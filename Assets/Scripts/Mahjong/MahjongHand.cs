@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 namespace Mahjong
 {
@@ -37,7 +36,7 @@ namespace Mahjong
 
         public MahjongHand Add(Tile tile)
         {
-            return new MahjongHand(originalHandString + tile.ToString());
+            return new MahjongHand(originalHandString + tile);
         }
 
         private bool AnalyzeNormal(int[] hand)
@@ -214,14 +213,12 @@ namespace Mahjong
         {
             get
             {
-                if (decompose == null)
-                {
-                    decompose = new HashSet<MianziSet>();
-                    var normal = AnalyzeNormal(mHand);
-                    var qiduizi = AnalyzeQiduizi(mHand);
-                    var guoshi = AnalyzeGuoshiWushuang(mHand);
-                    hasWin = normal || qiduizi || guoshi;
-                }
+                if (decompose != null) return hasWin;
+                decompose = new HashSet<MianziSet>();
+                var normal = AnalyzeNormal(mHand);
+                var qiduizi = AnalyzeQiduizi(mHand);
+                var guoshi = AnalyzeGuoshiWushuang(mHand);
+                hasWin = normal || qiduizi || guoshi;
                 return hasWin;
             }
         }
@@ -241,7 +238,7 @@ namespace Mahjong
             get
             {
                 if (!HasTing) return new List<Tile>();
-                else return new List<Tile>(tingList);
+                return new List<Tile>(tingList);
             }
         }
 
@@ -309,13 +306,12 @@ namespace Mahjong
         public int Index { get; private set; }
         public bool IsRed { get; private set; }
 
-        public Tile(Suit suit, int index, bool isRed = false)
+        public Tile(Suit suit, int index, bool isRed = false) : this()
         {
             if (index <= 0 || index > 9) throw new ArgumentException("Index must be within range of 1 and 9");
             Suit = suit;
             Index = index;
             IsRed = isRed;
-            hashCode = 0;
         }
 
         public bool IsYaojiu
@@ -355,12 +351,9 @@ namespace Mahjong
             return false;
         }
 
-        private int hashCode;
-
         public override int GetHashCode()
         {
-            if (hashCode == 0) hashCode = ToString().GetHashCode();
-            return hashCode;
+            return ToString().GetHashCode();
         }
     }
 
@@ -375,12 +368,11 @@ namespace Mahjong
         public MianziType Type { get; private set; }
         public Tile First { get; private set; }
         public bool Open { get; set; }
-        public Mianzi(Tile first, MianziType type, bool open = false)
+        public Mianzi(Tile first, MianziType type, bool open = false) : this()
         {
             First = first;
             Type = type;
             Open = open;
-            hashCode = 0;
         }
 
         public Tile Last
@@ -401,6 +393,21 @@ namespace Mahjong
             }
         }
 
+        public bool HasYaojiu
+        {
+            get { return First.IsYaojiu || Last.IsYaojiu; }
+        }
+
+        public bool IsYaojiu
+        {
+            get { return First.IsYaojiu || Last.IsYaojiu; }
+        }
+
+        public Suit Suit
+        {
+            get { return First.Suit; }
+        }
+
         public int CompareTo(Mianzi other)
         {
             if (!First.Equals(other.First)) return First.CompareTo(other.First); // 先按花色排序，然后按序数排序
@@ -414,8 +421,7 @@ namespace Mahjong
                 case MianziType.Kezi:
                     return string.Format("{0}{1}{2}", First.Index, First.Index, First.ToString());
                 case MianziType.Shunzi:
-                    var second = First.Next;
-                    return string.Format("{0}{1}{2}", First.Index, second.Index, second.Next.ToString());
+                    return string.Format("{0}{1}{2}", First.Index, First.Next.Index, First.Next.Next.ToString());
                 case MianziType.Jiang:
                     return string.Format("{0}{1}", First.Index, First.ToString());
                 case MianziType.Single:
@@ -436,12 +442,9 @@ namespace Mahjong
             return false;
         }
 
-        private int hashCode;
-
         public override int GetHashCode()
         {
-            if (hashCode == 0) hashCode = ToString().GetHashCode();
-            return hashCode;
+            return ToString().GetHashCode();
         }
     }
 
@@ -450,6 +453,7 @@ namespace Mahjong
         Kezi = 0, Shunzi = 1, Jiang = 2, Single = 3
     }
 
+    [Serializable]
     public class MianziSet : IEnumerable
     {
         private List<Mianzi> list;
@@ -515,7 +519,8 @@ namespace Mahjong
                 }
                 return true;
             }
-            else return false;
+
+            return false;
         }
 
         public override int GetHashCode()
