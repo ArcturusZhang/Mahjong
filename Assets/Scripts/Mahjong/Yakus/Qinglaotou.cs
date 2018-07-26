@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace Mahjong.Yakus
+﻿namespace Mahjong.Yakus
 {
-    public class DuanYao : Yaku
+    public class Qinglaotou : Yaku
     {
         public override string Name
         {
-            get { return "断幺"; }
+            get { return "清老头"; }
         }
 
         public override int Value
@@ -14,13 +12,17 @@ namespace Mahjong.Yakus
             get { return 1; }
         }
 
+        public override bool IsYakuMan
+        {
+            get { return true; }
+        }
+
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            foreach (Mianzi mianzi in hand)
+            foreach (var mianzi in hand)
             {
-                if (mianzi.HasYaojiu) return false;
+                if (!mianzi.IsLaotou) return false;
             }
-
             return true;
         }
     }

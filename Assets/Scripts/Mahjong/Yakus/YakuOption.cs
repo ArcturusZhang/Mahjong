@@ -9,6 +9,7 @@
         Rong,
         Haidi,
         Lingshang,
+        Qianggang,
         FirstRound
     }
 }

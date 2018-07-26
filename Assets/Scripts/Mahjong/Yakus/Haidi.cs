@@ -2,26 +2,21 @@
 
 namespace Mahjong.Yakus
 {
-    public class Zimo : Yaku
+    public class Haidi : Yaku
     {
         public override string Name
         {
-            get { return "门前清自摸和"; }
+            get { return "海底捞月"; }
         }
-        
+
         public override int Value
         {
             get { return 1; }
         }
 
-        public override YakuType Type
-        {
-            get { return YakuType.Menqian; }
-        }
-        
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            return options.Contains(YakuOption.Menqing) && options.Contains(YakuOption.Zimo);
+            return options.Contains(YakuOption.Haidi) && options.Contains(YakuOption.Zimo);
         }
     }
 }

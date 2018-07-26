@@ -4,24 +4,25 @@ namespace Mahjong.Yakus
 {
     public class Lizhi : Yaku
     {
-        public string Name
+        public override string Name
         {
             get { return "立直"; }
         }
 
-        public int Value
+        public override int Value
         {
             get { return 1; }
         }
 
-        public bool IsYakuMan
+        public override YakuType Type
         {
-            get { return false; }
+            get { return YakuType.Menqian; }
         }
 
-        public bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            return options.Contains(YakuOption.Menqing) && options.Contains(YakuOption.Lizhi);
+            return options.Contains(YakuOption.Menqing) && options.Contains(YakuOption.Lizhi) &&
+                   !options.Contains(YakuOption.FirstRound);
         }
     }
 }

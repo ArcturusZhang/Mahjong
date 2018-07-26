@@ -4,22 +4,22 @@ namespace Mahjong.Yakus
 {
     public class Pinghu : Yaku
     {
-        public string Name
+        public override string Name
         {
             get { return "平胡"; }
         }
 
-        public int Value
+        public override int Value
         {
             get { return 1; }
         }
 
-        public bool IsYakuMan
+        public override YakuType Type
         {
-            get { return false; }
+            get { return YakuType.Menqian; }
         }
 
-        public bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
             if (!options.Contains(YakuOption.Menqing)) return false;
             int shunziCount = 0;

@@ -15,13 +15,12 @@ namespace Mahjong
         public void TaskOnClick()
         {
             var yakuTypes = typeof(Yaku).Assembly.GetTypes()
-                .Where(clazz => !clazz.IsInterface && typeof(Yaku).IsAssignableFrom(clazz));
+                .Where(clazz => !clazz.IsAbstract && !clazz.IsInterface && typeof(Yaku).IsAssignableFrom(clazz));
             var yakuList = new List<Yaku>();
             foreach (var type in yakuTypes)
             {
                 var yaku = (Yaku) Activator.CreateInstance(type);
                 yakuList.Add(yaku);
-//                Debug.Log(yaku.Name);
             }
             var hand = new MahjongHand(input.text);
             var options = new[] {YakuOption.Lizhi, YakuOption.Menqing, YakuOption.Zimo};

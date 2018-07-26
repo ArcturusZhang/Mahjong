@@ -2,22 +2,17 @@
 {
     public class YipaiZhong : Yaku
     {
-        public string Name
+        public override string Name
         {
-            get { return "役牌：三元牌(中)"; }
+            get { return "役牌-三元牌(中)"; }
         }
 
-        public int Value
+        public override int Value
         {
             get { return 1; }
         }
 
-        public bool IsYakuMan
-        {
-            get { return false; }
-        }
-
-        public bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
             foreach (Mianzi mianzi in hand)
             {

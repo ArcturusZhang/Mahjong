@@ -9,11 +9,29 @@
           <e p="Mahjong" t="Include">
             <e p="MahjongAnalysor.cs" t="Include" />
             <e p="MahjongHand.cs" t="Include" />
+            <e p="Mianzi.cs" t="Include" />
+            <e p="MianziSet.cs" t="Include" />
+            <e p="Tile.cs" t="Include" />
             <e p="Yakus" t="Include">
+              <e p="Chunquandai.cs" t="Include" />
               <e p="DuanYao.cs" t="Include" />
+              <e p="Duiduihu.cs" t="Include" />
               <e p="GameStatus.cs" t="Include" />
+              <e p="Haidi.cs" t="Include" />
+              <e p="Hedi.cs" t="Include" />
+              <e p="Hunlaotou.cs" t="Include" />
+              <e p="Hunquandai.cs" t="Include" />
+              <e p="Lingshang.cs" t="Include" />
               <e p="Lizhi.cs" t="Include" />
               <e p="Pinghu.cs" t="Include" />
+              <e p="Qianggang.cs" t="Include" />
+              <e p="Qiduizi.cs" t="Include" />
+              <e p="Qinglaotou.cs" t="Include" />
+              <e p="Sananke.cs" t="Include" />
+              <e p="Sansetongke.cs" t="Include" />
+              <e p="Sansetongshun.cs" t="Include" />
+              <e p="ShuangLizhi.cs" t="Include" />
+              <e p="Sianke.cs" t="Include" />
               <e p="Yaku.cs" t="Include" />
               <e p="YakuOption.cs" t="Include" />
               <e p="Yibeikou.cs" t="Include" />
@@ -23,6 +41,7 @@
               <e p="YipaiFa.cs" t="Include" />
               <e p="YipaiZhong.cs" t="Include" />
               <e p="YipaiZifeng.cs" t="Include" />
+              <e p="Yiqitongguan.cs" t="Include" />
               <e p="Zimo.cs" t="Include" />
             </e>
           </e>
