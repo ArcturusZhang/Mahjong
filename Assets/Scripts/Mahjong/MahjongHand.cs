@@ -19,6 +19,7 @@ namespace Mahjong
         private bool hasWin;
         private List<Tile> tingList;
         private bool hasTing;
+
         public MahjongHand(string handString)
         {
             InitializeFromString(handString);
@@ -36,7 +37,7 @@ namespace Mahjong
 
         public MahjongHand Add(Tile tile)
         {
-            return new MahjongHand(originalHandString + tile);
+            return new MahjongHand(originalHandString + tile.ToOriginalString());
         }
 
         private bool AnalyzeNormal(int[] hand)
@@ -55,6 +56,7 @@ namespace Mahjong
                 if (tilesCount[i] % 3 == 0) remainderOfZero++;
                 if (tilesCount[i] % 3 == 2) suitOfTwo = i;
             }
+
             // 必须有3组余数为0才可能组成胡牌牌型
             if (remainderOfZero != 3) return false;
             var normalDecompose = new HashSet<MianziSet>();
@@ -63,6 +65,7 @@ namespace Mahjong
             {
                 decompose.Add(d);
             }
+
             return normalDecompose.Count != 0;
         }
 
@@ -80,6 +83,7 @@ namespace Mahjong
                     subList.Add(new Mianzi(tile, MianziType.Jiang));
                 }
             }
+
             decompose.Add(subList);
             return true;
         }
@@ -100,6 +104,7 @@ namespace Mahjong
                     subList.Add(new Mianzi(tile, type));
                 }
             }
+
             decompose.Add(subList);
             return true;
         }
@@ -118,12 +123,13 @@ namespace Mahjong
             {
                 array[GetIndex(tile)]++;
             }
+
             return array;
         }
 
         private void FindCompleteForm(int suitOfTwo, int[] hand, HashSet<MianziSet> result)
         {
-            Suit suit = (Suit)suitOfTwo;
+            Suit suit = (Suit) suitOfTwo;
             int start = suitOfTwo * 9;
             int end = suit == Suit.Z ? start + 7 : start + 9;
             for (int index = start; index < end; index++)
@@ -138,6 +144,7 @@ namespace Mahjong
                         com.Add(new Mianzi(new Tile(suit, index - start + 1), MianziType.Jiang));
                         result.Add(com);
                     }
+
                     // 撤销这次更改，以便再测试下一组将牌
                     hand[index] += 2;
                 }
@@ -153,6 +160,7 @@ namespace Mahjong
                 result.Add(newList);
                 return;
             }
+
             if (hand[index] == 0) Decompose(index + 1, hand, current, result);
             var tile = GetTile(index);
             if (hand[index] >= 3) // 寻找刻子
@@ -163,6 +171,7 @@ namespace Mahjong
                 current.RemoveAt(current.Count - 1);
                 hand[index] += 3;
             }
+
             // 寻找顺子
             if (tile.Suit != Suit.Z && tile.Index <= 7 && hand[index + 1] > 0 && hand[index + 2] > 0)
             {
@@ -180,21 +189,18 @@ namespace Mahjong
 
         private Tile GetTile(int index)
         {
-            Suit suit = (Suit)(index / 9);
+            Suit suit = (Suit) (index / 9);
             return new Tile(suit, index % 9 + 1);
         }
 
         private int GetIndex(Tile tile)
         {
-            return (int)tile.Suit * 9 + tile.Index - 1;
+            return (int) tile.Suit * 9 + tile.Index - 1;
         }
 
         public IEnumerable<Tile> Tiles
         {
-            get
-            {
-                return new List<Tile>(mTiles);
-            }
+            get { return new List<Tile>(mTiles); }
         }
 
         public IEnumerable<MianziSet> Decomposition
@@ -255,6 +261,7 @@ namespace Mahjong
                 if (win) result.Add(GetTile(index));
                 hand[index]--;
             }
+
             decompose = null;
             return result;
         }
@@ -278,6 +285,7 @@ namespace Mahjong
             {
                 mTiles.Add(tile);
             }
+
             mTiles.Sort();
             var builder = new StringBuilder();
             foreach (var tile in mTiles)
@@ -310,6 +318,8 @@ namespace Mahjong
         {
             if (index <= 0 || index > 9) throw new ArgumentException("Index must be within range of 1 and 9");
             Suit = suit;
+            if (Suit == Suit.Z && Index > 7)
+                throw new ArgumentException("Index of tiles in Suit of Zi must be within range of 1 and 9");
             Index = index;
             IsRed = isRed;
         }
@@ -337,6 +347,112 @@ namespace Mahjong
 
         public override string ToString()
         {
+            switch (Index)
+            {
+                case 1:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "一";
+                        case Suit.P: return "①";
+                        case Suit.S: return "１";
+                        case Suit.Z: return "东";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 2:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "二";
+                        case Suit.P: return "②";
+                        case Suit.S: return "２";
+                        case Suit.Z: return "南";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 3:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "三";
+                        case Suit.P: return "③";
+                        case Suit.S: return "３";
+                        case Suit.Z: return "西";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 4:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "四";
+                        case Suit.P: return "④";
+                        case Suit.S: return "４";
+                        case Suit.Z: return "北";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 5:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "五";
+                        case Suit.P: return "⑤";
+                        case Suit.S: return "５";
+                        case Suit.Z: return "白";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 6:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "六";
+                        case Suit.P: return "⑥";
+                        case Suit.S: return "６";
+                        case Suit.Z: return "发";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 7:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "七";
+                        case Suit.P: return "⑦";
+                        case Suit.S: return "７";
+                        case Suit.Z: return "中";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 8:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "八";
+                        case Suit.P: return "⑧";
+                        case Suit.S: return "８";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                case 9:
+                {
+                    switch (Suit)
+                    {
+                        case Suit.M: return "九";
+                        case Suit.P: return "⑨";
+                        case Suit.S: return "９";
+                        case Suit.Z: return "北";
+                        default: throw new ArgumentException("Will not happen");
+                    }
+                }
+                default: throw new ArgumentException("Will not happen");
+            }
+        }
+
+        public string ToOriginalString()
+        {
             return Index + Suit.ToString();
         }
 
@@ -345,9 +461,10 @@ namespace Mahjong
             if (obj == null) return false;
             if (obj is Tile)
             {
-                var other = (Tile)obj;
+                var other = (Tile) obj;
                 return Suit == other.Suit && Index == other.Index;
             }
+
             return false;
         }
 
@@ -359,7 +476,10 @@ namespace Mahjong
 
     public enum Suit
     {
-        M = 0, P = 1, S = 2, Z = 3
+        M = 0,
+        P = 1,
+        S = 2,
+        Z = 3
     }
 
     [Serializable]
@@ -368,6 +488,7 @@ namespace Mahjong
         public MianziType Type { get; private set; }
         public Tile First { get; private set; }
         public bool Open { get; set; }
+
         public Mianzi(Tile first, MianziType type, bool open = false) : this()
         {
             First = first;
@@ -419,11 +540,11 @@ namespace Mahjong
             switch (Type)
             {
                 case MianziType.Kezi:
-                    return string.Format("{0}{1}{2}", First.Index, First.Index, First.ToString());
+                    return string.Format("{0}{1}{2}", First, First, First);
                 case MianziType.Shunzi:
-                    return string.Format("{0}{1}{2}", First.Index, First.Next.Index, First.Next.Next.ToString());
+                    return string.Format("{0}{1}{2}", First, First.Next, First.Next.Next);
                 case MianziType.Jiang:
-                    return string.Format("{0}{1}", First.Index, First.ToString());
+                    return string.Format("{0}{1}", First, First);
                 case MianziType.Single:
                     return First.ToString();
                 default:
@@ -436,9 +557,10 @@ namespace Mahjong
             if (obj == null) return false;
             if (obj is Mianzi)
             {
-                var other = (Mianzi)obj;
+                var other = (Mianzi) obj;
                 return Type == other.Type && First.Equals(other.First);
             }
+
             return false;
         }
 
@@ -450,13 +572,17 @@ namespace Mahjong
 
     public enum MianziType
     {
-        Kezi = 0, Shunzi = 1, Jiang = 2, Single = 3
+        Kezi = 0,
+        Shunzi = 1,
+        Jiang = 2,
+        Single = 3
     }
 
     [Serializable]
     public class MianziSet : IEnumerable
     {
-        private List<Mianzi> list;
+        private readonly List<Mianzi> list;
+
         public MianziSet()
         {
             list = new List<Mianzi>();
@@ -485,10 +611,7 @@ namespace Mahjong
 
         public Mianzi this[int index]
         {
-            get
-            {
-                return list[index];
-            }
+            get { return list[index]; }
         }
 
         public int Count
@@ -503,6 +626,7 @@ namespace Mahjong
             {
                 builder.Append(mianzi).Append(" ");
             }
+
             return builder.ToString();
         }
 
@@ -511,12 +635,13 @@ namespace Mahjong
             if (obj == null) return false;
             if (obj is MianziSet)
             {
-                var set = (MianziSet)obj;
+                var set = (MianziSet) obj;
                 if (Count != set.Count) return false;
                 for (int i = 0; i < Count; i++)
                 {
                     if (!this[i].Equals(set[i])) return false;
                 }
+
                 return true;
             }
 

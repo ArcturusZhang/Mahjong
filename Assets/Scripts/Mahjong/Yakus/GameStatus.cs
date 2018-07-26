@@ -9,7 +9,7 @@ namespace Mahjong.Yakus
         public Tile Zifeng { get; private set; }
         public List<Tile> Dora { get; private set; }
 
-        public GameStatus() : this(new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), null)
+        public GameStatus() : this(new Tile(Suit.Z, 1), new Tile(Suit.Z, 1))
         {
         }
 
@@ -20,10 +20,11 @@ namespace Mahjong.Yakus
             Changfeng = changfeng;
             Zifeng = zifeng;
             Dora = new List<Tile>();
-            foreach (var tile in dora)
-            {
-                Dora.Add(tile);
-            }
+            if (dora != null)
+                foreach (var tile in dora)
+                {
+                    Dora.Add(tile);
+                }
         }
     }
 }
