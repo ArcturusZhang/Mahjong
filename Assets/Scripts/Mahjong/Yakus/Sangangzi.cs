@@ -1,12 +1,10 @@
 ﻿namespace Mahjong.Yakus
 {
-    public class Sananke : Yaku
+    public class Sangangzi : Yaku
     {
-        private static readonly Yaku sianke = new Sianke();
-
         public override string Name
         {
-            get { return "三暗刻"; }
+            get { return "三杠子"; }
         }
 
         public override int Value
@@ -14,17 +12,14 @@
             get { return 2; }
         }
 
-        // todo -- 自摸和荣胡导致的暗刻差别
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            if (sianke.Test(hand, rong, status, options)) return false;
             int count = 0;
             foreach (var mianzi in hand)
             {
-                if (mianzi.Type == MianziType.Kezi && !mianzi.Open) count++;
+                if (mianzi.IsGangzi) count++;
             }
-
-            return count >= 3;
+            return count == 3;
         }
     }
 }

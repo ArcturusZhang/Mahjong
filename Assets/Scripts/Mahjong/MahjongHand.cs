@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,7 +12,7 @@ namespace Mahjong
         private const int fullHandCount = 14;
         private const int tileKinds = 34;
         private string originalHandString;
-        private List<Tile> mTiles;
+        private readonly List<Tile> mTiles = new List<Tile>();
         private int[] mHand;
         private HashSet<MianziSet> decompose;
         private bool hasWin;
@@ -37,7 +36,9 @@ namespace Mahjong
 
         public MahjongHand Add(Tile tile)
         {
-            return new MahjongHand(originalHandString + tile.ToOriginalString());
+            var list = Tiles;
+            list.Add(tile);
+            return new MahjongHand(list);
         }
 
         private bool AnalyzeNormal(int[] hand)
@@ -187,18 +188,18 @@ namespace Mahjong
             }
         }
 
-        private Tile GetTile(int index)
+        private static Tile GetTile(int index)
         {
             Suit suit = (Suit) (index / 9);
             return new Tile(suit, index % 9 + 1);
         }
 
-        private int GetIndex(Tile tile)
+        private static int GetIndex(Tile tile)
         {
             return (int) tile.Suit * 9 + tile.Index - 1;
         }
 
-        public IEnumerable<Tile> Tiles
+        public IList<Tile> Tiles
         {
             get { return new List<Tile>(mTiles); }
         }
@@ -239,12 +240,11 @@ namespace Mahjong
             }
         }
 
-        public List<Tile> TingList
+        public IEnumerable<Tile> TingList
         {
             get
             {
-                if (!HasTing) return new List<Tile>();
-                return new List<Tile>(tingList);
+                return !HasTing ? new List<Tile>() : new List<Tile>(tingList);
             }
         }
 
@@ -268,7 +268,6 @@ namespace Mahjong
 
         private void InitializeFromString(string hand)
         {
-            mTiles = new List<Tile>();
             originalHandString = hand;
             Resolve(hand, @"\d+[MmWw]", Suit.M, mTiles);
             Resolve(hand, @"\d+[PpBb]", Suit.P, mTiles);
@@ -280,7 +279,6 @@ namespace Mahjong
 
         private void InitializeFromTiles(IEnumerable<Tile> tiles)
         {
-            mTiles = new List<Tile>();
             foreach (var tile in tiles)
             {
                 mTiles.Add(tile);
@@ -304,6 +302,24 @@ namespace Mahjong
                     result.Add(new Tile(suit, c - '0'));
                 }
             }
+        }
+
+        private string stringForm = null;
+
+        public override string ToString()
+        {
+            if (stringForm == null)
+            {
+                var builder = new StringBuilder();
+                foreach (var tile in mTiles)
+                {
+                    builder.Append(tile);
+                }
+
+                stringForm = builder.ToString();
+            }
+
+            return stringForm;
         }
     }
 }

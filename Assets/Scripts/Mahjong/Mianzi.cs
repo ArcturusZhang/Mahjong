@@ -11,12 +11,12 @@ namespace Mahjong
         public bool Open { get; set; }
         private bool isGangzi;
 
-        public Mianzi(Tile first, MianziType type, bool open = false, bool isGangzi = false) : this()
+        public Mianzi(Tile first, MianziType type, bool open = false, bool gangzi = false) : this()
         {
             First = first;
             Type = type;
             Open = open;
-            this.isGangzi = isGangzi;
+            isGangzi = gangzi;
         }
 
         public Tile Last

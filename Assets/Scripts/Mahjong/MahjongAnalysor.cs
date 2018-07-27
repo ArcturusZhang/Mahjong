@@ -22,9 +22,11 @@ namespace Mahjong
                 var yaku = (Yaku) Activator.CreateInstance(type);
                 yakuList.Add(yaku);
             }
+            Debug.Log(input.text);
             var hand = new MahjongHand(input.text);
             var options = new[] {YakuOption.Lizhi, YakuOption.Menqing, YakuOption.Zimo};
             var status = new GameStatus();
+            Debug.Log(string.Format("手牌：{0}", hand));
             if (hand.HasTing)
             {
                 var builder = new StringBuilder();
@@ -48,32 +50,6 @@ namespace Mahjong
                 }
                 Debug.Log(builder.ToString());
             }
-//            if (hand.HasWin)
-//                foreach (var mianziSet in hand.Decomposition)
-//                {
-//                    var builder = new StringBuilder();
-//                    builder.Append(mianziSet).Append("\n");
-//                    yakuList.ForEach(yaku =>
-//                    {
-//                        if (yaku.Test(mianziSet, new Tile(Suit.M, 1), YakuOption.Haidi, YakuOption.Richi,
-//                            YakuOption.Menqing, YakuOption.Tsumo))
-//                            builder.Append(yaku.Name).Append("\n");
-//                    });
-//                    Debug.Log(builder.ToString());
-//                }
-//            else
-//            {
-//                if (hand.HasTing)
-//                {
-//                    var builder = new StringBuilder();
-//                    foreach (var tile in hand.TingList)
-//                    {
-//                        builder.Append(tile).Append(" ");
-//                    }
-//
-//                    Debug.Log(builder.ToString());
-//                }
-//            }
         }
     }
 }

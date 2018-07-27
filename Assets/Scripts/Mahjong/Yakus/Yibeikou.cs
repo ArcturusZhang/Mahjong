@@ -5,6 +5,7 @@ namespace Mahjong.Yakus
 {
     public class Yibeikou : Yaku
     {
+        private static readonly Yaku erbeikou = new Erbeikou();
         public override string Name
         {
             get { return "一杯口"; }
@@ -23,12 +24,11 @@ namespace Mahjong.Yakus
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
             if (!options.Contains(YakuOption.Menqing)) return false;
-            IDictionary<Mianzi, int> dict = new Dictionary<Mianzi, int>();
-            foreach (Mianzi mianzi in hand)
+            if (erbeikou.Test(hand, rong, status, options)) return false;
+            hand.Sort();
+            for (int i = 1; i < hand.Count; i++)
             {
-                if (dict.ContainsKey(mianzi)) dict[mianzi]++;
-                else dict.Add(mianzi, 1);
-                if (dict[mianzi] == 2) return true;
+                if (hand[i].Type == MianziType.Shunzi && hand[i].Equals(hand[i - 1])) return true;
             }
 
             return false;

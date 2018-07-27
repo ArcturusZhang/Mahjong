@@ -10,6 +10,7 @@
         Haidi,
         Lingshang,
         Qianggang,
-        FirstRound
+        FirstRound,
+        Zhuangjia
     }
 }

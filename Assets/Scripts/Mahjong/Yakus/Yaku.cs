@@ -15,6 +15,7 @@ namespace Mahjong.Yakus
         {
             get { return YakuType.Normal; }
         }
+        
         public abstract bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options);
 
         public int CompareTo(Yaku other)

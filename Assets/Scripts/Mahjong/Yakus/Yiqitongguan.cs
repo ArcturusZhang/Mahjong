@@ -31,13 +31,15 @@ namespace Mahjong.Yakus
             var indexFlag = new int[4];
             foreach (var mianzi in hand)
             {
-                indexFlag[(int) mianzi.Suit] |= 1 << (mianzi.First.Index - 1); // binary
+                if (mianzi.Type == MianziType.Shunzi)
+                    indexFlag[(int) mianzi.Suit] |= 1 << (mianzi.First.Index - 1); // binary
             }
-            
+
             for (int i = 0; i < 3; i++)
             {
                 if ((indexFlag[i] & 1) != 0 && (indexFlag[i] & (1 << 3)) != 0
-                    && (indexFlag[i] & (1 << 6)) != 0) return true; // (binary) 1001001 = (decimal) 73
+                                            && (indexFlag[i] & (1 << 6)) != 0)
+                    return true; // (binary) 1001001 = (decimal) 73
             }
 
             return false;
