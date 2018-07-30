@@ -14,7 +14,7 @@ namespace Mahjong.Yakus
 
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            return options.Contains(YakuOption.FirstRound) && options.Contains(YakuOption.Rong);
+            return options.Contains(YakuOption.FirstRound) && !options.Contains(YakuOption.Zimo);
         }
     }
 }

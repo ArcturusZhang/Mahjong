@@ -10,43 +10,20 @@ namespace Mahjong
     {
         private const int tileKinds = 34;
         private readonly List<Mianzi> list;
-        private readonly int[] counts;
 
         public MianziSet()
         {
             list = new List<Mianzi>();
-            counts = new int[tileKinds];
         }
 
         public MianziSet(MianziSet copy) : this()
         {
             list.AddRange(copy);
-            Array.Copy(copy.counts, counts, counts.Length);
         }
 
         public void Add(Mianzi item)
         {
             list.Add(item);
-            int index = MahjongHand.GetIndex(item.First);
-            switch (item.Type)
-            {
-                case MianziType.Single:
-                    counts[index]++;
-                    break;
-                case MianziType.Jiang:
-                    counts[index] += 2;
-                    break;
-                case MianziType.Kezi:
-                    counts[index] += 3;
-                    if (item.IsGangzi) counts[index]++;
-                    break;
-                case MianziType.Shunzi:
-                    counts[index]++;
-                    counts[index + 1]++;
-                    counts[index + 2]++;
-                    break;
-                default: throw new ArgumentException("Invalid MianziType");
-            }
         }
 
         public void RemoveAt(int index)
@@ -61,7 +38,70 @@ namespace Mahjong
 
         public Mianzi this[int index] => list[index];
 
-        public int Count => list.Count;
+        public int MianziCount => list.Count;
+
+        public int[] TileDistribution
+        {
+            get
+            {
+                var distribution = new int[tileKinds];
+                foreach (var mianzi in list)
+                {
+                    int index = MahjongHand.GetIndex(mianzi.First);
+                    switch (mianzi.Type)
+                    {
+                        case MianziType.Single:
+                            distribution[index]++;
+                            break;
+                        case MianziType.Jiang:
+                            distribution[index] += 2;
+                            break;
+                        case MianziType.Kezi:
+                            distribution[index] += 3;
+                            if (mianzi.IsGangzi) distribution[index]++;
+                            break;
+                        case MianziType.Shunzi:
+                            distribution[index]++;
+                            distribution[index + 1]++;
+                            distribution[index + 2]++;
+                            break;
+                        default: throw new ArgumentException("Invalid MianziType");
+                    }
+                }
+
+                return distribution;
+            }
+        }
+
+        public int TileCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (var mianzi in list)
+                {
+                    switch (mianzi.Type)
+                    {
+                        case MianziType.Single:
+                            count++;
+                            break;
+                        case MianziType.Jiang:
+                            count += 2;
+                            break;
+                        case MianziType.Shunzi:
+                            count += 3;
+                            break;
+                        case MianziType.Kezi:
+                            count += 3;
+                            if (mianzi.IsGangzi) count++;
+                            break;
+                        default: throw new ArgumentException("Invalid MianziType");
+                    }
+                }
+
+                return count;
+            }
+        }
 
         public override string ToString()
         {
@@ -76,20 +116,15 @@ namespace Mahjong
 
         public override bool Equals(object obj)
         {
-            if (obj == null) return false;
-            if (obj is MianziSet)
+            var mianziSet = obj as MianziSet;
+            if (mianziSet == null) return false;
+            if (MianziCount != mianziSet.MianziCount) return false;
+            for (int i = 0; i < MianziCount; i++)
             {
-                var set = (MianziSet) obj;
-                if (Count != set.Count) return false;
-                for (int i = 0; i < Count; i++)
-                {
-                    if (!this[i].Equals(set[i])) return false;
-                }
-
-                return true;
+                if (!this[i].Equals(mianziSet[i])) return false;
             }
 
-            return false;
+            return true;
         }
 
         public override int GetHashCode()
@@ -120,8 +155,7 @@ namespace Mahjong
 
             public bool MoveNext()
             {
-                if (++currentIndex >= list.Count) return false;
-                return true;
+                return ++currentIndex < list.Count;
             }
 
             public void Reset()

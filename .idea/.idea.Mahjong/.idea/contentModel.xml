@@ -30,12 +30,16 @@
               <e p="人和.cs" t="Include" />
               <e p="双立直.cs" t="Include" />
               <e p="四暗刻.cs" t="Include" />
+              <e p="四杠子.cs" t="Include" />
               <e p="国士无双.cs" t="Include" />
               <e p="地和.cs" t="Include" />
               <e p="大三元.cs" t="Include" />
+              <e p="大四喜.cs" t="Include" />
               <e p="天和.cs" t="Include" />
+              <e p="字一色.cs" t="Include" />
               <e p="对对和.cs" t="Include" />
               <e p="小三元.cs" t="Include" />
+              <e p="小四喜.cs" t="Include" />
               <e p="岭上开花.cs" t="Include" />
               <e p="平和.cs" t="Include" />
               <e p="役牌中.cs" t="Include" />
@@ -54,6 +58,7 @@
               <e p="清老头.cs" t="Include" />
               <e p="立直.cs" t="Include" />
               <e p="纯全带幺九.cs" t="Include" />
+              <e p="绿一色.cs" t="Include" />
               <e p="自摸.cs" t="Include" />
             </e>
           </e>

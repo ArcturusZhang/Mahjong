@@ -14,7 +14,7 @@ namespace Mahjong.Yakus
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
             if (!options.Contains(YakuOption.Menqing)) return false;
-            if (hand.Count <= 4) return false;
+            if (hand.MianziCount <= 4) return false;
             var dict = new Dictionary<Mianzi, int>();
             foreach (var mianzi in hand)
             {

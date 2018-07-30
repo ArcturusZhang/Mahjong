@@ -38,6 +38,7 @@ namespace Mahjong
                     foreach (var mianziSet in rongHand.Decomposition)
                     {
                         builder.Append("分解：").Append(mianziSet).Append("\n");
+                        Yaku.PreTest(mianziSet, rong, status, options);
                         yakuList.ForEach(yaku =>
                         {
                             if (yaku.Test(mianziSet, rong, status, options))

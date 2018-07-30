@@ -16,7 +16,7 @@ namespace Mahjong.Yakus
             if (!options.Contains(YakuOption.Menqing)) return false;
             if (erbeikou.Test(hand, rong, status, options)) return false;
             hand.Sort();
-            for (int i = 1; i < hand.Count; i++)
+            for (int i = 1; i < hand.MianziCount; i++)
             {
                 if (hand[i].Type == MianziType.Shunzi && hand[i].Equals(hand[i - 1])) return true;
             }

@@ -6,7 +6,6 @@
         Menqing,
         Yifa,
         Zimo,
-        Rong,
         Haidi,
         Lingshang,
         Qianggang,

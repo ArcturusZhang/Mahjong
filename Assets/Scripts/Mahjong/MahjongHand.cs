@@ -169,7 +169,7 @@ namespace Mahjong
                 hand[index] -= 3;
                 current.Add(new Mianzi(tile, MianziType.Kezi));
                 Decompose(index, hand, current, result);
-                current.RemoveAt(current.Count - 1);
+                current.RemoveAt(current.MianziCount - 1);
                 hand[index] += 3;
             }
 
@@ -181,7 +181,7 @@ namespace Mahjong
                 hand[index + 2]--;
                 current.Add(new Mianzi(tile, MianziType.Shunzi));
                 Decompose(index, hand, current, result);
-                current.RemoveAt(current.Count - 1);
+                current.RemoveAt(current.MianziCount - 1);
                 hand[index]++;
                 hand[index + 1]++;
                 hand[index + 2]++;

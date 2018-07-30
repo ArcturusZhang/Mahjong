@@ -13,7 +13,7 @@
 
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            if (hand.Count != 13) return false;
+            if (hand.MianziCount != 13) return false;
             bool isShisan = false;
             foreach (var mianzi in hand)
             {

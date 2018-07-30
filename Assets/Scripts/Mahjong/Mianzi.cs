@@ -5,14 +5,14 @@ using System.Collections.Generic;
 namespace Mahjong
 {
     [Serializable]
-    public struct Mianzi : IComparable<Mianzi>//, IEnumerable<Tile>
+    public class Mianzi : IComparable<Mianzi>
     {
         public MianziType Type { get; }
         public Tile First { get; }
         public bool Open { get; set; }
         private bool isGangzi;
 
-        public Mianzi(Tile first, MianziType type, bool open = false, bool gangzi = false) : this()
+        public Mianzi(Tile first, MianziType type, bool open = false, bool gangzi = false)
         {
             First = first;
             Type = type;
@@ -89,16 +89,6 @@ namespace Mahjong
             }
         }
 
-//        IEnumerator IEnumerable.GetEnumerator()
-//        {
-//            return GetEnumerator();
-//        }
-//
-//        public IEnumerator<Tile> GetEnumerator()
-//        {
-//            return new MianziEnumerator(this);
-//        }
-
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
@@ -114,57 +104,6 @@ namespace Mahjong
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
-        }
-
-        private struct MianziEnumerator : IEnumerator<Tile>
-        {
-            private Tile current;
-            private readonly int indexStep;
-            private readonly int tilesCount;
-            private int currentIndex;
-
-            public MianziEnumerator(Mianzi mianzi)
-            {
-                current = mianzi.First;
-                indexStep = mianzi.Type == MianziType.Shunzi ? 1 : 0;
-                switch (mianzi.Type)
-                {
-                    case MianziType.Single:
-                        tilesCount = 1;
-                        break;
-                    case MianziType.Jiang:
-                        tilesCount = 2;
-                        break;
-                    case MianziType.Kezi:
-                    case MianziType.Shunzi:
-                        tilesCount = 3;
-                        break;
-                    default: throw new ArgumentException("Should not happen");
-                }
-
-                currentIndex = 0;
-            }
-
-            public bool MoveNext()
-            {
-                if (currentIndex >= tilesCount) return false;
-                currentIndex++;
-                current = new Tile(current.Suit, current.Index + indexStep);
-                return true;
-            }
-
-            public void Reset()
-            {
-                currentIndex = 0;
-            }
-
-            public Tile Current => current;
-
-            object IEnumerator.Current => Current;
-
-            public void Dispose()
-            {
-            }
         }
     }
 
