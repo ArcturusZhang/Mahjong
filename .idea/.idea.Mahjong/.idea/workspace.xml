@@ -2,62 +2,93 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5b1cff7a-593e-4823-8fd6-e419120dad31" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Chunquandai.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Chunquandai.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Duiduihu.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Duiduihu.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Haidi.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Haidi.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hedi.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hedi.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunlaotou.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunlaotou.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunquandai.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunquandai.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lingshang.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lingshang.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qianggang.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qianggang.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qiduizi.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qiduizi.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qinglaotou.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qinglaotou.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongke.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongke.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongshun.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongshun.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/ShuangLizhi.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/ShuangLizhi.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/九莲宝灯.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/九莲宝灯.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/人和.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/国士无双.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/地和.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌场风.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Mahjong/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Mahjong/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Mahjong/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Mahjong/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assembly-CSharp.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Assembly-CSharp.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lizhi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lizhi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Pinghu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Pinghu.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Chunquandai.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/纯全带幺九.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Chunquandai.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/纯全带幺九.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Dasanyuan.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/大三元.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Dasanyuan.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/大三元.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Dihu.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Dihu.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/地和.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/断幺九.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/断幺九.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Duiduihu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/对对和.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Duiduihu.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/对对和.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Erbeikou.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/二杯口.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Erbeikou.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/二杯口.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Haidi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/海底捞月.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Haidi.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/海底捞月.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hedi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/河底捞鱼.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hedi.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/河底捞鱼.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunlaotou.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混老头.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunlaotou.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混老头.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunquandai.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混全带幺九.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunquandai.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混全带幺九.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunyise.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混一色.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunyise.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混一色.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lingshang.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/岭上开花.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lingshang.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/岭上开花.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lizhi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/立直.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lizhi.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/立直.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Pinghu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/平和.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Pinghu.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/平和.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qianggang.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/抢杠.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qianggang.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/抢杠.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qiduizi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/七对子.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qiduizi.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/七对子.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qinglaotou.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清老头.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qinglaotou.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清老头.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qingyise.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清一色.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qingyise.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清一色.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Renhu.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Renhu.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/人和.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三暗刻.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三暗刻.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sangangzi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三杠子.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sangangzi.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三杠子.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongke.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同刻.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongke.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同刻.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongshun.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同顺.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongshun.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同顺.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/ShuangLizhi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/双立直.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/ShuangLizhi.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/双立直.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/四暗刻.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/四暗刻.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Tianhu.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/天和.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Tianhu.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/天和.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Xiaosanyuan.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/小三元.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Xiaosanyuan.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/小三元.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yaku.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yaku.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YakuOption.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YakuOption.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yibeikou.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yibeikou.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yifa.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yifa.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiBai.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiBai.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiChangfeng.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiChangfeng.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZhong.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZhong.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZifeng.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZifeng.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Zimo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Zimo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YiPaiChangfeng.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yibeikou.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一杯口.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yibeikou.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一杯口.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yifa.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一发.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yifa.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一发.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiBai.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌白.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiBai.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌白.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiChangfeng.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌场风.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌发.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌发.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZhong.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌中.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZhong.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌中.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZifeng.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌自风.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZifeng.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌自风.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一气通贯.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一气通贯.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Zimo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/自摸.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Zimo.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/自摸.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -71,66 +102,250 @@
       <file leaf-file-name="Mianzi.cs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-107">
-              <caret line="18" column="37" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
+            <state relative-caret-position="-2431">
+              <caret line="7" column="48" selection-start-line="7" selection-start-column="48" selection-end-line="7" selection-end-column="48" />
               <folding>
-                <marker date="1532618509270" expanded="true" signature="6:32" ph="..." />
-                <marker date="1532618509270" expanded="true" signature="51:3425" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="119:3307" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="399:534" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="560:1053" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="586:1043" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="630:1029" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1083:1277" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1109:1229" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1308:1419" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1449:1558" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1589:1700" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1730:1839" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1865:1924" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="1950:2010" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="2054:2236" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="2279:2881" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="2315:2871" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="2930:3193" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="3014:3156" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="3236:3301" ph="{...}" />
-                <marker date="1532618509270" expanded="true" signature="3335:3423" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="6:73" ph="..." />
+                <marker date="1532919397989" expanded="true" signature="92:5070" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="181:4952" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="433:561" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="587:1080" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="613:1070" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="657:1056" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="1110:1304" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="1136:1256" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="1817:1999" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="2040:2183" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="2226:2762" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="2262:2752" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="2764:3002" ph="/* IEnumerator IEnumerable.GetEnumerator() ... */" />
+                <marker date="1532919397989" expanded="true" signature="3051:3314" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="3135:3277" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="3357:3422" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="3483:4946" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="3706:4417" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="3867:4368" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="4453:4681" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="4714:4776" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="4908:4936" ph="{...}" />
+                <marker date="1532919397989" expanded="true" signature="4980:5068" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sananke.cs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs">
+      <file leaf-file-name="大三元.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/大三元.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
+            <state relative-caret-position="32">
+              <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
               <folding>
-                <marker date="1532618760473" expanded="true" signature="23:714" ph="{...}" />
-                <marker date="1532618760473" expanded="true" signature="57:712" ph="{...}" />
-                <marker date="1532618760473" expanded="true" signature="160:214" ph="{...}" />
-                <marker date="1532618760473" expanded="true" signature="249:299" ph="{...}" />
-                <marker date="1532618760473" expanded="true" signature="409:706" ph="{...}" />
-                <marker date="1532618760473" expanded="true" signature="559:664" ph="{...}" />
+                <marker date="1532795526713" expanded="true" signature="23:649" ph="{...}" />
+                <marker date="1532795526713" expanded="true" signature="53:647" ph="{...}" />
+                <marker date="1532795526713" expanded="true" signature="305:641" ph="{...}" />
+                <marker date="1532795526713" expanded="true" signature="382:588" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Sianke.cs" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs">
+      <file leaf-file-name="纯全带幺九.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/纯全带幺九.cs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="30" column="9" lean-forward="true" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+            <state relative-caret-position="64">
+              <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
               <folding>
-                <marker date="1532618760477" expanded="true" signature="23:729" ph="{...}" />
-                <marker date="1532618760477" expanded="true" signature="56:727" ph="{...}" />
-                <marker date="1532618760477" expanded="true" signature="155:209" ph="{...}" />
-                <marker date="1532618760477" expanded="true" signature="244:294" ph="{...}" />
-                <marker date="1532618760477" expanded="true" signature="334:387" ph="{...}" />
-                <marker date="1532618760477" expanded="true" signature="497:721" ph="{...}" />
-                <marker date="1532618760477" expanded="true" signature="575:680" ph="{...}" />
+                <marker date="1532795526693" expanded="true" signature="43:784" ph="{...}" />
+                <marker date="1532795526693" expanded="true" signature="75:782" ph="{...}" />
+                <marker date="1532795526693" expanded="true" signature="444:776" ph="{...}" />
+                <marker date="1532795526693" expanded="true" signature="659:740" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="人和.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/人和.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="64">
+              <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+              <folding>
+                <marker date="1532795241060" expanded="true" signature="43:508" ph="{...}" />
+                <marker date="1532795241060" expanded="true" signature="72:506" ph="{...}" />
+                <marker date="1532795241060" expanded="true" signature="383:500" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="九莲宝灯.cs" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/九莲宝灯.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="368">
+              <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
+              <folding>
+                <marker date="1532920341294" expanded="true" signature="43:863" ph="{...}" />
+                <marker date="1532920341294" expanded="true" signature="74:861" ph="{...}" />
+                <marker date="1532920341294" expanded="true" signature="459:855" ph="{...}" />
+                <marker date="1532920341294" expanded="true" signature="699:799" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MahjongAnalysor.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="54" column="1" selection-start-line="54" selection-start-column="1" selection-end-line="54" selection-end-column="1" />
+              <folding>
+                <marker date="1532919397985" expanded="true" signature="6:147" ph="..." />
+                <marker date="1532919397985" expanded="true" signature="166:1886" ph="{...}" />
+                <marker date="1532919397985" expanded="true" signature="217:1884" ph="{...}" />
+                <marker date="1532919397985" expanded="true" signature="285:1878" ph="{...}" />
+                <marker date="1532919397985" expanded="true" signature="559:689" ph="{...}" />
+                <marker date="1532919397985" expanded="true" signature="975:1868" ph="{...}" />
+                <marker date="1532919397985" expanded="true" signature="1133:1807" ph="{...}" />
+                <marker date="1532919397985" expanded="true" signature="1327:1746" ph="{...}" />
+                <marker date="1532919397985" expanded="true" signature="1476:1676" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Tile.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="13" selection-start-line="13" selection-end-line="13" />
+              <folding>
+                <marker date="1532795318621" expanded="true" signature="32:5551" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="96:5456" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="316:680" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="934:1056" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="1099:4933" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="1136:4923" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="1226:1547" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="1641:1962" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="2056:2377" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="2471:2792" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="2886:3207" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="3301:3622" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="3716:4037" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="4131:4403" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="4497:4818" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="4975:5039" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="5088:5342" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="5170:5305" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="5385:5450" ph="{...}" />
+                <marker date="1532795318621" expanded="true" signature="5478:5549" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MianziSet.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="643">
+              <caret line="47" column="75" selection-start-line="47" selection-start-column="75" selection-end-line="47" selection-end-column="75" />
+              <folding>
+                <marker date="1532919790092" expanded="true" signature="6:92" ph="..." />
+                <marker date="1532919790092" expanded="true" signature="111:3529" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="181:3527" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="340:440" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="491:604" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="642:1440" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="769:1430" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="1481:1535" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="1563:1608" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="1747:1975" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="1845:1925" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2024:2450" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2111:2413" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2270:2369" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2493:2558" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2610:2677" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2726:2782" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2845:3521" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="2996:3085" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="3121:3242" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="3275:3338" ph="{...}" />
+                <marker date="1532919790092" expanded="true" signature="3483:3511" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MahjongHand.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="111">
+              <caret line="190" column="16" selection-start-line="190" selection-start-column="16" selection-end-line="190" selection-end-column="16" />
+              <folding>
+                <marker date="1532919790095" expanded="false" signature="6:104" ph="..." />
+                <marker date="1532919790095" expanded="true" signature="123:10079" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="173:10077" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="628:694" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="747:807" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="852:935" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="978:1098" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="1146:2115" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="1529:1737" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="1995:2057" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="2164:2739" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="2377:2667" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="2501:2653" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="2795:3527" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="3008:3455" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="3260:3441" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="3575:3714" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="3768:3968" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="3862:3931" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="4061:4912" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="4272:4902" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="4337:4888" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="4607:4790" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="5013:6212" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="5067:5242" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="5403:5673" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="5796:6202" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="6261:6375" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="6424:6501" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="6615:6934" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="6641:6924" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="6962:7382" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="6988:7372" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="7411:7635" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="7437:7625" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="7794:8373" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="8011:8305" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="8429:8783" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="8850:9232" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="8900:8962" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="9321:9645" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="9397:9635" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="9528:9621" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="9731:10071" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="9777:10029" ph="{...}" />
+                <marker date="1532919790095" expanded="true" signature="9887:9965" ph="{...}" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="国士无双.cs" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/国士无双.cs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="464">
+              <caret line="29" column="26" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="26" />
+              <folding>
+                <marker date="1532797320950" expanded="true" signature="23:1048" ph="{...}" />
+                <marker date="1532797320950" expanded="true" signature="54:1046" ph="{...}" />
+                <marker date="1532797320950" expanded="true" signature="552:1040" ph="{...}" />
+                <marker date="1532797320950" expanded="true" signature="686:892" ph="{...}" />
+                <marker date="1532797320950" expanded="true" signature="778:878" ph="{...}" />
+                <marker date="1532797320950" expanded="true" signature="919:1005" ph="{...}" />
               </folding>
             </state>
           </provider>
@@ -142,86 +357,60 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YakuOption.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qiduizi.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yibeikou.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5D211034-79A7-463F-9DF2-FE4087FE96D9/cd/a311c5be/GUILayoutOption.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Pinghu.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongshun.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunlaotou.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/ShuangLizhi.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/GameStatus.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Zimo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混一色.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/天和.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/平和.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同顺.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/小三元.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/人和.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/地和.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清一色.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/2c/a3ff10e5/List`1.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Duiduihu.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yifa.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/29/85a31107/Int32.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/dd/312f40a5/Array.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一发.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/a1/af8a3596/IEnumerable.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunquandai.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qianggang.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混全带幺九.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/82/9295c479/Activator.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yaku.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZhong.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hedi.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5D211034-79A7-463F-9DF2-FE4087FE96D9/93/d6532fdb/GUILayout.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Chunquandai.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qinglaotou.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Haidi.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/国士无双.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/纯全带幺九.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lizhi.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongke.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/立直.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/90/6d8fff1a/Assembly.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiBai.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lingshang.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1D04A064-1035-487D-9B35-754113A7DEC9/31/a1f35238/Assembly.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiChangfeng.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZifeng.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三暗刻.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YakuOption.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/七对子.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一杯口.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5D211034-79A7-463F-9DF2-FE4087FE96D9/cd/a311c5be/GUILayoutOption.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混老头.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/双立直.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/GameStatus.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/对对和.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/九莲宝灯.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/四暗刻.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/断幺九.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/29/85a31107/Int32.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/dd/312f40a5/Array.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/抢杠.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yaku.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/河底捞鱼.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清老头.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/海底捞月.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同刻.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌白.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/岭上开花.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/二杯口.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三杠子.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/大三元.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/F84AA906-EE26-4C4A-932D-8627B3559EB9/a5/5404bbde/HashSet`1.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Assets/Scripts/MahjongAnalysor.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/MahjongHand.cs" />
-        <option value="$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5D211034-79A7-463F-9DF2-FE4087FE96D9/93/d6532fdb/GUILayout.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YakuOptions.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Richi.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Tsumo.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YiPai.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YiPaiChangfeng.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiSanyuan.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/GameStatus.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Erbeikou.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YakuOption.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Haidi.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hedi.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lingshang.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qianggang.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yaku.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lizhi.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Pinghu.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qiduizi.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongke.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongshun.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/ShuangLizhi.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yibeikou.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yifa.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiBai.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiChangfeng.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs" />
@@ -233,9 +422,46 @@
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunlaotou.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qinglaotou.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Duiduihu.cs" />
-        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌白.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一发.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一杯口.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/四暗刻.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三暗刻.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/小三元.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/天和.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/双立直.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同顺.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同刻.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三杠子.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/人和.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清一色.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清老头.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/七对子.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/抢杠.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/平和.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/立直.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/岭上开花.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混一色.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/二杯口.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/海底捞月.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混全带幺九.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混老头.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/河底摸鱼.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/河底捞鱼.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/对对和.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/断幺九.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/地和.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/大三元.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/纯全带幺九.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/国士无双.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs" />
+        <option value="$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/九莲宝灯.cs" />
       </list>
     </option>
   </component>
@@ -248,7 +474,7 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1440" />
     <option name="height" value="803" />
@@ -261,41 +487,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="UnityExplorer">
-        <subPane>
-          <expand>
-            <path>
-              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
-            </path>
-            <path>
-              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-            </path>
-            <path>
-              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-            </path>
-            <path>
-              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-            </path>
-            <path>
-              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
-              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-              <item name="" type="1045f7f1:UnityExplorerNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-        <option name="show-hidden-items" value="false" />
-      </pane>
       <pane id="SolutionExplorer">
         <subPane>
           <expand>
@@ -344,6 +535,41 @@
         <option name="show-file-system" value="false" />
         <option name="show-all-items" value="false" />
       </pane>
+      <pane id="UnityExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
+            </path>
+            <path>
+              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
+              <item name="" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
+              <item name="" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
+              <item name="" type="1045f7f1:UnityExplorerNode" />
+              <item name="" type="1045f7f1:UnityExplorerNode" />
+            </path>
+            <path>
+              <item name="" type="ad4990d8:FileSystemViewPaneBase$ProjectViewPaneTreeStructure$createRoot$1" />
+              <item name="Mahjong" type="483dac07:UnityExplorerNode$Root" />
+              <item name="" type="1045f7f1:UnityExplorerNode" />
+              <item name="" type="1045f7f1:UnityExplorerNode" />
+              <item name="" type="1045f7f1:UnityExplorerNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-hidden-items" value="false" />
+      </pane>
       <pane id="Scratches" />
     </panes>
   </component>
@@ -364,9 +590,9 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" pid="7162">
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" />
+      <option name="pid" value="7162" />
     </configuration>
   </component>
   <component name="SvnConfiguration">
@@ -386,12 +612,13 @@
       <workItem from="1532504993169" duration="109000" />
       <workItem from="1532513373262" duration="3722000" />
       <workItem from="1532575987992" duration="3906000" />
-      <workItem from="1532612668331" duration="5599000" />
+      <workItem from="1532612668331" duration="5778000" />
+      <workItem from="1532794346818" duration="5628000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="20700000" />
+    <option name="totallyTimeSpent" value="26507000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -403,24 +630,25 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1440" height="803" extended-state="6" />
+    <frame x="0" y="23" width="1440" height="803" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.329429" />
       <window_info anchor="right" id="Errors In Solution" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Unit Tests" order="7" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.27825466" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.28183118" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Unity" order="7" />
       <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39970717" />
       <window_info anchor="bottom" id="NuGet" order="7" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -429,7 +657,6 @@
       <window_info anchor="bottom" id="Inspection Results" order="8" weight="0.329429" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -441,56 +668,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="1" />
+      <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yaku.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="5" column="33" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/MahjongHand.cs" />
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/MahjongAnalysor.cs" />
-    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/F84AA906-EE26-4C4A-932D-8627B3559EB9/a5/5404bbde/HashSet`1.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="563">
-          <caret line="932" column="35" selection-start-line="932" selection-start-column="35" selection-end-line="932" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/MahjongAnalysor.cs" />
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/MahjongHand.cs" />
-    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5D211034-79A7-463F-9DF2-FE4087FE96D9/93/d6532fdb/GUILayout.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="1769" column="34" selection-start-line="1769" selection-start-column="34" selection-end-line="1769" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5D211034-79A7-463F-9DF2-FE4087FE96D9/cd/a311c5be/GUILayoutOption.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1D04A064-1035-487D-9B35-754113A7DEC9/31/a1f35238/Assembly.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="15" column="15" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/90/6d8fff1a/Assembly.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="252" column="27" selection-start-line="252" selection-start-column="27" selection-end-line="252" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/ECB5D8E2-0A91-44BC-A4F2-58317D1E56F9/82/9295c479/Activator.cs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="423">
@@ -502,21 +683,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="704">
           <caret line="44" column="15" selection-start-line="44" selection-start-column="15" selection-end-line="44" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Erbeikou.cs" />
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="143">
-          <caret line="17" column="64" selection-start-line="17" selection-start-column="64" selection-end-line="17" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4848">
-          <caret line="307" column="5" selection-start-line="307" selection-start-column="5" selection-end-line="307" selection-end-column="5" />
         </state>
       </provider>
     </entry>
@@ -545,42 +711,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="160">
           <caret line="11" column="75" selection-start-line="11" selection-start-column="75" selection-end-line="11" selection-end-column="75" />
-          <folding>
-            <marker date="1532571889985" expanded="false" signature="6:47" ph="..." />
-            <marker date="1532571889985" expanded="true" signature="72:932" ph="{...}" />
-            <marker date="1532571889985" expanded="true" signature="102:930" ph="{...}" />
-            <marker date="1532571889985" expanded="true" signature="340:360" ph="{...}" />
-            <marker date="1532571889985" expanded="true" signature="436:924" ph="{...}" />
-            <marker date="1532571889985" expanded="true" signature="842:914" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hedi.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="18" column="9" selection-start-line="18" selection-start-column="9" selection-end-line="18" selection-end-column="9" />
-          <folding>
-            <marker date="1532616475639" expanded="true" signature="43:576" ph="{...}" />
-            <marker date="1532616475639" expanded="true" signature="74:574" ph="{...}" />
-            <marker date="1532616475639" expanded="true" signature="205:260" ph="{...}" />
-            <marker date="1532616475639" expanded="true" signature="295:345" ph="{...}" />
-            <marker date="1532616475639" expanded="true" signature="455:568" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lingshang.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="9" selection-start-line="14" selection-start-column="9" selection-end-line="14" selection-end-column="9" />
-          <folding>
-            <marker date="1532616556743" expanded="true" signature="43:458" ph="{...}" />
-            <marker date="1532616556743" expanded="true" signature="79:456" ph="{...}" />
-            <marker date="1532616556743" expanded="true" signature="121:176" ph="{...}" />
-            <marker date="1532616556743" expanded="true" signature="211:261" ph="{...}" />
-            <marker date="1532616556743" expanded="true" signature="371:450" ph="{...}" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -588,23 +718,215 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="176">
           <caret line="11" column="18" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiChangfeng.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZhong.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZifeng.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Zimo.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs" />
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/役牌白.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
           <folding>
-            <marker date="1532577078323" expanded="true" signature="23:212" ph="{...}" />
-            <marker date="1532577078323" expanded="true" signature="52:210" ph="{...}" />
+            <marker date="1532795113578" expanded="true" signature="23:518" ph="{...}" />
+            <marker date="1532795113578" expanded="true" signature="53:516" ph="{...}" />
+            <marker date="1532795113578" expanded="true" signature="95:111" ph="{...}" />
+            <marker date="1532795113578" expanded="true" signature="146:152" ph="{...}" />
+            <marker date="1532795113578" expanded="true" signature="262:510" ph="{...}" />
+            <marker date="1532795113578" expanded="true" signature="316:473" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qianggang.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一发.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="18" column="57" selection-start-line="18" selection-start-column="57" selection-end-line="18" selection-end-column="57" />
+        <state relative-caret-position="64">
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
           <folding>
-            <marker date="1532616556748" expanded="true" signature="43:456" ph="{...}" />
-            <marker date="1532616556748" expanded="true" signature="79:454" ph="{...}" />
-            <marker date="1532616556748" expanded="true" signature="121:174" ph="{...}" />
-            <marker date="1532616556748" expanded="true" signature="209:259" ph="{...}" />
-            <marker date="1532616556748" expanded="true" signature="369:448" ph="{...}" />
+            <marker date="1532795113582" expanded="true" signature="43:563" ph="{...}" />
+            <marker date="1532795113582" expanded="true" signature="72:561" ph="{...}" />
+            <marker date="1532795113582" expanded="true" signature="114:123" ph="{...}" />
+            <marker date="1532795113582" expanded="true" signature="158:164" ph="{...}" />
+            <marker date="1532795113582" expanded="true" signature="204:214" ph="{...}" />
+            <marker date="1532795113582" expanded="true" signature="253:274" ph="{...}" />
+            <marker date="1532795113582" expanded="true" signature="384:555" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/一杯口.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
+          <folding>
+            <marker date="1532795318618" expanded="false" signature="0:18" ph="..." />
+            <marker date="1532795318618" expanded="true" signature="43:794" ph="{...}" />
+            <marker date="1532795318618" expanded="true" signature="73:792" ph="{...}" />
+            <marker date="1532795318618" expanded="true" signature="174:184" ph="{...}" />
+            <marker date="1532795318618" expanded="true" signature="219:225" ph="{...}" />
+            <marker date="1532795318618" expanded="true" signature="264:285" ph="{...}" />
+            <marker date="1532795318618" expanded="true" signature="395:786" ph="{...}" />
+            <marker date="1532795318618" expanded="true" signature="622:749" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/四暗刻.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding>
+            <marker date="1532795113572" expanded="true" signature="23:626" ph="{...}" />
+            <marker date="1532795113572" expanded="true" signature="53:624" ph="{...}" />
+            <marker date="1532795113572" expanded="true" signature="394:618" ph="{...}" />
+            <marker date="1532795113572" expanded="true" signature="472:577" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三暗刻.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding>
+            <marker date="1532795113568" expanded="true" signature="23:651" ph="{...}" />
+            <marker date="1532795113568" expanded="true" signature="53:649" ph="{...}" />
+            <marker date="1532795113568" expanded="true" signature="346:643" ph="{...}" />
+            <marker date="1532795113568" expanded="true" signature="496:601" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/小三元.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding>
+            <marker date="1532795204203" expanded="true" signature="23:922" ph="{...}" />
+            <marker date="1532795204203" expanded="true" signature="53:920" ph="{...}" />
+            <marker date="1532795204203" expanded="true" signature="256:914" ph="{...}" />
+            <marker date="1532795204203" expanded="true" signature="344:780" ph="{...}" />
+            <marker date="1532795204203" expanded="true" signature="468:766" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/天和.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+          <folding>
+            <marker date="1532795210534" expanded="true" signature="43:569" ph="{...}" />
+            <marker date="1532795210534" expanded="true" signature="72:567" ph="{...}" />
+            <marker date="1532795210534" expanded="true" signature="383:561" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/双立直.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+          <folding>
+            <marker date="1532795211489" expanded="true" signature="43:521" ph="{...}" />
+            <marker date="1532795211489" expanded="true" signature="73:519" ph="{...}" />
+            <marker date="1532795211489" expanded="true" signature="336:513" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同刻.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="21" />
+          <folding>
+            <marker date="1532795222220" expanded="true" signature="23:737" ph="{...}" />
+            <marker date="1532795222220" expanded="true" signature="54:735" ph="{...}" />
+            <marker date="1532795222220" expanded="true" signature="258:729" ph="{...}" />
+            <marker date="1532795222220" expanded="true" signature="348:542" ph="{...}" />
+            <marker date="1532795222220" expanded="true" signature="583:692" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三色同顺.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="4" column="21" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
+          <folding>
+            <marker date="1532795228187" expanded="true" signature="43:920" ph="{...}" />
+            <marker date="1532795228187" expanded="true" signature="74:918" ph="{...}" />
+            <marker date="1532795228187" expanded="true" signature="373:912" ph="{...}" />
+            <marker date="1532795228187" expanded="true" signature="529:725" ph="{...}" />
+            <marker date="1532795228187" expanded="true" signature="766:875" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/三杠子.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding>
+            <marker date="1532795235490" expanded="true" signature="23:457" ph="{...}" />
+            <marker date="1532795235490" expanded="true" signature="53:455" ph="{...}" />
+            <marker date="1532795235490" expanded="true" signature="256:449" ph="{...}" />
+            <marker date="1532795235490" expanded="true" signature="334:408" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清一色.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
+          <folding>
+            <marker date="1532795246831" expanded="true" signature="43:714" ph="{...}" />
+            <marker date="1532795246831" expanded="true" signature="73:712" ph="{...}" />
+            <marker date="1532795246831" expanded="true" signature="371:706" ph="{...}" />
+            <marker date="1532795246831" expanded="true" signature="514:647" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/清老头.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
+          <folding>
+            <marker date="1532795253300" expanded="true" signature="23:479" ph="{...}" />
+            <marker date="1532795253300" expanded="true" signature="53:477" ph="{...}" />
+            <marker date="1532795253300" expanded="true" signature="305:471" ph="{...}" />
+            <marker date="1532795253300" expanded="true" signature="356:436" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/七对子.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="32">
+          <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding>
+            <marker date="1532795263166" expanded="true" signature="23:567" ph="{...}" />
+            <marker date="1532795263166" expanded="true" signature="53:565" ph="{...}" />
+            <marker date="1532795263166" expanded="true" signature="316:559" ph="{...}" />
+            <marker date="1532795263166" expanded="true" signature="397:517" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/抢杠.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+          <folding>
+            <marker date="1532795271532" expanded="true" signature="43:361" ph="{...}" />
+            <marker date="1532795271532" expanded="true" signature="72:359" ph="{...}" />
+            <marker date="1532795271532" expanded="true" signature="274:353" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -614,485 +936,396 @@
         <state relative-caret-position="256">
           <caret line="16" column="9" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
           <folding>
-            <marker date="1532616721094" expanded="true" signature="38:771" ph="{...}" />
-            <marker date="1532616721094" expanded="true" signature="91:683" ph="{...}" />
-            <marker date="1532616721094" expanded="true" signature="223:277" ph="{...}" />
-            <marker date="1532616721094" expanded="true" signature="315:379" ph="{...}" />
-            <marker date="1532616721094" expanded="true" signature="531:677" ph="{...}" />
-            <marker date="1532616721094" expanded="true" signature="709:769" ph="{...}" />
+            <marker date="1532794812167" expanded="true" signature="38:684" ph="{...}" />
+            <marker date="1532794812167" expanded="true" signature="91:596" ph="{...}" />
+            <marker date="1532794812167" expanded="true" signature="444:590" ph="{...}" />
+            <marker date="1532794812167" expanded="true" signature="622:682" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/DuanYao.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/平和.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="9" selection-start-line="14" selection-start-column="9" selection-end-line="14" selection-end-column="9" />
+        <state relative-caret-position="96">
+          <caret line="6" column="42" selection-start-line="6" selection-start-column="42" selection-end-line="6" selection-end-column="42" />
           <folding>
-            <marker date="1532616467032" expanded="true" signature="38:540" ph="{...}" />
-            <marker date="1532616467032" expanded="true" signature="72:538" ph="{...}" />
-            <marker date="1532616467032" expanded="true" signature="114:167" ph="{...}" />
-            <marker date="1532616467032" expanded="true" signature="202:252" ph="{...}" />
-            <marker date="1532616467032" expanded="true" signature="362:532" ph="{...}" />
-            <marker date="1532616467032" expanded="true" signature="416:496" ph="{...}" />
+            <marker date="1532795312893" expanded="true" signature="43:839" ph="{...}" />
+            <marker date="1532795312893" expanded="true" signature="72:837" ph="{...}" />
+            <marker date="1532795312893" expanded="true" signature="334:831" ph="{...}" />
+            <marker date="1532795312893" expanded="true" signature="524:772" ph="{...}" />
+            <marker date="1532795312893" expanded="true" signature="592:758" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Haidi.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/立直.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="9" selection-start-line="14" selection-start-column="9" selection-end-line="14" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
           <folding>
-            <marker date="1532616470451" expanded="true" signature="43:487" ph="{...}" />
-            <marker date="1532616470451" expanded="true" signature="75:485" ph="{...}" />
-            <marker date="1532616470451" expanded="true" signature="117:172" ph="{...}" />
-            <marker date="1532616470451" expanded="true" signature="207:257" ph="{...}" />
-            <marker date="1532616470451" expanded="true" signature="367:479" ph="{...}" />
+            <marker date="1532795334780" expanded="true" signature="43:520" ph="{...}" />
+            <marker date="1532795334780" expanded="true" signature="72:518" ph="{...}" />
+            <marker date="1532795334780" expanded="true" signature="334:512" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Lizhi.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/岭上开花.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="9" selection-start-line="14" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="21" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
           <folding>
-            <marker date="1532616747543" expanded="true" signature="43:655" ph="{...}" />
-            <marker date="1532616747543" expanded="true" signature="75:653" ph="{...}" />
-            <marker date="1532616747543" expanded="true" signature="117:170" ph="{...}" />
-            <marker date="1532616747543" expanded="true" signature="205:255" ph="{...}" />
-            <marker date="1532616747543" expanded="true" signature="294:359" ph="{...}" />
-            <marker date="1532616747543" expanded="true" signature="469:647" ph="{...}" />
+            <marker date="1532795341423" expanded="true" signature="43:365" ph="{...}" />
+            <marker date="1532795341423" expanded="true" signature="74:363" ph="{...}" />
+            <marker date="1532795341423" expanded="true" signature="278:357" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Pinghu.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混一色.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
           <folding>
-            <marker date="1532616753028" expanded="true" signature="43:975" ph="{...}" />
-            <marker date="1532616753028" expanded="true" signature="76:973" ph="{...}" />
-            <marker date="1532616753028" expanded="true" signature="118:171" ph="{...}" />
-            <marker date="1532616753028" expanded="true" signature="206:256" ph="{...}" />
-            <marker date="1532616753028" expanded="true" signature="295:360" ph="{...}" />
-            <marker date="1532616753028" expanded="true" signature="470:967" ph="{...}" />
-            <marker date="1532616753028" expanded="true" signature="660:908" ph="{...}" />
-            <marker date="1532616753028" expanded="true" signature="728:894" ph="{...}" />
+            <marker date="1532795348018" expanded="true" signature="43:800" ph="{...}" />
+            <marker date="1532795348018" expanded="true" signature="73:798" ph="{...}" />
+            <marker date="1532795348018" expanded="true" signature="371:792" ph="{...}" />
+            <marker date="1532795348018" expanded="true" signature="546:724" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongke.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/二杯口.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="5" column="20" selection-start-line="5" selection-start-column="20" selection-end-line="5" selection-end-column="20" />
           <folding>
-            <marker date="1532616556750" expanded="true" signature="23:832" ph="{...}" />
-            <marker date="1532616556750" expanded="true" signature="61:830" ph="{...}" />
-            <marker date="1532616556750" expanded="true" signature="103:158" ph="{...}" />
-            <marker date="1532616556750" expanded="true" signature="193:243" ph="{...}" />
-            <marker date="1532616556750" expanded="true" signature="353:824" ph="{...}" />
-            <marker date="1532616556750" expanded="true" signature="443:637" ph="{...}" />
-            <marker date="1532616556750" expanded="true" signature="678:787" ph="{...}" />
+            <marker date="1532795358821" expanded="false" signature="6:52" ph="..." />
+            <marker date="1532795358821" expanded="true" signature="77:1026" ph="{...}" />
+            <marker date="1532795358821" expanded="true" signature="107:1024" ph="{...}" />
+            <marker date="1532795358821" expanded="true" signature="370:1018" ph="{...}" />
+            <marker date="1532795358821" expanded="true" signature="591:783" ph="{...}" />
+            <marker date="1532795358821" expanded="true" signature="851:977" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sansetongshun.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/海底捞月.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="20" column="40" selection-start-line="20" selection-start-column="40" selection-end-line="20" selection-end-column="40" />
+        <state relative-caret-position="64">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
           <folding>
-            <marker date="1532616768274" expanded="true" signature="43:1061" ph="{...}" />
-            <marker date="1532616768274" expanded="true" signature="83:1059" ph="{...}" />
-            <marker date="1532616768274" expanded="true" signature="157:212" ph="{...}" />
-            <marker date="1532616768274" expanded="true" signature="247:301" ph="{...}" />
-            <marker date="1532616768274" expanded="true" signature="340:404" ph="{...}" />
-            <marker date="1532616768274" expanded="true" signature="514:1053" ph="{...}" />
-            <marker date="1532616768274" expanded="true" signature="670:866" ph="{...}" />
-            <marker date="1532616768274" expanded="true" signature="907:1016" ph="{...}" />
+            <marker date="1532795526707" expanded="true" signature="43:398" ph="{...}" />
+            <marker date="1532795526707" expanded="true" signature="74:396" ph="{...}" />
+            <marker date="1532795526707" expanded="true" signature="278:390" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/ShuangLizhi.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混全带幺九.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="19" column="9" selection-start-line="19" selection-start-column="9" selection-end-line="19" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
           <folding>
-            <marker date="1532616776153" expanded="true" signature="43:661" ph="{...}" />
-            <marker date="1532616776153" expanded="true" signature="81:659" ph="{...}" />
-            <marker date="1532616776153" expanded="true" signature="123:177" ph="{...}" />
-            <marker date="1532616776153" expanded="true" signature="212:262" ph="{...}" />
-            <marker date="1532616776153" expanded="true" signature="301:366" ph="{...}" />
-            <marker date="1532616776153" expanded="true" signature="476:653" ph="{...}" />
+            <marker date="1532795526688" expanded="true" signature="43:1081" ph="{...}" />
+            <marker date="1532795526688" expanded="true" signature="75:1079" ph="{...}" />
+            <marker date="1532795526688" expanded="true" signature="560:1073" ph="{...}" />
+            <marker date="1532795526688" expanded="true" signature="956:1037" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yibeikou.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/混老头.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
           <folding>
-            <marker date="1532617000543" expanded="false" signature="6:52" ph="..." />
-            <marker date="1532617000543" expanded="true" signature="77:942" ph="{...}" />
-            <marker date="1532617000543" expanded="true" signature="112:940" ph="{...}" />
-            <marker date="1532617000543" expanded="true" signature="154:208" ph="{...}" />
-            <marker date="1532617000543" expanded="true" signature="251:301" ph="{...}" />
-            <marker date="1532617000543" expanded="true" signature="340:405" ph="{...}" />
-            <marker date="1532617000543" expanded="true" signature="515:934" ph="{...}" />
-            <marker date="1532617000543" expanded="true" signature="713:897" ph="{...}" />
+            <marker date="1532795526698" expanded="true" signature="23:591" ph="{...}" />
+            <marker date="1532795526698" expanded="true" signature="53:589" ph="{...}" />
+            <marker date="1532795526698" expanded="true" signature="317:583" ph="{...}" />
+            <marker date="1532795526698" expanded="true" signature="467:547" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yifa.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/河底捞鱼.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="24" column="9" selection-start-line="24" selection-start-column="9" selection-end-line="24" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
           <folding>
-            <marker date="1532617051585" expanded="true" signature="43:741" ph="{...}" />
-            <marker date="1532617051585" expanded="true" signature="74:739" ph="{...}" />
-            <marker date="1532617051585" expanded="true" signature="116:169" ph="{...}" />
-            <marker date="1532617051585" expanded="true" signature="204:254" ph="{...}" />
-            <marker date="1532617051585" expanded="true" signature="294:348" ph="{...}" />
-            <marker date="1532617051585" expanded="true" signature="387:452" ph="{...}" />
-            <marker date="1532617051585" expanded="true" signature="562:733" ph="{...}" />
+            <marker date="1532795526696" expanded="true" signature="43:488" ph="{...}" />
+            <marker date="1532795526696" expanded="true" signature="74:486" ph="{...}" />
+            <marker date="1532795526696" expanded="true" signature="367:480" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiBai.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/对对和.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
           <folding>
-            <marker date="1532617051583" expanded="true" signature="23:611" ph="{...}" />
-            <marker date="1532617051583" expanded="true" signature="58:609" ph="{...}" />
-            <marker date="1532617051583" expanded="true" signature="100:160" ph="{...}" />
-            <marker date="1532617051583" expanded="true" signature="195:245" ph="{...}" />
-            <marker date="1532617051583" expanded="true" signature="355:603" ph="{...}" />
-            <marker date="1532617051583" expanded="true" signature="409:566" ph="{...}" />
+            <marker date="1532795526710" expanded="true" signature="23:577" ph="{...}" />
+            <marker date="1532795526710" expanded="true" signature="53:575" ph="{...}" />
+            <marker date="1532795526710" expanded="true" signature="256:569" ph="{...}" />
+            <marker date="1532795526710" expanded="true" signature="334:527" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiChangfeng.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/断幺九.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="9" selection-start-line="14" selection-start-column="9" selection-end-line="14" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="43" selection-start-line="4" selection-start-column="43" selection-end-line="4" selection-end-column="43" />
           <folding>
-            <marker date="1532617051588" expanded="true" signature="38:626" ph="{...}" />
-            <marker date="1532617051588" expanded="true" signature="79:624" ph="{...}" />
-            <marker date="1532617051588" expanded="true" signature="121:178" ph="{...}" />
-            <marker date="1532617051588" expanded="true" signature="213:263" ph="{...}" />
-            <marker date="1532617051588" expanded="true" signature="373:618" ph="{...}" />
-            <marker date="1532617051588" expanded="true" signature="427:581" ph="{...}" />
+            <marker date="1532795526711" expanded="true" signature="23:434" ph="{...}" />
+            <marker date="1532795526711" expanded="true" signature="53:432" ph="{...}" />
+            <marker date="1532795526711" expanded="true" signature="256:426" ph="{...}" />
+            <marker date="1532795526711" expanded="true" signature="310:390" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiFa.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/地和.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
           <folding>
-            <marker date="1532617051581" expanded="true" signature="23:610" ph="{...}" />
-            <marker date="1532617051581" expanded="true" signature="57:608" ph="{...}" />
-            <marker date="1532617051581" expanded="true" signature="99:159" ph="{...}" />
-            <marker date="1532617051581" expanded="true" signature="194:244" ph="{...}" />
-            <marker date="1532617051581" expanded="true" signature="354:602" ph="{...}" />
-            <marker date="1532617051581" expanded="true" signature="408:565" ph="{...}" />
+            <marker date="1532795526704" expanded="true" signature="43:508" ph="{...}" />
+            <marker date="1532795526704" expanded="true" signature="72:506" ph="{...}" />
+            <marker date="1532795526704" expanded="true" signature="383:500" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZhong.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/大三元.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
+        <state relative-caret-position="32">
+          <caret line="2" column="20" selection-start-line="2" selection-start-column="20" selection-end-line="2" selection-end-column="20" />
           <folding>
-            <marker date="1532617051571" expanded="true" signature="23:613" ph="{...}" />
-            <marker date="1532617051571" expanded="true" signature="60:611" ph="{...}" />
-            <marker date="1532617051571" expanded="true" signature="102:162" ph="{...}" />
-            <marker date="1532617051571" expanded="true" signature="197:247" ph="{...}" />
-            <marker date="1532617051571" expanded="true" signature="357:605" ph="{...}" />
-            <marker date="1532617051571" expanded="true" signature="411:568" ph="{...}" />
+            <marker date="1532795526713" expanded="true" signature="23:649" ph="{...}" />
+            <marker date="1532795526713" expanded="true" signature="53:647" ph="{...}" />
+            <marker date="1532795526713" expanded="true" signature="305:641" ph="{...}" />
+            <marker date="1532795526713" expanded="true" signature="382:588" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/YipaiZifeng.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/纯全带幺九.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="12" column="9" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="9" />
+        <state relative-caret-position="64">
+          <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
           <folding>
-            <marker date="1532617051576" expanded="true" signature="23:605" ph="{...}" />
-            <marker date="1532617051576" expanded="true" signature="61:603" ph="{...}" />
-            <marker date="1532617051576" expanded="true" signature="103:160" ph="{...}" />
-            <marker date="1532617051576" expanded="true" signature="195:245" ph="{...}" />
-            <marker date="1532617051576" expanded="true" signature="355:597" ph="{...}" />
-            <marker date="1532617051576" expanded="true" signature="409:560" ph="{...}" />
+            <marker date="1532795526693" expanded="true" signature="43:784" ph="{...}" />
+            <marker date="1532795526693" expanded="true" signature="75:782" ph="{...}" />
+            <marker date="1532795526693" expanded="true" signature="444:776" ph="{...}" />
+            <marker date="1532795526693" expanded="true" signature="659:740" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Zimo.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/人和.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="10" column="8" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
+        <state relative-caret-position="64">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
           <folding>
-            <marker date="1532617051586" expanded="true" signature="43:610" ph="{...}" />
-            <marker date="1532617051586" expanded="true" signature="74:608" ph="{...}" />
-            <marker date="1532617051586" expanded="true" signature="116:173" ph="{...}" />
-            <marker date="1532617051586" expanded="true" signature="216:266" ph="{...}" />
-            <marker date="1532617051586" expanded="true" signature="305:370" ph="{...}" />
-            <marker date="1532617051586" expanded="true" signature="488:602" ph="{...}" />
+            <marker date="1532795241060" expanded="true" signature="43:508" ph="{...}" />
+            <marker date="1532795241060" expanded="true" signature="72:506" ph="{...}" />
+            <marker date="1532795241060" expanded="true" signature="383:500" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/国士无双.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="37" column="37" selection-start-line="37" selection-start-column="37" selection-end-line="37" selection-end-column="37" />
+        <state relative-caret-position="464">
+          <caret line="29" column="26" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="26" />
           <folding>
-            <marker date="1532582378156" expanded="false" signature="6:92" ph="..." />
-            <marker date="1532582378156" expanded="true" signature="111:2809" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="181:2807" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="259:318" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="369:422" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="460:508" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="549:603" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="631:676" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="715:775" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="801:860" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="903:1131" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="1001:1081" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="1180:1606" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="1267:1569" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="1426:1525" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="1649:1714" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="1766:1833" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="1882:1938" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="2001:2801" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="2152:2241" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="2289:2410" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="2443:2506" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="2541:2620" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="2660:2728" ph="{...}" />
-            <marker date="1532582378156" expanded="true" signature="2763:2791" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Yiqitongguan.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="24" column="40" selection-start-line="24" selection-start-column="40" selection-end-line="24" selection-end-column="40" />
-          <folding>
-            <marker date="1532617051568" expanded="false" signature="6:111" ph="..." />
-            <marker date="1532617051568" expanded="true" signature="136:1187" ph="{...}" />
-            <marker date="1532617051568" expanded="true" signature="175:1185" ph="{...}" />
-            <marker date="1532617051568" expanded="true" signature="249:304" ph="{...}" />
-            <marker date="1532617051568" expanded="true" signature="339:393" ph="{...}" />
-            <marker date="1532617051568" expanded="true" signature="432:496" ph="{...}" />
-            <marker date="1532617051568" expanded="true" signature="606:1179" ph="{...}" />
-            <marker date="1532617051568" expanded="true" signature="763:880" ph="{...}" />
-            <marker date="1532617051568" expanded="true" signature="933:1142" ph="{...}" />
+            <marker date="1532797320950" expanded="true" signature="23:1048" ph="{...}" />
+            <marker date="1532797320950" expanded="true" signature="54:1046" ph="{...}" />
+            <marker date="1532797320950" expanded="true" signature="552:1040" ph="{...}" />
+            <marker date="1532797320950" expanded="true" signature="686:892" ph="{...}" />
+            <marker date="1532797320950" expanded="true" signature="778:878" ph="{...}" />
+            <marker date="1532797320950" expanded="true" signature="919:1005" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Tile.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
+        <state relative-caret-position="208">
+          <caret line="13" selection-start-line="13" selection-end-line="13" />
           <folding>
-            <marker date="1532581288071" expanded="false" signature="6:92" ph="..." />
-            <marker date="1532581288071" expanded="true" signature="111:5762" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="175:5667" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="395:759" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="789:880" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="910:1003" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="1029:1103" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="1145:1267" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="1310:5144" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="1347:5134" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="1437:1758" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="1852:2173" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="2267:2588" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="2682:3003" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="3097:3418" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="3512:3833" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="3927:4248" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="4342:4614" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="4708:5029" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="5186:5250" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="5299:5553" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="5381:5516" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="5596:5661" ph="{...}" />
-            <marker date="1532581288071" expanded="true" signature="5689:5760" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Chunquandai.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="34" column="24" selection-start-line="34" selection-start-column="24" selection-end-line="34" selection-end-column="24" />
-          <folding>
-            <marker date="1532617672744" expanded="true" signature="43:929" ph="{...}" />
-            <marker date="1532617672744" expanded="true" signature="81:927" ph="{...}" />
-            <marker date="1532617672744" expanded="true" signature="231:287" ph="{...}" />
-            <marker date="1532617672744" expanded="true" signature="322:376" ph="{...}" />
-            <marker date="1532617672744" expanded="true" signature="415:479" ph="{...}" />
-            <marker date="1532617672744" expanded="true" signature="589:921" ph="{...}" />
-            <marker date="1532617672744" expanded="true" signature="804:885" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunquandai.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="6" column="42" selection-start-line="6" selection-start-column="42" selection-end-line="6" selection-end-column="42" />
-          <folding>
-            <marker date="1532617672741" expanded="true" signature="43:1237" ph="{...}" />
-            <marker date="1532617672741" expanded="true" signature="80:1235" ph="{...}" />
-            <marker date="1532617672741" expanded="true" signature="358:414" ph="{...}" />
-            <marker date="1532617672741" expanded="true" signature="449:503" ph="{...}" />
-            <marker date="1532617672741" expanded="true" signature="542:606" ph="{...}" />
-            <marker date="1532617672741" expanded="true" signature="716:1229" ph="{...}" />
-            <marker date="1532617672741" expanded="true" signature="1112:1193" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Hunlaotou.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="24" column="24" selection-start-line="24" selection-start-column="24" selection-end-line="24" selection-end-column="24" />
-          <folding>
-            <marker date="1532617974233" expanded="true" signature="23:692" ph="{...}" />
-            <marker date="1532617974233" expanded="true" signature="59:690" ph="{...}" />
-            <marker date="1532617974233" expanded="true" signature="169:223" ph="{...}" />
-            <marker date="1532617974233" expanded="true" signature="258:308" ph="{...}" />
-            <marker date="1532617974233" expanded="true" signature="418:684" ph="{...}" />
-            <marker date="1532617974233" expanded="true" signature="568:648" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Duiduihu.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="16" column="21" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
-          <folding>
-            <marker date="1532618221272" expanded="true" signature="23:670" ph="{...}" />
-            <marker date="1532618221272" expanded="true" signature="58:668" ph="{...}" />
-            <marker date="1532618221272" expanded="true" signature="100:154" ph="{...}" />
-            <marker date="1532618221272" expanded="true" signature="189:239" ph="{...}" />
-            <marker date="1532618221272" expanded="true" signature="349:662" ph="{...}" />
-            <marker date="1532618221272" expanded="true" signature="427:620" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qinglaotou.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="25" column="24" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
-          <folding>
-            <marker date="1532617974231" expanded="true" signature="23:618" ph="{...}" />
-            <marker date="1532617974231" expanded="true" signature="60:616" ph="{...}" />
-            <marker date="1532617974231" expanded="true" signature="102:156" ph="{...}" />
-            <marker date="1532617974231" expanded="true" signature="191:241" ph="{...}" />
-            <marker date="1532617974231" expanded="true" signature="281:334" ph="{...}" />
-            <marker date="1532617974231" expanded="true" signature="444:610" ph="{...}" />
-            <marker date="1532617974231" expanded="true" signature="495:575" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Qiduizi.cs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="17" column="9" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
-          <folding>
-            <marker date="1532616757748" expanded="true" signature="23:703" ph="{...}" />
-            <marker date="1532616757748" expanded="true" signature="57:701" ph="{...}" />
-            <marker date="1532616757748" expanded="true" signature="99:153" ph="{...}" />
-            <marker date="1532616757748" expanded="true" signature="188:238" ph="{...}" />
-            <marker date="1532616757748" expanded="true" signature="277:342" ph="{...}" />
-            <marker date="1532616757748" expanded="true" signature="452:695" ph="{...}" />
-            <marker date="1532616757748" expanded="true" signature="533:653" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="32:5551" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="96:5456" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="316:680" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="934:1056" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="1099:4933" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="1136:4923" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="1226:1547" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="1641:1962" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="2056:2377" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="2471:2792" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="2886:3207" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="3301:3622" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="3716:4037" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="4131:4403" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="4497:4818" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="4975:5039" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="5088:5342" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="5170:5305" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="5385:5450" ph="{...}" />
+            <marker date="1532795318621" expanded="true" signature="5478:5549" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Mianzi.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-107">
-          <caret line="18" column="37" selection-start-line="18" selection-start-column="37" selection-end-line="18" selection-end-column="37" />
+        <state relative-caret-position="-2431">
+          <caret line="7" column="48" selection-start-line="7" selection-start-column="48" selection-end-line="7" selection-end-column="48" />
           <folding>
-            <marker date="1532618509270" expanded="true" signature="6:32" ph="..." />
-            <marker date="1532618509270" expanded="true" signature="51:3425" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="119:3307" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="399:534" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="560:1053" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="586:1043" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="630:1029" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1083:1277" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1109:1229" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1308:1419" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1449:1558" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1589:1700" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1730:1839" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1865:1924" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="1950:2010" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="2054:2236" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="2279:2881" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="2315:2871" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="2930:3193" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="3014:3156" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="3236:3301" ph="{...}" />
-            <marker date="1532618509270" expanded="true" signature="3335:3423" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="6:73" ph="..." />
+            <marker date="1532919397989" expanded="true" signature="92:5070" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="181:4952" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="433:561" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="587:1080" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="613:1070" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="657:1056" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="1110:1304" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="1136:1256" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="1817:1999" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="2040:2183" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="2226:2762" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="2262:2752" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="2764:3002" ph="/* IEnumerator IEnumerable.GetEnumerator() ... */" />
+            <marker date="1532919397989" expanded="true" signature="3051:3314" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="3135:3277" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="3357:3422" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="3483:4946" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="3706:4417" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="3867:4368" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="4453:4681" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="4714:4776" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="4908:4936" ph="{...}" />
+            <marker date="1532919397989" expanded="true" signature="4980:5068" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sananke.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongAnalysor.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="25" column="30" selection-start-line="25" selection-start-column="30" selection-end-line="25" selection-end-column="30" />
+        <state relative-caret-position="289">
+          <caret line="54" column="1" selection-start-line="54" selection-start-column="1" selection-end-line="54" selection-end-column="1" />
           <folding>
-            <marker date="1532618760473" expanded="true" signature="23:714" ph="{...}" />
-            <marker date="1532618760473" expanded="true" signature="57:712" ph="{...}" />
-            <marker date="1532618760473" expanded="true" signature="160:214" ph="{...}" />
-            <marker date="1532618760473" expanded="true" signature="249:299" ph="{...}" />
-            <marker date="1532618760473" expanded="true" signature="409:706" ph="{...}" />
-            <marker date="1532618760473" expanded="true" signature="559:664" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="6:147" ph="..." />
+            <marker date="1532919397985" expanded="true" signature="166:1886" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="217:1884" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="285:1878" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="559:689" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="975:1868" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="1133:1807" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="1327:1746" ph="{...}" />
+            <marker date="1532919397985" expanded="true" signature="1476:1676" ph="{...}" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/Sianke.cs">
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MahjongHand.cs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="30" column="9" lean-forward="true" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+        <state relative-caret-position="111">
+          <caret line="190" column="16" selection-start-line="190" selection-start-column="16" selection-end-line="190" selection-end-column="16" />
           <folding>
-            <marker date="1532618760477" expanded="true" signature="23:729" ph="{...}" />
-            <marker date="1532618760477" expanded="true" signature="56:727" ph="{...}" />
-            <marker date="1532618760477" expanded="true" signature="155:209" ph="{...}" />
-            <marker date="1532618760477" expanded="true" signature="244:294" ph="{...}" />
-            <marker date="1532618760477" expanded="true" signature="334:387" ph="{...}" />
-            <marker date="1532618760477" expanded="true" signature="497:721" ph="{...}" />
-            <marker date="1532618760477" expanded="true" signature="575:680" ph="{...}" />
+            <marker date="1532919790095" expanded="false" signature="6:104" ph="..." />
+            <marker date="1532919790095" expanded="true" signature="123:10079" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="173:10077" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="628:694" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="747:807" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="852:935" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="978:1098" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="1146:2115" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="1529:1737" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="1995:2057" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="2164:2739" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="2377:2667" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="2501:2653" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="2795:3527" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="3008:3455" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="3260:3441" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="3575:3714" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="3768:3968" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="3862:3931" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="4061:4912" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="4272:4902" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="4337:4888" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="4607:4790" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="5013:6212" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="5067:5242" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="5403:5673" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="5796:6202" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="6261:6375" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="6424:6501" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="6615:6934" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="6641:6924" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="6962:7382" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="6988:7372" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="7411:7635" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="7437:7625" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="7794:8373" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="8011:8305" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="8429:8783" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="8850:9232" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="8900:8962" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="9321:9645" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="9397:9635" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="9528:9621" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="9731:10071" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="9777:10029" ph="{...}" />
+            <marker date="1532919790095" expanded="true" signature="9887:9965" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/MianziSet.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="643">
+          <caret line="47" column="75" selection-start-line="47" selection-start-column="75" selection-end-line="47" selection-end-column="75" />
+          <folding>
+            <marker date="1532919790092" expanded="true" signature="6:92" ph="..." />
+            <marker date="1532919790092" expanded="true" signature="111:3529" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="181:3527" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="340:440" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="491:604" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="642:1440" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="769:1430" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="1481:1535" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="1563:1608" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="1747:1975" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="1845:1925" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2024:2450" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2111:2413" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2270:2369" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2493:2558" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2610:2677" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2726:2782" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2845:3521" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="2996:3085" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="3121:3242" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="3275:3338" ph="{...}" />
+            <marker date="1532919790092" expanded="true" signature="3483:3511" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Assets/Scripts/Mahjong/Yakus/九莲宝灯.cs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="23" column="19" selection-start-line="23" selection-start-column="19" selection-end-line="23" selection-end-column="19" />
+          <folding>
+            <marker date="1532920341294" expanded="true" signature="43:863" ph="{...}" />
+            <marker date="1532920341294" expanded="true" signature="74:861" ph="{...}" />
+            <marker date="1532920341294" expanded="true" signature="459:855" ph="{...}" />
+            <marker date="1532920341294" expanded="true" signature="699:799" ph="{...}" />
           </folding>
         </state>
       </provider>

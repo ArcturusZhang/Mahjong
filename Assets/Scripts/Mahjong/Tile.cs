@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Mahjong
 {
@@ -22,20 +19,11 @@ namespace Mahjong
             IsRed = isRed;
         }
 
-        public bool IsYaojiu
-        {
-            get { return Suit == Suit.Z || Index == 1 || Index == 9; }
-        }
+        public bool IsYaojiu => Suit == Suit.Z || Index == 1 || Index == 9;
 
-        public bool IsLaotou
-        {
-            get { return Suit != Suit.Z && (Index == 1 || Index == 9); }
-        }
+        public bool IsLaotou => Suit != Suit.Z && (Index == 1 || Index == 9);
 
-        public Tile Next
-        {
-            get { return new Tile(Suit, Index + 1); }
-        }
+        public Tile Next => new Tile(Suit, Index + 1);
 
         public int CompareTo(Tile other)
         {

@@ -8,21 +8,45 @@ namespace Mahjong
     [Serializable]
     public class MianziSet : IEnumerable<Mianzi>
     {
+        private const int tileKinds = 34;
         private readonly List<Mianzi> list;
+        private readonly int[] counts;
 
         public MianziSet()
         {
             list = new List<Mianzi>();
+            counts = new int[tileKinds];
         }
 
         public MianziSet(MianziSet copy) : this()
         {
             list.AddRange(copy);
+            Array.Copy(copy.counts, counts, counts.Length);
         }
 
         public void Add(Mianzi item)
         {
             list.Add(item);
+            int index = MahjongHand.GetIndex(item.First);
+            switch (item.Type)
+            {
+                case MianziType.Single:
+                    counts[index]++;
+                    break;
+                case MianziType.Jiang:
+                    counts[index] += 2;
+                    break;
+                case MianziType.Kezi:
+                    counts[index] += 3;
+                    if (item.IsGangzi) counts[index]++;
+                    break;
+                case MianziType.Shunzi:
+                    counts[index]++;
+                    counts[index + 1]++;
+                    counts[index + 2]++;
+                    break;
+                default: throw new ArgumentException("Invalid MianziType");
+            }
         }
 
         public void RemoveAt(int index)
@@ -35,15 +59,9 @@ namespace Mahjong
             list.Sort();
         }
 
-        public Mianzi this[int index]
-        {
-            get { return list[index]; }
-        }
+        public Mianzi this[int index] => list[index];
 
-        public int Count
-        {
-            get { return list.Count; }
-        }
+        public int Count => list.Count;
 
         public override string ToString()
         {
@@ -99,7 +117,7 @@ namespace Mahjong
                 list = l;
                 currentIndex = -1;
             }
-            
+
             public bool MoveNext()
             {
                 if (++currentIndex >= list.Count) return false;
@@ -111,15 +129,9 @@ namespace Mahjong
                 currentIndex = -1;
             }
 
-            public Mianzi Current
-            {
-                get { return list[currentIndex]; }
-            }
+            public Mianzi Current => list[currentIndex];
 
-            object IEnumerator.Current
-            {
-                get { return Current; }
-            }
+            object IEnumerator.Current => Current;
 
             public void Dispose()
             {

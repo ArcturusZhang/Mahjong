@@ -188,21 +188,18 @@ namespace Mahjong
             }
         }
 
-        private static Tile GetTile(int index)
+        internal static Tile GetTile(int index)
         {
             Suit suit = (Suit) (index / 9);
             return new Tile(suit, index % 9 + 1);
         }
 
-        private static int GetIndex(Tile tile)
+        internal static int GetIndex(Tile tile)
         {
             return (int) tile.Suit * 9 + tile.Index - 1;
         }
 
-        public IList<Tile> Tiles
-        {
-            get { return new List<Tile>(mTiles); }
-        }
+        public IList<Tile> Tiles => new List<Tile>(mTiles);
 
         public IEnumerable<MianziSet> Decomposition
         {
@@ -240,13 +237,7 @@ namespace Mahjong
             }
         }
 
-        public IEnumerable<Tile> TingList
-        {
-            get
-            {
-                return !HasTing ? new List<Tile>() : new List<Tile>(tingList);
-            }
-        }
+        public IEnumerable<Tile> TingList => !HasTing ? new List<Tile>() : new List<Tile>(tingList);
 
         private List<Tile> FindAllTingTiles(int[] hand)
         {

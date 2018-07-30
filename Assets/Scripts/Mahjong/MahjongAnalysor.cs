@@ -26,7 +26,7 @@ namespace Mahjong
             var hand = new MahjongHand(input.text);
             var options = new[] {YakuOption.Lizhi, YakuOption.Menqing, YakuOption.Zimo};
             var status = new GameStatus();
-            Debug.Log(string.Format("手牌：{0}", hand));
+            Debug.Log($"手牌：{hand}");
             if (hand.HasTing)
             {
                 var builder = new StringBuilder();
