@@ -11,6 +11,7 @@ namespace Mahjong.Yakus
         private int value = YakuUtil.YakuManBasePoint;
         public override string Name => name;
         public override int Value => value;
+        public override bool IsYakuMan => true;
 
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
@@ -39,7 +40,12 @@ namespace Mahjong.Yakus
             if (isPure)
             {
                 name = pure;
-                value++;
+                value = YakuUtil.YakuManBasePoint + 1;
+            }
+            else
+            {
+                name = normal;
+                value = YakuUtil.YakuManBasePoint;
             }
 
             return true;

@@ -29,7 +29,12 @@ namespace Mahjong.Yakus
             if (isShisan)
             {
                 name = shisan;
-                value++;
+                value = YakuUtil.YakuManBasePoint + 1;
+            }
+            else
+            {
+                name = normal;
+                value = YakuUtil.YakuManBasePoint;
             }
             return true;
         }

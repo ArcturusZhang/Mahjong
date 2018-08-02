@@ -103,6 +103,18 @@ namespace Mahjong
             }
         }
 
+        public Mianzi Jiang
+        {
+            get
+            {
+                foreach (var mianzi in list)
+                {
+                    if (mianzi.Type == MianziType.Jiang) return mianzi;
+                }
+                throw new ArgumentException("No jiang!");
+            }
+        }
+
         public override string ToString()
         {
             var builder = new StringBuilder();

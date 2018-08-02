@@ -28,7 +28,12 @@ namespace Mahjong.Yakus
             if (isDanqi)
             {
                 name = single;
-                value++;
+                value = YakuUtil.YakuManBasePoint + 1;
+            }
+            else
+            {
+                name = normal;
+                value = YakuUtil.YakuManBasePoint;
             }
             return count == 4;
         }

@@ -16,7 +16,7 @@ namespace Mahjong.Yakus
 
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            if (!options.Contains(YakuOption.Menqing)) value = 2;
+            value = options.Contains(YakuOption.Menqing) ? 3 : 2;
             // 判定非清老头
             if (qinglaotou.Test(hand, rong, status, options)) return false;
             foreach (var mianzi in hand)

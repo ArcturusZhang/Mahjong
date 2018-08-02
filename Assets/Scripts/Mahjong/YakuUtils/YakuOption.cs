@@ -10,6 +10,7 @@
         Lingshang,
         Qianggang,
         FirstRound,
-        Zhuangjia
+        Zhuangjia,
+        Qingtianjing
     }
 }

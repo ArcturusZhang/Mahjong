@@ -25,7 +25,12 @@ namespace Mahjong.Yakus
             if (counts[32] == 0)
             {
                 name = pure;
-                value++;
+                value = YakuUtil.YakuManBasePoint + 1;
+            }
+            else
+            {
+                name = normal;
+                value = YakuUtil.YakuManBasePoint;
             }
 
             return true;

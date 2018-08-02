@@ -23,7 +23,18 @@ namespace Mahjong.YakuUtils
             return string.CompareOrdinal(Name, other.Name);
         }
 
-        public static void PreTest(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Equals(object obj)
+        {
+            var other = obj as Yaku;
+            return other != null && Name.Equals(other.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
+
+        public static void PreTest(MianziSet hand, Tile rong, params YakuOption[] options)
         {
             if (options.Contains(YakuOption.Zimo)) // 自摸的情形，将含有胡牌的刻字设为暗刻
             {

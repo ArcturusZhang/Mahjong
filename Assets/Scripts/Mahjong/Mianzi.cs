@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Mahjong
@@ -37,12 +36,13 @@ namespace Mahjong
                     if (gangzi) tiles.Add(first);
                     break;
                 case MianziType.Shunzi:
+                    if (First.Suit == Suit.Z) throw new ArgumentException("Suit of Zi cannot compose a Shunzi");
                     tiles.Add(first);
                     tiles.Add(first.Next);
                     tiles.Add(first.Next.Next);
                     break;
                 default:
-                    throw new ArgumentException("Invalid MianziType");
+                    throw new ArgumentOutOfRangeException();
             }
 
             Tiles = tiles;
@@ -74,6 +74,7 @@ namespace Mahjong
                     else if (Type == MianziType.Shunzi)
                     {
                         Array.Sort(tiles);
+                        if (tiles[0].Suit == Suit.Z) throw new ArgumentException("Suit of Zi cannot compose a Shunzi");
                         if (tiles[0].Suit != tiles[1].Suit || tiles[0].Suit != tiles[2].Suit)
                             throw new ArgumentException("Invalid mianzi composition");
                         if (tiles[1].Index != tiles[0].Index + 1 || tiles[2].Index != tiles[0].Index + 2)
@@ -101,7 +102,7 @@ namespace Mahjong
                     list.Add(tiles[3]);
                     break;
                 default:
-                    throw new ArgumentException("Too many tiles");
+                    throw new ArgumentException("Invalid tile count");
             }
             First = tiles[0];
             Tiles = list;
@@ -120,7 +121,7 @@ namespace Mahjong
                     case MianziType.Shunzi:
                         return First.Next.Next;
                     default:
-                        throw new ArgumentException("Invalid MianziType");
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -171,7 +172,7 @@ namespace Mahjong
                 case MianziType.Single:
                     return First.ToString();
                 default:
-                    throw new ArgumentException("Will not happen");
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

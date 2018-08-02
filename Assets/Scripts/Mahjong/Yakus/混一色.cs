@@ -15,7 +15,7 @@ namespace Mahjong.Yakus
 
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
-            if (!options.Contains(YakuOption.Menqing)) value = 2;
+            value = options.Contains(YakuOption.Menqing) ? 3 : 2;
             int flag = 0;
             bool hasZi = false;
             foreach (var mianzi in hand)
@@ -26,7 +26,7 @@ namespace Mahjong.Yakus
                     flag |= 1 << (int) mianzi.Suit;
             }
 
-            return YakuUtils.YakuUtil.Count1(flag) == 1 && hasZi;
+            return YakuUtil.Count1(flag) == 1 && hasZi;
         }
     }
 }
