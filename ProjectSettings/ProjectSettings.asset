@@ -660,7 +660,7 @@ PlayerSettings:
   cloudServicesEnabled:
     UNet: 1
   facebookSdkVersion: 7.9.4
-  apiCompatibilityLevel: 3
+  apiCompatibilityLevel: 2
   cloudProjectId: 9b460ee9-84ad-4098-be0f-fde57df649fb
   projectName: Mahjong
   organizationId: arcturuszhang
