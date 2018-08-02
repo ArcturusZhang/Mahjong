@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -15,6 +16,7 @@ namespace Mahjong.Yakus
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
             if (!options.Contains(YakuOption.Menqing)) value = 1;
+            else value = 2;
             var suitFlag = new int[9];
             foreach (var mianzi in hand)
             {

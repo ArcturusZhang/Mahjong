@@ -1,8 +1,10 @@
-﻿namespace Mahjong.Yakus
+﻿using Mahjong.YakuUtils;
+
+namespace Mahjong.Yakus
 {
     public class 役牌白 : Yaku
     {
-        public override string Name => "役牌-三元牌(白)";
+        public override string Name => "役牌-白";
 
         public override int Value => 1;
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -7,9 +8,10 @@ namespace Mahjong.Yakus
         private static readonly string normal = "九莲宝灯";
         private static readonly string pure = "纯正九莲宝灯";
         private string name = normal;
-        private int value = 1;
+        private int value = YakuUtil.YakuManBasePoint;
         public override string Name => name;
         public override int Value => value;
+
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
         {
             if (!options.Contains(YakuOption.Menqing)) return false;
@@ -37,8 +39,9 @@ namespace Mahjong.Yakus
             if (isPure)
             {
                 name = pure;
-                value = 2;
+                value++;
             }
+
             return true;
         }
     }

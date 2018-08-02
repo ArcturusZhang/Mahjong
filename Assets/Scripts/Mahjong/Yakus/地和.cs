@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -6,7 +7,7 @@ namespace Mahjong.Yakus
     {
         public override string Name => "地和";
 
-        public override int Value => 1;
+        public override int Value => YakuUtil.YakuManBasePoint;
 
         public override bool IsYakuMan => true;
 

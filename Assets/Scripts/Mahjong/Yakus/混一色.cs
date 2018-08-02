@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -25,7 +26,7 @@ namespace Mahjong.Yakus
                     flag |= 1 << (int) mianzi.Suit;
             }
 
-            return YakuUtils.Count1(flag) == 1 && hasZi;
+            return YakuUtils.YakuUtil.Count1(flag) == 1 && hasZi;
         }
     }
 }

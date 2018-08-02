@@ -1,11 +1,13 @@
-﻿namespace Mahjong.Yakus
+﻿using Mahjong.YakuUtils;
+
+namespace Mahjong.Yakus
 {
     public class 国士无双 : Yaku
     {
         private static readonly string normal = "国士无双";
         private static readonly string shisan = "国士无双·十三面听";
         private string name = normal;
-        private int value = 1;
+        private int value = YakuUtil.YakuManBasePoint;
         public override string Name => name;
         public override int Value => value;
         public override bool IsYakuMan => true;
@@ -27,7 +29,7 @@
             if (isShisan)
             {
                 name = shisan;
-                value = 2;
+                value++;
             }
             return true;
         }

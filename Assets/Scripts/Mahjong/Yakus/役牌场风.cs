@@ -1,4 +1,6 @@
-﻿namespace Mahjong.Yakus
+﻿using Mahjong.YakuUtils;
+
+namespace Mahjong.Yakus
 {
     public class 役牌场风 : Yaku
     {

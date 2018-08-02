@@ -1,10 +1,12 @@
-﻿namespace Mahjong.Yakus
+﻿using Mahjong.YakuUtils;
+
+namespace Mahjong.Yakus
 {
     public class 大三元 : Yaku
     {
         public override string Name => "大三元";
 
-        public override int Value => 1;
+        public override int Value => YakuUtil.YakuManBasePoint;
 
         public override bool IsYakuMan => true;
 

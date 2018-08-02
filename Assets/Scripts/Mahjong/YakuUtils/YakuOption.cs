@@ -1,4 +1,4 @@
-﻿namespace Mahjong.Yakus
+﻿namespace Mahjong.YakuUtils
 {
     public enum YakuOption
     {

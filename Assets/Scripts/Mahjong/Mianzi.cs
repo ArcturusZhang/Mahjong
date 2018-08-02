@@ -12,12 +12,99 @@ namespace Mahjong
         public bool Open { get; set; }
         private bool isGangzi;
 
+        public IEnumerable<Tile> Tiles { get; }
+
         public Mianzi(Tile first, MianziType type, bool open = false, bool gangzi = false)
         {
             First = first;
             Type = type;
             Open = open;
             isGangzi = gangzi;
+            var tiles = new List<Tile>();
+            switch (Type)
+            {
+                case MianziType.Single:
+                    tiles.Add(first);
+                    break;
+                case MianziType.Jiang:
+                    tiles.Add(first);
+                    tiles.Add(first);
+                    break;
+                case MianziType.Kezi:
+                    tiles.Add(first);
+                    tiles.Add(first);
+                    tiles.Add(first);
+                    if (gangzi) tiles.Add(first);
+                    break;
+                case MianziType.Shunzi:
+                    tiles.Add(first);
+                    tiles.Add(first.Next);
+                    tiles.Add(first.Next.Next);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid MianziType");
+            }
+
+            Tiles = tiles;
+        }
+
+        public Mianzi(bool open = false, params Tile[] tiles)
+        {
+            Open = open;
+            var list = new List<Tile>();
+            switch (tiles.Length)
+            {
+                case 1:
+                    Type = MianziType.Single;
+                    list.Add(tiles[0]);
+                    break;
+                case 2:
+                    if (!tiles[0].Equals(tiles[1])) throw new ArgumentException("Invalid mianzi composition");
+                    Type = MianziType.Jiang;
+                    list.Add(tiles[0]);
+                    list.Add(tiles[1]);
+                    break;
+                case 3:
+                    if (tiles[0].Equals(tiles[2])) Type = MianziType.Kezi;
+                    else Type = MianziType.Shunzi;
+                    if (Type == MianziType.Kezi)
+                    {
+                        if (!tiles[0].Equals(tiles[1])) throw new ArgumentException("Invalid mianzi composition");
+                    }
+                    else if (Type == MianziType.Shunzi)
+                    {
+                        Array.Sort(tiles);
+                        if (tiles[0].Suit != tiles[1].Suit || tiles[0].Suit != tiles[2].Suit)
+                            throw new ArgumentException("Invalid mianzi composition");
+                        if (tiles[1].Index != tiles[0].Index + 1 || tiles[2].Index != tiles[0].Index + 2)
+                            throw new ArgumentException("Invalid mianzi composition");
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Should not happen");
+                    }
+                    list.Add(tiles[0]);
+                    list.Add(tiles[1]);
+                    list.Add(tiles[2]);
+                    break;
+                case 4:
+                    for (int i = 1; i < 4; i++)
+                    {
+                        if (!tiles[i].Equals(tiles[i - 1])) throw new ArgumentException("Invalid mianzi composition");
+                    }
+
+                    Type = MianziType.Kezi;
+                    isGangzi = true;
+                    list.Add(tiles[0]);
+                    list.Add(tiles[1]);
+                    list.Add(tiles[2]);
+                    list.Add(tiles[3]);
+                    break;
+                default:
+                    throw new ArgumentException("Too many tiles");
+            }
+            First = tiles[0];
+            Tiles = list;
         }
 
         public Tile Last
@@ -45,7 +132,6 @@ namespace Mahjong
                 if (Type != MianziType.Kezi) return false;
                 return isGangzi;
             }
-            set { isGangzi = value; }
         }
 
         public bool HasYaojiu => Type != MianziType.Single && (First.IsYaojiu || Last.IsYaojiu);

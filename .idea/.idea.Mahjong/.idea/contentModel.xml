@@ -13,10 +13,6 @@
             <e p="MianziSet.cs" t="Include" />
             <e p="Tile.cs" t="Include" />
             <e p="Yakus" t="Include">
-              <e p="GameStatus.cs" t="Include" />
-              <e p="Yaku.cs" t="Include" />
-              <e p="YakuOption.cs" t="Include" />
-              <e p="YakuUtils.cs" t="Include" />
               <e p="一发.cs" t="Include" />
               <e p="一杯口.cs" t="Include" />
               <e p="一气通贯.cs" t="Include" />
@@ -37,6 +33,7 @@
               <e p="大四喜.cs" t="Include" />
               <e p="天和.cs" t="Include" />
               <e p="字一色.cs" t="Include" />
+              <e p="宝牌.cs" t="Include" />
               <e p="对对和.cs" t="Include" />
               <e p="小三元.cs" t="Include" />
               <e p="小四喜.cs" t="Include" />
@@ -57,9 +54,19 @@
               <e p="清一色.cs" t="Include" />
               <e p="清老头.cs" t="Include" />
               <e p="立直.cs" t="Include" />
+              <e p="红宝牌.cs" t="Include" />
               <e p="纯全带幺九.cs" t="Include" />
               <e p="绿一色.cs" t="Include" />
               <e p="自摸.cs" t="Include" />
+              <e p="里宝牌.cs" t="Include" />
+            </e>
+            <e p="YakuUtils" t="Include">
+              <e p="GameStatus.cs" t="Include" />
+              <e p="Yaku.cs" t="Include" />
+              <e p="YakuAnalysor.cs" t="Include" />
+              <e p="YakuDetails.cs" t="Include" />
+              <e p="YakuOption.cs" t="Include" />
+              <e p="YakuUtil.cs" t="Include" />
             </e>
           </e>
         </e>

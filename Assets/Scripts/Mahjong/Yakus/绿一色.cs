@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -8,7 +9,7 @@ namespace Mahjong.Yakus
         private static readonly string pure = "纯绿一色";
         private static readonly int[] Greens = {19, 20, 21, 23, 25, 32};
         private string name = normal;
-        private int value = 1;
+        private int value = YakuUtil.YakuManBasePoint;
         public override string Name => name;
         public override int Value => value;
 
@@ -24,7 +25,7 @@ namespace Mahjong.Yakus
             if (counts[32] == 0)
             {
                 name = pure;
-                value = 2;
+                value++;
             }
 
             return true;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mahjong.Yakus
+namespace Mahjong.YakuUtils
 {
     public class GameStatus
     {

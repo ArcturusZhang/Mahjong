@@ -1,7 +1,8 @@
-﻿namespace Mahjong.Yakus
+﻿namespace Mahjong.YakuUtils
 {
-    internal static class YakuUtils
+    internal static class YakuUtil
     {
+        internal static readonly int YakuManBasePoint = 13; 
         internal static int Count1(int flag)
         {
             if (flag < 0) return -1;

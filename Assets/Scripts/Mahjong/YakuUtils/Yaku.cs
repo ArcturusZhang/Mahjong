@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 
-namespace Mahjong.Yakus
+namespace Mahjong.YakuUtils
 {
     public abstract class Yaku : IComparable<Yaku>
     {
         public abstract string Name { get; }
         public abstract int Value { get; }
         public virtual bool IsYakuMan => false;
+        public virtual int SortIndex => -1;
 
         public virtual YakuType Type => YakuType.Normal;
 
@@ -15,7 +16,10 @@ namespace Mahjong.Yakus
 
         public int CompareTo(Yaku other)
         {
-            if (Value != other.Value) return Value - other.Value;
+            if (SortIndex > other.SortIndex) return 1;
+            if (SortIndex < other.SortIndex) return -1;
+            if (Value > other.Value) return 1;
+            if (Value < other.Value) return -1;
             return string.CompareOrdinal(Name, other.Name);
         }
 
@@ -31,7 +35,7 @@ namespace Mahjong.Yakus
                 }
             }
             else // 荣和的情形，将含有胡牌的刻字设为明刻
-            {// todo : may not work
+            {
                 for (int i = 0; i < hand.MianziCount; i++)
                 {
                     var mianzi = hand[i];
@@ -46,6 +50,7 @@ namespace Mahjong.Yakus
     {
         Normal,
         Shixia,
-        Menqian
+        Menqian,
+        Optional
     }
 }

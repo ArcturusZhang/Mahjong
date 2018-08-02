@@ -1,9 +1,11 @@
-﻿namespace Mahjong.Yakus
+﻿using Mahjong.YakuUtils;
+
+namespace Mahjong.Yakus
 {
     public class 小四喜 : Yaku
     {
         public override string Name => "小四喜";
-        public override int Value => 1;
+        public override int Value => YakuUtil.YakuManBasePoint;
         public override bool IsYakuMan => true;
 
         public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
