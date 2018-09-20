@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Mahjong.YakuUtils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,7 +18,7 @@ namespace Mahjong
         {
             Debug.Log(input.text);
             var hand = new MahjongHand(input.text);
-            var options = new[] {YakuOption.Lizhi, YakuOption.Menqing, YakuOption.Zimo};
+            var options = YakuOptions.Lizhi | YakuOptions.Menqing | YakuOptions.Zimo;
             var status = new GameStatus();
             Debug.Log($"手牌：{hand}");
             var info = YakuAnalysor.Analyze(hand, status, options);

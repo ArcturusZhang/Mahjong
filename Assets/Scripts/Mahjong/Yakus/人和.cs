@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Mahjong.YakuUtils;
+﻿using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -13,9 +12,9 @@ namespace Mahjong.Yakus
 
         public override YakuType Type => YakuType.Menqian;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
-            return options.Contains(YakuOption.FirstRound) && !options.Contains(YakuOption.Zimo);
+            return options.HasFlag(YakuOptions.FirstRound) && !options.HasFlag(YakuOptions.Zimo);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
@@ -12,9 +11,9 @@ namespace Mahjong.Yakus
 
         public override YakuType Type => YakuType.Menqian;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
-            if (!options.Contains(YakuOption.Menqing)) return false;
+            if (!options.HasFlag(YakuOptions.Menqing)) return false;
             if (hand.MianziCount <= 4) return false;
             var dict = new Dictionary<Mianzi, int>();
             foreach (var mianzi in hand)

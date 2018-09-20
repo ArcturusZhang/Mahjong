@@ -11,7 +11,7 @@ namespace Mahjong.Yakus
         public override int Value => 2;
 
         // todo -- 自摸和荣胡导致的暗刻差别
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
             if (sianke.Test(hand, rong, status, options)) return false;
             int count = 0;

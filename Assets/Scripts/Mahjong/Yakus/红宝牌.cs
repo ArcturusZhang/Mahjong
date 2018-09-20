@@ -10,7 +10,7 @@ namespace Mahjong.Yakus
         public override YakuType Type => YakuType.Optional;
         public override int SortIndex => int.MaxValue - 1;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
             int count = 0;
             foreach (var mianzi in hand)

@@ -8,7 +8,7 @@ namespace Mahjong.Yakus
 
         public override int Value => 1;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
             foreach (Mianzi mianzi in hand)
             {

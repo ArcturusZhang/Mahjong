@@ -16,12 +16,12 @@ namespace Mahjong.YakuUtils
         }
 
         public static IDictionary<Tile, PointResult> Analyze(MahjongHand hand, GameStatus status,
-            params YakuOption[] options)
+            YakuOptions options)
         {
             if (!hand.HasTing) throw new ArgumentException("手牌未听牌");
             var yakuList = GetAvailableYakuList();
             var dict = new Dictionary<Tile, PointResult>();
-            bool qingtianjing = options.Contains(YakuOption.Qingtianjing);
+            bool qingtianjing = options.HasFlag(YakuOptions.Qingtianjing);
             foreach (var rong in hand.TingList)
             {
                 var newHand = hand.Add(rong);
@@ -49,15 +49,15 @@ namespace Mahjong.YakuUtils
         }
 
         private static int Fu(ICollection<Yaku> yakus, MianziSet hand, Tile rong, GameStatus status,
-            params YakuOption[] options)
+            params YakuOptions[] options)
         {
             if (yakus.Contains(new 七对子())) return 25;
             if (yakus.Contains(new 国士无双())) return 30;
             int fu = 20;
             // 门清荣胡加符
-            if (!options.Contains(YakuOption.Zimo) && options.Contains(YakuOption.Menqing)) fu += 10;
+            if (!options.Contains(YakuOptions.Zimo) && options.Contains(YakuOptions.Menqing)) fu += 10;
             // 自摸加符
-            if (options.Contains(YakuOption.Zimo) && !yakus.Contains(new 平和()) &&
+            if (options.Contains(YakuOptions.Zimo) && !yakus.Contains(new 平和()) &&
                 !yakus.Contains(new 岭上开花())) fu += 2;
             // 将牌加符
             var tile = hand.Jiang.First;

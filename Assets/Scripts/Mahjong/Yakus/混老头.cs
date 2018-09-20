@@ -10,7 +10,7 @@ namespace Mahjong.Yakus
 
         public override int Value => 2;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
             // 判定是否清老头
             if (qinglaotou.Test(hand, rong, status, options) || ziyise.Test(hand, rong, status, options)) return false;

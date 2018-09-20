@@ -12,7 +12,7 @@ namespace Mahjong.YakuUtils
 
         public virtual YakuType Type => YakuType.Normal;
 
-        public abstract bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options);
+        public abstract bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options);
 
         public int CompareTo(Yaku other)
         {
@@ -34,9 +34,9 @@ namespace Mahjong.YakuUtils
             return Name.GetHashCode();
         }
 
-        public static void PreTest(MianziSet hand, Tile rong, params YakuOption[] options)
+        public static void PreTest(MianziSet hand, Tile rong, params YakuOptions[] options)
         {
-            if (options.Contains(YakuOption.Zimo)) // 自摸的情形，将含有胡牌的刻字设为暗刻
+            if (options.Contains(YakuOptions.Zimo)) // 自摸的情形，将含有胡牌的刻字设为暗刻
             {
                 for (int i = 0; i < hand.MianziCount; i++)
                 {
@@ -56,7 +56,7 @@ namespace Mahjong.YakuUtils
             }
         }
     }
-
+    
     public enum YakuType
     {
         Normal,

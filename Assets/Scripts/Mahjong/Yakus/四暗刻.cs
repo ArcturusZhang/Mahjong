@@ -15,7 +15,7 @@ namespace Mahjong.Yakus
 
         public override bool IsYakuMan => true;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
             int count = 0;
             bool isDanqi = false;

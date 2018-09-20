@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Mahjong.YakuUtils;
+﻿using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -11,9 +10,9 @@ namespace Mahjong.Yakus
 
         public override YakuType Type => YakuType.Menqian;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
-            if (!options.Contains(YakuOption.Menqing)) return false;
+            if (!options.HasFlag(YakuOptions.Menqing)) return false;
             int shunziCount = 0;
             bool twoSide = false;
             foreach (Mianzi mianzi in hand)

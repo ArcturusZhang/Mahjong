@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Mahjong.YakuUtils;
+﻿using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -17,9 +16,9 @@ namespace Mahjong.Yakus
 
         public override YakuType Type => YakuType.Shixia;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
-            value = options.Contains(YakuOption.Menqing) ? 2 : 1;
+            value = options.HasFlag(YakuOptions.Menqing) ? 2 : 1;
             // 判定非清老头、字一色、混老头、纯全带
             if (qinglaotou.Test(hand, rong, status, options) || ziyise.Test(hand, rong, status, options) ||
                 hunlaotou.Test(hand, rong, status, options) || chunquandai.Test(hand, rong, status, options))

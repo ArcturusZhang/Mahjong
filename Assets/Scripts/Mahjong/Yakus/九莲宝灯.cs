@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Mahjong.YakuUtils;
+﻿using Mahjong.YakuUtils;
 
 namespace Mahjong.Yakus
 {
@@ -13,9 +12,9 @@ namespace Mahjong.Yakus
         public override int Value => value;
         public override bool IsYakuMan => true;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
-            if (!options.Contains(YakuOption.Menqing)) return false;
+            if (!options.HasFlag(YakuOptions.Menqing)) return false;
             if (hand.MianziCount != 5 || hand.TileCount != 14) return false;
             var suit = hand[0].Suit;
             if (suit == Suit.Z) return false;

@@ -12,8 +12,9 @@ namespace Mahjong.Yakus
         private int value = YakuUtil.YakuManBasePoint;
         public override string Name => name;
         public override int Value => value;
+        public override bool IsYakuMan => true;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
             var counts = hand.TileDistribution;
             for (int i = 0; i < counts.Length; i++)

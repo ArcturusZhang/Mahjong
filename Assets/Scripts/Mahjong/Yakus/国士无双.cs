@@ -13,7 +13,7 @@ namespace Mahjong.Yakus
         public override bool IsYakuMan => true;
         public override YakuType Type => YakuType.Menqian;
 
-        public override bool Test(MianziSet hand, Tile rong, GameStatus status, params YakuOption[] options)
+        public override bool Test(MianziSet hand, Tile rong, GameStatus status, YakuOptions options)
         {
             if (hand.MianziCount != 13) return false;
             bool isShisan = false;
