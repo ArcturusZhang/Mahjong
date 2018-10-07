@@ -20,6 +20,7 @@ namespace Multi.Messages
 		public InTurnOperation Operation;
 		public bool DiscardLastDraw;
 		public Tile DiscardTile;
+		public int BonusTurnTime;
 	}
 
 	/// <summary>

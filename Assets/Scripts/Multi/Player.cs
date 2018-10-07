@@ -138,13 +138,18 @@ namespace Multi
         private void ClientHandleOutTurnOperation(Tile discardTile)
         {
             if (!isLocalPlayer) return;
-            // todo -- add out turn operation
             DisableOutTurnPanel();
-            connectionToServer.Send(MessageConstants.OutTurnOperationMessageId, new OutTurnOperationMessage
+            // todo -- add out turn operation
+            SendOutTurnOperationMessage(new OutTurnOperationMessage
             {
                 PlayerIndex = PlayerIndex,
                 Operation = OutTurnOperation.Skip
             });
+        }
+
+        private void SendOutTurnOperationMessage(OutTurnOperationMessage message)
+        {
+            connectionToServer.Send(MessageConstants.OutTurnOperationMessageId, message);
         }
 
         [Client]
@@ -188,6 +193,17 @@ namespace Multi
             var operation = MahjongLogic.GetInTurnOperation(HandTiles, OpenMelds, tile);
             EnableInTurnPanel(operation);
             PlayerHandPanel.DrawTile(this, tile);
+            MahjongManager.Instance.TimerController.StartCountDown(GameSettings.BaseTurnTime, BonusTurnTime,
+                () =>
+                {
+                    connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
+                    {
+                        DiscardTile = tile,
+                        Operation = InTurnOperation.Discard,
+                        PlayerIndex = PlayerIndex,
+                        DiscardLastDraw = true
+                    });
+                });
         }
 
         [Client]
@@ -244,12 +260,14 @@ namespace Multi
             discardMessageSent = true;
             Debug.Log($"Client attempts to discard tile {tile}");
             // todo -- richi status
+            int bonusTimeLeft = MahjongManager.Instance.TimerController.StopCountDown();
             connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
             {
                 DiscardTile = tile,
                 Operation = InTurnOperation.Discard,
                 PlayerIndex = PlayerIndex,
-                DiscardLastDraw = discardLastDraw
+                DiscardLastDraw = discardLastDraw,
+                BonusTurnTime = bonusTimeLeft
             });
         }
 
@@ -285,6 +303,17 @@ namespace Multi
         private void DisableOutTurnPanel()
         {
             MahjongManager.Instance.OutTurnOperationPanel.SetActive(false);
+        }
+
+        [Client]
+        public void OnSkipButtonClicked()
+        {
+            MahjongManager.Instance.OutTurnOperationPanel.SetActive(false);
+            SendOutTurnOperationMessage(new OutTurnOperationMessage
+            {
+                PlayerIndex = PlayerIndex,
+                Operation = OutTurnOperation.Skip
+            });
         }
     }
 }

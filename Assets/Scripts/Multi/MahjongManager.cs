@@ -6,6 +6,7 @@ using System.Text;
 using Multi.Messages;
 using Single;
 using Single.MahjongDataType;
+using UI;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
@@ -17,20 +18,22 @@ namespace Multi
 {
     public class MahjongManager : NetworkBehaviour
     {
-        [Header("In Game UI Elements")] public GameObject InGameCanvas;
+        [Header("In Turn UI Elements")] public GameObject InGameCanvas;
         public Text InGameInfoText;
         public GameObject InTurnOperationPanel;
         public Button TsumoButton;
-        public Toggle RichiButton;
-
+        public Button RichiButton;
         public Button InTurnKongButton;
 
-//        public Button CancelButton;
+        [Header("Out Turn UI Elements")]
         public GameObject OutTurnOperationPanel;
         public Button RongButton;
         public Button ChowButton;
         public Button PongButton;
         public Button OutTurnKongButton;
+        public Button SkipButton;
+
+        [Header("General UI Elements")] public TimerController TimerController;
 
         [Header("Object Reference Registrations")]
         public GameObject MahjongTable;
@@ -302,6 +305,7 @@ namespace Multi
             Debug.Log("[Server] Discard tile message received. " +
                       $"Player {content.PlayerIndex} is discarding tile {content.DiscardTile}, " +
                       $"discardLastDraw: {content.DiscardLastDraw}");
+            CurrentTurnPlayer.BonusTurnTime = content.BonusTurnTime; // update bonus time left
             if (waitForClientCoroutine != null)
             {
                 StopCoroutine(waitForClientCoroutine);
