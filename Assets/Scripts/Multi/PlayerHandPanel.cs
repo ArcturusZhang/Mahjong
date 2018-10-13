@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Single;
 using Single.MahjongDataType;
@@ -11,52 +10,62 @@ namespace Multi
     {
         public GameObject HandTilePrefab;
         public GameObject DrawnTilePrefab;
-        private Sprite[] tileSprites;
-        private IDictionary<string, Sprite> spriteDict;
 
-        private void Awake()
+        public void LockTiles()
         {
-            tileSprites = Resources.LoadAll<Sprite>("Textures/mjui");
-            spriteDict = new Dictionary<string, Sprite>();
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                var button = transform.GetChild(i).GetComponent<Button>();
+                button.interactable = false;
+            }
+        }
+
+        public void UnlockTiles()
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                var button = transform.GetChild(i).GetComponent<Button>();
+                button.interactable = true;
+            }
+        }
+
+        public void Clear()
+        {
+            for (int i = transform.childCount - 1; i >= 0; i--)
+                Destroy(transform.GetChild(i).gameObject);
         }
 
         public void Refresh(Player player, List<Tile> tiles)
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                Destroy(transform.GetChild(i).gameObject);
-            }
-
+            Clear();
             AddTiles(player, tiles);
         }
 
         public void DrawTile(Player player, Tile tile)
         {
-            var sprite = GetSprite(tile);
-            var tileImage = Instantiate(DrawnTilePrefab, transform);
-            var image = tileImage.GetComponent<Image>();
-            image.sprite = sprite;
-            var button = tileImage.GetComponent<Button>();
-            button.onClick.AddListener(() =>
-            {
-                player.ClientDiscardTile(tile, true);
-            });
+            DrawTile(player, tile, true, DrawnTilePrefab);
         }
 
         public void AddTiles(Player player, List<Tile> tiles)
         {
             foreach (var tile in tiles)
             {
-                var sprite = GetSprite(tile);
-                var tileImage = Instantiate(HandTilePrefab, transform);
-                var image = tileImage.GetComponent<Image>();
-                image.sprite = sprite;
-                var button = tileImage.GetComponent<Button>();
-                button.onClick.AddListener(() =>
-                {
-                    player.ClientDiscardTile(tile, false);
-                });
+                DrawTile(player, tile, false, HandTilePrefab);
             }
+        }
+
+        private void DrawTile(Player player, Tile tile, bool discardLastDraw, GameObject prefab)
+        {
+            var sprite = ResourceManager.Instance.GetTileSprite(tile);
+            var tileImage = Instantiate(prefab, transform);
+            var image = tileImage.GetComponent<Image>();
+            image.sprite = sprite;
+            var button = tileImage.GetComponent<Button>();
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() =>
+            {
+                player.ClientDiscardTile(tile, discardLastDraw);
+            });
         }
 
         public void DiscardTile()
@@ -68,23 +77,6 @@ namespace Multi
         {
             var obj = transform.GetChild(index).gameObject;
             Destroy(obj);
-        }
-
-        private Sprite GetSprite(Tile tile)
-        {
-            var key = MahjongConstants.GetTileName(tile);
-            if (!spriteDict.ContainsKey(key))
-            {
-                foreach (var sprite in tileSprites)
-                {
-                    if (key.Equals(sprite.name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        spriteDict.Add(key, sprite);
-                    }
-                }
-            }
-
-            return spriteDict[key];
         }
     }
 }

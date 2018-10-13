@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
-using Multi;
 using Single;
 using Single.MahjongDataType;
 using UnityEditor;
@@ -105,58 +105,42 @@ namespace Editor
 
                 builder.Append("\n");
             }
+
             Debug.Log(builder);
         }
 
-//        [MenuItem("Mahjong/Test/Test for chow")]
-//        public static void TestForChow()
-//        {
-//            var list = new List<Tile>
-//            {
-//                new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 4),
-//                new Tile(Suit.M, 5, true), new Tile(Suit.M, 5)
-//            };
-//            var result = HandAnalyst.TestForChow(list, new Tile(Suit.M, 4));
-//            var builder = new StringBuilder();
-//            foreach (var meld in result)
-//            {
-//                builder.Append(meld).Append(", ");
-//            }
-//            Debug.Log(builder);
-//        }
-//
-//        [MenuItem("Mahjong/Test/Test for pong")]
-//        public static void TestForPong()
-//        {
-//            var list = new List<Tile>
-//            {
-//                new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 4),
-//                new Tile(Suit.M, 5, true), new Tile(Suit.M, 5, true), new Tile(Suit.M, 5)
-//            };
-//            var result = HandAnalyst.TestForPong(list, new Tile(Suit.M, 5));
-//            var builder = new StringBuilder();
-//            foreach (var meld in result)
-//            {
-//                builder.Append(meld).Append(", ");
-//            }
-//            Debug.Log(builder);
-//        }
-//
-//        [MenuItem("Mahjong/Test/Test for kong")]
-//        public static void TestForKong()
-//        {
-//            var list = new List<Tile>
-//            {
-//                new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 4),
-//                new Tile(Suit.M, 5, true), new Tile(Suit.M, 5, true), new Tile(Suit.M, 5)
-//            };
-//            var result = HandAnalyst.TestForKong(list, new Tile(Suit.M, 5));
-//            var builder = new StringBuilder();
-//            foreach (var meld in result)
-//            {
-//                builder.Append(meld).Append(", ");
-//            }
-//            Debug.Log(builder);
-//        }
+        [MenuItem("Mahjong/Postprocess/Transparency background")]
+        public static void Transparency()
+        {
+            var texture = new Texture2D(1, 1);
+            var bytes = File.ReadAllBytes("Assets/Resources/Textures/UIElements/ui.png");
+            Debug.Log(bytes.Length);
+            texture.LoadImage(bytes);
+            texture.Apply();
+            Debug.Log($"Width: {texture.width}, height: {texture.height}");
+            TransparencyPixel(texture, texture.width, texture.height);
+            texture.Apply();
+            bytes = texture.EncodeToPNG();
+            File.WriteAllBytes("Assets/Resources/Textures/UIElements/ui_new.png", bytes);
+        }
+
+        private static void TransparencyPixel(Texture2D texture, int x, int y)
+        {
+            var queue = new Queue<Vector2Int>();
+            queue.Enqueue(new Vector2Int(x, y));
+            while (queue.Count > 0)
+            {
+                var p = queue.Dequeue();
+                var color = texture.GetPixel(p.x, p.y);
+                if (color == Color.white)
+                {
+                    texture.SetPixel(p.x, p.y, new Color(0, 0, 0, 0));
+                    if (p.x + 1 <= texture.width) queue.Enqueue(new Vector2Int(p.x + 1, p.y));
+                    if (p.x - 1 >= 0) queue.Enqueue(new Vector2Int(p.x - 1, p.y));
+                    if (p.y + 1 <= texture.height) queue.Enqueue(new Vector2Int(p.x, p.y + 1));
+                    if (p.y - 1 >= 0) queue.Enqueue(new Vector2Int(p.x, p.y - 1));
+                }
+            }
+        }
     }
 }

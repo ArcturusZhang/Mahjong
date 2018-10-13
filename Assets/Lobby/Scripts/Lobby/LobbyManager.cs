@@ -6,8 +6,11 @@ using UnityEngine.Networking;
 using UnityEngine.Networking.Types;
 using UnityEngine.Networking.Match;
 using System.Collections;
+using System.Collections.Generic;
 using Lobby;
 using Multi;
+using Multi.Messages;
+using UnityEngine.Networking.NetworkSystem;
 
 
 namespace Prototype.NetworkLobby
@@ -51,6 +54,11 @@ namespace Prototype.NetworkLobby
 
         protected LobbyHook _lobbyHooks;
 
+        [Header("LAN Player Infos")]
+        public List<Player> Players = new List<Player>();
+
+        public Player LocalPlayer;
+
         private void Start()
         {
             Instance = this;
@@ -64,7 +72,6 @@ namespace Prototype.NetworkLobby
 
             SetServerInfo("Offline", "None");
             
-            PlayerManager.Instance.ClearPlayers();
             Debug.Log("All players are cleared.");
         }
 
@@ -177,6 +184,17 @@ namespace Prototype.NetworkLobby
         public void AddLocalPlayer()
         {
             TryToAddPlayer();
+        }
+
+        public void AddPlayer(Player player)
+        {
+            Players.Add(player);
+        }
+
+        public void RemovePlayer(Player player)
+        {
+            Players.Remove(player);
+//            ServerReturnToLobby(); // todo -- player leaves will cause the game back to lobby
         }
 
         public void RemovePlayer(LobbyPlayer player)
@@ -427,6 +445,12 @@ namespace Prototype.NetworkLobby
         {
             ChangeTo(mainMenuPanel);
             infoPanel.Display("Client error : " + (errorCode == 6 ? "timeout" : errorCode.ToString()), "Close", null);
+        }
+
+        public override void OnClientSceneChanged(NetworkConnection conn)
+        {
+            base.OnClientSceneChanged(conn);
+            conn.Send(MessageConstants.SceneLoadedMessageId, new IntegerMessage(conn.connectionId));
         }
     }
 }

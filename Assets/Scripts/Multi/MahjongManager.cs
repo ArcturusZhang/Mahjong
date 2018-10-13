@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Multi.Messages;
+using Prototype.NetworkLobby;
 using Single;
 using Single.MahjongDataType;
+using Single.Yakus;
 using UI;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -25,39 +27,37 @@ namespace Multi
         public Button RichiButton;
         public Button InTurnKongButton;
 
-        [Header("Out Turn UI Elements")]
-        public GameObject OutTurnOperationPanel;
+        [Header("Out Turn UI Elements")] public GameObject OutTurnOperationPanel;
         public Button RongButton;
         public Button ChowButton;
         public Button PongButton;
         public Button OutTurnKongButton;
         public Button SkipButton;
+        public MeldSelector MeldSelector;
 
         [Header("General UI Elements")] public TimerController TimerController;
 
         [Header("Object Reference Registrations")]
-        public GameObject MahjongTable;
+        public MahjongSelector MahjongSelector;
 
         public GameObject PlayerHandPanel;
         public GameObject PlayerOpenPanel;
         public MahjongSetManager MahjongSetManager;
 
-        [Header("Prefab Registrations")] public GameObject MahjongTilesPrefab;
-
-        [Header("Game Status Info")] [SyncVar] public GameTurnState TurnState;
+        [Header("Game Status Info")] [SyncVar] public GameTurnState CurrentState;
         public Player CurrentTurnPlayer;
         [SyncVar] public int CurrentPlayerIndex;
         [SyncVar] public int OpenIndex;
         [SyncVar] public int RoundCount = 0; // Represent [East # Round]
         [SyncVar] public int CurrentExtraRound = 0;
         [SyncVar] public int FieldCount = 0;
+        [SyncVar] public bool FirstTurn = false;
+        [SyncVar] public bool LastDraw = false;
+        [SyncVar] public int SceneLoaded = 0;
 
-        private GameObject mahjongTiles;
-        internal MahjongSelector MahjongSelector;
         private Coroutine waitForClientCoroutine = null;
 
         private List<Player> players;
-        private Player localPlayer;
         private bool[] responseReceived;
         private OutTurnOperationMessage[] outTurnOperations;
 
@@ -67,6 +67,7 @@ namespace Multi
         {
             Debug.Log("[Server] MahjongManager Awake is called");
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
 
         public override void OnStartClient()
@@ -77,40 +78,50 @@ namespace Multi
         public override void OnStartServer()
         {
             Debug.Log("MahjongManager OnStartServer is called");
+            SceneLoaded = 0;
             ServerRegisterHandlers();
-            StartCoroutine(ServerState_RoundPrepare());
         }
 
         [Server]
         private void ServerRegisterHandlers()
         {
+            NetworkServer.RegisterHandler(MessageConstants.SceneLoadedMessageId, OnSceneLoadedMessageReceived);
             NetworkServer.RegisterHandler(MessageConstants.ReadinessMessageId, OnReadinessMessageReceived);
             NetworkServer.RegisterHandler(MessageConstants.DiscardTileMessageId, OnDiscardTileMessageReceived);
+            NetworkServer.RegisterHandler(MessageConstants.InTurnOperationMessageId, OnInTurnOperationMessageReceived);
             NetworkServer.RegisterHandler(MessageConstants.OutTurnOperationMessageId,
                 OnOutTurnOperationMessageReceived);
         }
 
         [Server]
-        internal void ServerEnterGameState(GameTurnState newState, string args)
+        private void OnSceneLoadedMessageReceived(NetworkMessage message)
         {
-            Debug.Log($"Server enters state {newState} with args {args}");
-            TurnState = newState;
-            RpcGameState(newState, args);
+            SceneLoaded++;
+            if (SceneLoaded == LobbyManager.Instance.Players.Count)
+                StartCoroutine(ServerState_RoundPrepare());
+        }
+
+        [Server]
+        internal void ServerEnterGameState(GameTurnState newState, string message)
+        {
+            Debug.Log($"Server enters state {newState} with message {message}");
+            CurrentState = newState;
+            RpcGameState(newState, message);
         }
 
         [ClientRpc]
-        private void RpcGameState(GameTurnState newState, string args)
+        private void RpcGameState(GameTurnState newState, string message)
         {
-            ClientHandleState(newState, args);
+            ClientHandleState(newState, message);
         }
 
         [Client]
-        private void ClientHandleState(GameTurnState newState, string args)
+        private void ClientHandleState(GameTurnState newState, string message)
         {
-            Debug.Log($"Client enters state: {newState} with args {args}");
-            TurnState = newState;
+            Debug.Log($"Client enters state: {newState} with message {message}");
+            CurrentState = newState;
             // todo -- client side MahjongManager logic
-            switch (TurnState)
+            switch (CurrentState)
             {
                 case GameTurnState.RoundPrepare:
                     ClientState_RoundPrepare();
@@ -125,8 +136,7 @@ namespace Multi
         private void ClientState_RoundPrepare()
         {
             // set local player's ui elements
-            localPlayer = PlayerManager.Instance.LocalPlayer;
-            localPlayer.PlayerHandPanel = PlayerHandPanel.GetComponent<PlayerHandPanel>();
+            LobbyManager.Instance.LocalPlayer.PlayerHandPanel = PlayerHandPanel.GetComponent<PlayerHandPanel>();
         }
 
         [Client]
@@ -134,37 +144,36 @@ namespace Multi
         {
             Debug.Log("ClientState_RoundStart is called");
             InGameCanvas.SetActive(true);
-            InGameInfoText.Print($"Current player's index: {localPlayer.PlayerIndex}");
+            InGameInfoText.Print($"Current player's index: {LobbyManager.Instance.LocalPlayer.PlayerIndex}");
             // Instantiate tiles and reset tiles
-            if (mahjongTiles != null) Destroy(mahjongTiles);
-            mahjongTiles = Instantiate(MahjongTilesPrefab, MahjongTable.transform);
+//            if (mahjongTiles != null) Destroy(mahjongTiles);
+//            mahjongTiles = Instantiate(MahjongTilesPrefab, MahjongTable.transform);
             // Read player order and put tiles to right direction
-            int wind = localPlayer.PlayerIndex;
-            mahjongTiles.transform.Rotate(Vector3.up, 90 * wind, Space.World);
-            MahjongSelector = mahjongTiles.GetComponent<MahjongSelector>();
+            int wind = LobbyManager.Instance.LocalPlayer.PlayerIndex;
+            MahjongSelector.transform.Rotate(Vector3.up, 90 * wind, Space.World);
+//            MahjongSelector = mahjongTiles.GetComponent<MahjongSelector>();
             // todo -- ui elements (dealer display, points, etc)
         }
 
         [Server]
         private IEnumerator ServerState_RoundPrepare()
         {
-            yield return new WaitForSeconds(1f);
             // Important: this is not redundant, time is needed for other object to initialize
             ServerEnterGameState(GameTurnState.RoundPrepare, "Determine initial dealer");
             // determine player turn order
-            players = new List<Player>(PlayerManager.Instance.Players);
-            localPlayer = PlayerManager.Instance.LocalPlayer;
+            players = new List<Player>(LobbyManager.Instance.Players);
             players.Shuffle();
+            Debug.Log(players.Count);
             for (int i = 0; i < players.Count; i++)
             {
                 players[i].PlayerIndex = i;
                 players[i].TotalPlayers = players.Count;
-                players[i].Points = GameSettings.PlayerInitialPoints;
+                players[i].Points = YakuManager.Instance.YakuData.InitialPoints;
             }
 
             FieldCount = 1;
 
-            yield return null;
+            yield return new WaitForSeconds(1f);
             ServerState_RoundStart(true);
         }
 
@@ -189,6 +198,8 @@ namespace Multi
                 FieldCount++;
             }
 
+            FirstTurn = true;
+
             foreach (var player in players)
             {
                 player.HandTiles = new List<Tile>();
@@ -197,8 +208,7 @@ namespace Multi
                 player.Richi = false;
             }
 
-            // Throw dice
-            // todo -- visual effect for throwing dice
+            // Throwing dice
             int dice = Random.Range(GameSettings.DiceMin, GameSettings.DiceMax + 1);
             Debug.Log($"Dice rolls {dice}");
             OpenIndex = MahjongSetManager.Open(dice);
@@ -207,9 +217,20 @@ namespace Multi
             // Get dora tiles and their indices
             var doraTiles = MahjongSetManager.DoraIndicators.ToArray();
             var doraIndices = MahjongSetManager.DoraIndicatorIndices.ToArray();
-            var playerIndices = new int[players.Count];
-            for (int i = 0; i < playerIndices.Length; i++) playerIndices[i] = i;
-            RpcClient_RoundStart(dice, OpenIndex, playerIndices, doraTiles, doraIndices);
+            // Sending initial tiles message
+            foreach (var player in players)
+            {
+                player.connectionToClient.Send(MessageConstants.InitialDrawingMessageId, new InitialDrawingMessage
+                {
+                    Dice = dice,
+                    TotalPlayers = players.Count,
+                    MountainOpenIndex = OpenIndex,
+                    Tiles = player.HandTiles.ToArray(),
+                    DoraIndicators = doraTiles.ToArray(),
+                    DoraIndicatorIndices = doraIndices,
+                });
+            }
+
             // wait for all the client has done drawing initial tiles
             responseReceived = new bool[players.Count];
             Debug.Log("[Server] Waiting for clients' readiness message");
@@ -223,22 +244,23 @@ namespace Multi
             for (int current = 0; current < GameSettings.InitialDrawRound * players.Count; current++)
             {
                 CurrentTurnPlayer = players[CurrentPlayerIndex];
-                int index = MahjongSetManager.NextIndex;
                 var tiles = MahjongSetManager.DrawTiles(GameSettings.TilesEveryRound);
                 count += tiles.Count;
-                CurrentTurnPlayer.ServerDrawTiles(index, tiles.ToArray());
-                CurrentPlayerIndex = MahjongConstants.RepeatIndex(CurrentPlayerIndex + 1, players.Count);
+                CurrentTurnPlayer.ServerDrawTiles(tiles.ToArray());
+                CurrentPlayerIndex = NextPlayerIndex;
             }
 
             Assert.AreEqual(CurrentPlayerIndex, 0, "Something has went wrong in method ServerDrawInitialTiles");
             for (CurrentPlayerIndex = 0; CurrentPlayerIndex < players.Count; CurrentPlayerIndex++)
             {
                 CurrentTurnPlayer = players[CurrentPlayerIndex];
-                int index = MahjongSetManager.NextIndex;
                 var tile = MahjongSetManager.DrawTile();
                 count++;
-                CurrentTurnPlayer.ServerDrawTiles(index, tile);
+                CurrentTurnPlayer.ServerDrawTiles(tile);
             }
+
+            Assert.AreEqual(MahjongSetManager.NextIndex - MahjongSetManager.OpenIndex, count,
+                $"MahjongSetManager {MahjongSetManager.NextIndex - MahjongSetManager.OpenIndex}, count {count}");
 
             return count;
         }
@@ -246,9 +268,9 @@ namespace Multi
         [Server]
         private void OnReadinessMessageReceived(NetworkMessage message)
         {
-            if (TurnState != GameTurnState.RoundStart)
+            if (CurrentState != GameTurnState.RoundStart)
             {
-                Debug.LogError($"Should not receive a ReadinessMessage in {TurnState} state, ignoring this message");
+                Debug.LogError($"Should not receive a ReadinessMessage in {CurrentState} state, ignoring this message");
                 return;
             }
 
@@ -288,6 +310,23 @@ namespace Multi
         }
 
         [Server]
+        private void OnInTurnOperationMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<InTurnOperationMessage>();
+            if (content.PlayerIndex != CurrentPlayerIndex)
+            {
+                Debug.Log(
+                    $"[Server] Received message from player {content.PlayerIndex} in player {CurrentPlayerIndex}'s turn, ignoring");
+                return;
+            }
+
+            // todo -- server side handle in turn operation
+            Debug.Log($"[Server] Received message from player {content.PlayerIndex}, "
+                      + $"requesting operation {content.Operation} with tile {content.Meld}");
+            CurrentTurnPlayer.BonusTurnTime = content.BonusTurnTime;
+        }
+
+        [Server]
         private IEnumerator ServerWaitForClientDiscard(Tile defaultTile, bool discardLastDraw)
         {
             yield return new WaitForSeconds(GameSettings.BaseTurnTime + CurrentTurnPlayer.BonusTurnTime +
@@ -300,6 +339,13 @@ namespace Multi
         [Server]
         private void OnDiscardTileMessageReceived(NetworkMessage message)
         {
+            if (CurrentState != GameTurnState.PlayerInTurn)
+            {
+                Debug.Log(
+                    $"[Server] Server received a discard tile message at state {CurrentState}, ignoring this message");
+                return;
+            }
+
             var content = message.ReadMessage<DiscardTileMessage>();
             if (content.PlayerIndex != CurrentPlayerIndex) return;
             Debug.Log("[Server] Discard tile message received. " +
@@ -312,7 +358,8 @@ namespace Multi
                 waitForClientCoroutine = null;
             }
 
-            // todo -- handle richi, self kong
+            // todo -- self kong and tsumo
+            // handle other operations
             ServerState_PlayerDiscardTile(content.DiscardTile, content.DiscardLastDraw, content.Operation);
         }
 
@@ -322,11 +369,21 @@ namespace Multi
             ServerEnterGameState(GameTurnState.PlayerDiscardTile,
                 $"Player {CurrentPlayerIndex} has discard a tile {discardTile}");
             CurrentTurnPlayer.RpcDiscardTile(discardTile, discardLastDraw, operation);
+            // Handle richi
+            if (CurrentTurnPlayer.OneShot) CurrentTurnPlayer.OneShot = false;
+            if (operation.HasFlag(InTurnOperation.Richi))
+            {
+                CurrentTurnPlayer.Richi = true;
+                CurrentTurnPlayer.OneShot = true;
+                if (FirstTurn) CurrentTurnPlayer.WRichi = true;
+            }
+
             foreach (var player in players)
             {
                 if (player == CurrentTurnPlayer) continue;
                 player.RpcOutTurnOperation(discardTile);
             }
+
             Debug.Log(
                 "[Server] Now waiting for turn time to expire or receive messages that any clients have out turn operation.");
             responseReceived = new bool[players.Count];
@@ -351,16 +408,17 @@ namespace Multi
         [Server]
         private void OnOutTurnOperationMessageReceived(NetworkMessage message)
         {
-            if (TurnState != GameTurnState.PlayerDiscardTile)
+            if (CurrentState != GameTurnState.PlayerDiscardTile)
             {
                 Debug.LogError(
-                    $"[Server] Should not receive a ReadinessMessage in {TurnState} state, ignoring this message");
+                    $"[Server] Should not receive a InTurnOperationMessage in {CurrentState} state, ignoring it");
                 return;
             }
 
             var content = message.ReadMessage<OutTurnOperationMessage>();
             if (responseReceived[content.PlayerIndex]) return; // already get message from this player, ignore.
             Debug.Log($"[Server] Received out turn message from player {content.PlayerIndex}");
+            players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;
             responseReceived[content.PlayerIndex] = true;
             outTurnOperations[content.PlayerIndex] = content;
             if (!responseReceived.All(received => received)) return;
@@ -380,13 +438,18 @@ namespace Multi
         private void ServerState_PlayerOutTurnOperation()
         {
             ServerEnterGameState(GameTurnState.PlayerOutTurnOperation, "Enters player out turn operation state");
-            // todo -- find which operation is to be executed
-            var rongMessageIndex = Array.FindIndex(outTurnOperations,
-                message => message != null && message.Operation.HasFlag(OutTurnOperation.Kong));
-            if (rongMessageIndex >= 0)
+            // find which operation is to be executed
+            var rongMessages = Array.FindAll(outTurnOperations,
+                message => message != null && message.Operation.HasFlag(OutTurnOperation.Rong));
+            if (rongMessages.Length > 0)
             {
-                var message = outTurnOperations[rongMessageIndex];
-                Debug.Log($"[Server] Player {message.PlayerIndex} has claimed a RONG of tile {message.Meld}");
+                Debug.Log($"[Server] {rongMessages.Length} players claimed RONG");
+                foreach (var message in rongMessages)
+                {
+                    Debug.Log($"[Server] Player {message.PlayerIndex} has claimed a RONG of tile {message.Meld}");
+                }
+
+                // todo -- rpc call to perform this operation
                 ServerState_RoundEnd(true);
                 return;
             }
@@ -397,6 +460,7 @@ namespace Multi
             {
                 var message = outTurnOperations[kongMessageIndex];
                 Debug.Log($"[Server] Player {message.PlayerIndex} has claimed a KONG of meld {message.Meld}");
+                OpenMeldBreaksOneShotAndFirstRound();
                 // todo -- rpc call to perform this operation
                 return;
             }
@@ -407,6 +471,7 @@ namespace Multi
             {
                 var message = outTurnOperations[pongMessageIndex];
                 Debug.Log($"[Server] Player {message.PlayerIndex} has claimed PONG of meld {message.Meld}");
+                OpenMeldBreaksOneShotAndFirstRound();
                 // todo -- rpc call to perform this operation
                 return;
             }
@@ -417,15 +482,18 @@ namespace Multi
             {
                 var message = outTurnOperations[chowMessageIndex];
                 Debug.Log($"[Server] Player {message.PlayerIndex} has claimed CHOW of meld {message.Meld}");
+                OpenMeldBreaksOneShotAndFirstRound();
                 // todo -- rpc call to perform this operation
+                players[message.PlayerIndex].RpcPerformChow(message.Meld);
                 return;
             }
+
             // Nothing is claimed by any client, enter next player's turn
-            CurrentPlayerIndex = MahjongConstants.RepeatIndex(CurrentPlayerIndex + 1, players.Count);
+            CurrentPlayerIndex = NextPlayerIndex;
             ServerState_PlayerDrawTile();
         }
 
-        [Server] // todo -- refine this 
+        [Server] // todo -- complete this 
         private void ServerState_RoundEnd(bool rong)
         {
             ServerEnterGameState(GameTurnState.RoundEnd, "A player claimed rong"); // todo -- add client round end logic
@@ -433,13 +501,26 @@ namespace Multi
             // todo -- add other end game operations, possibly start another round
         }
 
-        [ClientRpc]
-        private void RpcClient_RoundStart(int dice, int openIndex, int[] playerIndices, Tile[] doraTiles,
-            int[] doraIndices)
+        [Server]
+        private void OpenMeldBreaksOneShotAndFirstRound()
         {
-            InGameInfoText.Print($"Dice rolls to {dice} with open index of {openIndex}");
-            localPlayer.ClientTurnDoraTiles(doraTiles, doraIndices);
-            localPlayer.ClientDrawInitialTiles(openIndex, playerIndices);
+            FirstTurn = false;
+            foreach (var player in players)
+            {
+                player.OneShot = false;
+            }
         }
+
+//        [ClientRpc]
+//        private void RpcClient_RoundStart(int dice, int openIndex, int[] playerIndices, Tile[] doraTiles,
+//            int[] doraIndices)
+//        {
+//            InGameInfoText.Print($"Dice rolls to {dice} with open index of {openIndex}");
+//            LobbyManager.Instance.LocalPlayer.ClientTurnDoraTiles(doraTiles, doraIndices);
+//            LobbyManager.Instance.LocalPlayer.ClientDrawInitialTiles(openIndex, playerIndices);
+//        }
+
+        public int NextPlayerIndex =>
+            MahjongConstants.RepeatIndex(CurrentPlayerIndex + 1, LobbyManager.Instance.LocalPlayer.TotalPlayers);
     }
 }

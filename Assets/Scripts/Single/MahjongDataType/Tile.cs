@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Single.MahjongDataType
 {
     [Serializable]
     public struct Tile : IComparable<Tile>
     {
+        public static readonly IEqualityComparer<Tile>
+            TileConsiderColorEqualityComparer = new TileConsiderColorEqualityComparerImpl();
+        public static readonly IEqualityComparer<Tile>
+            TileIgnoreColorEqualityComparer = new TileIgnoreColorEqualityComparerImpl();
         public Suit Suit;
         public int Rank;
         public bool IsRed;
@@ -34,7 +39,7 @@ namespace Single.MahjongDataType
             return 0;
         }
 
-        private string GetString()
+        public string ToStringIgnoreColor()
         {
             switch (Rank)
             {
@@ -141,7 +146,7 @@ namespace Single.MahjongDataType
 
         public override string ToString()
         {
-            return IsRed ? GetString() + "r" : GetString();
+            return IsRed ? ToStringIgnoreColor() + "r" : ToStringIgnoreColor();
         }
 
         public override bool Equals(object obj)
@@ -169,6 +174,48 @@ namespace Single.MahjongDataType
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
+        }
+
+        private struct TileConsiderColorEqualityComparerImpl : IEqualityComparer<Tile>
+        {
+            public bool Equals(Tile x, Tile y)
+            {
+                return x.EqualsConsiderColor(y);
+            }
+
+            public int GetHashCode(Tile obj)
+            {
+                int hash = (int) obj.Suit;
+                hash = hash * 31 + obj.Rank;
+                hash = hash * 31 + (obj.IsRed ? 1 : 0);
+                return hash;
+            }
+        }
+
+        private struct TileIgnoreColorEqualityComparerImpl : IEqualityComparer<Tile>
+        {
+            public bool Equals(Tile x, Tile y)
+            {
+                return x.EqualsIgnoreColor(y);
+            }
+
+            public int GetHashCode(Tile obj)
+            {
+                int hash = (int) obj.Suit;
+                hash = hash * 31 + obj.Rank;
+                return hash;
+            }
+        }
+
+        public static Tile GetTile(int index)
+        {
+            var suit = (Suit) (index / 9);
+            return new Tile(suit, index % 9 + 1);
+        }
+
+        public static int GetIndex(Tile tile)
+        {
+            return (int) tile.Suit * 9 + tile.Rank - 1;
         }
     }
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Multi;
 using Single;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,7 +7,7 @@ namespace UI
 {
     public class HorizontalTileLayout : MonoBehaviour, ILayoutGroup
     {
-        private Queue<ElementGroup> queue = new Queue<ElementGroup>();
+        private readonly Queue<ElementGroup> queue = new Queue<ElementGroup>();
 
         public void SetLayoutHorizontal()
         {

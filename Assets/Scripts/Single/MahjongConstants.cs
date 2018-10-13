@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Single.MahjongDataType;
 using UnityEngine;
 
@@ -22,11 +21,6 @@ namespace Single
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
         public static readonly Quaternion FaceUp = Quaternion.Euler(-90, 0, -90);
 
-        public static readonly IEqualityComparer<Tile>
-            TileConcernColorEqualityComparer = new TileConcernColorEqualityComparerImpl();
-        public static readonly IEqualityComparer<Tile>
-            TileIgnoreColorEqualityComparer = new TileIgnoreColorEqualityComparerImpl();
-
         public static int RepeatIndex(int index, int length)
         {
             while (index >= length) index -= length;
@@ -38,53 +32,6 @@ namespace Single
         {
             int index = tile.IsRed ? 0 : tile.Rank;
             return index + tile.Suit.ToString().ToLower();
-        }
-
-        private static readonly IDictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
-
-        public static Texture2D GetTileTexture(Tile tile)
-        {
-            var key = GetTileName(tile);
-            Texture2D texture;
-            if (!textureDict.ContainsKey(key))
-            {
-                texture = Resources.Load<Texture2D>($"Textures/{key}");
-                textureDict.Add(key, texture);
-            }
-
-//            if (textureDict[key] == null) textureDict[key] = Resources.Load<Texture2D>($"Textures/{key}");
-            return textureDict[key];
-        }
-
-        private struct TileConcernColorEqualityComparerImpl : IEqualityComparer<Tile>
-        {
-            public bool Equals(Tile x, Tile y)
-            {
-                return x.EqualsConsiderColor(y);
-            }
-
-            public int GetHashCode(Tile obj)
-            {
-                int hash = (int) obj.Suit;
-                hash = hash * 31 + obj.Rank;
-                hash = hash * 31 + (obj.IsRed ? 1 : 0);
-                return hash;
-            }
-        }
-
-        private struct TileIgnoreColorEqualityComparerImpl : IEqualityComparer<Tile>
-        {
-            public bool Equals(Tile x, Tile y)
-            {
-                return x.EqualsIgnoreColor(y);
-            }
-
-            public int GetHashCode(Tile obj)
-            {
-                int hash = (int) obj.Suit;
-                hash = hash * 31 + obj.Rank;
-                return hash;
-            }
         }
     }
 

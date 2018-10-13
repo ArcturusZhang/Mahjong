@@ -12,11 +12,6 @@ namespace Single
         public PlayerHandHolder[] Hands;
         public PlayerRiverHolder[] Rivers;
 
-        public void DrawInitialTiles(Player self, int openIndex, params int[] playerIndices)
-        {
-            StartCoroutine(DrawInitialCoroutine(self, openIndex, playerIndices));
-        }
-
         public void DrawToPlayer(int nextIndex, int playerIndex)
         {
             DrawTileAt(nextIndex);
@@ -37,53 +32,53 @@ namespace Single
             Rivers[selfWind].DiscardTile(tile, richi);
         }
 
-        public void Refresh(int count, int selfWind)
+        public void Refresh(int count, int playerIndex)
         {
-            Hands[selfWind].Refresh(count);
+            Hands[playerIndex].Refresh(count);
         }
 
-        public void Refresh(List<Tile> tiles, int selfWind)
+        public void Refresh(List<Tile> tiles, int playerIndex)
         {
-            Hands[selfWind].Refresh(tiles);
+            Hands[playerIndex].Refresh(tiles);
         }
 
-        private IEnumerator DrawInitialCoroutine(Player self, int openIndex, params int[] playerIndices)
+        public IEnumerator DrawInitialCoroutine(Player self, int openIndex, int totalPlayers)
         {
             int selfDrawn = 0;
             for (int round = 0; round < GameSettings.InitialDrawRound; round++)
             {
-                foreach (int playerIndex in playerIndices)
+                for (int playerIndex = 0; playerIndex < totalPlayers; playerIndex++)
                 {
+                    Debug.Log($"Drawing from {openIndex} to {openIndex + GameSettings.TilesEveryRound}");
                     openIndex = DrawTilesAt(openIndex, GameSettings.TilesEveryRound);
                     if (self.PlayerIndex == playerIndex)
                     {
                         var tiles = self.HandTiles.GetRange(selfDrawn, GameSettings.TilesEveryRound);
                         selfDrawn += GameSettings.TilesEveryRound;
-                        Hands[playerIndex].DrawTiles(tiles);
                         self.ClientAddTiles(tiles);
                     }
-                    else
-                        Hands[playerIndex].DrawTiles(GameSettings.TilesEveryRound);
+
+                    Hands[playerIndex].DrawTiles(GameSettings.TilesEveryRound);
 
                     yield return new WaitForSeconds(0.5f);
                 }
             }
 
-            foreach (int playerIndex in playerIndices)
+            for (int playerIndex = 0; playerIndex < totalPlayers; playerIndex++)
             {
                 openIndex = DrawTileAt(openIndex);
                 if (self.PlayerIndex == playerIndex)
                 {
                     var tiles = self.HandTiles.GetRange(selfDrawn, GameSettings.TilesLastRound);
                     selfDrawn += GameSettings.TilesLastRound;
-                    Hands[playerIndex].DrawTiles(tiles);
                     self.ClientAddTiles(tiles);
                 }
-                else
-                    Hands[playerIndex].DrawTile();
+
+                Hands[playerIndex].DrawTile();
 
                 yield return new WaitForSeconds(0.5f);
             }
+
             self.InitialDrawComplete(true);
             self.HandTiles.Sort();
             self.ClientUpdateTiles();
@@ -115,6 +110,9 @@ namespace Single
             var wallIndex = index / MahjongConstants.WallTilesCount;
             var tileIndex = index % MahjongConstants.WallTilesCount;
             var wall = Walls[wallIndex];
+            if (wall == null) Debug.Log($"Wall at side {wallIndex} = null???");
+            if (wall.GetChild(tileIndex) == null) // bug : sometimes this is null
+                Debug.Log($"Tile {tileIndex} (total index {index}) at wall {wallIndex} is null");
             return wall.GetChild(tileIndex).gameObject;
         }
 

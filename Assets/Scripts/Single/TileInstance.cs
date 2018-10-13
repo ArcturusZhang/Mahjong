@@ -1,5 +1,4 @@
-﻿using Multi;
-using Single.MahjongDataType;
+﻿using Single.MahjongDataType;
 using UnityEngine;
 
 namespace Single
@@ -9,11 +8,18 @@ namespace Single
 	{
 		public Tile Tile;
 
+		private MeshRenderer meshRenderer;
+
+		private void Awake()
+		{
+			meshRenderer = GetComponent<MeshRenderer>();
+		}
+
 		public void SetTile(Tile tile)
 		{
 			Tile = tile;
-			var material = GetComponent<MeshRenderer>().material;
-			material.mainTexture = MahjongConstants.GetTileTexture(Tile);
+			var material = meshRenderer.material;
+			material.mainTexture = ResourceManager.Instance.GetTileTexture(tile);
 		}
 	}
 }

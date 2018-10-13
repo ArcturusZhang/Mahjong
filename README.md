@@ -8,4 +8,4 @@ Some resources are fetched from On-line web game [Majsoul](http://www.majsoul.co
 
 1. Complete and refine the main function of the game
 
-1. Async load the online scene and resources
+1. Async load the online scene and resources (done)

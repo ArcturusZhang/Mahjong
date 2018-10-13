@@ -1,5 +1,4 @@
-﻿using Single;
-using Single.MahjongDataType;
+﻿using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.UI;
 

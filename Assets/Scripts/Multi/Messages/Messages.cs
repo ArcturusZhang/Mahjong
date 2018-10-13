@@ -9,9 +9,27 @@ namespace Multi.Messages
 		public int PlayerIndex;
 	}
 
+	public class InitialDrawingMessage : MessageBase
+	{
+		public int Dice;
+		public int TotalPlayers;
+		public int MountainOpenIndex;
+		public Tile[] Tiles;
+		public int[] DoraIndicatorIndices;
+		public Tile[] DoraIndicators;
+	}
+
 	public class DrawTileMessage : MessageBase
 	{
 		public Tile Tile;
+	}
+
+	public class InTurnOperationMessage : MessageBase
+	{
+		public int PlayerIndex;
+		public InTurnOperation Operation;
+		public Meld Meld;
+		public int BonusTurnTime;
 	}
 
 	public class DiscardTileMessage : MessageBase
@@ -33,5 +51,6 @@ namespace Multi.Messages
 		public int PlayerIndex;
 		public OutTurnOperation Operation;
 		public Meld Meld;
+		public int BonusTurnTime;
 	}
 }

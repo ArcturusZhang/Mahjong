@@ -8,6 +8,12 @@ namespace Single.MahjongDataType
     [Serializable]
     public struct Meld : IComparable<Meld>
     {
+        public static IEqualityComparer<Meld> MeldConsiderColorEqualityComparer =
+            new MeldConsiderColorEqualityComparerImpl();
+
+        public static IEqualityComparer<Meld> MeldIgnoreColorEqualityComparer =
+            new MeldIgnoreColorEqualityComparerImpl();
+
         public MeldType Type;
         public Tile[] Tiles;
         public bool Revealed;
@@ -45,10 +51,12 @@ namespace Single.MahjongDataType
                             throw new ArgumentException("Invalid meld composition");
                     }
                     else throw new ArgumentException("Will not happen");
+
                     break;
                 case 4:
                     for (int i = 1; i < 4; i++)
-                        if (!Tiles[i].EqualsIgnoreColor(Tiles[i - 1])) throw new ArgumentException("Invalid meld composition");
+                        if (!Tiles[i].EqualsIgnoreColor(Tiles[i - 1]))
+                            throw new ArgumentException("Invalid meld composition");
                     Type = MeldType.Triplet;
                     IsKong = true;
                     break;
@@ -91,6 +99,25 @@ namespace Single.MahjongDataType
             return builder.ToString();
         }
 
+        public string ToStringIgnoreColor()
+        {
+            var builder = new StringBuilder();
+            foreach (var tile in Tiles)
+            {
+                builder.Append(tile.ToStringIgnoreColor());
+            }
+
+            if (Revealed) builder.Append("(revealed)");
+
+            return builder.ToString();
+        }
+
+        public bool ContainsIgnoreColor(Tile tile)
+        {
+            if (Suit != tile.Suit) return false;
+            return tile.Rank >= First.Rank && tile.Rank <= Last.Rank;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
@@ -106,9 +133,77 @@ namespace Single.MahjongDataType
             return true;
         }
 
+        public bool IdenticalTo(MeldType type, Tile first)
+        {
+            return Type == type && First.EqualsIgnoreColor(first);
+        }
+
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
+        }
+
+        public bool IsTwoSideIgnoreColor(Tile tile)
+        {
+            if (Type != MeldType.Sequence) return false;
+            if (!First.EqualsIgnoreColor(tile) && !Last.EqualsIgnoreColor(tile)) return false;
+            if (tile.Rank != 3 && tile.Rank != 7) return true;
+            if (tile.Rank == 3 && First.Rank == 1) return false;
+            if (tile.Rank == 7 && Last.Rank == 9) return false;
+            return true;
+        }
+
+        public bool IsTwoSideConsiderColor(Tile tile)
+        {
+            if (Type != MeldType.Sequence) return false;
+            if (!First.EqualsConsiderColor(tile) && !Last.EqualsConsiderColor(tile)) return false;
+            if (tile.Rank != 3 && tile.Rank != 7) return true;
+            if (tile.Rank == 3 && First.Rank == 1) return false;
+            if (tile.Rank == 7 && Last.Rank == 9) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// This comparer is identical to the default Equals method
+        /// </summary>
+        private struct MeldConsiderColorEqualityComparerImpl : IEqualityComparer<Meld>
+        {
+            public bool Equals(Meld x, Meld y)
+            {
+                if (x.Type != y.Type || x.Revealed != y.Revealed) return false;
+                if (x.Tiles.Length != y.Tiles.Length) return false;
+                for (int i = 0; i < x.Tiles.Length; i++)
+                {
+                    if (!x.Tiles[i].EqualsConsiderColor(y.Tiles[i])) return false;
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(Meld obj)
+            {
+                return obj.GetHashCode();
+            }
+        }
+
+        private struct MeldIgnoreColorEqualityComparerImpl : IEqualityComparer<Meld>
+        {
+            public bool Equals(Meld x, Meld y)
+            {
+                if (x.Type != y.Type || x.Revealed != y.Revealed) return false;
+                if (x.Tiles.Length != y.Tiles.Length) return false;
+                for (int i = 0; i < x.Tiles.Length; i++)
+                {
+                    if (!x.Tiles[i].EqualsIgnoreColor(y.Tiles[i])) return false;
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(Meld obj)
+            {
+                return obj.ToStringIgnoreColor().GetHashCode();
+            }
         }
     }
 

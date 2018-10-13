@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Linq;
+using Single;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -14,8 +14,6 @@ namespace UI
 
         private Coroutine currentTimerCoroutine;
 
-        private Sprite[] baseTimeSprites;
-        private Sprite[] bonusTimeSprites;
         private WaitForSeconds wait;
 
         private int mBaseTime;
@@ -24,27 +22,15 @@ namespace UI
         private void Awake()
         {
             wait = new WaitForSeconds(1f);
-            StartCoroutine(LoadSpritesAsync());
-        }
-
-        private IEnumerator LoadSpritesAsync()
-        {
-            var sprites = Resources.LoadAll<Sprite>("Textures/UIElements/mjdesktop3");
-            baseTimeSprites = new Sprite[10];
-            bonusTimeSprites = new Sprite[10];
-            for (int i = 0; i < 10; i++)
-            {
-                baseTimeSprites[i] = sprites.FirstOrDefault(sprite => sprite.name == $"time{i}");
-                Debug.Log(baseTimeSprites[i].name);
-                bonusTimeSprites[i] = sprites.FirstOrDefault(sprite => sprite.name == $"bonus{i}");
-                Debug.Log(bonusTimeSprites[i].name);
-            }
-
-            yield return null;
         }
 
         public void StartCountDown(int baseTime, int bonusTime, UnityAction callback)
         {
+            if (currentTimerCoroutine != null)
+            {
+                StopCoroutine(currentTimerCoroutine);
+                currentTimerCoroutine = null;
+            }
             mBaseTime = baseTime;
             mBonusTime = bonusTime;
             SetTime(mBaseTime, mBonusTime);
@@ -53,7 +39,11 @@ namespace UI
 
         public int StopCountDown()
         {
-            if (currentTimerCoroutine != null) StopCoroutine(currentTimerCoroutine);
+            if (currentTimerCoroutine != null)
+            {
+                StopCoroutine(currentTimerCoroutine);
+                currentTimerCoroutine = null;
+            }
             DisableVisualElements();
             return mBonusTime;
         }
@@ -113,7 +103,7 @@ namespace UI
             {
                 BaseTimeImage.gameObject.SetActive(true);
                 PlusImage.gameObject.SetActive(true);
-                var sprite = baseTimeSprites[baseTime];
+                var sprite = ResourceManager.Instance.GetBaseTimeSprite(baseTime);
                 BaseTimeImage.sprite = sprite;
             }
 
@@ -122,6 +112,7 @@ namespace UI
                 PlusImage.gameObject.SetActive(false);
                 BonusTimeImages[0].gameObject.SetActive(false);
                 BonusTimeImages[1].gameObject.SetActive(false);
+                return;
             }
 
             int first = bonusTime / 10;
@@ -131,14 +122,14 @@ namespace UI
             {
                 BonusTimeImages[0].gameObject.SetActive(true);
                 BonusTimeImages[1].gameObject.SetActive(true);
-                BonusTimeImages[0].sprite = bonusTimeSprites[first];
-                BonusTimeImages[1].sprite = bonusTimeSprites[second];
+                BonusTimeImages[0].sprite = ResourceManager.Instance.GetBonusTimeSprite(first);
+                BonusTimeImages[1].sprite = ResourceManager.Instance.GetBonusTimeSprite(second);
             }
             else
             {
                 BonusTimeImages[0].gameObject.SetActive(true);
                 BonusTimeImages[1].gameObject.SetActive(false);
-                BonusTimeImages[0].sprite = bonusTimeSprites[second];
+                BonusTimeImages[0].sprite = ResourceManager.Instance.GetBonusTimeSprite(second);
             }
         }
     }
