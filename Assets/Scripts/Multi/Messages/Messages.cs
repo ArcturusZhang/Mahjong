@@ -4,6 +4,11 @@ using UnityEngine.Networking;
 
 namespace Multi.Messages
 {
+	public class SceneLoadedMessage : MessageBase
+	{
+		public int PlayerIndex;
+	}
+	
 	public class ReadinessMessage : MessageBase
 	{
 		public int PlayerIndex;
@@ -50,7 +55,14 @@ namespace Multi.Messages
 	{
 		public int PlayerIndex;
 		public OutTurnOperation Operation;
+		public Tile DiscardedTile;
 		public Meld Meld;
 		public int BonusTurnTime;
+	}
+
+	public class DiscardAfterOpenMessage : MessageBase
+	{
+		public int PlayerIndex;
+		public Tile DefaultTile;
 	}
 }

@@ -108,3 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82f72df823929574097f50d6a051500b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0

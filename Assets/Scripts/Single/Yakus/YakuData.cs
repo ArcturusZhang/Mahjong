@@ -19,6 +19,7 @@ namespace Single.Yakus
         [Range(1, 2)] public int 纯绿一色 = 2;
         public bool 青天井 = false;
         public int InitialPoints = 25000;
+        public int BaseTurnTime = 5;
 
         private static readonly int[] Greens = {19, 20, 21, 23, 25, 32};
 

@@ -27,9 +27,11 @@ namespace Utils
             return -1;
         }
 
-        public static void RemoveLast<T>(this List<T> list)
+        public static T RemoveLast<T>(this List<T> list)
         {
+            var last = list[list.Count - 1];
             list.RemoveAt(list.Count - 1);
+            return last;
         }
 
         public static void Print(this Text text, string content, bool append = false)

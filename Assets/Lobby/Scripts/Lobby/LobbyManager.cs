@@ -450,7 +450,7 @@ namespace Prototype.NetworkLobby
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
             base.OnClientSceneChanged(conn);
-            conn.Send(MessageConstants.SceneLoadedMessageId, new IntegerMessage(conn.connectionId));
+//            conn.Send(MessageConstants.SceneLoadedMessageId, new SceneLoadedMessage {PlayerIndex = });
         }
     }
 }

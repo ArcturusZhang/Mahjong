@@ -8,28 +8,52 @@ namespace Single
 {
     public class MahjongSelector : MonoBehaviour
     {
+        [Header("Tiles & Holders")]
         public Transform[] Walls;
         public PlayerHandHolder[] Hands;
         public PlayerRiverHolder[] Rivers;
+        public PlayerOpenHolder[] Opens;
+
+        [Header("Prefabs")] public GameObject MeldLeft;
+        public GameObject MeldOpposite;
+        public GameObject MeldRight;
+        public GameObject MeldLeftKong;
+        public GameObject MeldOppositeKong;
+        public GameObject MeldRightKong;
+        public GameObject MeldSelfKong;
+
+        public IDictionary<MeldInstanceType, GameObject> PrefabDict { get; private set; }
+
+        private void Awake()
+        {
+            PrefabDict = new Dictionary<MeldInstanceType, GameObject>
+            {
+                {MeldInstanceType.Left, MeldLeft},
+                {MeldInstanceType.Opposite, MeldOpposite},
+                {MeldInstanceType.Right, MeldRight},
+                {MeldInstanceType.LeftKong, MeldLeftKong},
+                {MeldInstanceType.OppositeKong, MeldOppositeKong},
+                {MeldInstanceType.RightKong, MeldRightKong},
+                {MeldInstanceType.SelfKong, MeldSelfKong}
+            };
+        }
 
         public void DrawToPlayer(int nextIndex, int playerIndex)
         {
             DrawTileAt(nextIndex);
-            var hand = Hands[playerIndex];
-            hand.DrawingTile();
+            Hands[playerIndex].DrawingTile();
         }
 
         public void DrawToPlayer(int nextIndex, int playerIndex, Tile tile)
         {
             DrawTileAt(nextIndex);
-            var hand = Hands[playerIndex];
-            hand.DrawingTile(tile);
+            Hands[playerIndex].DrawingTile(tile);
         }
 
-        public void DiscardTile(Tile tile, bool discardLastDraw, int selfWind, bool richi = false)
+        public void DiscardTile(Tile tile, bool discardLastDraw, int playerIndex, bool richi = false)
         {
-            Hands[selfWind].DiscardTile(discardLastDraw);
-            Rivers[selfWind].DiscardTile(tile, richi);
+            Hands[playerIndex].DiscardTile(discardLastDraw);
+            Rivers[playerIndex].DiscardTile(tile, richi);
         }
 
         public void Refresh(int count, int playerIndex)
@@ -83,6 +107,11 @@ namespace Single
             self.HandTiles.Sort();
             self.ClientUpdateTiles();
         }
+        
+        public void OpenToPlayer(int playerIndex, Meld meld, Tile discardTile, MeldInstanceType instanceType)
+        {
+            Opens[playerIndex].Open(meld, discardTile, instanceType);
+        }
 
         private int DrawTileAt(int index)
         {
@@ -110,9 +139,9 @@ namespace Single
             var wallIndex = index / MahjongConstants.WallTilesCount;
             var tileIndex = index % MahjongConstants.WallTilesCount;
             var wall = Walls[wallIndex];
-            if (wall == null) Debug.Log($"Wall at side {wallIndex} = null???");
-            if (wall.GetChild(tileIndex) == null) // bug : sometimes this is null
-                Debug.Log($"Tile {tileIndex} (total index {index}) at wall {wallIndex} is null");
+            if (wall == null) Debug.LogWarning($"Wall at side {wallIndex} = null???");
+            if (wall.GetChild(tileIndex) == null)
+                Debug.LogWarning($"Tile {tileIndex} (total index {index}) at wall {wallIndex} is null");
             return wall.GetChild(tileIndex).gameObject;
         }
 

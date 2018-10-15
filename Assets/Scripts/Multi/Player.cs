@@ -18,7 +18,6 @@ namespace Multi
     public class Player : NetworkBehaviour
     {
         [Header("UI Elements")] public PlayerHandPanel PlayerHandPanel;
-//        public GameObject PlayerOpenPanel;
 
         [Header("Game Status")] [SyncVar] public int TotalPlayers;
 
@@ -36,9 +35,10 @@ namespace Multi
         [SyncVar] public bool WRichi = false;
         [SyncVar] public bool OneShot = false;
         [SyncVar] public int HandTilesCount = 0;
-        public List<Meld> OpenMelds;
+        [SerializeField] internal List<Meld> OpenMelds;
 
-        [Header("Player Private Data")] public List<Tile> HandTiles;
+        [Header("Player Private Data")] 
+        [SerializeField] internal List<Tile> HandTiles;
         public Tile LastDraw;
 
         private bool isRichiing = false;
@@ -69,6 +69,8 @@ namespace Multi
             LobbyManager.Instance.client.RegisterHandler(MessageConstants.DrawTileMessageId, OnDrawTileMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageConstants.InitialDrawingMessageId,
                 OnInitialDrawingMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageConstants.DiscardAfterOpenMessageId,
+                OnDiscardAfterOpenMessageReceived);
         }
 
         [Client]
@@ -88,13 +90,6 @@ namespace Multi
             Debug.Log("Player OnPoints is called");
             Points = amount;
             // todo -- change ui text
-        }
-
-        [Server]
-        internal void ServerDrawTiles(params Tile[] tiles)
-        {
-            HandTiles.AddRange(tiles);
-            HandTilesCount += tiles.Length;
         }
 
         [ClientRpc]
@@ -125,10 +120,11 @@ namespace Multi
             else
             {
                 int index = HandTiles.FindIndex(tile, Tile.TileConsiderColorEqualityComparer);
+                Assert.IsTrue(index >= 0, "There must be this tile");
                 HandTiles.RemoveAt(index);
-                PlayerHandPanel.DiscardTile(index);
                 HandTiles.Add(LastDraw);
                 HandTiles.Sort();
+                PlayerHandPanel.DiscardTile(index);
                 ClientUpdateTiles();
             }
 
@@ -176,8 +172,8 @@ namespace Multi
 
             EnableOutTurnPanel(chows, pongs, kongs, pointInfo.BasePoint > 0, discardTile);
             // wait for operation or time expires
-            MahjongManager.Instance.TimerController.StartCountDown(GameSettings.BaseTurnTime, BonusTurnTime,
-                () =>
+            MahjongManager.Instance.TimerController.StartCountDown(YakuManager.Instance.YakuData.BaseTurnTime,
+                BonusTurnTime, () =>
                 {
                     DisableOutTurnPanel();
                     SendOutTurnOperationMessage(new OutTurnOperationMessage
@@ -268,8 +264,8 @@ namespace Multi
                 return;
             }
 
-            MahjongManager.Instance.TimerController.StartCountDown(GameSettings.BaseTurnTime, BonusTurnTime,
-                () =>
+            MahjongManager.Instance.TimerController.StartCountDown(YakuManager.Instance.YakuData.BaseTurnTime,
+                BonusTurnTime, () =>
                 {
                     connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
                     {
@@ -463,25 +459,28 @@ namespace Multi
                         PlayerIndex = PlayerIndex,
                         Operation = OutTurnOperation.Rong,
                         BonusTurnTime = bonusTime,
+                        DiscardedTile = discardTile,
                         Meld = new Meld(true, discardTile)
                     });
                 });
             }
 
             if (chows.Count > 0)
-                HandleOpenMeldOperations(MahjongManager.Instance.ChowButton, chows, OutTurnOperation.Chow);
+                HandleOpenMeldOperations(MahjongManager.Instance.ChowButton, chows, OutTurnOperation.Chow, discardTile);
 
             if (pongs.Count > 0)
-                HandleOpenMeldOperations(MahjongManager.Instance.PongButton, pongs, OutTurnOperation.Pong);
+                HandleOpenMeldOperations(MahjongManager.Instance.PongButton, pongs, OutTurnOperation.Pong, discardTile);
 
             if (kongs.Count > 0)
-                HandleOpenMeldOperations(MahjongManager.Instance.OutTurnKongButton, kongs, OutTurnOperation.Kong);
+                HandleOpenMeldOperations(MahjongManager.Instance.OutTurnKongButton, kongs, OutTurnOperation.Kong,
+                    discardTile);
 
             MahjongManager.Instance.OutTurnOperationPanel.SetActive(true);
         }
 
         [Client] // todo -- skip selecting from MeldSelector when there is only one option
-        private void HandleOpenMeldOperations(Button button, ISet<Meld> melds, OutTurnOperation operation)
+        private void HandleOpenMeldOperations(Button button, ISet<Meld> melds, OutTurnOperation operation,
+            Tile discardTile)
         {
             button.gameObject.SetActive(true);
             ReplaceListener(button, () =>
@@ -495,8 +494,10 @@ namespace Multi
                         PlayerIndex = PlayerIndex,
                         Operation = operation,
                         BonusTurnTime = bonusTime,
+                        DiscardedTile = discardTile,
                         Meld = melds.First()
                     });
+                    return;
                 }
 
                 MahjongManager.Instance.MeldSelector.gameObject.SetActive(true);
@@ -510,6 +511,7 @@ namespace Multi
                         PlayerIndex = PlayerIndex,
                         Operation = operation,
                         BonusTurnTime = bonusTime,
+                        DiscardedTile = discardTile,
                         Meld = meld
                     });
                 });
@@ -531,14 +533,59 @@ namespace Multi
         }
 
         [ClientRpc] // todo -- complete this
-        internal void RpcPerformChow(Meld meld)
+        internal void RpcPerformChow(int playerIndex, Meld meld, Tile discardTile)
         {
-            ClientPerformChow(meld);
+            ClientPerformChow(playerIndex, meld, discardTile);
         }
 
         [Client]
-        private void ClientPerformChow(Meld meld)
+        private void ClientPerformChow(int playerIndex, Meld meld, Tile discardTile)
         {
+            Debug.Log($"Test: {PlayerIndex}");
+            MahjongManager.Instance.MahjongSelector.OpenToPlayer(playerIndex, meld, discardTile, MeldInstanceType.Left);
+//            HandTilesCount -= meld.Tiles.Length;
+            MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
+            // handle local player
+            if (!isLocalPlayer) return;
+            OpenMelds.Add(meld);
+            foreach (var tile in meld.Tiles)
+            {
+                HandTiles.Remove(tile);
+            }
+
+            MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
+            PlayerHandPanel.Refresh(this, HandTiles);
+        }
+
+        [Client] // todo -- this method contains bug, need fixing
+        private void OnDiscardAfterOpenMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<DiscardAfterOpenMessage>();
+            if (content.PlayerIndex != PlayerIndex)
+            {
+                Debug.LogError(
+                    $"Player {PlayerIndex} should not receive a message intended to player {content.PlayerIndex}");
+            }
+
+            discardMessageSent = false;
+            var defaultTile = content.DefaultTile;
+            Debug.Log($"Player {content.PlayerIndex} has received discard request, default is {defaultTile}");
+            DisableInTurnPanel();
+            HandTiles.Remove(defaultTile);
+            LastDraw = defaultTile;
+            PlayerHandPanel.Refresh(this, HandTiles);
+            PlayerHandPanel.DrawTile(this, defaultTile);
+            MahjongManager.Instance.TimerController.StartCountDown(YakuManager.Instance.YakuData.BaseTurnTime,
+                BonusTurnTime, () =>
+                {
+                    connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
+                    {
+                        DiscardTile = defaultTile,
+                        Operation = InTurnOperation.Discard,
+                        PlayerIndex = PlayerIndex,
+                        DiscardLastDraw = true
+                    });
+                });
         }
     }
 }

@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 114932082885956442}
   - component: {fileID: 114975771267236468}
   m_Layer: 5
-  m_Name: Meld
+  m_Name: SelectableMeld
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -302,17 +302,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 267cf8730b617694d8bbe783ec24363f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Meld:
-    Type: 2
-    Tiles:
-    - Suit: 3
-      Rank: 1
-      IsRed: 0
-    - Suit: 3
-      Rank: 1
-      IsRed: 0
-    Revealed: 1
-    IsKong: 0
   Tile1: {fileID: 114963423515993456}
   Tile2: {fileID: 114194559431071852}
   Tile3: {fileID: 114492633336798230}

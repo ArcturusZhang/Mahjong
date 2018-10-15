@@ -14,7 +14,7 @@ namespace Editor
         public static void CreateMahjongSet()
         {
             var mahjongSetGameObject = GameObject.Find("MahjongTiles");
-            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/tile.prefab");
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
             var mahjongSetTransform = mahjongSetGameObject.transform;
             int corner = 0;
             int count = 0;
@@ -57,7 +57,7 @@ namespace Editor
             for (int i = 0; i < 4; i++)
             {
                 var handTileHolder = GameObject.Find($"playerHand{i}");
-                var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/tile.prefab");
+                var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
                 for (int count = 0; count < MahjongConstants.CompleteHandTilesCount; count++)
                 {
                     var position = new Vector3(count * (MahjongConstants.TileWidth + MahjongConstants.Gap),
@@ -141,6 +141,194 @@ namespace Editor
                     if (p.y - 1 >= 0) queue.Enqueue(new Vector2Int(p.x, p.y - 1));
                 }
             }
+        }
+
+        [MenuItem("Mahjong/Meld Creation/Create Meld (Left)")]
+        public static void CreateMeldLeft()
+        {
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
+            var meldObject = new GameObject("Meld (left)");
+            meldObject.transform.position = Vector3.zero;
+            meldObject.transform.rotation = Quaternion.identity;
+            var tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileHeight / 2 - 2 * MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
+        }
+
+        [MenuItem("Mahjong/Meld Creation/Create MeldKong (Left)")]
+        public static void CreateMeldLeftKong()
+        {
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
+            var meldObject = new GameObject("MeldKong (left)");
+            meldObject.transform.position = Vector3.zero;
+            meldObject.transform.rotation = Quaternion.identity;
+            var tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileHeight / 2 - 3 * MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
+        }
+
+        [MenuItem("Mahjong/Meld Creation/Create Meld (Right)")]
+        public static void CreateMeldRight()
+        {
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
+            var meldObject = new GameObject("Meld (right)");
+            meldObject.transform.position = Vector3.zero;
+            meldObject.transform.rotation = Quaternion.identity;
+            var tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileHeight / 2);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileHeight);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth - MahjongConstants.TileHeight);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+        }
+
+        [MenuItem("Mahjong/Meld Creation/Create MeldKong (Right)")]
+        public static void CreateMeldRightKong()
+        {
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
+            var meldObject = new GameObject("MeldKong (right)");
+            meldObject.transform.position = Vector3.zero;
+            meldObject.transform.rotation = Quaternion.identity;
+            var tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileHeight / 2);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileHeight);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth - MahjongConstants.TileHeight);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth - MahjongConstants.TileHeight);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+        }
+
+        [MenuItem("Mahjong/Meld Creation/Create Meld (Opposite)")]
+        public static void CreateMeldOpposite()
+        {
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
+            var meldObject = new GameObject("Meld (opposite)");
+            meldObject.transform.position = Vector3.zero;
+            meldObject.transform.rotation = Quaternion.identity;
+            var tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileHeight / 2 - MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth - MahjongConstants.TileHeight);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+        }
+
+        [MenuItem("Mahjong/Meld Creation/Create MeldKong (Opposite)")]
+        public static void CreateMeldOppositeKong()
+        {
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
+            var meldObject = new GameObject("MeldKong (opposite)");
+            meldObject.transform.position = Vector3.zero;
+            meldObject.transform.rotation = Quaternion.identity;
+            var tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileHeight / 2 - 2 * MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth - MahjongConstants.TileHeight);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+        }
+
+        [MenuItem("Mahjong/Meld Creation/Create MeldKong (Self)")]
+        public static void CreateMeldSelf()
+        {
+            var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Mahjong/tile.prefab");
+            var meldObject = new GameObject("MeldKong (self)");
+            meldObject.transform.position = Vector3.zero;
+            meldObject.transform.rotation = Quaternion.identity;
+            var tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2);
+            tileObject.transform.localRotation = Quaternion.Euler(-180, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition =
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
+            tileObject = Instantiate(tilePrefab, meldObject.transform);
+            tileObject.transform.localPosition = 
+                new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
+                    -MahjongConstants.TileWidth / 2 - 3 * MahjongConstants.TileWidth);
+            tileObject.transform.localRotation = Quaternion.Euler(-180, 270, -90);
         }
     }
 }
