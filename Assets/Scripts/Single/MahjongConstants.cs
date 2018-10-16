@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Single.MahjongDataType;
 using UnityEngine;
 
@@ -32,6 +33,26 @@ namespace Single
         {
             int index = tile.IsRed ? 0 : tile.Rank;
             return index + tile.Suit.ToString().ToLower();
+        }
+
+        public static void Remove(this List<Tile> handTiles, Meld meld, Tile except)
+        {
+            int index = Array.FindIndex(meld.Tiles, tile => tile.EqualsConsiderColor(except));
+            for (int i = 0; i < meld.Tiles.Length; i++)
+            {
+                if (i == index) continue;
+                handTiles.Remove(meld.Tiles[i]);
+            }
+        }
+
+        public static MeldInstanceType GetMeldDirection(int currentPlayerIndex, int discardPlayerIndex,
+            bool isKong = false)
+        {
+            if (RepeatIndex(currentPlayerIndex + 1, WallCount) == discardPlayerIndex) 
+                return !isKong ? MeldInstanceType.Right : MeldInstanceType.RightKong;
+            if (RepeatIndex(currentPlayerIndex - 1, WallCount) == discardPlayerIndex) 
+                return !isKong ? MeldInstanceType.Left : MeldInstanceType.LeftKong;
+            return !isKong ? MeldInstanceType.Opposite : MeldInstanceType.OppositeKong;
         }
     }
 

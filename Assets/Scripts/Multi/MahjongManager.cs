@@ -39,6 +39,7 @@ namespace Multi
 
         [Header("Object Reference Registrations")]
         public MahjongSelector MahjongSelector;
+
         public GameObject PlayerHandPanel;
         public MahjongSetManager MahjongSetManager;
 
@@ -58,8 +59,8 @@ namespace Multi
         private List<Player> players;
         private bool[] responseReceived;
         private OutTurnOperationMessage[] outTurnOperations;
-        private List<Tile>[] playerHandTiles;
-        private List<Meld>[] playerOpenMelds;
+        [SerializeField] private List<Tile>[] playerHandTiles;
+        [SerializeField] private List<Meld>[] playerOpenMelds;
 
         public static MahjongManager Instance { get; private set; }
 
@@ -246,6 +247,7 @@ namespace Multi
                 // initialize open meld list
                 playerOpenMelds[current] = new List<Meld>();
             }
+
             CurrentPlayerIndex = 0;
             for (int current = 0; current < GameSettings.InitialDrawRound * players.Count; current++)
             {
@@ -268,7 +270,9 @@ namespace Multi
                 CurrentPlayerIndex = NextPlayerIndex;
             }
 
-            Assert.AreEqual(MahjongSetManager.NextIndex - MahjongSetManager.OpenIndex, count,
+            Assert.AreEqual(
+                MahjongConstants.RepeatIndex(MahjongSetManager.NextIndex - MahjongSetManager.OpenIndex,
+                    MahjongConstants.TotalTilesCount), count,
                 $"MahjongSetManager {MahjongSetManager.NextIndex - MahjongSetManager.OpenIndex}, count {count}");
 
             return count;
@@ -383,6 +387,7 @@ namespace Multi
                 playerHandTiles[CurrentPlayerIndex].Add(CurrentTurnPlayer.LastDraw);
                 playerHandTiles[CurrentPlayerIndex].Sort();
             }
+
             CurrentTurnPlayer.BonusTurnTime = content.BonusTurnTime; // update bonus time left
             if (waitForClientCoroutine != null)
             {
@@ -479,7 +484,8 @@ namespace Multi
                 Debug.Log($"[Server] {rongMessages.Length} players claimed RONG");
                 foreach (var message in rongMessages)
                 {
-                    Debug.Log($"[Server] Player {message.PlayerIndex} has claimed a RONG of tile {message.DiscardedTile}");
+                    Debug.Log(
+                        $"[Server] Player {message.PlayerIndex} has claimed a RONG of tile {message.DiscardedTile}");
                 }
 
                 // todo -- rpc call to perform this operation
@@ -505,7 +511,28 @@ namespace Multi
                 var message = outTurnOperations[pongMessageIndex];
                 Debug.Log($"[Server] Player {message.PlayerIndex} has claimed PONG of meld {message.Meld}");
                 OpenMeldBreaksOneShotAndFirstRound();
-                // todo -- rpc call to perform this operation
+                // rpc call to perform PONG operation
+                int discardPlayerIndex = CurrentPlayerIndex;
+                CurrentPlayerIndex = message.PlayerIndex;
+                CurrentTurnPlayer = players[CurrentPlayerIndex];
+                CurrentTurnPlayer.RpcPerformPong(message.PlayerIndex, message.Meld, message.DiscardedTile,
+                    discardPlayerIndex);
+                // server side data update
+                CurrentTurnPlayer.HandTilesCount -= message.Meld.Tiles.Length;
+                playerHandTiles[CurrentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
+                playerOpenMelds[CurrentPlayerIndex].Add(message.Meld);
+                var defaultTile = playerHandTiles[CurrentPlayerIndex].RemoveLast();
+                CurrentTurnPlayer.LastDraw = defaultTile;
+                Assert.IsTrue(playerHandTiles[CurrentPlayerIndex].Count == CurrentTurnPlayer.HandTilesCount,
+                    "Hand tile count should equals to data on server");
+                Debug.Log($"[Server] Sending message to player {message.PlayerIndex}, default discard: {defaultTile}");
+                CurrentTurnPlayer.connectionToClient.Send(MessageConstants.DiscardAfterOpenMessageId,
+                    new DiscardAfterOpenMessage
+                    {
+                        PlayerIndex = message.PlayerIndex,
+                        DefaultTile = defaultTile
+                    });
+                ServerState_PlayerInTurn(defaultTile);
                 return;
             }
 
@@ -516,22 +543,26 @@ namespace Multi
                 var message = outTurnOperations[chowMessageIndex];
                 Debug.Log($"[Server] Player {message.PlayerIndex} has claimed CHOW of meld {message.Meld}");
                 OpenMeldBreaksOneShotAndFirstRound();
-                // todo -- rpc call to perform this operation
+                // rpc call to perform CHOW operation
                 CurrentPlayerIndex = message.PlayerIndex;
                 CurrentTurnPlayer = players[CurrentPlayerIndex];
+                CurrentTurnPlayer.RpcPerformChow(message.Meld, message.DiscardedTile);
+                // server side data update
                 CurrentTurnPlayer.HandTilesCount -= message.Meld.Tiles.Length;
-                CurrentTurnPlayer.RpcPerformChow(message.PlayerIndex, message.Meld, message.DiscardedTile);
+                playerHandTiles[CurrentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
+                playerOpenMelds[CurrentPlayerIndex].Add(message.Meld);
                 var defaultTile = playerHandTiles[CurrentPlayerIndex].RemoveLast();
                 CurrentTurnPlayer.LastDraw = defaultTile;
-                playerOpenMelds[CurrentPlayerIndex].Add(message.Meld);
-                ServerState_PlayerInTurn(defaultTile);
+                Assert.IsTrue(playerHandTiles[CurrentPlayerIndex].Count == CurrentTurnPlayer.HandTilesCount,
+                    "Hand tile count should equals to data on server");
                 Debug.Log($"[Server] Sending message to player {message.PlayerIndex}, default discard: {defaultTile}");
-                players[message.PlayerIndex].connectionToClient.Send(MessageConstants.DiscardAfterOpenMessageId,
+                CurrentTurnPlayer.connectionToClient.Send(MessageConstants.DiscardAfterOpenMessageId,
                     new DiscardAfterOpenMessage
                     {
                         PlayerIndex = message.PlayerIndex,
                         DefaultTile = defaultTile
                     });
+                ServerState_PlayerInTurn(defaultTile);
                 return;
             }
 

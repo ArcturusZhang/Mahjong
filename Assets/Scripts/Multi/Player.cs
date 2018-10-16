@@ -37,8 +37,9 @@ namespace Multi
         [SyncVar] public int HandTilesCount = 0;
         [SerializeField] internal List<Meld> OpenMelds;
 
-        [Header("Player Private Data")] 
-        [SerializeField] internal List<Tile> HandTiles;
+        [Header("Player Private Data")] [SerializeField]
+        internal List<Tile> HandTiles;
+
         public Tile LastDraw;
 
         private bool isRichiing = false;
@@ -149,7 +150,8 @@ namespace Multi
             var handStatus = GetCurrentHandStatus();
             var roundStatus = GetCurrentRoundState();
             var pointInfo = YakuManager.Instance.GetPointInfo(decomposes, discardTile, handStatus, roundStatus);
-            Debug.Log($"OutTurnOperation: {pointInfo}");
+            Debug.Log($"Client is handling out turn operation with tile {discardTile}, chows: {chows.Count}, "
+                      + $"pongs: {pongs.Count}, kongs: {kongs.Count}, point info: {pointInfo}");
             // after richi, only response to RONG
             if (Richi)
             {
@@ -288,6 +290,7 @@ namespace Multi
             var roundStatus = GetCurrentRoundState();
             var pointInfo = YakuManager.Instance.GetPointInfo(handTiles, openMelds, tile, handStatus, roundStatus);
             if (pointInfo.BasePoint > 0) operation |= InTurnOperation.Tsumo;
+            Debug.Log($"Client is handling in turn operation, tile {tile}, point info: {pointInfo}");
             // test for kong
             int count = 0;
             foreach (var handTile in handTiles)
@@ -465,24 +468,22 @@ namespace Multi
                 });
             }
 
-            if (chows.Count > 0)
-                HandleOpenMeldOperations(MahjongManager.Instance.ChowButton, chows, OutTurnOperation.Chow, discardTile);
+            HandleOpenMeldOperations(MahjongManager.Instance.ChowButton, chows, OutTurnOperation.Chow, discardTile);
 
-            if (pongs.Count > 0)
-                HandleOpenMeldOperations(MahjongManager.Instance.PongButton, pongs, OutTurnOperation.Pong, discardTile);
+            HandleOpenMeldOperations(MahjongManager.Instance.PongButton, pongs, OutTurnOperation.Pong, discardTile);
 
-            if (kongs.Count > 0)
-                HandleOpenMeldOperations(MahjongManager.Instance.OutTurnKongButton, kongs, OutTurnOperation.Kong,
-                    discardTile);
+            HandleOpenMeldOperations(MahjongManager.Instance.OutTurnKongButton, kongs, OutTurnOperation.Kong,
+                discardTile);
 
             MahjongManager.Instance.OutTurnOperationPanel.SetActive(true);
         }
 
-        [Client] // todo -- skip selecting from MeldSelector when there is only one option
+        [Client] // todo -- fix bugs
         private void HandleOpenMeldOperations(Button button, ISet<Meld> melds, OutTurnOperation operation,
             Tile discardTile)
         {
-            button.gameObject.SetActive(true);
+            button.gameObject.SetActive(melds.Count > 0);
+            if (melds.Count == 0) return;
             ReplaceListener(button, () =>
             {
                 if (melds.Count == 1)
@@ -532,32 +533,51 @@ namespace Multi
             button.onClick.AddListener(call);
         }
 
-        [ClientRpc] // todo -- complete this
-        internal void RpcPerformChow(int playerIndex, Meld meld, Tile discardTile)
+        [ClientRpc]
+        internal void RpcPerformChow(Meld meld, Tile discardTile)
         {
-            ClientPerformChow(playerIndex, meld, discardTile);
+            ClientPerformChow(meld, discardTile);
         }
 
         [Client]
-        private void ClientPerformChow(int playerIndex, Meld meld, Tile discardTile)
+        private void ClientPerformChow(Meld meld, Tile discardTile)
         {
-            Debug.Log($"Test: {PlayerIndex}");
-            MahjongManager.Instance.MahjongSelector.OpenToPlayer(playerIndex, meld, discardTile, MeldInstanceType.Left);
-//            HandTilesCount -= meld.Tiles.Length;
+            Debug.Log(
+                $"Player {PlayerIndex} is performing CHOW operation with meld {meld} on discardTile {discardTile}");
+            // todo -- more visual effect
+            MahjongManager.Instance.MahjongSelector.OpenToPlayer(PlayerIndex, meld, discardTile, MeldInstanceType.Left);
             MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
             // handle local player
             if (!isLocalPlayer) return;
+            DisableOutTurnPanel();
+            HandTiles.Remove(meld, discardTile);
             OpenMelds.Add(meld);
-            foreach (var tile in meld.Tiles)
-            {
-                HandTiles.Remove(tile);
-            }
-
             MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
-            PlayerHandPanel.Refresh(this, HandTiles);
         }
 
-        [Client] // todo -- this method contains bug, need fixing
+        [ClientRpc]
+        internal void RpcPerformPong(int playerIndex, Meld meld, Tile discardTile, int discardPlayerIndex)
+        {
+            ClientPerformPong(meld, discardTile, MahjongConstants.GetMeldDirection(playerIndex, discardPlayerIndex));
+        }
+
+        [Client]
+        private void ClientPerformPong(Meld meld, Tile discardTile, MeldInstanceType direction)
+        {
+            Debug.Log(
+                $"Player {PlayerIndex} is performing PONG operation with meld {meld} on discardTile {discardTile} from {direction}");
+            // todo -- more visual effect
+            MahjongManager.Instance.MahjongSelector.OpenToPlayer(PlayerIndex, meld, discardTile, direction);
+            MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
+            // handle local player
+            if (!isLocalPlayer) return;
+            DisableOutTurnPanel();
+            HandTiles.Remove(meld, discardTile);
+            OpenMelds.Add(meld);
+            MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
+        }
+
+        [Client]
         private void OnDiscardAfterOpenMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<DiscardAfterOpenMessage>();
