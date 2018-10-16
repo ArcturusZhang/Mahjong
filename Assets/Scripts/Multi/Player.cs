@@ -24,7 +24,7 @@ namespace Multi
         [SyncVar]
         public int PlayerIndex = -1; // Round order index -- 0: East, 1: South, 2: West, 3: North (This does not change)
 
-        [SyncVar] public int BonusTurnTime = 20;
+        [SyncVar] public int BonusTurnTime;
         // todo -- add more game status here, such as prevailing wind
 
         [Header("Player Public Data")] [SyncVar]
@@ -112,7 +112,7 @@ namespace Multi
             Debug.Log($"Player {PlayerIndex}'s turn, tile {tile} is discarded. DiscardLastDraw: {discardLastDraw}");
             MahjongManager.Instance.MahjongSelector.DiscardTile(tile, discardLastDraw, PlayerIndex,
                 operation.HasFlag(InTurnOperation.Richi));
-            StartCoroutine(ClientUpdateTilesForSeconds(GameSettings.PlayerHandTilesSortDelay));
+            StartCoroutine(ClientUpdateTilesForSeconds(GameManager.Instance.GameSettings.PlayerHandTilesSortDelay));
             if (!isLocalPlayer) return;
             if (discardLastDraw)
             {
@@ -149,7 +149,7 @@ namespace Multi
             var decomposes = MahjongLogic.Decompose(HandTiles, OpenMelds, discardTile);
             var handStatus = GetCurrentHandStatus();
             var roundStatus = GetCurrentRoundState();
-            var pointInfo = YakuManager.Instance.GetPointInfo(decomposes, discardTile, handStatus, roundStatus);
+            var pointInfo = GameManager.Instance.GetPointInfo(decomposes, discardTile, handStatus, roundStatus);
             Debug.Log($"Client is handling out turn operation with tile {discardTile}, chows: {chows.Count}, "
                       + $"pongs: {pongs.Count}, kongs: {kongs.Count}, point info: {pointInfo}");
             // after richi, only response to RONG
@@ -174,7 +174,7 @@ namespace Multi
 
             EnableOutTurnPanel(chows, pongs, kongs, pointInfo.BasePoint > 0, discardTile);
             // wait for operation or time expires
-            MahjongManager.Instance.TimerController.StartCountDown(YakuManager.Instance.YakuData.BaseTurnTime,
+            MahjongManager.Instance.TimerController.StartCountDown(GameManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
                 {
                     DisableOutTurnPanel();
@@ -266,7 +266,7 @@ namespace Multi
                 return;
             }
 
-            MahjongManager.Instance.TimerController.StartCountDown(YakuManager.Instance.YakuData.BaseTurnTime,
+            MahjongManager.Instance.TimerController.StartCountDown(GameManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
                 {
                     connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
@@ -288,7 +288,7 @@ namespace Multi
             // test for tsumo
             var handStatus = GetCurrentHandStatus();
             var roundStatus = GetCurrentRoundState();
-            var pointInfo = YakuManager.Instance.GetPointInfo(handTiles, openMelds, tile, handStatus, roundStatus);
+            var pointInfo = GameManager.Instance.GetPointInfo(handTiles, openMelds, tile, handStatus, roundStatus);
             if (pointInfo.BasePoint > 0) operation |= InTurnOperation.Tsumo;
             Debug.Log($"Client is handling in turn operation, tile {tile}, point info: {pointInfo}");
             // test for kong
@@ -312,7 +312,7 @@ namespace Multi
         [Client]
         private IEnumerator RichiAutoDiscard(Tile tile)
         {
-            yield return new WaitForSeconds(GameSettings.AutoDiscardDelayAfterRichi);
+            yield return new WaitForSeconds(GameManager.Instance.GameSettings.AutoDiscardDelayAfterRichi);
             connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
             {
                 DiscardTile = tile,
@@ -595,7 +595,7 @@ namespace Multi
             LastDraw = defaultTile;
             PlayerHandPanel.Refresh(this, HandTiles);
             PlayerHandPanel.DrawTile(this, defaultTile);
-            MahjongManager.Instance.TimerController.StartCountDown(YakuManager.Instance.YakuData.BaseTurnTime,
+            MahjongManager.Instance.TimerController.StartCountDown(GameManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
                 {
                     connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage

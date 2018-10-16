@@ -7,10 +7,11 @@ using UnityEngine.Assertions;
 
 namespace Single.Yakus
 {
-    [CreateAssetMenu(menuName = "Mahjong/Yakus")]
+    [CreateAssetMenu(menuName = "Mahjong/YakuData")]
     public class YakuData : ScriptableObject
     {
-        public static int YakumanBaseFan = 13;
+        [Header("Yaku settings")] 
+        public const int YakumanBaseFan = 13;
         public bool 允许食断 = true;
         public bool 连风对子额外加符 = true;
         [Range(1, 2)] public int 四暗刻单骑 = 2;
@@ -18,8 +19,6 @@ namespace Single.Yakus
         [Range(1, 2)] public int 纯正九连宝灯 = 2;
         [Range(1, 2)] public int 纯绿一色 = 2;
         public bool 青天井 = false;
-        public int InitialPoints = 25000;
-        public int BaseTurnTime = 5;
 
         private static readonly int[] Greens = {19, 20, 21, 23, 25, 32};
 

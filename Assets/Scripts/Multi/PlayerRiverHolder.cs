@@ -11,7 +11,7 @@ namespace Multi
         public float XOffset = 0;
         public float YOffset = 0;
         public float Gap = 0.001f;
-        private readonly List<DiscardedTile> tiles = new List<DiscardedTile>();
+        internal readonly List<DiscardedTile> tiles = new List<DiscardedTile>();
 
         public void DiscardTile(Tile tile, bool richi)
         {
@@ -39,17 +39,17 @@ namespace Multi
             var tileInstance = tileObject.GetComponent<TileInstance>();
             tileInstance.SetTile(tile);
             tiles.Add(discardedTile);
-            int currentRow = (tiles.Count - 1) / GameSettings.TilesPerRowInRiver;
-            if (currentRow == GameSettings.MaxRowInRiver - 1) return;
+            int currentRow = (tiles.Count - 1) / GameManager.Instance.GameSettings.TilesPerRowInRiver;
+            if (currentRow == GameManager.Instance.GameSettings.MaxRowInRiver - 1) return;
 
-            if (tiles.Count % GameSettings.TilesPerRowInRiver == 0) // change row
+            if (tiles.Count % GameManager.Instance.GameSettings.TilesPerRowInRiver == 0) // change row
             {
                 XOffset = 0;
                 YOffset += MahjongConstants.TileHeight;
             }
         }
 
-        private struct DiscardedTile
+        internal struct DiscardedTile
         {
             public Tile Tile;
             public bool Richi;

@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   YakuData: {fileID: 11400000, guid: a613a7e49d525434b922fd32b51111e3, type: 2}
+  GameSettings: {fileID: 11400000, guid: 37a8861d2ac47e54fa164b2c642c3755, type: 2}
 --- !u!114 &1142396071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,8 +167,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9658da4929316514e9c80ed6247051ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseTimeSprites: []
-  BonusTimeSprites: []
 --- !u!1001 &1291009681
 Prefab:
   m_ObjectHideFlags: 0

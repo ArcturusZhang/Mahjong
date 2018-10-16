@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Single.MahjongDataType;
+using Single.Yakus;
 using UnityEngine;
 
-namespace Single.Yakus
+namespace Single
 {
-    public class YakuManager : MonoBehaviour
+    public class GameManager : MonoBehaviour
     {
-        public static YakuManager Instance;
+        public static GameManager Instance;
 
         public YakuData YakuData;
+        public GameSettings GameSettings;
 
         private IEnumerable<MethodInfo> yakuMethods;
 
@@ -213,7 +214,7 @@ namespace Single.Yakus
             {
                 TotalFan = Fan + dora + uraDora + redDora;
                 int point = Fu * (int) Math.Pow(2, TotalFan + 2);
-                BasePoint = YakuManager.ToNextUnit(point, 100);
+                BasePoint = GameManager.ToNextUnit(point, 100);
             }
             else if (IsYakuman)
             {
@@ -231,7 +232,7 @@ namespace Single.Yakus
                 else
                 {
                     int point = Fu * (int) Math.Pow(2, TotalFan + 2);
-                    point = YakuManager.ToNextUnit(point, 100);
+                    point = GameManager.ToNextUnit(point, 100);
                     BasePoint = Math.Min(Mangan, point);
                 }
             }

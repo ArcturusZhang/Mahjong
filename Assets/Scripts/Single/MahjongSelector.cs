@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Multi;
 using Single.MahjongDataType;
+using Single.Yakus;
 using UnityEngine;
 
 namespace Single
@@ -69,20 +70,20 @@ namespace Single
         public IEnumerator DrawInitialCoroutine(Player self, int openIndex, int totalPlayers)
         {
             int selfDrawn = 0;
-            for (int round = 0; round < GameSettings.InitialDrawRound; round++)
+            for (int round = 0; round < GameManager.Instance.GameSettings.InitialDrawRound; round++)
             {
                 for (int playerIndex = 0; playerIndex < totalPlayers; playerIndex++)
                 {
-                    Debug.Log($"Drawing from {openIndex} to {openIndex + GameSettings.TilesEveryRound}");
-                    openIndex = DrawTilesAt(openIndex, GameSettings.TilesEveryRound);
+                    Debug.Log($"Drawing from {openIndex} to {openIndex + GameManager.Instance.GameSettings.TilesEveryRound}");
+                    openIndex = DrawTilesAt(openIndex, GameManager.Instance.GameSettings.TilesEveryRound);
                     if (self.PlayerIndex == playerIndex)
                     {
-                        var tiles = self.HandTiles.GetRange(selfDrawn, GameSettings.TilesEveryRound);
-                        selfDrawn += GameSettings.TilesEveryRound;
+                        var tiles = self.HandTiles.GetRange(selfDrawn, GameManager.Instance.GameSettings.TilesEveryRound);
+                        selfDrawn += GameManager.Instance.GameSettings.TilesEveryRound;
                         self.ClientAddTiles(tiles);
                     }
 
-                    Hands[playerIndex].DrawTiles(GameSettings.TilesEveryRound);
+                    Hands[playerIndex].DrawTiles(GameManager.Instance.GameSettings.TilesEveryRound);
 
                     yield return new WaitForSeconds(0.5f);
                 }
@@ -93,8 +94,8 @@ namespace Single
                 openIndex = DrawTileAt(openIndex);
                 if (self.PlayerIndex == playerIndex)
                 {
-                    var tiles = self.HandTiles.GetRange(selfDrawn, GameSettings.TilesLastRound);
-                    selfDrawn += GameSettings.TilesLastRound;
+                    var tiles = self.HandTiles.GetRange(selfDrawn, GameManager.Instance.GameSettings.TilesLastRound);
+                    selfDrawn += GameManager.Instance.GameSettings.TilesLastRound;
                     self.ClientAddTiles(tiles);
                 }
 

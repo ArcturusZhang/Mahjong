@@ -163,7 +163,7 @@ namespace Multi
             {
                 players[i].PlayerIndex = i;
                 players[i].TotalPlayers = players.Count;
-                players[i].Points = YakuManager.Instance.YakuData.InitialPoints;
+                players[i].Points = GameManager.Instance.GameSettings.InitialPoints;
             }
 
             FieldCount = 1;
@@ -204,12 +204,14 @@ namespace Multi
 
             foreach (var player in players)
             {
+                player.BonusTurnTime = GameManager.Instance.GameSettings.BonusTurnTime;
                 player.HandTilesCount = MahjongConstants.CompleteHandTilesCount;
                 player.Richi = false;
             }
 
             // Throwing dice
-            int dice = Random.Range(GameSettings.DiceMin, GameSettings.DiceMax + 1);
+            int dice = Random.Range(GameManager.Instance.GameSettings.DiceMin,
+                GameManager.Instance.GameSettings.DiceMax + 1);
             Debug.Log($"Dice rolls {dice}");
             OpenIndex = MahjongSetManager.Open(dice);
             // Draw tiles in turn
@@ -249,24 +251,22 @@ namespace Multi
             }
 
             CurrentPlayerIndex = 0;
-            for (int current = 0; current < GameSettings.InitialDrawRound * players.Count; current++)
+            for (int current = 0;
+                current < GameManager.Instance.GameSettings.InitialDrawRound * players.Count;
+                current++)
             {
-//                CurrentTurnPlayer = players[CurrentPlayerIndex];
-                var tiles = MahjongSetManager.DrawTiles(GameSettings.TilesEveryRound);
+                var tiles = MahjongSetManager.DrawTiles(GameManager.Instance.GameSettings.TilesEveryRound);
                 count += tiles.Count;
                 playerHandTiles[CurrentPlayerIndex].AddRange(tiles.ToArray());
-//                CurrentTurnPlayer.ServerDrawTiles(tiles.ToArray());
                 CurrentPlayerIndex = NextPlayerIndex;
             }
 
             Assert.AreEqual(CurrentPlayerIndex, 0, "Something has went wrong in method ServerDrawInitialTiles");
             for (int current = 0; current < players.Count; current++)
             {
-//                CurrentTurnPlayer = players[CurrentPlayerIndex];
                 var tile = MahjongSetManager.DrawTile();
                 count++;
                 playerHandTiles[CurrentPlayerIndex].Add(tile);
-//                CurrentTurnPlayer.ServerDrawTiles(tile);
                 CurrentPlayerIndex = NextPlayerIndex;
             }
 
@@ -359,8 +359,9 @@ namespace Multi
         [Server]
         private IEnumerator ServerWaitForClientDiscard(Tile defaultTile, bool discardLastDraw)
         {
-            yield return new WaitForSeconds(YakuManager.Instance.YakuData.BaseTurnTime +
-                                            CurrentTurnPlayer.BonusTurnTime + GameSettings.ServerBufferTime);
+            yield return new WaitForSeconds(GameManager.Instance.GameSettings.BaseTurnTime +
+                                            CurrentTurnPlayer.BonusTurnTime +
+                                            GameManager.Instance.GameSettings.ServerBufferTime);
             Debug.Log($"[Server] Time out for player {CurrentTurnPlayer.PlayerIndex}, "
                       + $"automatically discard a tile {defaultTile}");
             ServerState_PlayerDiscardTile(defaultTile, discardLastDraw, InTurnOperation.Discard);
@@ -433,8 +434,8 @@ namespace Multi
         private IEnumerator ServerWaitForOutTurnOperations()
         {
             var maxBonusTime = players.Max(player => player.BonusTurnTime);
-            var serverWaitTime = YakuManager.Instance.YakuData.BaseTurnTime + maxBonusTime +
-                                 GameSettings.ServerBufferTime;
+            var serverWaitTime = GameManager.Instance.GameSettings.BaseTurnTime + maxBonusTime +
+                                 GameManager.Instance.GameSettings.ServerBufferTime;
             Debug.Log($"[Server] Server will wait for {serverWaitTime} seconds");
             yield return new WaitForSeconds(serverWaitTime);
             Debug.Log("[Server] Time out when waiting out turn operations.");
