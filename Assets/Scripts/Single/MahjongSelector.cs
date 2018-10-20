@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Multi;
 using Single.MahjongDataType;
-using Single.Yakus;
 using UnityEngine;
 
 namespace Single

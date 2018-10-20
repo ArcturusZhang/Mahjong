@@ -49,6 +49,8 @@ namespace Single
 
         public int NextIndex => nextIndex;
 
+        public int NextLingshangIndex => lingshangIndices[lingshangDrawn];
+
         public void ShuffleSet()
         {
             allTiles.Shuffle();

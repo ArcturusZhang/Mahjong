@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Single.Yakus
+namespace Single.MahjongDataType
 {
     [CreateAssetMenu(menuName = "Mahjong/YakuData")]
     public class YakuData : ScriptableObject

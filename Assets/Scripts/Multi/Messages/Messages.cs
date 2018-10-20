@@ -35,6 +35,7 @@ namespace Multi.Messages
 		public InTurnOperation Operation;
 		public Meld Meld;
 		public int BonusTurnTime;
+		public PointInfo PointInfo;
 	}
 
 	public class DiscardTileMessage : MessageBase
@@ -45,12 +46,7 @@ namespace Multi.Messages
 		public Tile DiscardTile;
 		public int BonusTurnTime;
 	}
-
-	/// <summary>
-	/// If operation is skip, the data in Meld field is useless
-	/// If operation is chow, pong or kong, field Meld stores the claimed meld
-	/// If operation is rong, field Meld will be of type Single, storing the winning tile
-	/// </summary>
+	
 	public class OutTurnOperationMessage : MessageBase
 	{
 		public int PlayerIndex;
@@ -58,11 +54,18 @@ namespace Multi.Messages
 		public Tile DiscardedTile;
 		public Meld Meld;
 		public int BonusTurnTime;
+		public PointInfo PointInfo;
 	}
 
 	public class DiscardAfterOpenMessage : MessageBase
 	{
 		public int PlayerIndex;
 		public Tile DefaultTile;
+	}
+
+	public class LingshangTileDrawnMessage : MessageBase
+	{
+		public int PlayerIndex;
+		public Tile Lingshang;
 	}
 }

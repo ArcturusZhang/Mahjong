@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using Single.MahjongDataType;
-using Single.Yakus;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Utils;
@@ -227,6 +227,12 @@ namespace Single
             }
 
             return array;
+        }
+
+        public static bool TestMenqing(List<Meld> openMelds)
+        {
+            if (openMelds.Count == 0) return true;
+            return openMelds.All(meld => !meld.Revealed);
         }
 
         public static ISet<Meld> GetChows(List<Tile> handTiles, Tile discardTile)

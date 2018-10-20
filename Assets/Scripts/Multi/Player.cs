@@ -5,7 +5,6 @@ using Multi.Messages;
 using Prototype.NetworkLobby;
 using Single;
 using Single.MahjongDataType;
-using Single.Yakus;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -139,7 +138,7 @@ namespace Multi
         }
 
         [Client]
-        private void ClientHandleOutTurnOperation(Tile discardTile)
+        private void ClientHandleOutTurnOperation(Tile discardTile, bool lingshang = false)
         {
             if (!isLocalPlayer) return;
             var can = PlayerIndex == MahjongManager.Instance.NextPlayerIndex; // todo -- more game setting variations
@@ -147,7 +146,7 @@ namespace Multi
             var pongs = MahjongLogic.GetPongs(HandTiles, discardTile);
             var kongs = MahjongLogic.GetKongs(HandTiles, discardTile);
             var decomposes = MahjongLogic.Decompose(HandTiles, OpenMelds, discardTile);
-            var handStatus = GetCurrentHandStatus();
+            var handStatus = GetCurrentHandStatus(lingshang);
             var roundStatus = GetCurrentRoundState();
             var pointInfo = GameManager.Instance.GetPointInfo(decomposes, discardTile, handStatus, roundStatus);
             Debug.Log($"Client is handling out turn operation with tile {discardTile}, chows: {chows.Count}, "
@@ -188,7 +187,7 @@ namespace Multi
         }
 
         [Client]
-        private HandStatus GetCurrentHandStatus()
+        private HandStatus GetCurrentHandStatus(bool lingshang = false)
         {
             var handStatus = HandStatus.Nothing;
             if (OpenMelds.Count == 0) handStatus |= HandStatus.Menqing;
@@ -197,6 +196,7 @@ namespace Multi
             if (Richi) handStatus |= HandStatus.Richi;
             if (WRichi) handStatus |= HandStatus.WRichi;
             if (OneShot) handStatus |= HandStatus.OneShot;
+            if (lingshang) handStatus |= HandStatus.Lingshang;
             return handStatus;
         }
 
@@ -279,11 +279,11 @@ namespace Multi
                 });
         }
 
-        [Client]
+        [Client] // todo -- openMelds.Count == 0 contains bugs
         public InTurnOperation GetInTurnOperation(List<Tile> handTiles, List<Meld> openMelds, Tile tile)
         {
             var operation = InTurnOperation.Discard;
-            if (openMelds.Count == 0 && !Richi) operation |= InTurnOperation.Richi;
+            if (MahjongLogic.TestMenqing(openMelds) && !Richi) operation |= InTurnOperation.Richi;
 
             // test for tsumo
             var handStatus = GetCurrentHandStatus();
@@ -413,6 +413,7 @@ namespace Multi
                             Operation = InTurnOperation.Tsumo,
                             Meld = new Meld(false, tile),
                             BonusTurnTime = bonusTime
+                            // todo -- tsumo operation needs a pointInfo
                         });
                 });
             }
@@ -464,6 +465,7 @@ namespace Multi
                         BonusTurnTime = bonusTime,
                         DiscardedTile = discardTile,
                         Meld = new Meld(true, discardTile)
+                        // todo -- rong operation needs a pointInfo field
                     });
                 });
             }
@@ -536,17 +538,33 @@ namespace Multi
         [ClientRpc]
         internal void RpcPerformChow(Meld meld, Tile discardTile)
         {
-            ClientPerformChow(meld, discardTile);
+            ClientPerformOpenMeld(meld, discardTile, MeldInstanceType.Left);
+        }
+
+        [ClientRpc]
+        internal void RpcPerformPong(int playerIndex, Meld meld, Tile discardTile, int discardPlayerIndex)
+        {
+            ClientPerformOpenMeld(meld, discardTile,
+                MahjongConstants.GetMeldDirection(playerIndex, discardPlayerIndex));
+        }
+
+        [ClientRpc]
+        internal void RpcPerformKong(int playerIndex, Meld meld, Tile discardTile, int discardPlayerIndex,
+            int lingshangIndex)
+        {
+            // todo -- client call to perform kong
+            ClientPerformKong(meld, discardTile,
+                MahjongConstants.GetMeldDirection(playerIndex, discardPlayerIndex, true), lingshangIndex);
         }
 
         [Client]
-        private void ClientPerformChow(Meld meld, Tile discardTile)
+        private void ClientPerformKong(Meld meld, Tile discardTile, MeldInstanceType direction, int lingshangIndex)
         {
             Debug.Log(
-                $"Player {PlayerIndex} is performing CHOW operation with meld {meld} on discardTile {discardTile}");
-            // todo -- more visual effect
-            MahjongManager.Instance.MahjongSelector.OpenToPlayer(PlayerIndex, meld, discardTile, MeldInstanceType.Left);
+                $"Player {PlayerIndex} is opening meld {meld} on discardTile {discardTile}");
+            MahjongManager.Instance.MahjongSelector.OpenToPlayer(PlayerIndex, meld, discardTile, direction);
             MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
+            MahjongManager.Instance.MahjongSelector.DrawToPlayer(lingshangIndex, PlayerIndex);
             // handle local player
             if (!isLocalPlayer) return;
             DisableOutTurnPanel();
@@ -555,18 +573,11 @@ namespace Multi
             MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
         }
 
-        [ClientRpc]
-        internal void RpcPerformPong(int playerIndex, Meld meld, Tile discardTile, int discardPlayerIndex)
-        {
-            ClientPerformPong(meld, discardTile, MahjongConstants.GetMeldDirection(playerIndex, discardPlayerIndex));
-        }
-
         [Client]
-        private void ClientPerformPong(Meld meld, Tile discardTile, MeldInstanceType direction)
+        private void ClientPerformOpenMeld(Meld meld, Tile discardTile, MeldInstanceType direction)
         {
             Debug.Log(
-                $"Player {PlayerIndex} is performing PONG operation with meld {meld} on discardTile {discardTile} from {direction}");
-            // todo -- more visual effect
+                $"Player {PlayerIndex} is opening meld {meld} on discardTile {discardTile}");
             MahjongManager.Instance.MahjongSelector.OpenToPlayer(PlayerIndex, meld, discardTile, direction);
             MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
             // handle local player
@@ -600,9 +611,42 @@ namespace Multi
                 {
                     connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
                     {
+                        PlayerIndex = PlayerIndex,
                         DiscardTile = defaultTile,
                         Operation = InTurnOperation.Discard,
+                        DiscardLastDraw = true
+                    });
+                });
+        }
+
+        [Client]
+        private void OnLingshangTileDrawnMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<LingshangTileDrawnMessage>();
+            if (content.PlayerIndex != PlayerIndex)
+            {
+                Debug.LogError(
+                    $"Player {PlayerIndex} should not receive a message intended to player {content.PlayerIndex}");
+            }
+
+            discardMessageSent = false;
+            var lingshang = content.Lingshang;
+            Debug.Log($"Player {content.PlayerIndex} has drawn a lingshang {lingshang}, discarding await.");
+            LastDraw = lingshang;
+            isRichiing = false;
+            var operation = GetInTurnOperation(HandTiles, OpenMelds, lingshang);
+            EnableInTurnPanel(operation, lingshang);
+            PlayerHandPanel.Refresh(this, HandTiles);
+            PlayerHandPanel.DrawTile(this, lingshang);
+            MahjongManager.Instance.TimerController.StartCountDown(GameManager.Instance.GameSettings.BaseTurnTime,
+                BonusTurnTime, () =>
+                {
+                    DisableInTurnPanel();
+                    connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
+                    {
                         PlayerIndex = PlayerIndex,
+                        DiscardTile = lingshang,
+                        Operation = InTurnOperation.Discard,
                         DiscardLastDraw = true
                     });
                 });

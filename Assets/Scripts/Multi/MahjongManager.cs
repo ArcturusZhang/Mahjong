@@ -7,7 +7,6 @@ using Multi.Messages;
 using Prototype.NetworkLobby;
 using Single;
 using Single.MahjongDataType;
-using Single.Yakus;
 using UI;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -502,6 +501,28 @@ namespace Multi
                 Debug.Log($"[Server] Player {message.PlayerIndex} has claimed a KONG of meld {message.Meld}");
                 OpenMeldBreaksOneShotAndFirstRound();
                 // todo -- rpc call to perform this operation
+                var lingshangIndex = MahjongSetManager.NextLingshangIndex;
+                var lingshangTile = MahjongSetManager.DrawLingshang();
+                int discardPlayerIndex = CurrentPlayerIndex;
+                CurrentPlayerIndex = message.PlayerIndex;
+                CurrentTurnPlayer = players[CurrentPlayerIndex];
+                CurrentTurnPlayer.RpcPerformKong(message.PlayerIndex, message.Meld, message.DiscardedTile,
+                    discardPlayerIndex, lingshangIndex);
+                // server side data update
+                CurrentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
+                playerHandTiles[CurrentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
+                playerOpenMelds[CurrentPlayerIndex].Add(message.Meld);
+                CurrentTurnPlayer.LastDraw = lingshangTile;
+                Assert.IsTrue(playerHandTiles[CurrentPlayerIndex].Count == CurrentTurnPlayer.HandTilesCount,
+                    "Hand tile count should equal to data on server");
+                Debug.Log($"[Server] Sending message to player {message.PlayerIndex}, default discard: {lingshangTile}");
+                // send message to client
+                CurrentTurnPlayer.connectionToClient.Send(MessageConstants.LingshangTileDrawnMessageId,
+                    new LingshangTileDrawnMessage
+                    {
+                        PlayerIndex = CurrentPlayerIndex,
+                        Lingshang = lingshangTile
+                    });
                 return;
             }
 
@@ -519,13 +540,13 @@ namespace Multi
                 CurrentTurnPlayer.RpcPerformPong(message.PlayerIndex, message.Meld, message.DiscardedTile,
                     discardPlayerIndex);
                 // server side data update
-                CurrentTurnPlayer.HandTilesCount -= message.Meld.Tiles.Length;
+                CurrentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
                 playerHandTiles[CurrentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
                 playerOpenMelds[CurrentPlayerIndex].Add(message.Meld);
                 var defaultTile = playerHandTiles[CurrentPlayerIndex].RemoveLast();
                 CurrentTurnPlayer.LastDraw = defaultTile;
                 Assert.IsTrue(playerHandTiles[CurrentPlayerIndex].Count == CurrentTurnPlayer.HandTilesCount,
-                    "Hand tile count should equals to data on server");
+                    "Hand tile count should equal to data on server");
                 Debug.Log($"[Server] Sending message to player {message.PlayerIndex}, default discard: {defaultTile}");
                 CurrentTurnPlayer.connectionToClient.Send(MessageConstants.DiscardAfterOpenMessageId,
                     new DiscardAfterOpenMessage
@@ -549,7 +570,7 @@ namespace Multi
                 CurrentTurnPlayer = players[CurrentPlayerIndex];
                 CurrentTurnPlayer.RpcPerformChow(message.Meld, message.DiscardedTile);
                 // server side data update
-                CurrentTurnPlayer.HandTilesCount -= message.Meld.Tiles.Length;
+                CurrentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
                 playerHandTiles[CurrentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
                 playerOpenMelds[CurrentPlayerIndex].Add(message.Meld);
                 var defaultTile = playerHandTiles[CurrentPlayerIndex].RemoveLast();

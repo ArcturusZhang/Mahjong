@@ -69,6 +69,7 @@ namespace Single.MahjongDataType
         public Tile Last => Tiles[Tiles.Length - 1];
         public Suit Suit => First.Suit;
         public int EffectiveTileCount => Math.Min(Tiles.Length, 3);
+        public int TileCount => Tiles.Length;
 
         public bool HasYaojiu => Type != MeldType.Single && (First.IsYaojiu || Last.IsYaojiu);
         public bool IsYaojiu => Type != MeldType.Single && First.IsYaojiu && Last.IsYaojiu;
