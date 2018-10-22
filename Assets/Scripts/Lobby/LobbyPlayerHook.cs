@@ -1,5 +1,4 @@
 ﻿using Multi;
-using Prototype.NetworkLobby;
 using UnityEngine;
 using UnityEngine.Networking;
 

@@ -114,7 +114,7 @@ namespace Single
             return hasYakuman ? result.Where(yakuValue => yakuValue.Type == YakuType.Yakuman).ToList() : result;
         }
 
-        public PointInfo GetPointInfo(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile, 
+        public PointInfo GetPointInfo(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile,
             HandStatus handStatus, RoundStatus roundStatus, int dora = 0, int uraDora = 0, int redDora = 0)
         {
             var decomposes = MahjongLogic.Decompose(handTiles, openMelds, winningTile);
@@ -124,12 +124,17 @@ namespace Single
         public PointInfo GetPointInfo(ISet<List<Meld>> decomposes, Tile winningTile, HandStatus handStatus,
             RoundStatus roundStatus, int dora = 0, int uraDora = 0, int redDora = 0)
         {
+            Debug.Log($"GetPointInfo method, parameters: \ndecomposes: {decomposes}, winningTile: {winningTile}, "
+                      + $"handStatus: {handStatus}, roundStatus: {roundStatus}, "
+                      + $"dora: {dora}, uraDora: {uraDora}, redDora: {redDora}");
             var infos = new List<PointInfo>();
             foreach (var decompose in decomposes)
             {
                 var yakus = CountYaku(decompose, winningTile, handStatus, roundStatus);
                 var fu = CountFu(decompose, winningTile, handStatus, roundStatus, yakus);
-                infos.Add(new PointInfo(fu, yakus, YakuData.青天井, dora, uraDora, redDora));
+                var info = new PointInfo(fu, yakus, YakuData.青天井, dora, uraDora, redDora);
+                infos.Add(info);
+                Debug.Log($"Decompose: {string.Join(", ", decompose)}, PointInfo: {info}");
             }
 
             if (infos.Count == 0) return new PointInfo();
@@ -138,6 +143,7 @@ namespace Single
             return infos[infos.Count - 1];
         }
 
+        // for test -- todo -- to be removed
         private void FixedUpdate()
         {
             // for test
@@ -159,6 +165,7 @@ namespace Single
         }
     }
 
+    [Serializable]
     public struct PointInfo : IComparable<PointInfo>
     {
         private static readonly int Mangan = 2000;

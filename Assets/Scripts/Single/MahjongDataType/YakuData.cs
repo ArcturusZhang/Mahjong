@@ -9,8 +9,7 @@ namespace Single.MahjongDataType
     [CreateAssetMenu(menuName = "Mahjong/YakuData")]
     public class YakuData : ScriptableObject
     {
-        [Header("Yaku settings")] 
-        public const int YakumanBaseFan = 13;
+        [Header("Yaku settings")] public const int YakumanBaseFan = 13;
         public bool 允许食断 = true;
         public bool 连风对子额外加符 = true;
         [Range(1, 2)] public int 四暗刻单骑 = 2;
@@ -254,7 +253,6 @@ namespace Single.MahjongDataType
             {
                 if (meld.Type != MeldType.Sequence) continue;
                 int tileFlag = 1 << Tile.GetIndex(meld.First);
-//                if ((handFlag & tileFlag) != 0) return new YakuValue {Name = "一杯口", Value = 1};
                 if ((handFlag & tileFlag) != 0)
                 {
                     count++;
@@ -285,8 +283,9 @@ namespace Single.MahjongDataType
             if (count < 3) return new YakuValue();
             Assert.IsTrue(count >= 3 && count <= 4, "There could not be more than 4 triplets in a complete hand");
             var winningTileInOther = decompose.Any(meld => !meld.Revealed &&
-                (meld.Type == MeldType.Pair || meld.Type == MeldType.Sequence) &&
-                meld.ContainsIgnoreColor(winningTile));
+                                                           (meld.Type == MeldType.Pair ||
+                                                            meld.Type == MeldType.Sequence) &&
+                                                           meld.ContainsIgnoreColor(winningTile));
             if (handStatus.HasFlag(HandStatus.Tsumo))
             {
                 if (count == 3) return new YakuValue {Name = "三暗刻", Value = 2};
@@ -351,7 +350,7 @@ namespace Single.MahjongDataType
         public YakuValue 天地和(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
         {
             if (!handStatus.HasFlag(HandStatus.Tsumo) || !handStatus.HasFlag(HandStatus.Menqing) ||
-                !handStatus.HasFlag(HandStatus.FirstRound))
+                !handStatus.HasFlag(HandStatus.FirstTurn))
                 return new YakuValue();
             return roundStatus.PlayerIndex == roundStatus.RoundCount - 1
                 ? new YakuValue {Name = "天和", Value = 1, Type = YakuType.Yakuman}
@@ -451,12 +450,58 @@ namespace Single.MahjongDataType
         }
     }
 
+    [Serializable]
     public struct RoundStatus
     {
         public int PlayerIndex;
         public int RoundCount;
+        public int CurrentExtraRound;
         public int FieldCount;
         public int TotalPlayer;
+        public int TilesLeft;
+
+        public RoundStatus RemoveTiles(int count)
+        {
+            return new RoundStatus
+            {
+                PlayerIndex = PlayerIndex,
+                RoundCount = RoundCount,
+                CurrentExtraRound = CurrentExtraRound,
+                FieldCount = FieldCount,
+                TotalPlayer = TotalPlayer,
+                TilesLeft = TilesLeft - count
+            };
+        }
+
+        public RoundStatus NextRound(bool newRound = true)
+        {
+            if (!newRound)
+                return new RoundStatus
+                {
+                    PlayerIndex = PlayerIndex,
+                    RoundCount = RoundCount,
+                    CurrentExtraRound = CurrentExtraRound + 1,
+                    FieldCount = FieldCount,
+                    TotalPlayer = TotalPlayer
+                };
+            int newRoundCount = RoundCount + 1;
+            int newFieldCount = FieldCount;
+            if (newRoundCount > TotalPlayer)
+            {
+                newRoundCount -= TotalPlayer;
+                newFieldCount++;
+            }
+
+            return new RoundStatus
+            {
+                PlayerIndex = PlayerIndex,
+                RoundCount = newRoundCount,
+                CurrentExtraRound = 0,
+                FieldCount = newFieldCount,
+                TotalPlayer = TotalPlayer
+            };
+
+        }
 
         public Tile SelfWind
         {
@@ -470,6 +515,12 @@ namespace Single.MahjongDataType
         }
 
         public Tile PrevailingWind => new Tile(Suit.Z, FieldCount);
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}, RoundCount: {RoundCount}, CurrentExtraRound: {CurrentExtraRound}, "
+                   + $"FieldCount: {FieldCount}, TotalPlayer: {TotalPlayer}";
+        }
     }
 
     [Flags]
@@ -480,7 +531,7 @@ namespace Single.MahjongDataType
         Tsumo = 1 << 2,
         Richi = 1 << 3,
         WRichi = 1 << 4,
-        FirstRound = 1 << 5,
+        FirstTurn = 1 << 5,
         Lingshang = 1 << 6,
         LastDraw = 1 << 7,
         RobbKong = 1 << 8,

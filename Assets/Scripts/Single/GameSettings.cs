@@ -8,6 +8,7 @@ namespace Single
         [Header("General settings")] public int InitialPoints = 25000;
         public int DiceMin = 2;
         public int DiceMax = 12;
+        public int MountainReservedTiles = 14;
         
         [Header("Tile drawing settings")] public int InitialDrawRound = 3;
         public int TilesEveryRound = 4;

@@ -56,17 +56,6 @@ namespace Single
         }
     }
 
-    public enum GameTurnState
-    {
-        RoundPrepare,
-        RoundStart,
-        PlayerDrawTile,
-        PlayerInTurn,
-        PlayerDiscardTile,
-        PlayerOutTurnOperation,
-        RoundEnd
-    }
-
     [Flags]
     public enum InTurnOperation
     {

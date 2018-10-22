@@ -26,7 +26,9 @@ namespace Multi.Messages
 
 	public class DrawTileMessage : MessageBase
 	{
+		public int PlayerIndex;
 		public Tile Tile;
+		public bool Lingshang;
 	}
 
 	public class InTurnOperationMessage : MessageBase
