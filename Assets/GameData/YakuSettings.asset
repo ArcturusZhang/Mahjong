@@ -9,5 +9,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3c669a09cd3ef4945be94f392909dadf, type: 3}
-  m_Name: YakuData
+  m_Name: YakuSettings
   m_EditorClassIdentifier: 
+  "\u5141\u8BB8\u98DF\u65AD": 1
+  "\u8FDE\u98CE\u5BF9\u5B50\u989D\u5916\u52A0\u7B26": 1
+  "\u56DB\u6697\u523B\u5355\u9A91": 2
+  "\u56FD\u58EB\u65E0\u53CC\u5341\u4E09\u9762": 2
+  "\u7EAF\u6B63\u4E5D\u8FDE\u5B9D\u706F": 2
+  "\u7EAF\u7EFF\u4E00\u8272": 2
+  "\u9752\u5929\u4E95": 0

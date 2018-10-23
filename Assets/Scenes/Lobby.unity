@@ -121,10 +121,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1142396069}
-  - component: {fileID: 1142396070}
   - component: {fileID: 1142396071}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: ResourceManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143,19 +142,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1142396070
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1142396067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7aef37a6e1b04ddf813e31b4118fde00, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  YakuData: {fileID: 11400000, guid: a613a7e49d525434b922fd32b51111e3, type: 2}
-  GameSettings: {fileID: 11400000, guid: 37a8861d2ac47e54fa164b2c642c3755, type: 2}
 --- !u!114 &1142396071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +153,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9658da4929316514e9c80ed6247051ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  YakuSettings: {fileID: 11400000, guid: a613a7e49d525434b922fd32b51111e3, type: 2}
+  GameSettings: {fileID: 11400000, guid: 37a8861d2ac47e54fa164b2c642c3755, type: 2}
 --- !u!1001 &1291009681
 Prefab:
   m_ObjectHideFlags: 0
@@ -331,6 +319,16 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11475086, guid: c0978251ff7b10d4fb954a4b56acd9f0, type: 2}
+      propertyPath: YakuSettings
+      value: 
+      objectReference: {fileID: 11400000, guid: a613a7e49d525434b922fd32b51111e3,
+        type: 2}
+    - target: {fileID: 11475086, guid: c0978251ff7b10d4fb954a4b56acd9f0, type: 2}
+      propertyPath: GameSettings
+      value: 
+      objectReference: {fileID: 11400000, guid: 37a8861d2ac47e54fa164b2c642c3755,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0978251ff7b10d4fb954a4b56acd9f0, type: 2}
   m_IsPrefabAsset: 0

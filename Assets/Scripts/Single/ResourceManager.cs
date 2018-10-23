@@ -9,6 +9,9 @@ namespace Single
 {
     public class ResourceManager : MonoBehaviour
     {
+        [Header("Game Settings")]
+        public GameSettings GameSettings;
+        public YakuSettings YakuSettings;
         private static readonly string[] TileSuits = {"m", "s", "p", "z"};
         public static ResourceManager Instance { get; private set; }
         private Sprite[] baseTimeSprites;

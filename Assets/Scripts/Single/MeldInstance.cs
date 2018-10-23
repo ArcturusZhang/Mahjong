@@ -12,18 +12,29 @@ namespace Single
 
         public TileInstance[] TileInstances;
 
-        public void SetMeld(Meld meld, Tile discardTile)
+        public void SetMeld(Meld meld, Tile discardTile, MeldInstanceType type)
         {
             Meld = meld;
+            InstanceType = type;
             var index = Array.FindIndex(meld.Tiles, tile => tile.EqualsConsiderColor(discardTile));
             int tileCount = 1;
-            for (int i = 0; i < meld.Tiles.Length; i++)
+            for (int i = 0; i < meld.TileCount; i++)
             {
                 if (i == index) continue;
                 TileInstances[tileCount++].SetTile(meld.Tiles[i]);
             }
 
             TileInstances[0].SetTile(discardTile);
+        }
+
+        public void SetMeld(Meld meld)
+        {
+            Meld = meld;
+            InstanceType = MeldInstanceType.SelfKong;
+            for (int i = 0; i < meld.TileCount; i++)
+            {
+                TileInstances[i].SetTile(meld.Tiles[i]);
+            }
         }
 
         public void AddToKong(Tile addedTile)

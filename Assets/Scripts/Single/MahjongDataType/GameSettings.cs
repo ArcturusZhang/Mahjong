@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Single
+namespace Single.MahjongDataType
 {
     [CreateAssetMenu(menuName = "Mahjong/GameSettings")]
     public class GameSettings : ScriptableObject

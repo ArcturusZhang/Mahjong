@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Lobby;
-using Multi.GameState;
 using Multi.Messages;
 using Single;
 using Single.MahjongDataType;
@@ -21,12 +19,12 @@ namespace Multi
         [Header("UI Elements")] public PlayerHandPanel PlayerHandPanel;
 
         [Header("Game Status")] [SyncVar] public int TotalPlayers;
+        [SyncVar] public RoundStatus RoundStatus;
 
         [SyncVar]
         public int PlayerIndex = -1; // Round order index -- 0: East, 1: South, 2: West, 3: North (This does not change)
 
         [SyncVar] public int BonusTurnTime;
-        // todo -- add more game status here, such as prevailing wind
 
         [Header("Player Public Data")] [SyncVar]
         public string PlayerName = "";
@@ -38,7 +36,6 @@ namespace Multi
         [SyncVar] public bool FirstTurn = false;
         [SyncVar] public int HandTilesCount = 0;
         [SerializeField] internal List<Meld> OpenMelds;
-        [SyncVar] public RoundStatus RoundStatus;
 
         [Header("Player Private Data")] [SerializeField]
         internal List<Tile> HandTiles;
@@ -48,7 +45,6 @@ namespace Multi
         private bool isRichiing = false;
         private bool discardMessageSent = false;
         private Coroutine outTurnOperationWaiting;
-        private GameSettings gameSettings;
 
         public override void OnStartClient()
         {
@@ -60,7 +56,6 @@ namespace Multi
         {
             Debug.Log($"Player [{netId}] [name: {PlayerName}] OnStartLocalPlayer is called");
             LobbyManager.Instance.LocalPlayer = this;
-            gameSettings = GameManager.Instance.GameSettings;
             RegisterHandlers();
         }
 
@@ -117,7 +112,7 @@ namespace Multi
             Debug.Log($"Player {PlayerIndex}'s turn, tile {tile} is discarded. DiscardLastDraw: {discardLastDraw}");
             MahjongManager.Instance.MahjongSelector.DiscardTile(tile, discardLastDraw, PlayerIndex,
                 operation.HasFlag(InTurnOperation.Richi));
-            StartCoroutine(ClientUpdateTilesForSeconds(GameManager.Instance.GameSettings.PlayerHandTilesSortDelay));
+            StartCoroutine(ClientUpdateTilesForSeconds(MahjongManager.Instance.GameSettings.PlayerHandTilesSortDelay));
             if (!isLocalPlayer) return;
             if (discardLastDraw)
             {
@@ -151,11 +146,11 @@ namespace Multi
             var can = PlayerIndex == MahjongConstants.RepeatIndex(currentPlayerIndex + 1, TotalPlayers);
             var chows = can ? MahjongLogic.GetChows(HandTiles, discardTile) : new HashSet<Meld>();
             var pongs = MahjongLogic.GetPongs(HandTiles, discardTile);
-            var kongs = MahjongLogic.GetKongs(HandTiles, discardTile);
-            var decomposes = MahjongLogic.Decompose(HandTiles, OpenMelds, discardTile);
+            var kongs = MahjongLogic.GetOutTurnKongs(HandTiles, discardTile);
             var handStatus = GetCurrentHandStatus(lingshang);
             var roundStatus = GetCurrentRoundState();
-            var pointInfo = GameManager.Instance.GetPointInfo(decomposes, discardTile, handStatus, roundStatus);
+            var pointInfo = MahjongLogic.GetPointInfo(HandTiles, OpenMelds, discardTile, handStatus, roundStatus,
+                MahjongManager.Instance.YakuSettings);
             Debug.Log($"Client is handling out turn operation with tile {discardTile}, chows: {chows.Count}, "
                       + $"pongs: {pongs.Count}, kongs: {kongs.Count}, point info: {pointInfo}");
             // after richi, only response to RONG
@@ -180,7 +175,7 @@ namespace Multi
 
             EnableOutTurnPanel(chows, pongs, kongs, pointInfo.BasePoint > 0, discardTile);
             // wait for operation or time expires
-            MahjongManager.Instance.TimerController.StartCountDown(GameManager.Instance.GameSettings.BaseTurnTime,
+            MahjongManager.Instance.TimerController.StartCountDown(MahjongManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
                 {
                     DisableOutTurnPanel();
@@ -199,7 +194,7 @@ namespace Multi
             var handStatus = HandStatus.Nothing;
             if (MahjongLogic.TestMenqing(OpenMelds)) handStatus |= HandStatus.Menqing;
             if (FirstTurn) handStatus |= HandStatus.FirstTurn;
-            if (RoundStatus.TilesLeft == gameSettings.MountainReservedTiles)
+            if (RoundStatus.TilesLeft == MahjongManager.Instance.GameSettings.MountainReservedTiles)
                 handStatus |= HandStatus.LastDraw;
             if (Richi) handStatus |= HandStatus.Richi;
             if (WRichi) handStatus |= HandStatus.WRichi;
@@ -269,27 +264,36 @@ namespace Multi
                 return;
             }
 
-            var tile = content.Tile;
-            Debug.Log($"Tile {tile} is drawn");
-            LastDraw = tile;
-            var operation = GetInTurnOperation(HandTiles, OpenMelds, tile, content.Lingshang);
+            var lastDraw = content.Tile;
+            Debug.Log($"Tile {lastDraw} is drawn");
+            LastDraw = lastDraw;
+            // handle tsumo
+            var handStatus = GetCurrentHandStatus(content.Lingshang) | HandStatus.Tsumo;
+            var roundStatus = GetCurrentRoundState();
+            var pointInfo = MahjongLogic.GetPointInfo(HandTiles, OpenMelds, lastDraw, handStatus, roundStatus,
+                MahjongManager.Instance.YakuSettings);
+            // handle kongs
+            var kongs = MahjongLogic.GetInTurnKongs(HandTiles, OpenMelds, lastDraw);
+            var richiKongs = MahjongLogic.GetRichiKongs(HandTiles, OpenMelds, lastDraw);
             // handle auto discard after richi
-            if (Richi && !operation.HasFlag(InTurnOperation.Tsumo) && !operation.HasFlag(InTurnOperation.ConcealedKong))
+            if (Richi && pointInfo.BasePoint == 0 && richiKongs.Count == 0)
             {
-                StartCoroutine(RichiAutoDiscard(tile));
+                StartCoroutine(RichiAutoDiscard(lastDraw));
                 return;
             }
 
             isRichiing = false;
-            EnableInTurnPanel(operation, tile);
-            PlayerHandPanel.DrawTile(this, tile);
+            var menqing = MahjongLogic.TestMenqing(OpenMelds);
+            EnableInTurnPanel(menqing, kongs, richiKongs, pointInfo, lastDraw);
+            PlayerHandPanel.Refresh(this, HandTiles, Richi);
+            PlayerHandPanel.DrawTile(this, lastDraw);
 
-            MahjongManager.Instance.TimerController.StartCountDown(GameManager.Instance.GameSettings.BaseTurnTime,
+            MahjongManager.Instance.TimerController.StartCountDown(MahjongManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
                 {
                     connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
                     {
-                        DiscardTile = tile,
+                        DiscardTile = lastDraw,
                         Operation = InTurnOperation.Discard,
                         PlayerIndex = PlayerIndex,
                         DiscardLastDraw = true
@@ -298,40 +302,9 @@ namespace Multi
         }
 
         [Client]
-        public InTurnOperation GetInTurnOperation(List<Tile> handTiles, List<Meld> openMelds, Tile tile,
-            bool lingshang = false)
-        {
-            var operation = InTurnOperation.Discard;
-            if (MahjongLogic.TestMenqing(openMelds) && !Richi) operation |= InTurnOperation.Richi;
-
-            // test for tsumo
-            var handStatus = GetCurrentHandStatus(lingshang);
-            var roundStatus = GetCurrentRoundState();
-            var pointInfo = GameManager.Instance.GetPointInfo(handTiles, openMelds, tile, handStatus, roundStatus);
-            if (pointInfo.BasePoint > 0) operation |= InTurnOperation.Tsumo;
-            Debug.Log($"Client is handling in turn operation, tile {tile}, point info: {pointInfo}");
-            // test for kong
-            int count = 0;
-            foreach (var handTile in handTiles)
-            {
-                if (handTile.EqualsIgnoreColor(tile)) count++;
-            }
-
-            if (count == 3) operation |= InTurnOperation.ConcealedKong;
-            Assert.IsTrue(count <= 3, "More than four identical tiles exists, this should not happen!");
-            foreach (var meld in openMelds)
-            {
-                if (meld.Type == MeldType.Triplet && meld.First.EqualsIgnoreColor(tile))
-                    operation |= InTurnOperation.AddedKong;
-            }
-
-            return operation;
-        }
-
-        [Client]
         private IEnumerator RichiAutoDiscard(Tile tile)
         {
-            yield return new WaitForSeconds(GameManager.Instance.GameSettings.AutoDiscardDelayAfterRichi);
+            yield return new WaitForSeconds(MahjongManager.Instance.GameSettings.AutoDiscardDelayAfterRichi);
             connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage
             {
                 DiscardTile = tile,
@@ -353,9 +326,6 @@ namespace Multi
             PlayerHandPanel.Clear();
         }
 
-        /// <summary>
-        /// This method is only called on local player
-        /// </summary>
         [Client]
         internal void ClientUpdateTiles()
         {
@@ -408,43 +378,77 @@ namespace Multi
         }
 
         [Client]
-        private void EnableInTurnPanel(InTurnOperation operation, Tile tile)
+        private void EnableInTurnPanel(bool menqing, ISet<Meld> kongs, ISet<Meld> richiKongs, PointInfo pointInfo,
+            Tile lastDraw)
         {
-            if (operation == InTurnOperation.Discard) return;
-            MahjongManager.Instance.InTurnOperationPanel.SetActive(true);
-            if (!Richi && operation.HasFlag(InTurnOperation.Richi))
+            if (!menqing && pointInfo.BasePoint == 0 && kongs.Count == 0) return;
+            if (menqing && !Richi)
             {
                 MahjongManager.Instance.RichiButton.gameObject.SetActive(true);
                 ReplaceListener(MahjongManager.Instance.RichiButton, () => { isRichiing = !isRichiing; });
             }
 
-            if (operation.HasFlag(InTurnOperation.Tsumo))
+            if (pointInfo.BasePoint > 0)
             {
                 MahjongManager.Instance.TsumoButton.gameObject.SetActive(true);
                 ReplaceListener(MahjongManager.Instance.TsumoButton, () =>
                 {
                     DisableInTurnPanel();
                     int bonusTime = MahjongManager.Instance.TimerController.StopCountDown();
-                    connectionToServer.Send(MessageConstants.InTurnOperationMessageId,
-                        new InTurnOperationMessage
-                        {
-                            PlayerIndex = PlayerIndex,
-                            Operation = InTurnOperation.Tsumo,
-                            Meld = new Meld(false, tile),
-                            BonusTurnTime = bonusTime
-                            // todo -- tsumo operation needs a pointInfo
-                        });
+                    connectionToServer.Send(MessageConstants.InTurnOperationMessageId, new InTurnOperationMessage
+                    {
+                        PlayerIndex = PlayerIndex,
+                        Operation = InTurnOperation.Tsumo,
+                        LastDraw = lastDraw,
+                        BonusTurnTime = bonusTime,
+                        PointInfo = pointInfo
+                    });
                 });
             }
 
-            if (operation.HasFlag(InTurnOperation.ConcealedKong) || operation.HasFlag(InTurnOperation.AddedKong))
+            HandleInTurnKongs(MahjongManager.Instance.InTurnKongButton, Richi ? richiKongs : kongs, lastDraw);
+
+            MahjongManager.Instance.InTurnOperationPanel.SetActive(true);
+        }
+
+        [Client]
+        private void HandleInTurnKongs(Button button, ISet<Meld> kongs, Tile lastDraw)
+        {
+            button.gameObject.SetActive(kongs.Count > 0);
+            if (kongs.Count == 0) return;
+            ReplaceListener(button, () =>
             {
-                MahjongManager.Instance.InTurnKongButton.gameObject.SetActive(true);
-                ReplaceListener(MahjongManager.Instance.InTurnKongButton, () =>
+                if (kongs.Count == 1)
                 {
-                    // todo -- add listener for kong
+                    DisableInTurnPanel();
+                    int bonusTime = MahjongManager.Instance.TimerController.StopCountDown();
+                    connectionToServer.Send(MessageConstants.InTurnOperationMessageId, new InTurnOperationMessage
+                    {
+                        PlayerIndex = PlayerIndex,
+                        Operation = InTurnOperation.Kong,
+                        LastDraw = lastDraw,
+                        Meld = kongs.First(),
+                        BonusTurnTime = bonusTime
+                    });
+                    return;
+                }
+
+                MahjongManager.Instance.MeldSelector.gameObject.SetActive(true);
+                MahjongManager.Instance.MeldSelector.ResetMelds();
+                MahjongManager.Instance.MeldSelector.AddMelds(kongs, meld =>
+                {
+                    DisableInTurnPanel();
+                    int bonusTime = MahjongManager.Instance.TimerController.StopCountDown();
+                    connectionToServer.Send(MessageConstants.InTurnOperationMessageId, new InTurnOperationMessage
+                    {
+                        PlayerIndex = PlayerIndex,
+                        Operation = InTurnOperation.Kong,
+                        LastDraw = lastDraw,
+                        Meld = meld,
+                        BonusTurnTime = bonusTime,
+                    });
                 });
-            }
+            });
         }
 
         [Client]
@@ -499,7 +503,7 @@ namespace Multi
             MahjongManager.Instance.OutTurnOperationPanel.SetActive(true);
         }
 
-        [Client] // todo -- fix bugs
+        [Client]
         private void HandleOpenMeldOperations(Button button, ISet<Meld> melds, OutTurnOperation operation,
             Tile discardTile)
         {
@@ -509,7 +513,7 @@ namespace Multi
             {
                 if (melds.Count == 1)
                 {
-                    DisableInTurnPanel();
+                    DisableOutTurnPanel();
                     int bonusTime = MahjongManager.Instance.TimerController.StopCountDown();
                     SendOutTurnOperationMessage(new OutTurnOperationMessage
                     {
@@ -575,12 +579,38 @@ namespace Multi
         }
 
         [ClientRpc]
-        [Obsolete]
-        internal void RpcPerformKong_Old(int playerIndex, Meld meld, Tile discardTile, int discardPlayerIndex,
-            int lingshangIndex)
+        internal void RpcPerformInTurnKong(int playerIndex, Meld meld, Tile lastDraw)
         {
-            ClientPerformKong(meld, discardTile,
-                MahjongConstants.GetMeldDirection(playerIndex, discardPlayerIndex, true));
+            ClientPerformInTurnKong(meld, lastDraw);
+        }
+
+        [Client]
+        private void ClientPerformInTurnKong(Meld meld, Tile lastDraw)
+        {
+            // determine whether this is an added kong
+            var added = meld.Revealed && meld.Tiles.Contains(lastDraw, Tile.TileConsiderColorEqualityComparer);
+            // added kong
+            if (added)
+            {
+                var openMeldIndex = OpenMelds.FindIndex(openMeld =>
+                    openMeld.Type == meld.Type && openMeld.First.EqualsIgnoreColor(meld.First));
+                Assert.IsTrue(openMeldIndex >= 0, "There must be such a meld to add");
+                MahjongManager.Instance.MahjongSelector.AddedKongToPlayer(PlayerIndex, meld, lastDraw);
+                MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
+                OpenMelds[openMeldIndex] = meld;
+            }
+            else // concealed kong
+            {
+                MahjongManager.Instance.MahjongSelector.ConcealedKongToPlayer(PlayerIndex, meld);
+                MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
+                OpenMelds.Add(meld);
+            }
+
+            // handle local player
+            if (!isLocalPlayer) return;
+            DisableInTurnPanel();
+            HandTiles.Subtract(meld.Tiles, lastDraw);
+            MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
         }
 
         [Client]
@@ -590,12 +620,13 @@ namespace Multi
                 $"Player {PlayerIndex} is opening meld {meld} on discardTile {discardTile}");
             MahjongManager.Instance.MahjongSelector.OpenToPlayer(PlayerIndex, meld, discardTile, direction);
             MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
-//            MahjongManager.Instance.MahjongSelector.DrawToPlayer(lingshangIndex, PlayerIndex);
+            OpenMelds.Add(meld);
             // handle local player
             if (!isLocalPlayer) return;
             DisableOutTurnPanel();
-            HandTiles.Remove(meld, discardTile);
-            OpenMelds.Add(meld);
+            Debug.Log($"Player's hand: {string.Join(", ", HandTiles)}");
+            HandTiles.Subtract(meld.Tiles, discardTile);
+            Debug.Log($"Player's hand after subtraction: {string.Join(", ", HandTiles)}");
             MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
         }
 
@@ -606,11 +637,11 @@ namespace Multi
                 $"Player {PlayerIndex} is opening meld {meld} on discardTile {discardTile}");
             MahjongManager.Instance.MahjongSelector.OpenToPlayer(PlayerIndex, meld, discardTile, direction);
             MahjongManager.Instance.MahjongSelector.Refresh(HandTilesCount, PlayerIndex);
+            OpenMelds.Add(meld);
             // handle local player
             if (!isLocalPlayer) return;
             DisableOutTurnPanel();
-            HandTiles.Remove(meld, discardTile);
-            OpenMelds.Add(meld);
+            HandTiles.Subtract(meld.Tiles, discardTile);
             MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
         }
 
@@ -632,7 +663,7 @@ namespace Multi
             LastDraw = defaultTile;
             PlayerHandPanel.Refresh(this, HandTiles);
             PlayerHandPanel.DrawTile(this, defaultTile);
-            MahjongManager.Instance.TimerController.StartCountDown(GameManager.Instance.GameSettings.BaseTurnTime,
+            MahjongManager.Instance.TimerController.StartCountDown(MahjongManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
                 {
                     connectionToServer.Send(MessageConstants.DiscardTileMessageId, new DiscardTileMessage

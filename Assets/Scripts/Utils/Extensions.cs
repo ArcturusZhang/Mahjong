@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 
 namespace Utils
@@ -40,6 +42,24 @@ namespace Utils
                 text.text += "\n" + content;
             else
                 text.text = content;
+        }
+
+        public static void Subtract<T>(this List<T> list, T[] subList, T except)
+        {
+            int index = Array.FindIndex(subList, item => item.Equals(except));
+            for (int i = 0; i < subList.Length; i++)
+            {
+                if (i == index) continue;
+                list.Remove(subList[i]);
+            }
+        }
+
+        public static void Subtract<T>(this List<T> list, IEnumerable<T> subList)
+        {
+            foreach (var item in subList)
+            {
+                list.Remove(item);
+            }
         }
     }
 }

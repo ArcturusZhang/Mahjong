@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Single;
 using Single.MahjongDataType;
 using UnityEngine;
@@ -39,14 +40,20 @@ namespace Multi
             var tileInstance = tileObject.GetComponent<TileInstance>();
             tileInstance.SetTile(tile);
             tiles.Add(discardedTile);
-            int currentRow = (tiles.Count - 1) / GameManager.Instance.GameSettings.TilesPerRowInRiver;
-            if (currentRow == GameManager.Instance.GameSettings.MaxRowInRiver - 1) return;
+            int currentRow = (tiles.Count - 1) / MahjongManager.Instance.GameSettings.TilesPerRowInRiver;
+            if (currentRow == MahjongManager.Instance.GameSettings.MaxRowInRiver - 1) return;
 
-            if (tiles.Count % GameManager.Instance.GameSettings.TilesPerRowInRiver == 0) // change row
+            if (tiles.Count % MahjongManager.Instance.GameSettings.TilesPerRowInRiver == 0) // change row
             {
                 XOffset = 0;
                 YOffset += MahjongConstants.TileHeight;
             }
+        }
+
+        // todo -- need implementation
+        public void RetractLastTile()
+        {
+            throw new NotImplementedException();
         }
 
         internal struct DiscardedTile

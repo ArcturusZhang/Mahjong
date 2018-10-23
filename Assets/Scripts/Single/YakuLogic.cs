@@ -1,26 +1,17 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Single.MahjongDataType;
 using UnityEngine.Assertions;
 
-namespace Single.MahjongDataType
+namespace Single
 {
-    [CreateAssetMenu(menuName = "Mahjong/YakuData")]
-    public class YakuData : ScriptableObject
+    public static class YakuLogic
     {
-        [Header("Yaku settings")] public const int YakumanBaseFan = 13;
-        public bool 允许食断 = true;
-        public bool 连风对子额外加符 = true;
-        [Range(1, 2)] public int 四暗刻单骑 = 2;
-        [Range(1, 2)] public int 国士无双十三面 = 2;
-        [Range(1, 2)] public int 纯正九连宝灯 = 2;
-        [Range(1, 2)] public int 纯绿一色 = 2;
-        public bool 青天井 = false;
-
         private static readonly int[] Greens = {19, 20, 21, 23, 25, 32};
 
-        public YakuValue 立直(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 立直(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (handStatus.HasFlag(HandStatus.Menqing) && handStatus.HasFlag(HandStatus.Richi))
                 return new YakuValue {Name = "立直", Value = 1};
@@ -29,7 +20,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 一发(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 一发(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (handStatus.HasFlag(HandStatus.Menqing) &&
                 (handStatus.HasFlag(HandStatus.Richi) || handStatus.HasFlag(HandStatus.WRichi)) &&
@@ -37,14 +29,16 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 自摸(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 自摸(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!handStatus.HasFlag(HandStatus.Menqing) || !handStatus.HasFlag(HandStatus.Tsumo))
                 return new YakuValue();
             return new YakuValue {Name = "门前清自摸和", Value = 1};
         }
 
-        public YakuValue 平和(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 平和(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
             int countOfSequence = 0;
@@ -55,7 +49,7 @@ namespace Single.MahjongDataType
                 if (meld.Type == MeldType.Sequence)
                 {
                     countOfSequence++;
-                    twoSide = meld.IsTwoSideIgnoreColor(winningTile);
+                    twoSide = twoSide || meld.IsTwoSideIgnoreColor(winningTile);
                 }
             }
 
@@ -63,7 +57,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 役牌自风(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 役牌自风(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             var tile = roundStatus.SelfWind;
             foreach (var meld in decompose)
@@ -75,7 +70,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 役牌场风(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 役牌场风(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             var tile = roundStatus.PrevailingWind;
             foreach (var meld in decompose)
@@ -87,7 +83,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 役牌白(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 役牌白(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             foreach (var meld in decompose)
             {
@@ -98,7 +95,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 役牌发(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 役牌发(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             foreach (var meld in decompose)
             {
@@ -109,7 +107,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 役牌中(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 役牌中(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             foreach (var meld in decompose)
             {
@@ -120,9 +119,10 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 断幺九(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 断幺九(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
-            if (!允许食断 && !handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
+            if (!settings.允许食断 && !handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
             foreach (var meld in decompose)
             {
                 if (meld.HasYaojiu) return new YakuValue();
@@ -131,14 +131,16 @@ namespace Single.MahjongDataType
             return new YakuValue {Name = "断幺九", Value = 1};
         }
 
-        public YakuValue 岭上(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 岭上(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             return handStatus.HasFlag(HandStatus.Lingshang)
                 ? new YakuValue {Name = "岭上开花", Value = 1}
                 : new YakuValue();
         }
 
-        public YakuValue 海底(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 海底(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!handStatus.HasFlag(HandStatus.LastDraw)) return new YakuValue();
             return handStatus.HasFlag(HandStatus.Tsumo)
@@ -146,12 +148,14 @@ namespace Single.MahjongDataType
                 : new YakuValue {Name = "河底摸鱼", Value = 1};
         }
 
-        public YakuValue 抢杠(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 抢杠(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             return handStatus.HasFlag(HandStatus.RobbKong) ? new YakuValue {Name = "抢杠", Value = 1} : new YakuValue();
         }
 
-        public YakuValue 七对子(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 七对子(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
             if (decompose.Count != 7) return new YakuValue();
@@ -163,7 +167,8 @@ namespace Single.MahjongDataType
             return new YakuValue {Name = "七对子", Value = 2};
         }
 
-        public YakuValue 一气(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 一气(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             const int flag = 73; // binary : 1001001
             int handFlag = 0;
@@ -185,7 +190,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 三色同顺(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 三色同顺(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             const int flag = 1 + (1 << 9) + (1 << 18); // binary : 1000000001000000001
             int handFlag = 0;
@@ -206,7 +212,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 三色同刻(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 三色同刻(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             const int flag = 1 + (1 << 9) + (1 << 18); // binary : 1000000001000000001
             int handFlag = 0;
@@ -228,7 +235,8 @@ namespace Single.MahjongDataType
         }
 
         // todo -- this may contains bugs
-        public YakuValue 全带系(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 全带系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!decompose.All(meld => meld.HasYaojiu)) return new YakuValue();
             if (decompose.All(meld => meld.Suit == Suit.Z))
@@ -244,7 +252,8 @@ namespace Single.MahjongDataType
                 : new YakuValue {Name = "纯全带幺九", Value = handStatus.HasFlag(HandStatus.Menqing) ? 3 : 2};
         }
 
-        public YakuValue 杯口系(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 杯口系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
             int handFlag = 0;
@@ -268,7 +277,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 对对和(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 对对和(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             int countPairs = decompose.Count(meld => meld.Type == MeldType.Pair);
             if (countPairs != 1) return new YakuValue();
@@ -277,7 +287,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 暗刻系(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 暗刻系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             var count = decompose.Count(meld => meld.Type == MeldType.Triplet && !meld.Revealed);
             if (count < 3) return new YakuValue();
@@ -291,7 +302,7 @@ namespace Single.MahjongDataType
                 if (count == 3) return new YakuValue {Name = "三暗刻", Value = 2};
                 // count == 4
                 return winningTileInOther
-                    ? new YakuValue {Name = "四暗刻·单骑听", Value = 四暗刻单骑, Type = YakuType.Yakuman}
+                    ? new YakuValue {Name = "四暗刻·单骑听", Value = settings.四暗刻单骑, Type = YakuType.Yakuman}
                     : new YakuValue {Name = "四暗刻", Value = 1, Type = YakuType.Yakuman};
             }
 
@@ -299,11 +310,12 @@ namespace Single.MahjongDataType
             if (count == 3 && winningTileInOther) return new YakuValue {Name = "三暗刻", Value = 2};
             // count == 4
             return winningTileInOther
-                ? new YakuValue {Name = "四暗刻·单骑听", Value = 四暗刻单骑, Type = YakuType.Yakuman}
+                ? new YakuValue {Name = "四暗刻·单骑听", Value = settings.四暗刻单骑, Type = YakuType.Yakuman}
                 : new YakuValue {Name = "三暗刻", Value = 2};
         }
 
-        public YakuValue 一色系(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 一色系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
 //            var allZ = decompose.All(meld => meld.Suit == Suit.Z);
 //            if (allZ) return new YakuValue {Name = "字一色", Value = 1, Type = YakuType.Yakuman};
@@ -319,7 +331,8 @@ namespace Single.MahjongDataType
                 : new YakuValue {Name = "清一色", Value = handStatus.HasFlag(HandStatus.Menqing) ? 6 : 5};
         }
 
-        public YakuValue 杠子系(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 杠子系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             int count = decompose.Count(meld => meld.IsKong);
             if (count < 3) return new YakuValue();
@@ -328,7 +341,8 @@ namespace Single.MahjongDataType
             return new YakuValue {Name = "四杠子", Value = 1, Type = YakuType.Yakuman};
         }
 
-        public YakuValue 三元系(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 三元系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             const int flag = 7;
             int tripletFlag = 0;
@@ -347,7 +361,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 天地和(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 天地和(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!handStatus.HasFlag(HandStatus.Tsumo) || !handStatus.HasFlag(HandStatus.Menqing) ||
                 !handStatus.HasFlag(HandStatus.FirstTurn))
@@ -357,16 +372,18 @@ namespace Single.MahjongDataType
                 : new YakuValue {Name = "地和", Value = 1, Type = YakuType.Yakuman};
         }
 
-        public YakuValue 国士(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 国士(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (decompose.Count != 13) return new YakuValue();
             var pair = decompose.First(meld => meld.Type == MeldType.Pair);
             return pair.ContainsIgnoreColor(winningTile)
-                ? new YakuValue {Name = "国士无双十三面", Value = 国士无双十三面, Type = YakuType.Yakuman}
+                ? new YakuValue {Name = "国士无双十三面", Value = settings.国士无双十三面, Type = YakuType.Yakuman}
                 : new YakuValue {Name = "国士无双", Value = 1, Type = YakuType.Yakuman};
         }
 
-        public YakuValue 九莲(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 九莲(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             if (!handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
             var first = decompose[0];
@@ -389,11 +406,12 @@ namespace Single.MahjongDataType
             }
 
             return counts[winningTile.Rank - 1] == 2 || counts[winningTile.Rank - 1] == 4
-                ? new YakuValue {Name = "纯正九连宝灯", Value = 纯正九连宝灯, Type = YakuType.Yakuman}
+                ? new YakuValue {Name = "纯正九连宝灯", Value = settings.纯正九连宝灯, Type = YakuType.Yakuman}
                 : new YakuValue {Name = "九连宝灯", Value = 1, Type = YakuType.Yakuman};
         }
 
-        public YakuValue 四喜系(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 四喜系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             const int flag = 15;
             int tripletFlag = 0;
@@ -413,7 +431,8 @@ namespace Single.MahjongDataType
             return new YakuValue();
         }
 
-        public YakuValue 绿一色(List<Meld> decompose, Tile winningTile, HandStatus handStatus, RoundStatus roundStatus)
+        public static YakuValue 绿一色(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings settings)
         {
             var counts = MahjongLogic.CountTiles(decompose);
             for (int i = 0; i < counts.Length; i++)
@@ -423,13 +442,14 @@ namespace Single.MahjongDataType
             }
 
             return counts[Greens[Greens.Length - 1]] == 0
-                ? new YakuValue {Name = "纯绿一色", Value = 纯绿一色, Type = YakuType.Yakuman}
+                ? new YakuValue {Name = "纯绿一色", Value = settings.纯绿一色, Type = YakuType.Yakuman}
                 : new YakuValue {Name = "绿一色", Value = 1, Type = YakuType.Yakuman};
         }
 
         // todo -- more to add
     }
 
+    [Serializable]
     public struct YakuValue
     {
         public string Name;

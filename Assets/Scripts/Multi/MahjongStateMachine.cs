@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Single;
 using Single.MahjongDataType;
 
-namespace Multi.GameState
+namespace Multi
 {
     [Serializable]
     public class MahjongStateMachine : StateMachine.StateMachine

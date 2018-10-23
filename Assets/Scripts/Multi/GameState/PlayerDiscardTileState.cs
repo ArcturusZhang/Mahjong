@@ -20,9 +20,9 @@ namespace Multi.GameState
         private Player currentTurnPlayer;
         private bool[] responseReceived;
 
-        public override void OnStateEntered()
+        public override void OnStateEnter()
         {
-            base.OnStateEntered();
+            base.OnStateEnter();
             NetworkServer.RegisterHandler(MessageConstants.OutTurnOperationMessageId, OnOutTurnOperationMessageReceived);
             currentPlayerIndex = GameStatus.CurrentPlayerIndex;
             currentTurnPlayer = GameStatus.CurrentTurnPlayer;
@@ -60,9 +60,9 @@ namespace Multi.GameState
             ServerCallback.Invoke(OutTurnOperationMessages);
         }
 
-        public override void OnStateExited()
+        public override void OnStateExit()
         {
-            base.OnStateExited();
+            base.OnStateExit();
             NetworkServer.UnregisterHandler(MessageConstants.OutTurnOperationMessageId);
         }
     }

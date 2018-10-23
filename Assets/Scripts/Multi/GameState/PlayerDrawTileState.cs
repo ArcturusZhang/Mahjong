@@ -1,4 +1,5 @@
 using Multi.Messages;
+using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
 using UnityEngine;
@@ -11,14 +12,16 @@ namespace Multi.GameState
     {
         public MahjongSetManager MahjongSetManager;
         public GameStatus GameStatus;
-        public UnityAction<Tile, bool, InTurnOperation> ServerCallback;
+        public UnityAction<InTurnOperationData> ServerInTurnCallback;
+        public UnityAction<DiscardTileData> ServerDiscardCallback;
         public bool Lingshang;
         private int currentPlayerIndex;
         private Player currentTurnPlayer;
 
-        public override void OnStateEntered()
+        public override void OnStateEnter()
         {
-            base.OnStateEntered();
+            base.OnStateEnter();
+            NetworkServer.RegisterHandler(MessageConstants.InTurnOperationMessageId, OnInTurnOperationMessageReceived);
             NetworkServer.RegisterHandler(MessageConstants.DiscardTileMessageId, OnDiscardTileMessageReceived);
             currentPlayerIndex = GameStatus.CurrentPlayerIndex;
             currentTurnPlayer = GameStatus.CurrentTurnPlayer;
@@ -35,13 +38,35 @@ namespace Multi.GameState
             {
                 player.RoundStatus = GameStatus.RoundStatus;
             }
+
             currentTurnPlayer.LastDraw = tile;
             currentTurnPlayer.RpcYourTurnToDraw(nextIndex);
             currentTurnPlayer.connectionToClient.Send(MessageConstants.DrawTileMessageId,
                 new DrawTileMessage {PlayerIndex = GameStatus.CurrentPlayerIndex, Tile = tile, Lingshang = false});
         }
 
-        // todo -- in turn operation message handler 
+        private void OnInTurnOperationMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<InTurnOperationMessage>();
+            if (content.PlayerIndex != currentPlayerIndex)
+            {
+                Debug.Log($"[PlayerInTurnState] Received discarding message from player {content.PlayerIndex}"
+                          + $" in player {currentPlayerIndex}'s turn, ignoring");
+                return;
+            }
+
+            // rpc data update
+            currentTurnPlayer.BonusTurnTime = content.BonusTurnTime;
+            // handle result in callback
+            ServerInTurnCallback.Invoke(new InTurnOperationData
+            {
+                PlayerIndex = content.PlayerIndex,
+                LastDraw = content.LastDraw,
+                Meld = content.Meld,
+                Operation = content.Operation,
+                PointInfo = content.PointInfo
+            });
+        }
 
         private void OnDiscardTileMessageReceived(NetworkMessage message)
         {
@@ -53,6 +78,8 @@ namespace Multi.GameState
                 return;
             }
 
+            Debug.Log($"[PlayerInTurnState] Player {content.PlayerIndex} has discarded a tile {content.DiscardTile}");
+            // server side data update
             if (!content.DiscardLastDraw)
             {
                 GameStatus.PlayerHandTiles[currentPlayerIndex].Remove(content.DiscardTile);
@@ -60,13 +87,20 @@ namespace Multi.GameState
                 GameStatus.PlayerHandTiles[currentPlayerIndex].Sort();
             }
 
+            // rpc data update
             currentTurnPlayer.BonusTurnTime = content.BonusTurnTime;
-            ServerCallback.Invoke(content.DiscardTile, content.DiscardLastDraw, content.Operation);
+            ServerDiscardCallback.Invoke(new DiscardTileData
+            {
+                DiscardTile = content.DiscardTile,
+                DiscardLastDraw = content.DiscardLastDraw,
+                Operation = content.Operation
+            });
         }
 
-        public override void OnStateExited()
+        public override void OnStateExit()
         {
-            base.OnStateExited();
+            base.OnStateExit();
+            NetworkServer.UnregisterHandler(MessageConstants.InTurnOperationMessageId);
             NetworkServer.UnregisterHandler(MessageConstants.DiscardTileMessageId);
         }
     }

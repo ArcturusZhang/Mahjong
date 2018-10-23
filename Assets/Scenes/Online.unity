@@ -2404,15 +2404,20 @@ MonoBehaviour:
   MahjongSelector: {fileID: 2039882071}
   PlayerHandPanel: {fileID: 79044173}
   MahjongSetManager: {fileID: 1884002971}
-  SceneLoaded: 0
   GameStatus:
     CurrentPlayerIndex: 0
     CurrentTurnPlayer: {fileID: 0}
     Players: []
-    FirstTurn: 0
-    TilesLeft: 0
+    RoundStatus:
+      PlayerIndex: 0
+      RoundCount: 0
+      CurrentExtraRound: 0
+      FieldCount: 0
+      TotalPlayer: 0
+      TilesLeft: 0
     Dice: 0
-  GameSettings: {fileID: 11400000, guid: 37a8861d2ac47e54fa164b2c642c3755, type: 2}
+  GameSettings: {fileID: 0}
+  YakuSettings: {fileID: 0}
 --- !u!4 &1884002970
 Transform:
   m_ObjectHideFlags: 0

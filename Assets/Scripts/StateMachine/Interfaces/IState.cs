@@ -2,8 +2,8 @@
 {
 	public interface IState
 	{
-		void OnStateEntered();
-		void OnStateUpdated();
-		void OnStateExited();
+		void OnStateEnter();
+		void OnStateUpdate();
+		void OnStateExit();
 	}
 }

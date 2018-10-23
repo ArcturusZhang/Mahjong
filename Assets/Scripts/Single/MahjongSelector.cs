@@ -69,20 +69,20 @@ namespace Single
         public IEnumerator DrawInitialCoroutine(Player self, int openIndex, int totalPlayers)
         {
             int selfDrawn = 0;
-            for (int round = 0; round < GameManager.Instance.GameSettings.InitialDrawRound; round++)
+            for (int round = 0; round < MahjongManager.Instance.GameSettings.InitialDrawRound; round++)
             {
                 for (int playerIndex = 0; playerIndex < totalPlayers; playerIndex++)
                 {
-                    Debug.Log($"Drawing from {openIndex} to {openIndex + GameManager.Instance.GameSettings.TilesEveryRound}");
-                    openIndex = DrawTilesAt(openIndex, GameManager.Instance.GameSettings.TilesEveryRound);
+                    Debug.Log($"Drawing from {openIndex} to {openIndex + MahjongManager.Instance.GameSettings.TilesEveryRound}");
+                    openIndex = DrawTilesAt(openIndex, MahjongManager.Instance.GameSettings.TilesEveryRound);
                     if (self.PlayerIndex == playerIndex)
                     {
-                        var tiles = self.HandTiles.GetRange(selfDrawn, GameManager.Instance.GameSettings.TilesEveryRound);
-                        selfDrawn += GameManager.Instance.GameSettings.TilesEveryRound;
+                        var tiles = self.HandTiles.GetRange(selfDrawn, MahjongManager.Instance.GameSettings.TilesEveryRound);
+                        selfDrawn += MahjongManager.Instance.GameSettings.TilesEveryRound;
                         self.ClientAddTiles(tiles);
                     }
 
-                    Hands[playerIndex].DrawTiles(GameManager.Instance.GameSettings.TilesEveryRound);
+                    Hands[playerIndex].DrawTiles(MahjongManager.Instance.GameSettings.TilesEveryRound);
 
                     yield return new WaitForSeconds(0.5f);
                 }
@@ -93,8 +93,8 @@ namespace Single
                 openIndex = DrawTileAt(openIndex);
                 if (self.PlayerIndex == playerIndex)
                 {
-                    var tiles = self.HandTiles.GetRange(selfDrawn, GameManager.Instance.GameSettings.TilesLastRound);
-                    selfDrawn += GameManager.Instance.GameSettings.TilesLastRound;
+                    var tiles = self.HandTiles.GetRange(selfDrawn, MahjongManager.Instance.GameSettings.TilesLastRound);
+                    selfDrawn += MahjongManager.Instance.GameSettings.TilesLastRound;
                     self.ClientAddTiles(tiles);
                 }
 
@@ -111,6 +111,16 @@ namespace Single
         public void OpenToPlayer(int playerIndex, Meld meld, Tile discardTile, MeldInstanceType instanceType)
         {
             Opens[playerIndex].Open(meld, discardTile, instanceType);
+        }
+
+        public void ConcealedKongToPlayer(int playerIndex, Meld meld)
+        {
+            Opens[playerIndex].ConcealedKong(meld);
+        }
+
+        public void AddedKongToPlayer(int playerIndex, Meld meld, Tile lastDraw)
+        {
+            Opens[playerIndex].AddToKong(meld, lastDraw);
         }
 
         private int DrawTileAt(int index)

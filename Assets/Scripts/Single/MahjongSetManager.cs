@@ -63,6 +63,7 @@ namespace Single
             openIndex = -MahjongConstants.WallTilesCount * index + dice * 2;
             openIndex = MahjongConstants.RepeatIndex(openIndex, allTiles.Count);
             nextIndex = openIndex;
+            lingshangDrawn = 0;
             lingshangIndices = new[] {openIndex - 2, openIndex - 1, openIndex - 4, openIndex - 3};
             doraIndicatorIndices = new[] {openIndex - 6, openIndex - 8, openIndex - 10, openIndex - 12, openIndex - 14};
             return openIndex;

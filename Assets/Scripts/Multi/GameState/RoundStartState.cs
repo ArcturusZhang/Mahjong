@@ -3,7 +3,6 @@ using System.Linq;
 using Multi.Messages;
 using Single;
 using Single.MahjongDataType;
-using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -22,9 +21,9 @@ namespace Multi.GameState
         private List<Player> players;
         private bool[] responseReceived;
 
-        public override void OnStateEntered()
+        public override void OnStateEnter()
         {
-            base.OnStateEntered();
+            base.OnStateEnter();
             NetworkServer.RegisterHandler(MessageConstants.ReadinessMessageId, OnReadinessMessageReceived);
             MahjongManager.RpcClientRoundStart();
             GameStatus.RoundStatus = GameStatus.RoundStatus.NextRound(NewRound);
@@ -110,9 +109,9 @@ namespace Multi.GameState
             ServerCallback.Invoke();
         }
 
-        public override void OnStateExited()
+        public override void OnStateExit()
         {
-            base.OnStateExited();
+            base.OnStateExit();
             NetworkServer.UnregisterHandler(MessageConstants.ReadinessMessageId);
             GameStatus.SetCurrentPlayerIndex(GameStatus.RoundStatus.RoundCount - 1);
         }

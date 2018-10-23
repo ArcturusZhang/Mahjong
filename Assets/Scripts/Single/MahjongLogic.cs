@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Multi;
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -9,6 +11,135 @@ namespace Single
 {
     public static class MahjongLogic
     {
+        public readonly static IEnumerable<MethodInfo> YakuMethods;
+
+        static MahjongLogic()
+        {
+            YakuMethods = typeof(YakuLogic).GetMethods(BindingFlags.Static | BindingFlags.Public).Where(p =>
+                p.GetParameters().Select(q => q.ParameterType).SequenceEqual(new[]
+                    {typeof(List<Meld>), typeof(Tile), typeof(HandStatus), typeof(RoundStatus), typeof(YakuSettings)}));
+        }
+
+        public static int CountFu(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, IList<YakuValue> yakus, YakuSettings yakuSettings)
+        {
+            if (decompose.Count == 7) return 25; // 7 pairs
+            if (decompose.Count == 13) return 30; // 13 orphans
+            int fu = 20; // base fu
+            // Menqing and not tsumo
+            if (handStatus.HasFlag(HandStatus.Menqing) && !handStatus.HasFlag(HandStatus.Tsumo)) fu += 10;
+            // Tsumo
+            if (handStatus.HasFlag(HandStatus.Tsumo) && !yakus.Any(yaku => yaku.Name == "平和" || yaku.Name == "岭上开花"))
+                fu += 2;
+            // pair
+            var pair = decompose.First(meld => meld.Type == MeldType.Pair);
+            if (pair.Suit == Suit.Z)
+            {
+                if (pair.First.Rank >= 5 && pair.First.Rank <= 7) fu += 2; // dragons
+                var selfWind = roundStatus.SelfWind;
+                var prevailingWind = roundStatus.PrevailingWind;
+                if (pair.First.EqualsIgnoreColor(selfWind)) fu += 2;
+
+                if (pair.First.EqualsIgnoreColor(prevailingWind))
+                {
+                    if (!prevailingWind.EqualsIgnoreColor(selfWind) ||
+                        yakuSettings.连风对子额外加符) fu += 2;
+                }
+            }
+
+            // sequences
+            int flag = 0;
+            foreach (var meld in decompose)
+            {
+                if (!meld.Tiles.Contains(winningTile)) continue;
+                if (meld.Type == MeldType.Pair) flag++;
+                if (meld.Type == MeldType.Sequence && !meld.Revealed && meld.IsTwoSideIgnoreColor(winningTile)) flag++;
+            }
+
+            if (flag != 0) fu += 2;
+            // triplets
+            var winningTileInOther = decompose.Any(meld => !meld.Revealed &&
+                                                           (meld.Type == MeldType.Pair ||
+                                                            meld.Type == MeldType.Sequence) &&
+                                                           meld.ContainsIgnoreColor(winningTile));
+            foreach (var meld in decompose)
+            {
+                if (meld.Type != MeldType.Triplet) continue;
+                if (meld.Revealed)
+                    fu += GetTripletFu(meld, true);
+                else if (handStatus.HasFlag(HandStatus.Tsumo)) fu += GetTripletFu(meld, false);
+                else if (winningTileInOther) fu += GetTripletFu(meld, false);
+                else if (meld.ContainsIgnoreColor(winningTile)) fu += GetTripletFu(meld, true);
+                else fu += GetTripletFu(meld, false);
+            }
+
+            return ToNextUnit(fu, 10);
+        }
+
+        public static int ToNextUnit(int value, int unit)
+        {
+            if (value % unit == 0) return value;
+            return (value / unit + 1) * unit;
+        }
+
+        private static int GetTripletFu(Meld meld, bool revealed)
+        {
+            int triplet = revealed ? 2 : 4;
+            if (meld.IsKong) triplet *= 4;
+            if (meld.IsYaojiu) triplet *= 2;
+            return triplet;
+        }
+
+        private static IList<YakuValue> CountYaku(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings yakuSettings)
+        {
+            var result = new List<YakuValue>();
+            if (decompose == null || decompose.Count == 0) return result;
+            foreach (var yakuMethod in YakuMethods)
+            {
+                var value = (YakuValue) yakuMethod.Invoke(yakuSettings,
+                    new object[] {decompose, winningTile, handStatus, roundStatus, yakuSettings});
+                if (value.Value != 0)
+                {
+                    result.Add(value);
+                }
+            }
+
+            if (yakuSettings.青天井) return result;
+            var hasYakuman = result.Any(yakuValue => yakuValue.Type == YakuType.Yakuman);
+            return hasYakuman ? result.Where(yakuValue => yakuValue.Type == YakuType.Yakuman).ToList() : result;
+        }
+
+        public static PointInfo GetPointInfo(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile,
+            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, int dora = 0, int uraDora = 0,
+            int redDora = 0)
+        {
+            var decomposes = Decompose(handTiles, openMelds, winningTile);
+            return GetPointInfo(decomposes, winningTile, handStatus, roundStatus, yakuSettings, dora, uraDora, redDora);
+        }
+
+        public static PointInfo GetPointInfo(ISet<List<Meld>> decomposes, Tile winningTile, HandStatus handStatus,
+            RoundStatus roundStatus, YakuSettings yakuSettings, int dora = 0, int uraDora = 0, int redDora = 0)
+        {
+            Debug.Log($"GetPointInfo method, parameters: \ndecomposes: {decomposes}, winningTile: {winningTile}, "
+                      + $"handStatus: {handStatus}, roundStatus: {roundStatus}, "
+                      + $"dora: {dora}, uraDora: {uraDora}, redDora: {redDora}");
+            var infos = new List<PointInfo>();
+            foreach (var decompose in decomposes)
+            {
+                var yakus = CountYaku(decompose, winningTile, handStatus, roundStatus, yakuSettings);
+                var fu = CountFu(decompose, winningTile, handStatus, roundStatus, yakus, yakuSettings);
+                var info = new PointInfo(fu, yakus, yakuSettings.青天井, dora, uraDora, redDora);
+                infos.Add(info);
+                Debug.Log($"Decompose: {string.Join(", ", decompose)}, PointInfo: {info}");
+            }
+
+            if (infos.Count == 0) return new PointInfo();
+            infos.Sort();
+            Debug.Log($"CountPoint: {string.Join(", ", infos.Select(info => info.ToString()))}");
+            return infos[infos.Count - 1];
+        }
+
         public static ISet<List<Meld>> Decompose(List<Tile> handTiles, List<Meld> openMelds, Tile tile)
         {
             var decompose = new HashSet<List<Meld>>(new MeldListEqualityComparer());
@@ -232,7 +363,12 @@ namespace Single
         public static bool TestMenqing(List<Meld> openMelds)
         {
             if (openMelds.Count == 0) return true;
-            return openMelds.All(meld => !meld.Revealed);
+            foreach (var meld in openMelds)
+            {
+                if (meld.Revealed) return false;
+            }
+
+            return true;
         }
 
         public static ISet<Meld> GetChows(List<Tile> handTiles, Tile discardTile)
@@ -244,16 +380,16 @@ namespace Single
             var tilesN1 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank + 1);
             var tilesN2 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank + 2);
             foreach (var tileP2 in tilesP2)
-                foreach (var tileP1 in tilesP1)
-                    result.Add(new Meld(true, tileP2, tileP1, discardTile));
+            foreach (var tileP1 in tilesP1)
+                result.Add(new Meld(true, tileP2, tileP1, discardTile));
 
             foreach (var tileP1 in tilesP1)
-                foreach (var tileN1 in tilesN1)
-                    result.Add(new Meld(true, tileP1, discardTile, tileN1));
+            foreach (var tileN1 in tilesN1)
+                result.Add(new Meld(true, tileP1, discardTile, tileN1));
 
             foreach (var tileN1 in tilesN1)
-                foreach (var tileN2 in tilesN2)
-                    result.Add(new Meld(true, discardTile, tileN1, tileN2));
+            foreach (var tileN2 in tilesN2)
+                result.Add(new Meld(true, discardTile, tileN1, tileN2));
             return result;
         }
 
@@ -268,6 +404,7 @@ namespace Single
                 tiles.Sort();
                 result.Add(new Meld(true, tiles.ToArray()));
             }
+
             // tiles.Count == 3
             Assert.IsTrue(tiles.Count == 3, "tiles.Count == 3");
             tiles.Sort();
@@ -277,7 +414,7 @@ namespace Single
             return result;
         }
 
-        public static ISet<Meld> GetKongs(List<Tile> handTiles, Tile discardTile)
+        public static ISet<Meld> GetOutTurnKongs(List<Tile> handTiles, Tile discardTile)
         {
             var result = new HashSet<Meld>();
             var tiles = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank);
@@ -285,6 +422,47 @@ namespace Single
             tiles.Add(discardTile);
             Assert.IsTrue(tiles.Count == 4, "tiles.Count == 4");
             result.Add(new Meld(true, tiles.ToArray()));
+            return result;
+        }
+
+        public static ISet<Meld> GetInTurnKongs(List<Tile> handTiles, List<Meld> openMelds, Tile lastDraw)
+        {
+            var result = new HashSet<Meld>();
+            // find added kongs
+            var addedKongIndex = openMelds.FindIndex(meld =>
+                meld.Type == MeldType.Triplet && !meld.IsKong && meld.First.EqualsIgnoreColor(lastDraw));
+            if (addedKongIndex >= 0)
+            {
+                var meld = openMelds[addedKongIndex];
+                var tiles = new List<Tile>(meld.Tiles) {lastDraw};
+                result.Add(new Meld(true, tiles.ToArray()));
+            }
+
+            // find concealed kongs
+            var tilesCount = new Dictionary<Tile, List<Tile>>(Tile.TileIgnoreColorEqualityComparer);
+            foreach (var handTile in handTiles)
+            {
+                if (tilesCount.ContainsKey(handTile)) tilesCount[handTile].Add(handTile);
+                else tilesCount.Add(handTile, new List<Tile> {handTile});
+            }
+
+            if (tilesCount.ContainsKey(lastDraw) && tilesCount[lastDraw].Count >= 3)
+            {
+                tilesCount[lastDraw].Add(lastDraw);
+                result.Add(new Meld(false, tilesCount[lastDraw].ToArray()));
+            }
+
+            foreach (var entry in tilesCount)
+            {
+                if (entry.Value.Count == 4) result.Add(new Meld(false, entry.Value.ToArray()));
+            }
+
+            return result;
+        }
+
+        public static ISet<Meld> GetRichiKongs(List<Tile> handTiles, List<Meld> openMelds, Tile lastDraw)
+        {
+            var result = new HashSet<Meld>();
             return result;
         }
     }

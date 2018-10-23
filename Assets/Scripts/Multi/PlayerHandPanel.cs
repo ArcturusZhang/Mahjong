@@ -35,10 +35,10 @@ namespace Multi
                 Destroy(transform.GetChild(i).gameObject);
         }
 
-        public void Refresh(Player player, List<Tile> tiles)
+        public void Refresh(Player player, List<Tile> tiles, bool richi = false)
         {
             Clear();
-            AddTiles(player, tiles);
+            AddTiles(player, tiles, richi);
         }
 
         public void DrawTile(Player player, Tile tile)
@@ -46,15 +46,15 @@ namespace Multi
             DrawTile(player, tile, true, DrawnTilePrefab);
         }
 
-        public void AddTiles(Player player, List<Tile> tiles)
+        public void AddTiles(Player player, List<Tile> tiles, bool richi = false)
         {
             foreach (var tile in tiles)
             {
-                DrawTile(player, tile, false, HandTilePrefab);
+                DrawTile(player, tile, false, HandTilePrefab, richi);
             }
         }
 
-        private void DrawTile(Player player, Tile tile, bool discardLastDraw, GameObject prefab)
+        private void DrawTile(Player player, Tile tile, bool discardLastDraw, GameObject prefab, bool richi = false)
         {
             var sprite = ResourceManager.Instance.GetTileSprite(tile);
             var tileImage = Instantiate(prefab, transform);
@@ -62,6 +62,7 @@ namespace Multi
             image.sprite = sprite;
             var button = tileImage.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
+            if (richi) return;
             button.onClick.AddListener(() =>
             {
                 player.ClientDiscardTile(tile, discardLastDraw);

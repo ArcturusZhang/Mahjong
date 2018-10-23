@@ -35,6 +35,7 @@ namespace Multi.Messages
 	{
 		public int PlayerIndex;
 		public InTurnOperation Operation;
+		public Tile LastDraw;
 		public Meld Meld;
 		public int BonusTurnTime;
 		public PointInfo PointInfo;
@@ -63,11 +64,5 @@ namespace Multi.Messages
 	{
 		public int PlayerIndex;
 		public Tile DefaultTile;
-	}
-
-	public class LingshangTileDrawnMessage : MessageBase
-	{
-		public int PlayerIndex;
-		public Tile Lingshang;
 	}
 }

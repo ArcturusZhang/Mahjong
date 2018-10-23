@@ -10,6 +10,5 @@ namespace Multi.Messages
         public const short DiscardTileMessageId = 104;
         public const short OutTurnOperationMessageId = 105;
         public const short DiscardAfterOpenMessageId = 106;
-        public const short LingshangTileDrawnMessageId = 107;
     }
 }

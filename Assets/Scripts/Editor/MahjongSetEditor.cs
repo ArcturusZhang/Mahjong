@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Single;
 using Single.MahjongDataType;
@@ -84,29 +85,32 @@ namespace Editor
             }
         }
 
-        [MenuItem("Mahjong/Test/Test for decompose")]
+        [MenuItem("Mahjong/Test/Test MahjongLogic")]
         public static void TestForDecompose()
         {
             var handTiles = new List<Tile>
             {
-                new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 2),
-                new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 3),
-                new Tile(Suit.M, 3), new Tile(Suit.M, 4), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
-                new Tile(Suit.M, 5),
+                new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.P, 4), new Tile(Suit.P, 5, true),
+                new Tile(Suit.P, 7), new Tile(Suit.P, 8), new Tile(Suit.P, 9), new Tile(Suit.S, 2),
+                new Tile(Suit.S, 3), new Tile(Suit.S, 4), new Tile(Suit.S, 5), new Tile(Suit.S, 6),
+                new Tile(Suit.S, 7),
             };
-            var decompose = MahjongLogic.Decompose(handTiles, new List<Meld>(), new Tile(Suit.M, 5));
-            var builder = new StringBuilder();
-            foreach (var sub in decompose)
+            var openMelds = new List<Meld>();
+            var winningTile = new Tile(Suit.P, 6);
+            var handStatus = HandStatus.Menqing | HandStatus.Tsumo;
+            var roundStatus = new RoundStatus
             {
-                foreach (var meld in sub)
-                {
-                    builder.Append(meld).Append(", ");
-                }
-
-                builder.Append("\n");
-            }
-
-            Debug.Log(builder);
+                PlayerIndex = 1,
+                RoundCount = 1,
+                FieldCount = 1,
+                CurrentExtraRound = 0,
+                TilesLeft = 100,
+                TotalPlayer = 2
+            };
+            var yakuSettings = AssetDatabase.LoadAssetAtPath<YakuSettings>("Assets/GameData/YakuSettings.asset");
+            var pointInfo = MahjongLogic.GetPointInfo(handTiles, openMelds, winningTile, handStatus, roundStatus,
+                yakuSettings);
+            Debug.Log(pointInfo);
         }
 
         [MenuItem("Mahjong/Postprocess/Transparency background")]
@@ -156,12 +160,12 @@ namespace Editor
                     -MahjongConstants.TileWidth / 2);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileHeight / 2 - 2 * MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
@@ -180,17 +184,17 @@ namespace Editor
                     -MahjongConstants.TileWidth / 2);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileHeight / 2 - 3 * MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
@@ -204,7 +208,7 @@ namespace Editor
             meldObject.transform.position = Vector3.zero;
             meldObject.transform.rotation = Quaternion.identity;
             var tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileHeight / 2);
             tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
@@ -214,7 +218,7 @@ namespace Editor
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileHeight);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth - MahjongConstants.TileHeight);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
@@ -228,7 +232,7 @@ namespace Editor
             meldObject.transform.position = Vector3.zero;
             meldObject.transform.rotation = Quaternion.identity;
             var tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileHeight / 2);
             tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
@@ -238,12 +242,12 @@ namespace Editor
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileHeight);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth - MahjongConstants.TileHeight);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth - MahjongConstants.TileHeight);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
@@ -262,12 +266,12 @@ namespace Editor
                     -MahjongConstants.TileWidth / 2);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileHeight / 2 - MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth - MahjongConstants.TileHeight);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
@@ -291,12 +295,12 @@ namespace Editor
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileWidth / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileHeight / 2 - 2 * MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 180, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth - MahjongConstants.TileHeight);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
@@ -320,12 +324,12 @@ namespace Editor
                     -MahjongConstants.TileWidth / 2 - MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - 2 * MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(0, 270, -90);
             tileObject = Instantiate(tilePrefab, meldObject.transform);
-            tileObject.transform.localPosition = 
+            tileObject.transform.localPosition =
                 new Vector3(-MahjongConstants.TileHeight / 2, MahjongConstants.TileThickness / 2,
                     -MahjongConstants.TileWidth / 2 - 3 * MahjongConstants.TileWidth);
             tileObject.transform.localRotation = Quaternion.Euler(-180, 270, -90);

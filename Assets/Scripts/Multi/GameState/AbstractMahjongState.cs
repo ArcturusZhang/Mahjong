@@ -5,17 +5,17 @@ namespace Multi.GameState
 {
     public abstract class AbstractMahjongState : IState
     {
-        public virtual void OnStateEntered()
+        public virtual void OnStateEnter()
         {
             Debug.Log($"[StateMachine] Enter {GetType().Name}");
         }
 
-        public virtual void OnStateUpdated()
+        public virtual void OnStateUpdate()
         {
             Debug.Log($"[StateMachine] Execute {GetType().Name}");
         }
 
-        public virtual void OnStateExited()
+        public virtual void OnStateExit()
         {
             Debug.Log($"[StateMachine] Exit {GetType().Name}");
         }

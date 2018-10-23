@@ -1,11 +1,10 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Lobby;
 using Multi.GameState;
 using Multi.Messages;
+using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
 using UI;
@@ -44,6 +43,7 @@ namespace Multi
 
         [Header("Game Status Info")] public GameStatus GameStatus;
         public GameSettings GameSettings;
+        public YakuSettings YakuSettings;
 
         private Coroutine waitForClientCoroutine = null;
 
@@ -66,6 +66,8 @@ namespace Multi
         public override void OnStartServer()
         {
             Debug.Log("MahjongManager OnStartServer is called");
+            GameSettings = ResourceManager.Instance.GameSettings;
+            YakuSettings = ResourceManager.Instance.YakuSettings;
             stateMachine = new MahjongStateMachine();
             GameStatus.Players = LobbyManager.Instance.Players;
             StartCoroutine(StartServerGameLoop());
@@ -79,6 +81,7 @@ namespace Multi
             {
                 MahjongManager = this,
                 GameSettings = GameSettings,
+                YakuSettings = YakuSettings,
                 GameStatus = GameStatus
             });
             yield return new WaitForSeconds(1f);
@@ -103,10 +106,15 @@ namespace Multi
                 MahjongSetManager = MahjongSetManager,
                 GameStatus = GameStatus,
                 Lingshang = false,
-                ServerCallback = (tile, discardLastDraw, operation) =>
+                ServerInTurnCallback = data =>
                 {
                     StopWaitingCoroutine();
-                    ServerDiscardTile(tile, discardLastDraw, operation);
+                    ServerInTurnOperation(data);
+                },
+                ServerDiscardCallback = data =>
+                {
+                    StopWaitingCoroutine();
+                    ServerDiscardTile(data);
                 },
             });
             waitForClientCoroutine =
@@ -120,32 +128,73 @@ namespace Multi
                                             GameSettings.ServerBufferTime);
             Debug.Log($"[Server] Time out for player {GameStatus.CurrentPlayerIndex}, "
                       + $"automatically discard {GameStatus.CurrentTurnPlayer.LastDraw}");
-            ServerDiscardTile(GameStatus.CurrentTurnPlayer.LastDraw, true, InTurnOperation.Discard);
+            ServerDiscardTile(new DiscardTileData
+            {
+                DiscardTile = GameStatus.CurrentTurnPlayer.LastDraw,
+                DiscardLastDraw = true,
+                Operation = InTurnOperation.Discard
+            });
         }
 
         [Server]
-        private void StopWaitingCoroutine()
+        private void ServerInTurnOperation(InTurnOperationData inTurnOperationData)
         {
-            if (waitForClientCoroutine == null) return;
-            StopCoroutine(waitForClientCoroutine);
-            waitForClientCoroutine = null;
+            var operation = inTurnOperationData.Operation;
+            if (operation.HasFlag(InTurnOperation.Tsumo))
+            {
+                Debug.Log(
+                    $"[Server] Player {inTurnOperationData.PlayerIndex} has claimed tsumo for point: {inTurnOperationData.PointInfo}");
+                // todo -- turn into RoundEndState
+                stateMachine.ChangeState(new RoundEndState());
+                return;
+            }
+
+            if (operation.HasFlag(InTurnOperation.Kong))
+            {
+                Debug.Log(
+                    $"[Server] Player {inTurnOperationData.PlayerIndex} has claimed kong for {inTurnOperationData.Meld}");
+                // rpc call to perform kong on clients
+                GameStatus.CurrentTurnPlayer.RpcPerformInTurnKong(inTurnOperationData.PlayerIndex,
+                    inTurnOperationData.Meld, inTurnOperationData.LastDraw);
+                var meld = inTurnOperationData.Meld;
+                var added = meld.Revealed &&
+                            meld.Tiles.Contains(inTurnOperationData.LastDraw, Tile.TileConsiderColorEqualityComparer);
+                if (!added) GameStatus.CurrentTurnPlayer.HandTilesCount -= meld.EffectiveTileCount;
+                stateMachine.ChangeState(new PlayerDrawTileState
+                {
+                    MahjongSetManager = MahjongSetManager,
+                    GameStatus = GameStatus,
+                    Lingshang = true,
+                    ServerInTurnCallback = data =>
+                    {
+                        StopWaitingCoroutine();
+                        ServerInTurnOperation(data);
+                    },
+                    ServerDiscardCallback = data =>
+                    {
+                        StopWaitingCoroutine();
+                        ServerDiscardTile(data);
+                    }
+                });
+                return;
+            }
         }
 
         [Server]
-        private void ServerDiscardTile(Tile discardTile, bool discardLastDraw, InTurnOperation operation)
+        private void ServerDiscardTile(DiscardTileData data)
         {
             var outTurnOperationMessages = new OutTurnOperationMessage[GameStatus.Players.Count];
             var playerDiscardTileState = new PlayerDiscardTileState
             {
                 GameStatus = GameStatus,
-                DiscardTile = discardTile,
-                DiscardLastDraw = discardLastDraw,
-                InTurnOperation = operation,
+                DiscardTile = data.DiscardTile,
+                DiscardLastDraw = data.DiscardLastDraw,
+                InTurnOperation = data.Operation,
                 OutTurnOperationMessages = outTurnOperationMessages,
                 ServerCallback = messages =>
                 {
                     StopWaitingCoroutine();
-                    ServerHandleOutTurnOperations(messages);
+                    ServerOutTurnOperations(messages);
                 }
             };
             stateMachine.ChangeState(playerDiscardTileState);
@@ -161,11 +210,11 @@ namespace Multi
             yield return new WaitForSeconds(serverWaitTime);
             Debug.Log("[Server] Time out when waiting out turn operations.");
             // todo -- disable out turn ui panel for all clients
-            ServerHandleOutTurnOperations(outTurnOperationMessages);
+            ServerOutTurnOperations(outTurnOperationMessages);
         }
 
         [Server]
-        private void ServerHandleOutTurnOperations(OutTurnOperationMessage[] outTurnOperationMessages)
+        private void ServerOutTurnOperations(OutTurnOperationMessage[] outTurnOperationMessages)
         {
             Debug.Log($"[Server] Handling out turn operations");
             var rongMessages = Array.FindAll(outTurnOperationMessages,
@@ -193,7 +242,7 @@ namespace Multi
                     discardPlayerIndex);
                 // server side data update
                 currentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
+                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardedTile);
                 GameStatus.PlayerOpenMelds[currentPlayerIndex].Add(message.Meld);
                 Assert.AreEqual(GameStatus.PlayerHandTiles[currentPlayerIndex].Count, currentTurnPlayer.HandTilesCount,
                     "Hand tile count should equal to data on server");
@@ -202,10 +251,15 @@ namespace Multi
                     MahjongSetManager = MahjongSetManager,
                     GameStatus = GameStatus,
                     Lingshang = true,
-                    ServerCallback = (tile, discardLastDraw, operation) =>
+                    ServerInTurnCallback = data =>
                     {
                         StopWaitingCoroutine();
-                        ServerDiscardTile(tile, discardLastDraw, operation);
+                        ServerInTurnOperation(data);
+                    },
+                    ServerDiscardCallback = data =>
+                    {
+                        StopWaitingCoroutine();
+                        ServerDiscardTile(data);
                     }
                 });
                 waitForClientCoroutine = StartCoroutine(ServerWaitForClientDiscard());
@@ -228,7 +282,7 @@ namespace Multi
                     discardPlayerIndex);
                 // server side data update
                 currentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
+                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardedTile);
                 GameStatus.PlayerOpenMelds[currentPlayerIndex].Add(message.Meld);
                 var defaultTile = GameStatus.PlayerHandTiles[currentPlayerIndex].RemoveLast();
                 Assert.AreEqual(GameStatus.PlayerHandTiles[currentPlayerIndex].Count, currentTurnPlayer.HandTilesCount,
@@ -237,10 +291,10 @@ namespace Multi
                 {
                     DefaultTile = defaultTile,
                     GameStatus = GameStatus,
-                    ServerCallback = (tile, discardLastDraw, operation) =>
+                    ServerCallback = data =>
                     {
                         StopWaitingCoroutine();
-                        ServerDiscardTile(tile, discardLastDraw, operation);
+                        ServerDiscardTile(data);
                     }
                 });
                 waitForClientCoroutine = StartCoroutine(ServerWaitForClientDiscard());
@@ -261,7 +315,7 @@ namespace Multi
                 currentTurnPlayer.RpcPerformChow(message.Meld, message.DiscardedTile);
                 // server side data update
                 currentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Remove(message.Meld, message.DiscardedTile);
+                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardedTile);
                 GameStatus.PlayerOpenMelds[currentPlayerIndex].Add(message.Meld);
                 var defaultTile = GameStatus.PlayerHandTiles[currentPlayerIndex].RemoveLast();
                 Assert.AreEqual(GameStatus.PlayerHandTiles[currentPlayerIndex].Count, currentTurnPlayer.HandTilesCount,
@@ -270,10 +324,10 @@ namespace Multi
                 {
                     DefaultTile = defaultTile,
                     GameStatus = GameStatus,
-                    ServerCallback = (tile, discardLastDraw, operation) =>
+                    ServerCallback = data =>
                     {
                         StopWaitingCoroutine();
-                        ServerDiscardTile(tile, discardLastDraw, operation);
+                        ServerDiscardTile(data);
                     }
                 });
                 waitForClientCoroutine = StartCoroutine(ServerWaitForClientDiscard());
@@ -304,9 +358,11 @@ namespace Multi
         }
 
         [ClientRpc]
-        internal void RpcClientPrepare()
+        internal void RpcClientPrepare(GameSettings gameSettings, YakuSettings yakuSettings)
         {
             LobbyManager.Instance.LocalPlayer.PlayerHandPanel = PlayerHandPanel;
+            GameSettings = gameSettings;
+            YakuSettings = yakuSettings;
         }
 
         [ClientRpc]
@@ -319,6 +375,14 @@ namespace Multi
             int wind = LobbyManager.Instance.LocalPlayer.PlayerIndex;
             MahjongSelector.transform.Rotate(Vector3.up, 90 * wind, Space.World);
             // todo -- ui elements (dealer display, points, etc)
+        }
+
+        [Server]
+        private void StopWaitingCoroutine()
+        {
+            if (waitForClientCoroutine == null) return;
+            StopCoroutine(waitForClientCoroutine);
+            waitForClientCoroutine = null;
         }
     }
 }

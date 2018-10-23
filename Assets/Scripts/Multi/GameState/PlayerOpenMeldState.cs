@@ -1,5 +1,5 @@
 using Multi.Messages;
-using Single;
+using Multi.ServerData;
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,13 +11,13 @@ namespace Multi.GameState
     {
         public Tile DefaultTile;
         public GameStatus GameStatus;
-        public UnityAction<Tile, bool, InTurnOperation> ServerCallback;
+        public UnityAction<DiscardTileData> ServerCallback;
         private int currentPlayerIndex;
         private Player currentTurnPlayer;
         
-        public override void OnStateEntered()
+        public override void OnStateEnter()
         {
-            base.OnStateEntered();
+            base.OnStateEnter();
             NetworkServer.RegisterHandler(MessageConstants.DiscardTileMessageId, OnDiscardTileMessageReceived);
             currentPlayerIndex = GameStatus.CurrentPlayerIndex;
             currentTurnPlayer = GameStatus.CurrentTurnPlayer;
@@ -48,12 +48,17 @@ namespace Multi.GameState
             }
 
             currentTurnPlayer.BonusTurnTime = content.BonusTurnTime;
-            ServerCallback.Invoke(content.DiscardTile, content.DiscardLastDraw, content.Operation);
+            ServerCallback.Invoke(new DiscardTileData
+            {
+                DiscardTile = content.DiscardTile,
+                DiscardLastDraw = content.DiscardLastDraw,
+                Operation = content.Operation
+            });
         }
 
-        public override void OnStateExited()
+        public override void OnStateExit()
         {
-            base.OnStateExited();
+            base.OnStateExit();
             NetworkServer.UnregisterHandler(MessageConstants.DiscardTileMessageId);
         }
     }

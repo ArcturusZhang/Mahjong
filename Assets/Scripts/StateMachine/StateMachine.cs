@@ -12,21 +12,21 @@ namespace StateMachine
         {
             if (newState == null) throw new ArgumentException("New state cannot be null!");
             previousState = currentState;
-            previousState?.OnStateExited();
+            previousState?.OnStateExit();
             currentState = newState;
-            currentState.OnStateEntered();
+            currentState.OnStateEnter();
         }
 
         public virtual void UpdateState()
         {
-            currentState?.OnStateUpdated();
+            currentState?.OnStateUpdate();
         }
 
         public virtual void RollbackToPreviousState()
         {
-            currentState.OnStateExited();
+            currentState.OnStateExit();
             currentState = previousState;
-            currentState.OnStateEntered();
+            currentState.OnStateEnter();
         }
 
         public Type CurrentState => currentState.GetType();
