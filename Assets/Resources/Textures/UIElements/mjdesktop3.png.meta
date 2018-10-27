@@ -7,17 +7,17 @@ TextureImporter:
     21300004: mjdesktop3_2
     21300006: yuku
     21300008: fu5
-    21300010: man
+    21300010: yakuman
     21300012: tsumo
     21300014: mjdesktop3_7
-    21300016: 4kong
-    21300018: mjdesktop3_9
+    21300016: 4kongs
+    21300018: mjdesktop3_100
     21300020: fan0
     21300022: fu5
     21300024: mjdesktop3_12
     21300026: mjdesktop3_13
     21300028: time5
-    21300030: mjdesktop3_15
+    21300030: placeBack
     21300032: point
     21300034: base1
     21300036: fu3
@@ -45,7 +45,7 @@ TextureImporter:
     21300080: base9
     21300082: bonus1
     21300084: bonus2
-    21300086: mjdesktop3_43
+    21300086: minus
     21300088: mjdesktop3_44
     21300090: base3
     21300092: mjdesktop3_46
@@ -96,11 +96,11 @@ TextureImporter:
     21300182: fu8
     21300184: fan1
     21300186: fu2
-    21300188: mjdesktop3_0
+    21300188: confirmButton
     21300190: yakuman
     21300192: fu7
     21300194: tsumo
-    21300196: 4kong
+    21300196: 4kongs
     21300198: fu0
     21300200: point
     21300202: base1
@@ -244,13 +244,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: mjdesktop3_0
+      name: confirmButton
       rect:
         serializedVersion: 2
-        x: 0
-        y: 490
-        width: 104
-        height: 306
+        x: 181
+        y: 570
+        width: 150
+        height: 58
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -307,10 +307,10 @@ TextureImporter:
       name: yakuman
       rect:
         serializedVersion: 2
-        x: 537
+        x: 536
         y: 705
-        width: 148
-        height: 91
+        width: 149
+        height: 90
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -404,7 +404,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: 4kong
+      name: 4kongs
       rect:
         serializedVersion: 2
         x: 205
@@ -424,13 +424,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop3_9
+      name: mjdesktop3_100
       rect:
         serializedVersion: 2
-        x: 428
-        y: 633
-        width: 108
-        height: 114
+        x: 538
+        y: 638
+        width: 65
+        height: 61
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -544,7 +544,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop3_15
+      name: placeBack
       rect:
         serializedVersion: 2
         x: 664
@@ -1104,13 +1104,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop3_43
+      name: minus
       rect:
         serializedVersion: 2
-        x: 0
-        y: 186
-        width: 117
-        height: 135
+        x: 126
+        y: 81
+        width: 67
+        height: 23
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1329,7 +1329,7 @@ TextureImporter:
         serializedVersion: 2
         x: 642
         y: 215
-        width: 50
+        width: 48
         height: 77
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -1767,9 +1767,9 @@ TextureImporter:
       name: fan9
       rect:
         serializedVersion: 2
-        x: 238
+        x: 239
         y: 281
-        width: 50
+        width: 45
         height: 72
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

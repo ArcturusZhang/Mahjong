@@ -217,6 +217,17 @@ namespace Single.MahjongDataType
         {
             return (int) tile.Suit * 9 + tile.Rank - 1;
         }
+
+        public Tile Dora
+        {
+            get
+            {
+                int repeat = Suit == Suit.Z ? 7 : 9;
+                int rank = Rank + 1;
+                if (rank > repeat) rank -= repeat;
+                return new Tile(Suit, rank);
+            }
+        }
     }
 
     public enum Suit

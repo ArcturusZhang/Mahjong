@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Single;
 using Single.MahjongDataType;
 using UnityEngine;
 using Utils;

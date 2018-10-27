@@ -103,7 +103,7 @@ namespace UI
             {
                 BaseTimeImage.gameObject.SetActive(true);
                 PlusImage.gameObject.SetActive(true);
-                var sprite = ResourceManager.Instance.GetBaseTimeSprite(baseTime);
+                var sprite = ResourceManager.Instance.BaseTime(baseTime);
                 BaseTimeImage.sprite = sprite;
             }
 
@@ -122,14 +122,14 @@ namespace UI
             {
                 BonusTimeImages[0].gameObject.SetActive(true);
                 BonusTimeImages[1].gameObject.SetActive(true);
-                BonusTimeImages[0].sprite = ResourceManager.Instance.GetBonusTimeSprite(first);
-                BonusTimeImages[1].sprite = ResourceManager.Instance.GetBonusTimeSprite(second);
+                BonusTimeImages[0].sprite = ResourceManager.Instance.BonusTime(first);
+                BonusTimeImages[1].sprite = ResourceManager.Instance.BonusTime(second);
             }
             else
             {
                 BonusTimeImages[0].gameObject.SetActive(true);
                 BonusTimeImages[1].gameObject.SetActive(false);
-                BonusTimeImages[0].sprite = ResourceManager.Instance.GetBonusTimeSprite(second);
+                BonusTimeImages[0].sprite = ResourceManager.Instance.BonusTime(second);
             }
         }
     }

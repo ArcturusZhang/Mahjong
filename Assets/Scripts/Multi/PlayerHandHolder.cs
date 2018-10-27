@@ -2,6 +2,7 @@
 using Single;
 using Single.MahjongDataType;
 using UnityEngine;
+using Utils;
 
 namespace Multi
 {
@@ -75,10 +76,7 @@ namespace Multi
 
 		private void DeleteAllTiles()
 		{
-			for (int i = transform.childCount - 1; i >= 0; i--)
-			{
-				Destroy(transform.GetChild(i).gameObject);
-			}
+			transform.DestroyAllChild();
 		}
 
 		private GameObject InstantiateTile(int index)

@@ -6,7 +6,7 @@ TextureImporter:
     21300002: mjdesktop2_1
     21300004: mjdesktop2_2
     21300006: richi
-    21300008: mjdesktop2_4
+    21300008: fanBack
     21300010: panel
     21300012: mjdesktop2_6
     21300014: liuju_button
@@ -20,9 +20,9 @@ TextureImporter:
     21300030: mjdesktop2_15
     21300032: mjdesktop2_16
     21300034: pong
-    21300036: mjdesktop2_18
+    21300036: itemBack
     21300038: kong
-    21300040: mjdesktop2_20
+    21300040: itemBackYakuman
     21300042: mjdesktop2_21
     21300044: mjdesktop2_22
     21300046: chow
@@ -208,7 +208,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop2_4
+      name: fanBack
       rect:
         serializedVersion: 2
         x: 0
@@ -488,7 +488,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop2_18
+      name: itemBack
       rect:
         serializedVersion: 2
         x: 615
@@ -528,7 +528,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop2_20
+      name: itemBackYakuman
       rect:
         serializedVersion: 2
         x: 601

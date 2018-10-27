@@ -197,7 +197,7 @@ namespace Single
             int handFlag = 0;
             foreach (var meld in decompose)
             {
-                if (meld.Type != MeldType.Sequence) continue;
+                if (meld.Type != MeldType.Sequence || meld.Suit == Suit.Z) continue;
                 handFlag |= 1 << Tile.GetIndex(meld.First);
             }
 
@@ -219,7 +219,7 @@ namespace Single
             int handFlag = 0;
             foreach (var meld in decompose)
             {
-                if (meld.Type != MeldType.Triplet) continue;
+                if (meld.Type != MeldType.Triplet || meld.Suit == Suit.Z) continue;
                 handFlag |= 1 << Tile.GetIndex(meld.First);
             }
 
@@ -450,7 +450,7 @@ namespace Single
     }
 
     [Serializable]
-    public struct YakuValue
+    public struct YakuValue : IComparable<YakuValue>
     {
         public string Name;
         public int Value;
@@ -462,6 +462,11 @@ namespace Single
             {
                 Name = Name, Value = value, Type = Type
             };
+        }
+
+        public int CompareTo(YakuValue other)
+        {
+            return Value.CompareTo(other.Value);
         }
 
         public override string ToString()

@@ -7,11 +7,6 @@ namespace Single.MahjongDataType
     [Serializable]
     public struct PointInfo : IComparable<PointInfo>
     {
-        private static readonly int Mangan = 2000;
-        private static readonly int Haneman = 3000;
-        private static readonly int Baiman = 4000;
-        private static readonly int Sanbaiman = 6000;
-        private static readonly int Yakuman = 8000;
         public int Fu;
         public int Fan;
         public YakuValue[] Yakus;
@@ -63,24 +58,25 @@ namespace Single.MahjongDataType
             }
             else if (IsYakuman)
             {
-                BasePoint = Fan * Yakuman;
+                BasePoint = Fan * MahjongConstants.Yakuman;
                 TotalFan = Fan;
             }
             else
             {
                 TotalFan = Fan + dora + uraDora + redDora;
-                if (TotalFan >= 13) BasePoint = Yakuman;
-                else if (TotalFan >= 11) BasePoint = Sanbaiman;
-                else if (TotalFan >= 8) BasePoint = Baiman;
-                else if (TotalFan >= 6) BasePoint = Haneman;
-                else if (TotalFan >= 5) BasePoint = Mangan;
+                if (TotalFan >= 13) BasePoint = MahjongConstants.Yakuman;
+                else if (TotalFan >= 11) BasePoint = MahjongConstants.Sanbaiman;
+                else if (TotalFan >= 8) BasePoint = MahjongConstants.Baiman;
+                else if (TotalFan >= 6) BasePoint = MahjongConstants.Haneman;
+                else if (TotalFan >= 5) BasePoint = MahjongConstants.Mangan;
                 else
                 {
                     int point = Fu * (int) Math.Pow(2, TotalFan + 2);
                     point = MahjongLogic.ToNextUnit(point, 100);
-                    BasePoint = Math.Min(Mangan, point);
+                    BasePoint = Math.Min(MahjongConstants.Mangan, point);
                 }
             }
+            Array.Sort(Yakus);
         }
 
         public int BasePoint { get; }
@@ -90,7 +86,8 @@ namespace Single.MahjongDataType
         {
             var yakus = Yakus == null ? "" : string.Join(", ", Yakus.Select(yaku => yaku.ToString()));
             return
-                $"Fu = {Fu}, Fan = {Fan}, Yakus = [{yakus}], BasePoint = {BasePoint}";
+                $"Fu = {Fu}, Fan = {Fan}, Dora = {Dora}, UraDora = {UraDora}, RedDora = {RedDora}, "
+                + $"Yakus = [{yakus}], BasePoint = {BasePoint}";
         }
 
         public int CompareTo(PointInfo other)

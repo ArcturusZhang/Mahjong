@@ -3,6 +3,7 @@ using Single;
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.UI;
+using Utils;
 
 namespace Multi
 {
@@ -31,8 +32,7 @@ namespace Multi
 
         public void Clear()
         {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-                Destroy(transform.GetChild(i).gameObject);
+            transform.DestroyAllChild();
         }
 
         public void Refresh(Player player, List<Tile> tiles, bool richi = false)

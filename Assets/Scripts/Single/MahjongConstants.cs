@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Single.MahjongDataType;
 using UnityEngine;
 
@@ -21,6 +20,15 @@ namespace Single
         public const float UiGap = 20;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
         public static readonly Quaternion FaceUp = Quaternion.Euler(-90, 0, -90);
+        // UI Settings
+        public const int YakuItemColumns = 2;
+        public const int FullItemCountPerColumn = 4;
+        // Yaku ranks
+        public const int Mangan = 2000;
+        public const int Haneman = 3000;
+        public const int Baiman = 4000;
+        public const int Sanbaiman = 6000;
+        public const int Yakuman = 8000;
 
         public static int RepeatIndex(int index, int length)
         {

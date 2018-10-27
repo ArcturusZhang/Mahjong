@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Events;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace Utils
 {
@@ -59,6 +62,30 @@ namespace Utils
             foreach (var item in subList)
             {
                 list.Remove(item);
+            }
+        }
+
+        public static void SetNumber(this Image[] images, int number, Func<int, Sprite> func)
+        {
+            for (int i = 0; i < images.Length; i++)
+            {
+                if (number == 0 && i > 0) images[i].gameObject.SetActive(false);
+                else
+                {
+                    images[i].gameObject.SetActive(true);
+                    images[i].sprite = func.Invoke(number % 10);
+                }
+
+                number /= 10;
+            }
+            Assert.AreEqual(number, 0, "The display overflows.");
+        }
+
+        public static void DestroyAllChild(this Transform transform)
+        {
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                Object.Destroy(transform.GetChild(i).gameObject);
             }
         }
     }

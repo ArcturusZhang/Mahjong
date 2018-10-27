@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Multi;
-using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.Match;

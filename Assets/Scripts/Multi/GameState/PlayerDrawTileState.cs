@@ -1,7 +1,6 @@
 using Multi.Messages;
 using Multi.ServerData;
 using Single;
-using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;

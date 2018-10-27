@@ -69,25 +69,28 @@ namespace Multi.GameState
         private int DrawInitialTiles()
         {
             int count = 0;
-            for (int current = 0; current < players.Count; current++)
+            for (int turn = 0; turn < players.Count; turn++)
             {
+                var current = CurrentPlayerIndex(turn);
                 GameStatus.PlayerHandTiles[current] = new List<Tile>();
                 GameStatus.PlayerOpenMelds[current] = new List<Meld>();
             }
 
             // draw tiles
             for (int round = 0; round < GameSettings.InitialDrawRound; round++)
-            for (int current = 0; current < players.Count; current++)
+            for (int turn = 0; turn < players.Count; turn++)
             {
                 var tiles = MahjongSetManager.DrawTiles(GameSettings.TilesEveryRound);
                 count += tiles.Count;
+                var current = CurrentPlayerIndex(turn);
                 GameStatus.PlayerHandTiles[current].AddRange(tiles);
             }
 
-            for (int current = 0; current < players.Count; current++)
+            for (int turn = 0; turn < players.Count; turn++)
             {
                 var tile = MahjongSetManager.DrawTile();
                 count++;
+                var current = CurrentPlayerIndex(turn);
                 GameStatus.PlayerHandTiles[current].Add(tile);
             }
 
@@ -114,6 +117,11 @@ namespace Multi.GameState
             base.OnStateExit();
             NetworkServer.UnregisterHandler(MessageConstants.ReadinessMessageId);
             GameStatus.SetCurrentPlayerIndex(GameStatus.RoundStatus.RoundCount - 1);
+        }
+
+        private int CurrentPlayerIndex(int turn)
+        {
+            return MahjongConstants.RepeatIndex(GameStatus.RoundStatus.RoundCount - 1 + turn, players.Count);
         }
     }
 }

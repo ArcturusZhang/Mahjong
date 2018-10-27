@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Multi;
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -111,24 +110,77 @@ namespace Single
         }
 
         public static PointInfo GetPointInfo(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile,
-            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, int dora = 0, int uraDora = 0,
-            int redDora = 0)
+            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, List<Tile> doraIndicators = null,
+            List<Tile> uraDoraIndicators = null)
         {
             var decomposes = Decompose(handTiles, openMelds, winningTile);
+            // count dora
+            int dora = CountDora(handTiles, openMelds, winningTile, doraIndicators);
+            int uraDora = 0;
+            if (handStatus.HasFlag(HandStatus.Richi) || handStatus.HasFlag(HandStatus.WRichi))
+            {
+                Assert.IsNotNull(uraDoraIndicators, "There should be uraDoras after richi");
+                uraDora = CountDora(handTiles, openMelds, winningTile, uraDoraIndicators);
+            }
+            int redDora = CountRed(handTiles, openMelds, winningTile);
             return GetPointInfo(decomposes, winningTile, handStatus, roundStatus, yakuSettings, dora, uraDora, redDora);
         }
 
-        public static PointInfo GetPointInfo(ISet<List<Meld>> decomposes, Tile winningTile, HandStatus handStatus,
+        private static int CountDora(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile,
+            List<Tile> indicators)
+        {
+            if (indicators == null) return 0;
+            int count = 0;
+            foreach (var doraIndicator in indicators)
+            {
+                var dora = doraIndicator.Dora;
+                count += CountDora(handTiles, openMelds, winningTile, dora);
+            }
+
+            return count;
+        }
+
+        private static int CountDora(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile, Tile dora)
+        {
+            int count = 0;
+            foreach (var handTile in handTiles)
+            {
+                if (handTile.EqualsIgnoreColor(dora)) count++;
+            }
+
+            foreach (var meld in openMelds)
+            {
+                foreach (var tile in meld.Tiles)
+                {
+                    if (tile.EqualsIgnoreColor(dora)) count++;
+                }
+            }
+
+            if (winningTile.EqualsIgnoreColor(dora)) count++;
+            return count;
+        }
+
+        private static int CountRed(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile)
+        {
+            int count = 0;
+            count += handTiles.Count(tile => tile.IsRed);
+            count += openMelds.Sum(meld => meld.Tiles.Count(tile => tile.IsRed));
+            count += winningTile.IsRed ? 1 : 0;
+            return count;
+        }
+
+        private static PointInfo GetPointInfo(ISet<List<Meld>> decomposes, Tile winningTile, HandStatus handStatus,
             RoundStatus roundStatus, YakuSettings yakuSettings, int dora = 0, int uraDora = 0, int redDora = 0)
         {
-            Debug.Log($"GetPointInfo method, parameters: \ndecomposes: {decomposes}, winningTile: {winningTile}, "
-                      + $"handStatus: {handStatus}, roundStatus: {roundStatus}, "
+            Debug.Log($"GetPointInfo method, parameters: \ndecomposes: {DecompositionToString(decomposes)}, "
+                      + $"winningTile: {winningTile}, handStatus: {handStatus}, roundStatus: {roundStatus}, "
                       + $"dora: {dora}, uraDora: {uraDora}, redDora: {redDora}");
             var infos = new List<PointInfo>();
             foreach (var decompose in decomposes)
             {
                 var yakus = CountYaku(decompose, winningTile, handStatus, roundStatus, yakuSettings);
                 var fu = CountFu(decompose, winningTile, handStatus, roundStatus, yakus, yakuSettings);
+                if (yakus.Count == 0) continue;
                 var info = new PointInfo(fu, yakus, yakuSettings.青天井, dora, uraDora, redDora);
                 infos.Add(info);
                 Debug.Log($"Decompose: {string.Join(", ", decompose)}, PointInfo: {info}");
@@ -140,7 +192,7 @@ namespace Single
             return infos[infos.Count - 1];
         }
 
-        public static ISet<List<Meld>> Decompose(List<Tile> handTiles, List<Meld> openMelds, Tile tile)
+        private static ISet<List<Meld>> Decompose(List<Tile> handTiles, List<Meld> openMelds, Tile tile)
         {
             var decompose = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             int count = handTiles.Count;
@@ -464,6 +516,12 @@ namespace Single
         {
             var result = new HashSet<Meld>();
             return result;
+        }
+
+        private static string DecompositionToString(ISet<List<Meld>> decomposes)
+        {
+            var strings = decomposes.Select(list => $"[{string.Join(", ", list)}");
+            return string.Join("; ", strings);
         }
     }
 }

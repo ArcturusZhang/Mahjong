@@ -3,7 +3,7 @@ guid: 298efb40f439c074cb09d7c79c012281
 TextureImporter:
   fileIDToRecycleName:
     21300000: mjdesktop1_0
-    21300002: mjdesktop1_1
+    21300002: PlayerPanelBack
     21300004: mjdesktop1_2
     21300006: mjdesktop1_3
     21300008: mjdesktop1_4
@@ -138,7 +138,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop1_1
+      name: PlayerPanelBack
       rect:
         serializedVersion: 2
         x: 513

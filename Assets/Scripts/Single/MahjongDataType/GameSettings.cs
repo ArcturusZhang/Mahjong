@@ -21,5 +21,7 @@ namespace Single.MahjongDataType
         public int ServerBufferTime = 2; // extra waiting time for bad networking
         public float PlayerHandTilesSortDelay = 1f;
         public float AutoDiscardDelayAfterRichi = 0.5f;
+        public float SummaryPanelDelayTime = 0.5f;
+        public int SummaryPanelWaitingTime = 5;
     }
 }

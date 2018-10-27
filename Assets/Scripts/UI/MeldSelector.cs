@@ -2,6 +2,7 @@
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Events;
+using Utils;
 
 namespace UI
 {
@@ -21,10 +22,7 @@ namespace UI
 
 		public void ResetMelds()
 		{
-			for (int i = 0; i < transform.childCount; i++)
-			{
-				Destroy(transform.GetChild(i).gameObject);
-			}
+			transform.DestroyAllChild();
 		}
 	}
 }

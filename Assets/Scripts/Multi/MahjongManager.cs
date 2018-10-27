@@ -8,6 +8,8 @@ using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
 using UI;
+using UI.PointSummaryPanel;
+using UI.RoundEndPanel;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Networking;
@@ -32,6 +34,9 @@ namespace Multi
         public Button OutTurnKongButton;
         public Button SkipButton;
         public MeldSelector MeldSelector;
+
+        [Header("Round End UI Elements")] public PointSummaryPanelController PointSummaryPanelController;
+        public RoundEndPanelController RoundEndPanelController;
 
         [Header("General UI Elements")] public TimerController TimerController;
 
@@ -86,16 +91,22 @@ namespace Multi
             });
             yield return new WaitForSeconds(1f);
             // Start first round
+            ServerNextRound(true);
+            Debug.Log("[Server] Waiting for clients' readiness message");
+        }
+
+        [Server]
+        private void ServerNextRound(bool newRound)
+        {
             stateMachine.ChangeState(new RoundStartState
             {
                 MahjongManager = this,
-                NewRound = true,
+                NewRound = newRound,
                 GameSettings = GameSettings,
                 GameStatus = GameStatus,
                 MahjongSetManager = MahjongSetManager,
                 ServerCallback = ServerNextTurn
             });
-            Debug.Log("[Server] Waiting for clients' readiness message");
         }
 
         [Server]
@@ -145,7 +156,12 @@ namespace Multi
                 Debug.Log(
                     $"[Server] Player {inTurnOperationData.PlayerIndex} has claimed tsumo for point: {inTurnOperationData.PointInfo}");
                 // todo -- turn into RoundEndState
-                stateMachine.ChangeState(new RoundEndState());
+                stateMachine.ChangeState(new RoundEndState
+                {
+                    MahjongManager = this,
+                    GameStatus = GameStatus,
+                    ServerCallback = ServerNextRound
+                });
                 return;
             }
 
@@ -223,6 +239,12 @@ namespace Multi
             {
                 Debug.Log($"[Server] {rongMessages.Length} players claimed RONG");
                 // todo -- rpc call to handle this operation
+                stateMachine.ChangeState(new RoundEndState
+                {
+                    MahjongManager = this,
+                    GameStatus = GameStatus,
+                    ServerCallback = ServerNextRound
+                });
                 return;
             }
 
@@ -363,6 +385,8 @@ namespace Multi
             LobbyManager.Instance.LocalPlayer.PlayerHandPanel = PlayerHandPanel;
             GameSettings = gameSettings;
             YakuSettings = yakuSettings;
+            PointSummaryPanelController.GameSettings = gameSettings;
+            PointSummaryPanelController.YakuSettings = yakuSettings;
         }
 
         [ClientRpc]
