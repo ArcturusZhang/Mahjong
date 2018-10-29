@@ -63,7 +63,7 @@ namespace Multi.GameState
                 LastDraw = content.LastDraw,
                 Meld = content.Meld,
                 Operation = content.Operation,
-                PointInfo = content.PointInfo
+                PlayerClientData = content.PlayerClientData
             });
         }
 

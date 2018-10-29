@@ -1,4 +1,6 @@
-﻿using Single;
+﻿using System;
+using Multi.ServerData;
+using Single;
 using Single.MahjongDataType;
 using UnityEngine.Networking;
 
@@ -38,7 +40,25 @@ namespace Multi.Messages
 		public Tile LastDraw;
 		public Meld Meld;
 		public int BonusTurnTime;
-		public PointInfo PointInfo;
+		public PlayerClientData PlayerClientData;
+	}
+
+	[Serializable]
+	public struct PlayerClientData
+	{
+		public Tile[] HandTiles;
+		public Meld[] OpenMelds;
+		public Tile WinningTile;
+		public int WinPlayerIndex;
+		public HandStatus HandStatus;
+		public RoundStatus RoundStatus;
+
+		public override string ToString()
+		{
+			return $"HandTiles: {string.Join("", HandTiles)}, OpenMelds: [{string.Join(",", OpenMelds)}], "
+			       + $"WinningTile: {WinningTile}, WinningPlayerIndex: {WinPlayerIndex}, HandStatus: {HandStatus}, "
+			       + $"RoundStatus: {RoundStatus}";
+		}
 	}
 
 	public class DiscardTileMessage : MessageBase
@@ -57,7 +77,7 @@ namespace Multi.Messages
 		public Tile DiscardedTile;
 		public Meld Meld;
 		public int BonusTurnTime;
-		public PointInfo PointInfo;
+		public PlayerClientData PlayerClientData;
 	}
 
 	public class DiscardAfterOpenMessage : MessageBase

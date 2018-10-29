@@ -1,3 +1,4 @@
+using Multi.Messages;
 using Single;
 using Single.MahjongDataType;
 
@@ -9,7 +10,7 @@ namespace Multi.ServerData
         public Tile LastDraw;
         public Meld Meld;
         public InTurnOperation Operation;
-        public PointInfo PointInfo;
+        public PlayerClientData PlayerClientData;
     }
 
     public struct DiscardTileData
@@ -22,20 +23,21 @@ namespace Multi.ServerData
     public struct RoundEndData
     {
         public RoundEndType RoundEndType;
-        public PlayerData[] PlayerDataArray;
+        public int LosePlayerIndex;
+        public int TotalPlayer;
+        public PlayerServerData[] PlayerServerDataArray;
     }
 
-    public struct PlayerData
+    public struct PlayerServerData
     {
         public Tile[] HandTiles;
-        public Tile[] OpenMelds;
+        public Meld[] OpenMelds;
         public Tile WinningTile;
         public int WinPlayerIndex;
         public HandStatus HandStatus;
         public RoundStatus RoundStatus;
         public Tile[] DoraIndicators;
         public Tile[] UraDoraIndicators;
-        public int LosePlayerIndex; // valued -1 if tsumo
     }
 
     /// <summary>

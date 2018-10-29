@@ -98,7 +98,7 @@ namespace Single
             return tile;
         }
 
-        public IList<Tile> DoraIndicators
+        public List<Tile> DoraIndicators
         {
             get
             {
@@ -113,7 +113,7 @@ namespace Single
             }
         }
 
-        public IList<int> DoraIndicatorIndices
+        public List<int> DoraIndicatorIndices
         {
             get
             {
@@ -128,7 +128,7 @@ namespace Single
             }
         }
 
-        public IList<Tile> UraDoraIndicators
+        public List<Tile> UraDoraIndicators
         {
             get
             {

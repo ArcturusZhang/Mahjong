@@ -1,6 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Multi.Messages;
-using UI.PointSummaryPanel;
+using Multi.ServerData;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Networking;
@@ -13,10 +15,8 @@ namespace Multi.GameState
     // todo -- 3. Points summary
     public class RoundEndState : AbstractMahjongState
     {
-        public MahjongManager MahjongManager;
-        public int WinPlayerIndex;
         public GameStatus GameStatus;
-        public UnityAction<bool> ServerCallback;
+        public UnityAction<bool> ServerNextRoundCallback;
         private bool[] responseReceived;
         
         public override void OnStateEnter()
@@ -33,8 +33,8 @@ namespace Multi.GameState
             responseReceived[content.PlayerIndex] = true;
             if (!responseReceived.All(received => received)) return;
             // all clients are ready
-            var newRound = WinPlayerIndex == GameStatus.RoundStatus.RoundCount - 1;
-            ServerCallback.Invoke(newRound);
+            var newRound = true;
+            ServerNextRoundCallback.Invoke(newRound);
         }
 
         public override void OnStateExit()

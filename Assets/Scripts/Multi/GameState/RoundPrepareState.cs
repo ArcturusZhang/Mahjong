@@ -7,9 +7,8 @@ namespace Multi.GameState
 {
     public class RoundPrepareState : AbstractMahjongState
     {
-        public MahjongManager MahjongManager;
+//        public MahjongManager MahjongManager;
         public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
         public GameStatus GameStatus;
         private List<Player> players;
         
@@ -17,7 +16,6 @@ namespace Multi.GameState
         {
             base.OnStateEnter();
             players = GameStatus.Players;
-            MahjongManager.RpcClientPrepare(GameSettings, YakuSettings);
             players.Shuffle();
             Debug.Log($"[RoundPrepareState] This game has total {players.Count} players");
             for (int i = 0; i < players.Count; i++)
@@ -28,6 +26,12 @@ namespace Multi.GameState
             }
 
             GameStatus.Reset();
+        }
+
+        public override void OnStateExit()
+        {
+            base.OnStateExit();
+            Debug.Log($"[RoundPrepareState] Prepare finished");
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Lobby;
 using Multi.GameState;
@@ -82,11 +83,10 @@ namespace Multi
         private IEnumerator StartServerGameLoop()
         {
             yield return new WaitForSeconds(1f);
+            RpcClientPrepare(GameSettings, YakuSettings);
             stateMachine.ChangeState(new RoundPrepareState
             {
-                MahjongManager = this,
                 GameSettings = GameSettings,
-                YakuSettings = YakuSettings,
                 GameStatus = GameStatus
             });
             yield return new WaitForSeconds(1f);
@@ -98,9 +98,9 @@ namespace Multi
         [Server]
         private void ServerNextRound(bool newRound)
         {
+            RpcClientRoundStart();
             stateMachine.ChangeState(new RoundStartState
             {
-                MahjongManager = this,
                 NewRound = newRound,
                 GameSettings = GameSettings,
                 GameStatus = GameStatus,
@@ -148,20 +148,52 @@ namespace Multi
         }
 
         [Server]
+        private PlayerServerData ValidatePlayerSideData(PlayerClientData playerClientData)
+        {
+            var data = new PlayerServerData
+            {
+                HandTiles = playerClientData.HandTiles,
+                OpenMelds = playerClientData.OpenMelds,
+                WinningTile = playerClientData.WinningTile,
+                WinPlayerIndex = playerClientData.WinPlayerIndex,
+                HandStatus = playerClientData.HandStatus,
+                RoundStatus = playerClientData.RoundStatus,
+                DoraIndicators = MahjongSetManager.DoraIndicators.ToArray(),
+                UraDoraIndicators = MahjongSetManager.UraDoraIndicators.ToArray()
+            };
+            // validate
+            var index = data.WinPlayerIndex;
+            Assert.IsTrue(ClientUtil.ArrayEquals(data.HandTiles, GameStatus.PlayerHandTiles[index].ToArray()));
+            Assert.IsTrue(ClientUtil.ArrayEquals(data.OpenMelds, GameStatus.PlayerOpenMelds[index].ToArray()));
+            // todo -- winning tile also need validation 
+            return data;
+        }
+
+        [Server]
         private void ServerInTurnOperation(InTurnOperationData inTurnOperationData)
         {
             var operation = inTurnOperationData.Operation;
             if (operation.HasFlag(InTurnOperation.Tsumo))
             {
-                Debug.Log(
-                    $"[Server] Player {inTurnOperationData.PlayerIndex} has claimed tsumo for point: {inTurnOperationData.PointInfo}");
-                // todo -- turn into RoundEndState
+                Debug.Log($"[Server] Player {inTurnOperationData.PlayerIndex} has claimed tsumo, "
+                          + $"player side data: {inTurnOperationData.PlayerClientData}");
+                // validate data from client
+                var data = ValidatePlayerSideData(inTurnOperationData.PlayerClientData);
+                // todo -- rpc call to show visual effect
+                // todo -- rpc call to show summary panel
+                RpcClientRoundEnd(new RoundEndData
+                {
+                    RoundEndType = RoundEndType.Win,
+                    LosePlayerIndex = -1,
+                    PlayerServerDataArray = new[] {data}
+                });
+                // todo -- switch to RoundEndState
                 stateMachine.ChangeState(new RoundEndState
                 {
-                    MahjongManager = this,
                     GameStatus = GameStatus,
-                    ServerCallback = ServerNextRound
+                    ServerNextRoundCallback = ServerNextRound
                 });
+                // todo -- rpc call to show round end panel
                 return;
             }
 
@@ -238,13 +270,20 @@ namespace Multi
             if (rongMessages.Length > 0)
             {
                 Debug.Log($"[Server] {rongMessages.Length} players claimed RONG");
-                // todo -- rpc call to handle this operation
+                // todo -- validate player side data and sort from current player
+                // todo -- rpc call to show visual effect
+                // todo -- rpc call to show summary panel
+                RpcClientRoundEnd(new RoundEndData
+                {
+                    // todo -- RoundEndData
+                });
+                // todo -- switch to RoundEndState
                 stateMachine.ChangeState(new RoundEndState
                 {
-                    MahjongManager = this,
                     GameStatus = GameStatus,
-                    ServerCallback = ServerNextRound
+                    ServerNextRoundCallback = ServerNextRound
                 });
+                // todo -- rpc call to show summary panel
                 return;
             }
 
@@ -401,12 +440,35 @@ namespace Multi
             // todo -- ui elements (dealer display, points, etc)
         }
 
+        [ClientRpc]
+        internal void RpcClientRoundEnd(RoundEndData data)
+        {
+            StartCoroutine(ClientShowSummaryPanel(data));
+        }
+
         [Server]
         private void StopWaitingCoroutine()
         {
             if (waitForClientCoroutine == null) return;
             StopCoroutine(waitForClientCoroutine);
             waitForClientCoroutine = null;
+        }
+
+        [Client]
+        private IEnumerator ClientShowSummaryPanel(RoundEndData data)
+        {
+            int panelCount = data.PlayerServerDataArray.Length;
+            for (int i = 0; i < panelCount; i++)
+            {
+                var playerServerData = data.PlayerServerDataArray[i];
+                if (i < panelCount - 1)
+                    yield return StartCoroutine(
+                        PointSummaryPanelController.ShowSummaryPanel(playerServerData, data.LosePlayerIndex));
+                else
+                    yield return StartCoroutine(
+                        PointSummaryPanelController.ShowSummaryPanel(playerServerData, data.LosePlayerIndex,
+                            () => { Debug.Log("All panel has been shown"); }));
+            }
         }
     }
 }

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34bbbe923f2045aebe5382ad17f7b144, type: 3}
+  m_Name: FanNumbers
+  m_EditorClassIdentifier: 
+  Numbers:
+  - {fileID: 21300020, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300184, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300094, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300058, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300114, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300120, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300126, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300110, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300118, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300138, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}

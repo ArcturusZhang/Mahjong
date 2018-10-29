@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Layout
 {
 	public class TileLayoutElement : MonoBehaviour, ILayoutElement
 	{

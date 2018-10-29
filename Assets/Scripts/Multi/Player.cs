@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lobby;
 using Multi.Messages;
+using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
 using UnityEngine;
@@ -173,7 +174,16 @@ namespace Multi
                 return;
             }
 
-            EnableOutTurnPanel(chows, pongs, kongs, pointInfo.BasePoint > 0, discardTile);
+            var playerClientData = new PlayerClientData
+            {
+                HandTiles = HandTiles.ToArray(),
+                OpenMelds = OpenMelds.ToArray(),
+                WinningTile = discardTile,
+                WinPlayerIndex = PlayerIndex,
+                HandStatus = handStatus,
+                RoundStatus = roundStatus
+            };
+            EnableOutTurnPanel(chows, pongs, kongs, discardTile, pointInfo.BasePoint > 0, playerClientData);
             // wait for operation or time expires
             MahjongManager.Instance.TimerController.StartCountDown(MahjongManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
@@ -213,7 +223,8 @@ namespace Multi
                 PlayerIndex = PlayerIndex,
                 RoundCount = RoundStatus.RoundCount,
                 FieldCount = RoundStatus.FieldCount,
-                CurrentExtraRound = RoundStatus.CurrentExtraRound
+                CurrentExtraRound = RoundStatus.CurrentExtraRound,
+                TilesLeft = RoundStatus.TilesLeft
             };
         }
 
@@ -284,7 +295,7 @@ namespace Multi
 
             isRichiing = false;
             var menqing = MahjongLogic.TestMenqing(OpenMelds);
-            EnableInTurnPanel(menqing, kongs, richiKongs, pointInfo, lastDraw);
+            EnableInTurnPanel(menqing, kongs, richiKongs, handStatus, roundStatus, pointInfo, lastDraw);
             PlayerHandPanel.Refresh(this, HandTiles, Richi);
             PlayerHandPanel.DrawTile(this, lastDraw);
 
@@ -378,22 +389,31 @@ namespace Multi
         }
 
         [Client]
-        private void EnableInTurnPanel(bool menqing, ISet<Meld> kongs, ISet<Meld> richiKongs, PointInfo pointInfo,
-            Tile lastDraw)
+        private void EnableInTurnPanel(bool menqing, ISet<Meld> kongs, ISet<Meld> richiKongs, HandStatus handStatus,
+            RoundStatus roundStatus, PointInfo pointInfo, Tile lastDraw)
         {
             if (!menqing && pointInfo.BasePoint == 0 && kongs.Count == 0) return;
             if (menqing && !Richi)
             {
                 MahjongManager.Instance.RichiButton.gameObject.SetActive(true);
-                ReplaceListener(MahjongManager.Instance.RichiButton, () => { isRichiing = !isRichiing; });
+                ClientUtil.ReplaceListener(MahjongManager.Instance.RichiButton, () => { isRichiing = !isRichiing; });
             }
 
             if (pointInfo.BasePoint > 0)
             {
                 MahjongManager.Instance.TsumoButton.gameObject.SetActive(true);
-                ReplaceListener(MahjongManager.Instance.TsumoButton, () =>
+                ClientUtil.ReplaceListener(MahjongManager.Instance.TsumoButton, () =>
                 {
                     DisableInTurnPanel();
+                    var data = new PlayerClientData
+                    {
+                        HandTiles = HandTiles.ToArray(),
+                        OpenMelds = OpenMelds.ToArray(),
+                        WinningTile = lastDraw,
+                        WinPlayerIndex = PlayerIndex,
+                        HandStatus = handStatus,
+                        RoundStatus = roundStatus
+                    };
                     int bonusTime = MahjongManager.Instance.TimerController.StopCountDown();
                     connectionToServer.Send(MessageConstants.InTurnOperationMessageId, new InTurnOperationMessage
                     {
@@ -401,7 +421,7 @@ namespace Multi
                         Operation = InTurnOperation.Tsumo,
                         LastDraw = lastDraw,
                         BonusTurnTime = bonusTime,
-                        PointInfo = pointInfo
+                        PlayerClientData = data
                     });
                 });
             }
@@ -416,7 +436,7 @@ namespace Multi
         {
             button.gameObject.SetActive(kongs.Count > 0);
             if (kongs.Count == 0) return;
-            ReplaceListener(button, () =>
+            ClientUtil.ReplaceListener(button, () =>
             {
                 if (kongs.Count == 1)
                 {
@@ -458,11 +478,11 @@ namespace Multi
         }
 
         [Client]
-        private void EnableOutTurnPanel(ISet<Meld> chows, ISet<Meld> pongs, ISet<Meld> kongs, bool rong,
-            Tile discardTile)
+        private void EnableOutTurnPanel(ISet<Meld> chows, ISet<Meld> pongs, ISet<Meld> kongs, Tile discardTile, 
+            bool rong, PlayerClientData playerClientData)
         {
             MahjongManager.Instance.SkipButton.gameObject.SetActive(true);
-            ReplaceListener(MahjongManager.Instance.SkipButton,
+            ClientUtil.ReplaceListener(MahjongManager.Instance.SkipButton,
                 () =>
                 {
                     DisableOutTurnPanel();
@@ -477,7 +497,7 @@ namespace Multi
             if (rong)
             {
                 MahjongManager.Instance.RongButton.gameObject.SetActive(true);
-                ReplaceListener(MahjongManager.Instance.RongButton, () =>
+                ClientUtil.ReplaceListener(MahjongManager.Instance.RongButton, () =>
                 {
                     DisableOutTurnPanel();
                     int bonusTime = MahjongManager.Instance.TimerController.StopCountDown();
@@ -487,8 +507,8 @@ namespace Multi
                         Operation = OutTurnOperation.Rong,
                         BonusTurnTime = bonusTime,
                         DiscardedTile = discardTile,
-                        Meld = new Meld(true, discardTile)
-                        // todo -- rong operation needs a pointInfo field
+                        Meld = new Meld(true, discardTile),
+                        PlayerClientData = playerClientData
                     });
                 });
             }
@@ -509,7 +529,7 @@ namespace Multi
         {
             button.gameObject.SetActive(melds.Count > 0);
             if (melds.Count == 0) return;
-            ReplaceListener(button, () =>
+            ClientUtil.ReplaceListener(button, () =>
             {
                 if (melds.Count == 1)
                 {
@@ -549,13 +569,6 @@ namespace Multi
         {
             MahjongManager.Instance.OutTurnOperationPanel.SetActive(false);
             MahjongManager.Instance.MeldSelector.gameObject.SetActive(false);
-        }
-
-        [Client]
-        private void ReplaceListener(Button button, UnityAction call)
-        {
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(call);
         }
 
         [ClientRpc]

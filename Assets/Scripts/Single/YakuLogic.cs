@@ -541,6 +541,8 @@ namespace Single
 
         public Tile PrevailingWind => new Tile(Suit.Z, FieldCount);
 
+        public bool IsDealer => PlayerIndex + 1 == RoundCount;
+
         public override string ToString()
         {
             return $"PlayerIndex: {PlayerIndex}, RoundCount: {RoundCount}, CurrentExtraRound: {CurrentExtraRound}, "

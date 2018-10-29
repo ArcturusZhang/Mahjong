@@ -9,7 +9,7 @@ namespace UI.PointSummaryPanel
 	public class ConfirmButtonController : MonoBehaviour
 	{
 		public Button Button;
-		public Image CountDownImage;
+		public NumberPanelController CountDownController;
 		
 		private readonly WaitForSeconds wait = new WaitForSeconds(1f);
 
@@ -25,7 +25,7 @@ namespace UI.PointSummaryPanel
 			Button.onClick.AddListener(callback);
 			while (countDown > 0)
 			{
-				CountDownImage.sprite = ResourceManager.Instance.BonusTime(Mathf.CeilToInt(countDown));
+				CountDownController.SetNumber(countDown);
 				yield return wait;
 				countDown--;
 			}

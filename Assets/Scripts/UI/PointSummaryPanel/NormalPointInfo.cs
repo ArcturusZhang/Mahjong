@@ -7,15 +7,17 @@ namespace UI.PointSummaryPanel
 {
 	public class NormalPointInfo : MonoBehaviour
 	{
-		public Image[] Fans;
-		public Image[] Fus;
+		public NumberPanelController FanController;
+		public NumberPanelController FuController;
+//		public Image[] Fans;
+//		public Image[] Fus;
 
 		public void SetPointInfo(int fan, int fu)
 		{
 			// Set fan
-			Fans.SetNumber(fan, ResourceManager.Instance.FanNumber);
+			FanController.SetNumber(fan);
 			// Set fu
-			Fus.SetNumber(fu, ResourceManager.Instance.FuNumber);
+			FuController.SetNumber(fu);
 		}
 	}
 }

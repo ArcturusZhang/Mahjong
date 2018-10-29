@@ -3,7 +3,7 @@ using Single;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI
+namespace UI.Layout
 {
     public class HorizontalTileLayout : MonoBehaviour, ILayoutGroup
     {

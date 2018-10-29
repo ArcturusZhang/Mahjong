@@ -2,8 +2,6 @@
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.UI;
-using Utils;
-using Debug = System.Diagnostics.Debug;
 
 namespace UI.PointSummaryPanel
 {
@@ -11,7 +9,7 @@ namespace UI.PointSummaryPanel
 	{
 		public Image Normal;
 		public Image YakuMan;
-		public Image[] Fans;
+		public NumberPanelController FanController;
 		public Text YakuName;
 		
 		public void SetYakuItem(YakuValue yaku, bool 青天井 = false)
@@ -24,10 +22,12 @@ namespace UI.PointSummaryPanel
 				Normal.gameObject.SetActive(true);
 				YakuMan.gameObject.SetActive(false);
 				int value = yaku.Type == YakuType.Normal ? yaku.Value : yaku.Value * YakuSettings.YakumanBaseFan;
-				Fans.SetNumber(value, ResourceManager.Instance.FanNumber);
+				Debug.Log($"{yaku.Name}: {value}");
+				FanController.SetNumber(value);
 			}
 			else
 			{
+				Debug.Log($"{yaku.Name}: YakuMan");
 				// use yaku man display
 				Normal.gameObject.SetActive(false);
 				YakuMan.gameObject.SetActive(true);

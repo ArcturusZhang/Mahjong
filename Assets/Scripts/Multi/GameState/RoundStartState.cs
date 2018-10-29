@@ -13,7 +13,6 @@ namespace Multi.GameState
     public class RoundStartState : AbstractMahjongState
     {
         public bool NewRound;
-        public MahjongManager MahjongManager;
         public GameSettings GameSettings;
         public GameStatus GameStatus;
         public MahjongSetManager MahjongSetManager;
@@ -25,7 +24,6 @@ namespace Multi.GameState
         {
             base.OnStateEnter();
             NetworkServer.RegisterHandler(MessageConstants.ReadinessMessageId, OnReadinessMessageReceived);
-            MahjongManager.RpcClientRoundStart();
             GameStatus.RoundStatus = GameStatus.RoundStatus.NextRound(NewRound);
             players = GameStatus.Players;
             // Throwing dice

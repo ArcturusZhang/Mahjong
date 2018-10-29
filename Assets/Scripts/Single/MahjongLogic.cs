@@ -122,6 +122,7 @@ namespace Single
                 Assert.IsNotNull(uraDoraIndicators, "There should be uraDoras after richi");
                 uraDora = CountDora(handTiles, openMelds, winningTile, uraDoraIndicators);
             }
+
             int redDora = CountRed(handTiles, openMelds, winningTile);
             return GetPointInfo(decomposes, winningTile, handStatus, roundStatus, yakuSettings, dora, uraDora, redDora);
         }
@@ -190,6 +191,13 @@ namespace Single
             infos.Sort();
             Debug.Log($"CountPoint: {string.Join(", ", infos.Select(info => info.ToString()))}");
             return infos[infos.Count - 1];
+        }
+
+        public static int GetTotalPoint(PointInfo pointInfo, RoundStatus roundStatus)
+        {
+            return roundStatus.IsDealer
+                ? pointInfo.BasePoint * roundStatus.TotalPlayer * 2
+                : pointInfo.BasePoint * (roundStatus.TotalPlayer + 1);
         }
 
         private static ISet<List<Meld>> Decompose(List<Tile> handTiles, List<Meld> openMelds, Tile tile)
