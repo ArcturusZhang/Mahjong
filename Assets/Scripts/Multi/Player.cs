@@ -41,7 +41,7 @@ namespace Multi
         [Header("Player Private Data")] [SerializeField]
         internal List<Tile> HandTiles;
 
-        public Tile LastDraw;
+        internal Tile LastDraw;
 
         private bool isRichiing = false;
         private bool discardMessageSent = false;
@@ -144,7 +144,8 @@ namespace Multi
         {
             // todo -- more game setting variations
             if (!isLocalPlayer) return;
-            var can = PlayerIndex == MahjongConstants.RepeatIndex(currentPlayerIndex + 1, TotalPlayers);
+            var can = MahjongManager.Instance.GameSettings.IsChowAllowed &&
+                      PlayerIndex == MahjongConstants.RepeatIndex(currentPlayerIndex + 1, TotalPlayers);
             var chows = can ? MahjongLogic.GetChows(HandTiles, discardTile) : new HashSet<Meld>();
             var pongs = MahjongLogic.GetPongs(HandTiles, discardTile);
             var kongs = MahjongLogic.GetOutTurnKongs(HandTiles, discardTile);
@@ -393,7 +394,7 @@ namespace Multi
             RoundStatus roundStatus, PointInfo pointInfo, Tile lastDraw)
         {
             if (!menqing && pointInfo.BasePoint == 0 && kongs.Count == 0) return;
-            if (menqing && !Richi)
+            if (menqing && !Richi && Points >= ResourceManager.Instance.GameSettings.RichiMortgagePoints)
             {
                 MahjongManager.Instance.RichiButton.gameObject.SetActive(true);
                 ClientUtil.ReplaceListener(MahjongManager.Instance.RichiButton, () => { isRichiing = !isRichiing; });
@@ -478,7 +479,7 @@ namespace Multi
         }
 
         [Client]
-        private void EnableOutTurnPanel(ISet<Meld> chows, ISet<Meld> pongs, ISet<Meld> kongs, Tile discardTile, 
+        private void EnableOutTurnPanel(ISet<Meld> chows, ISet<Meld> pongs, ISet<Meld> kongs, Tile discardTile,
             bool rong, PlayerClientData playerClientData)
         {
             MahjongManager.Instance.SkipButton.gameObject.SetActive(true);
@@ -506,7 +507,7 @@ namespace Multi
                         PlayerIndex = PlayerIndex,
                         Operation = OutTurnOperation.Rong,
                         BonusTurnTime = bonusTime,
-                        DiscardedTile = discardTile,
+                        DiscardTile = discardTile,
                         Meld = new Meld(true, discardTile),
                         PlayerClientData = playerClientData
                     });
@@ -540,7 +541,7 @@ namespace Multi
                         PlayerIndex = PlayerIndex,
                         Operation = operation,
                         BonusTurnTime = bonusTime,
-                        DiscardedTile = discardTile,
+                        DiscardTile = discardTile,
                         Meld = melds.First()
                     });
                     return;
@@ -557,7 +558,7 @@ namespace Multi
                         PlayerIndex = PlayerIndex,
                         Operation = operation,
                         BonusTurnTime = bonusTime,
-                        DiscardedTile = discardTile,
+                        DiscardTile = discardTile,
                         Meld = meld
                     });
                 });
@@ -658,7 +659,8 @@ namespace Multi
             MahjongManager.Instance.MahjongSelector.Refresh(HandTiles, PlayerIndex);
         }
 
-        [Client]
+        [Client] // todo -- this needs fix to implement the todo list #2
+        // todo -- (Player cannot discard same tile or strongly related tiles after claimed an open)
         private void OnDiscardAfterOpenMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<DiscardAfterOpenMessage>();
@@ -670,12 +672,15 @@ namespace Multi
 
             discardMessageSent = false;
             var defaultTile = content.DefaultTile;
-            Debug.Log($"Player {content.PlayerIndex} has received discard request, default is {defaultTile}");
+            Debug.Log($"Player {content.PlayerIndex} has received discard request, default is {defaultTile}, "
+                      + $"forbidden is {string.Join(", ", content.ForbiddenTiles)}");
             DisableInTurnPanel();
             HandTiles.Remove(defaultTile);
             LastDraw = defaultTile;
             PlayerHandPanel.Refresh(this, HandTiles);
             PlayerHandPanel.DrawTile(this, defaultTile);
+            if (!MahjongManager.Instance.GameSettings.AllowDiscardSameAfterOpen)
+                PlayerHandPanel.LockTiles(content.ForbiddenTiles);
             MahjongManager.Instance.TimerController.StartCountDown(MahjongManager.Instance.GameSettings.BaseTurnTime,
                 BonusTurnTime, () =>
                 {

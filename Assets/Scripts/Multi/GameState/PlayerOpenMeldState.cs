@@ -9,7 +9,7 @@ namespace Multi.GameState
 {
     public class PlayerOpenMeldState : AbstractMahjongState
     {
-        public Tile DefaultTile;
+        public OpenMeldData OpenMeldData;
         public GameStatus GameStatus;
         public UnityAction<DiscardTileData> ServerCallback;
         private int currentPlayerIndex;
@@ -21,12 +21,13 @@ namespace Multi.GameState
             NetworkServer.RegisterHandler(MessageConstants.DiscardTileMessageId, OnDiscardTileMessageReceived);
             currentPlayerIndex = GameStatus.CurrentPlayerIndex;
             currentTurnPlayer = GameStatus.CurrentTurnPlayer;
-            currentTurnPlayer.LastDraw = DefaultTile;
+            currentTurnPlayer.LastDraw = OpenMeldData.DefaultTile;
             currentTurnPlayer.connectionToClient.Send(MessageConstants.DiscardAfterOpenMessageId,
                 new DiscardAfterOpenMessage
                 {
                     PlayerIndex = currentPlayerIndex,
-                    DefaultTile = DefaultTile
+                    DefaultTile = OpenMeldData.DefaultTile,
+                    ForbiddenTiles = OpenMeldData.ForbiddenTiles
                 });
         }
 

@@ -13,8 +13,9 @@ namespace Multi.GameState
         public Tile DiscardTile;
         public bool DiscardLastDraw;
         public InTurnOperation InTurnOperation;
-        public GameStatus GameStatus;
         public OutTurnOperationMessage[] OutTurnOperationMessages;
+        public GameStatus GameStatus;
+        public GameSettings GameSettings;
         public UnityAction<OutTurnOperationMessage[]> ServerCallback;
         private int currentPlayerIndex;
         private Player currentTurnPlayer;
@@ -35,6 +36,7 @@ namespace Multi.GameState
                 currentTurnPlayer.Richi = true;
                 currentTurnPlayer.OneShot = true;
                 if (currentTurnPlayer.FirstTurn) currentTurnPlayer.WRichi = true;
+                currentTurnPlayer.Points -= GameSettings.RichiMortgagePoints;
             }
 
             foreach (var player in GameStatus.Players)

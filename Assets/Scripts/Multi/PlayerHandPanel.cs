@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using Single;
 using Single.MahjongDataType;
+using UI.Layout;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -14,20 +16,35 @@ namespace Multi
 
         public void LockTiles()
         {
-            for (int i = 0; i < transform.childCount; i++)
+            transform.TraversalChildren(child =>
             {
-                var button = transform.GetChild(i).GetComponent<Button>();
+                var button = child.GetComponent<Button>();
                 button.interactable = false;
-            }
+            });
+        }
+
+        public void LockTiles(Tile[] tiles)
+        {
+            if (tiles == null) return;
+            Debug.Log($"[LockTiles] Locking tiles {string.Join(", ", tiles)}");
+            transform.TraversalChildren(child =>
+            {
+                var tileLayoutElement = child.GetComponent<TileLayoutElement>();
+                Debug.Log($"[LockTiles] Investigating tile {tileLayoutElement.Tile}");
+                if (!tiles.Contains(tileLayoutElement.Tile, Tile.TileIgnoreColorEqualityComparer)) return;
+                Debug.Log($"[LockTiles] Locked tile: {tileLayoutElement.Tile}");
+                var button = child.GetComponent<Button>();
+                button.interactable = false;
+            });
         }
 
         public void UnlockTiles()
         {
-            for (int i = 0; i < transform.childCount; i++)
+            transform.TraversalChildren(child =>
             {
-                var button = transform.GetChild(i).GetComponent<Button>();
+                var button = child.GetComponent<Button>();
                 button.interactable = true;
-            }
+            });
         }
 
         public void Clear()
@@ -57,16 +74,15 @@ namespace Multi
         private void DrawTile(Player player, Tile tile, bool discardLastDraw, GameObject prefab, bool richi = false)
         {
             var sprite = ResourceManager.Instance.GetTileSprite(tile);
-            var tileImage = Instantiate(prefab, transform);
-            var image = tileImage.GetComponent<Image>();
+            var tileImageObject = Instantiate(prefab, transform);
+            var tileLayoutElement = tileImageObject.GetComponent<TileLayoutElement>();
+            tileLayoutElement.Tile = tile;
+            var image = tileImageObject.GetComponent<Image>();
             image.sprite = sprite;
-            var button = tileImage.GetComponent<Button>();
+            var button = tileImageObject.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
             if (richi) return;
-            button.onClick.AddListener(() =>
-            {
-                player.ClientDiscardTile(tile, discardLastDraw);
-            });
+            button.onClick.AddListener(() => { player.ClientDiscardTile(tile, discardLastDraw); });
         }
 
         public void DiscardTile()

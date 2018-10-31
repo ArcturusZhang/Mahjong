@@ -48,8 +48,8 @@ namespace Multi
         public MahjongSetManager MahjongSetManager;
 
         [Header("Game Status Info")] public GameStatus GameStatus;
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
+        [HideInInspector] public GameSettings GameSettings;
+        [HideInInspector] public YakuSettings YakuSettings;
 
         private Coroutine waitForClientCoroutine = null;
 
@@ -112,6 +112,7 @@ namespace Multi
         [Server]
         internal void ServerNextTurn()
         {
+            // todo -- check for early ending
             stateMachine.ChangeState(new PlayerDrawTileState
             {
                 MahjongSetManager = MahjongSetManager,
@@ -235,6 +236,7 @@ namespace Multi
             var playerDiscardTileState = new PlayerDiscardTileState
             {
                 GameStatus = GameStatus,
+                GameSettings = GameSettings,
                 DiscardTile = data.DiscardTile,
                 DiscardLastDraw = data.DiscardLastDraw,
                 InTurnOperation = data.Operation,
@@ -299,11 +301,11 @@ namespace Multi
                 GameStatus.SetCurrentPlayerIndex(message.PlayerIndex);
                 var currentPlayerIndex = GameStatus.CurrentPlayerIndex;
                 var currentTurnPlayer = GameStatus.CurrentTurnPlayer;
-                currentTurnPlayer.RpcPerformKong(message.PlayerIndex, message.Meld, message.DiscardedTile,
+                currentTurnPlayer.RpcPerformKong(message.PlayerIndex, message.Meld, message.DiscardTile,
                     discardPlayerIndex);
                 // server side data update
                 currentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardedTile);
+                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardTile);
                 GameStatus.PlayerOpenMelds[currentPlayerIndex].Add(message.Meld);
                 Assert.AreEqual(GameStatus.PlayerHandTiles[currentPlayerIndex].Count, currentTurnPlayer.HandTilesCount,
                     "Hand tile count should equal to data on server");
@@ -339,18 +341,19 @@ namespace Multi
                 GameStatus.SetCurrentPlayerIndex(message.PlayerIndex);
                 var currentPlayerIndex = GameStatus.CurrentPlayerIndex;
                 var currentTurnPlayer = GameStatus.CurrentTurnPlayer;
-                currentTurnPlayer.RpcPerformPong(message.PlayerIndex, message.Meld, message.DiscardedTile,
+                currentTurnPlayer.RpcPerformPong(message.PlayerIndex, message.Meld, message.DiscardTile,
                     discardPlayerIndex);
                 // server side data update
                 currentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardedTile);
+                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardTile);
                 GameStatus.PlayerOpenMelds[currentPlayerIndex].Add(message.Meld);
                 var defaultTile = GameStatus.PlayerHandTiles[currentPlayerIndex].RemoveLast();
                 Assert.AreEqual(GameStatus.PlayerHandTiles[currentPlayerIndex].Count, currentTurnPlayer.HandTilesCount,
                     "Hand tile count should equal to data on server");
                 stateMachine.ChangeState(new PlayerOpenMeldState
                 {
-                    DefaultTile = defaultTile,
+                    OpenMeldData = new OpenMeldData
+                        {DefaultTile = defaultTile, DiscardTile = message.DiscardTile, OpenMeld = message.Meld},
                     GameStatus = GameStatus,
                     ServerCallback = data =>
                     {
@@ -373,17 +376,18 @@ namespace Multi
                 GameStatus.SetCurrentPlayerIndex(message.PlayerIndex);
                 var currentPlayerIndex = GameStatus.CurrentPlayerIndex;
                 var currentTurnPlayer = GameStatus.CurrentTurnPlayer;
-                currentTurnPlayer.RpcPerformChow(message.Meld, message.DiscardedTile);
+                currentTurnPlayer.RpcPerformChow(message.Meld, message.DiscardTile);
                 // server side data update
                 currentTurnPlayer.HandTilesCount -= message.Meld.EffectiveTileCount;
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardedTile);
+                GameStatus.PlayerHandTiles[currentPlayerIndex].Subtract(message.Meld.Tiles, message.DiscardTile);
                 GameStatus.PlayerOpenMelds[currentPlayerIndex].Add(message.Meld);
                 var defaultTile = GameStatus.PlayerHandTiles[currentPlayerIndex].RemoveLast();
                 Assert.AreEqual(GameStatus.PlayerHandTiles[currentPlayerIndex].Count, currentTurnPlayer.HandTilesCount,
                     "Hand tile count should equal to data on server");
                 stateMachine.ChangeState(new PlayerOpenMeldState
                 {
-                    DefaultTile = defaultTile,
+                    OpenMeldData = new OpenMeldData
+                        {DefaultTile = defaultTile, DiscardTile = message.DiscardTile, OpenMeld = message.Meld},
                     GameStatus = GameStatus,
                     ServerCallback = data =>
                     {

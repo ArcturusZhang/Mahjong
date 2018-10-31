@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Single.MahjongDataType
 {
@@ -27,6 +28,8 @@ namespace Single.MahjongDataType
         public bool IsYaojiu => Suit == Suit.Z || Rank == 1 || Rank == 9;
 
         public bool IsLaotou => Suit != Suit.Z && (Rank == 1 || Rank == 9);
+        
+        public Tile Previous => new Tile(Suit, Rank - 1);
 
         public Tile Next => new Tile(Suit, Rank + 1);
 
@@ -51,7 +54,7 @@ namespace Single.MahjongDataType
                         case Suit.P: return "①";
                         case Suit.S: return "１";
                         case Suit.Z: return "东";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 2:
@@ -62,7 +65,7 @@ namespace Single.MahjongDataType
                         case Suit.P: return "②";
                         case Suit.S: return "２";
                         case Suit.Z: return "南";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 3:
@@ -73,7 +76,7 @@ namespace Single.MahjongDataType
                         case Suit.P: return "③";
                         case Suit.S: return "３";
                         case Suit.Z: return "西";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 4:
@@ -84,7 +87,7 @@ namespace Single.MahjongDataType
                         case Suit.P: return "④";
                         case Suit.S: return "４";
                         case Suit.Z: return "北";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 5:
@@ -95,7 +98,7 @@ namespace Single.MahjongDataType
                         case Suit.P: return "⑤";
                         case Suit.S: return "５";
                         case Suit.Z: return "白";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 6:
@@ -106,7 +109,7 @@ namespace Single.MahjongDataType
                         case Suit.P: return "⑥";
                         case Suit.S: return "６";
                         case Suit.Z: return "发";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 7:
@@ -117,7 +120,7 @@ namespace Single.MahjongDataType
                         case Suit.P: return "⑦";
                         case Suit.S: return "７";
                         case Suit.Z: return "中";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 8:
@@ -127,7 +130,7 @@ namespace Single.MahjongDataType
                         case Suit.M: return "八";
                         case Suit.P: return "⑧";
                         case Suit.S: return "８";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
                 case 9:
@@ -137,10 +140,12 @@ namespace Single.MahjongDataType
                         case Suit.M: return "九";
                         case Suit.P: return "⑨";
                         case Suit.S: return "９";
-                        default: throw new ArgumentException("Will not happen");
+                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
                     }
                 }
-                default: throw new ArgumentException("Will not happen");
+                default: 
+                    Debug.LogError($"Rank = {Rank} should not happen");
+                    return $"Suit = {Suit}, Rank = {Rank}";
             }
         }
 

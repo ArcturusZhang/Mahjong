@@ -119,6 +119,11 @@ namespace Single.MahjongDataType
             return tile.Rank >= First.Rank && tile.Rank <= Last.Rank;
         }
 
+        public bool ContainsConsiderColor(Tile tile)
+        {
+            return Tiles.Contains(tile, Tile.TileConsiderColorEqualityComparer);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == null) return false;

@@ -74,7 +74,7 @@ namespace Multi.Messages
 	{
 		public int PlayerIndex;
 		public OutTurnOperation Operation;
-		public Tile DiscardedTile;
+		public Tile DiscardTile;
 		public Meld Meld;
 		public int BonusTurnTime;
 		public PlayerClientData PlayerClientData;
@@ -84,5 +84,6 @@ namespace Multi.Messages
 	{
 		public int PlayerIndex;
 		public Tile DefaultTile;
+		public Tile[] ForbiddenTiles;
 	}
 }

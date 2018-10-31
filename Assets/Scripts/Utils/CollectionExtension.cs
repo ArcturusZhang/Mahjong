@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
@@ -8,8 +9,8 @@ using Object = UnityEngine.Object;
 
 namespace Utils
 {
-    public static class Extensions
-    {
+    public static class CollectionExtension
+    {   
         public static void Shuffle<T>(this List<T> list)
         {
             int n = list.Count;
@@ -65,6 +66,7 @@ namespace Utils
             }
         }
 
+        [Obsolete]
         public static void SetNumber(this Image[] images, int number, Func<int, Sprite> func)
         {
             for (int i = 0; i < images.Length; i++)
@@ -79,14 +81,6 @@ namespace Utils
                 number /= 10;
             }
             Assert.AreEqual(number, 0, "The display overflows.");
-        }
-
-        public static void DestroyAllChild(this Transform transform)
-        {
-            for (int i = transform.childCount - 1; i >= 0; i--)
-            {
-                Object.Destroy(transform.GetChild(i).gameObject);
-            }
         }
     }
 }
