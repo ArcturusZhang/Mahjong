@@ -16,7 +16,6 @@ namespace Multi
         public int CurrentPlayerIndex;
         public Player CurrentTurnPlayer;
         public List<Player> Players;
-        public RoundStatus RoundStatus;
         public List<Tile>[] PlayerHandTiles;
         public List<Meld>[] PlayerOpenMelds;
         public int Dice;
@@ -25,14 +24,6 @@ namespace Multi
         {
             CurrentPlayerIndex = 0;
             CurrentTurnPlayer = Players[CurrentPlayerIndex];
-            RoundStatus = new RoundStatus
-            {
-                RoundCount = 0,
-                FieldCount = 1,
-                CurrentExtraRound = 0,
-                TotalPlayer = Players.Count,
-                TilesLeft = MahjongConstants.TotalTilesCount,
-            };
             PlayerHandTiles = new List<Tile>[Players.Count];
             PlayerOpenMelds = new List<Meld>[Players.Count];
         }

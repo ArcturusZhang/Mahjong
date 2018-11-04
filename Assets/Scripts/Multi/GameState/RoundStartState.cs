@@ -13,7 +13,9 @@ namespace Multi.GameState
     public class RoundStartState : AbstractMahjongState
     {
         public bool NewRound;
+        public bool ExtraRound;
         public GameSettings GameSettings;
+        public NetworkRoundStatus NetworkRoundStatus;
         public GameStatus GameStatus;
         public MahjongSetManager MahjongSetManager;
         public UnityAction ServerCallback;
@@ -24,7 +26,7 @@ namespace Multi.GameState
         {
             base.OnStateEnter();
             NetworkServer.RegisterHandler(MessageConstants.ReadinessMessageId, OnReadinessMessageReceived);
-            GameStatus.RoundStatus = GameStatus.RoundStatus.NextRound(NewRound);
+            NetworkRoundStatus.NextRound(NewRound, ExtraRound);
             players = GameStatus.Players;
             // Throwing dice
             GameStatus.Dice = Random.Range(GameSettings.DiceMin, GameSettings.DiceMax + 1);
@@ -32,7 +34,7 @@ namespace Multi.GameState
             Debug.Log($"[RoundStartState] Dice rolls {GameStatus.Dice}");
             // Draw tiles in turn
             int count = DrawInitialTiles();
-            GameStatus.RoundStatus = GameStatus.RoundStatus.RemoveTiles(count);
+            NetworkRoundStatus.RemoveTiles(count);
             // Update data in players
             foreach (var player in players)
             {
@@ -41,7 +43,6 @@ namespace Multi.GameState
                 player.Richi = false;
                 player.WRichi = false;
                 player.FirstTurn = true;
-                player.RoundStatus = GameStatus.RoundStatus;
             }
             var doraTiles = MahjongSetManager.DoraIndicators.ToArray();
             var doraIndices = MahjongSetManager.DoraIndicatorIndices.ToArray();
@@ -114,12 +115,12 @@ namespace Multi.GameState
         {
             base.OnStateExit();
             NetworkServer.UnregisterHandler(MessageConstants.ReadinessMessageId);
-            GameStatus.SetCurrentPlayerIndex(GameStatus.RoundStatus.RoundCount - 1);
+            GameStatus.SetCurrentPlayerIndex(NetworkRoundStatus.RoundCount - 1);
         }
 
         private int CurrentPlayerIndex(int turn)
         {
-            return MahjongConstants.RepeatIndex(GameStatus.RoundStatus.RoundCount - 1 + turn, players.Count);
+            return MahjongConstants.RepeatIndex(NetworkRoundStatus.RoundCount - 1 + turn, players.Count);
         }
     }
 }

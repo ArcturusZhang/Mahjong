@@ -16,7 +16,7 @@ namespace Multi.GameState
     public class RoundEndState : AbstractMahjongState
     {
         public GameStatus GameStatus;
-        public UnityAction<bool> ServerNextRoundCallback;
+        public UnityAction<bool, bool> ServerNextRoundCallback;
         private bool[] responseReceived;
         
         public override void OnStateEnter()
@@ -33,8 +33,8 @@ namespace Multi.GameState
             responseReceived[content.PlayerIndex] = true;
             if (!responseReceived.All(received => received)) return;
             // all clients are ready
-            var newRound = true;
-            ServerNextRoundCallback.Invoke(newRound);
+            // todo -- new round logic needs revisit
+            ServerNextRoundCallback.Invoke(true, false);
         }
 
         public override void OnStateExit()

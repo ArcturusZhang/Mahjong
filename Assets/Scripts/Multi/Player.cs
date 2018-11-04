@@ -18,9 +18,9 @@ namespace Multi
     public class Player : NetworkBehaviour
     {
         [Header("UI Elements")] public PlayerHandPanel PlayerHandPanel;
+        public Text PlayerPointInfo;
 
         [Header("Game Status")] [SyncVar] public int TotalPlayers;
-        [SyncVar] public RoundStatus RoundStatus;
 
         [SyncVar]
         public int PlayerIndex = -1; // Round order index -- 0: East, 1: South, 2: West, 3: North (This does not change)
@@ -92,6 +92,9 @@ namespace Multi
             Debug.Log("Player OnPoints is called");
             Points = amount;
             // todo -- change ui text
+            if (PlayerPointInfo == null) return;
+            PlayerPointInfo.gameObject.SetActive(true);
+            PlayerPointInfo.text = amount.ToString();
         }
 
         [ClientRpc]
@@ -205,7 +208,8 @@ namespace Multi
             var handStatus = HandStatus.Nothing;
             if (MahjongLogic.TestMenqing(OpenMelds)) handStatus |= HandStatus.Menqing;
             if (FirstTurn) handStatus |= HandStatus.FirstTurn;
-            if (RoundStatus.TilesLeft == MahjongManager.Instance.GameSettings.MountainReservedTiles)
+            if (MahjongManager.Instance.NetworkRoundStatus.TilesLeft ==
+                MahjongManager.Instance.GameSettings.MountainReservedTiles)
                 handStatus |= HandStatus.LastDraw;
             if (Richi) handStatus |= HandStatus.Richi;
             if (WRichi) handStatus |= HandStatus.WRichi;
@@ -217,16 +221,18 @@ namespace Multi
         [Client]
         private RoundStatus GetCurrentRoundState()
         {
-            Debug.Log($"GetCurrentRoundState: RoundStatus: {RoundStatus}");
-            return new RoundStatus
+            var status = new RoundStatus
             {
                 TotalPlayer = TotalPlayers,
                 PlayerIndex = PlayerIndex,
-                RoundCount = RoundStatus.RoundCount,
-                FieldCount = RoundStatus.FieldCount,
-                CurrentExtraRound = RoundStatus.CurrentExtraRound,
-                TilesLeft = RoundStatus.TilesLeft
+                RoundCount = MahjongManager.Instance.NetworkRoundStatus.RoundCount,
+                FieldCount = MahjongManager.Instance.NetworkRoundStatus.FieldCount,
+                CurrentExtraRound = MahjongManager.Instance.NetworkRoundStatus.CurrentExtraRound,
+                RichiSticks = MahjongManager.Instance.NetworkRoundStatus.RichiSticks,
+                TilesLeft = MahjongManager.Instance.NetworkRoundStatus.TilesLeft
             };
+            Debug.Log($"GetCurrentRoundState: RoundStatus: {status}");
+            return status;
         }
 
         [Client]

@@ -481,52 +481,10 @@ namespace Single
         public int PlayerIndex;
         public int RoundCount;
         public int CurrentExtraRound;
+        public int RichiSticks;
         public int FieldCount;
         public int TotalPlayer;
         public int TilesLeft;
-
-        public RoundStatus RemoveTiles(int count)
-        {
-            return new RoundStatus
-            {
-                PlayerIndex = PlayerIndex,
-                RoundCount = RoundCount,
-                CurrentExtraRound = CurrentExtraRound,
-                FieldCount = FieldCount,
-                TotalPlayer = TotalPlayer,
-                TilesLeft = TilesLeft - count
-            };
-        }
-
-        public RoundStatus NextRound(bool newRound = true)
-        {
-            if (!newRound)
-                return new RoundStatus
-                {
-                    PlayerIndex = PlayerIndex,
-                    RoundCount = RoundCount,
-                    CurrentExtraRound = CurrentExtraRound + 1,
-                    FieldCount = FieldCount,
-                    TotalPlayer = TotalPlayer
-                };
-            int newRoundCount = RoundCount + 1;
-            int newFieldCount = FieldCount;
-            if (newRoundCount > TotalPlayer)
-            {
-                newRoundCount -= TotalPlayer;
-                newFieldCount++;
-            }
-
-            return new RoundStatus
-            {
-                PlayerIndex = PlayerIndex,
-                RoundCount = newRoundCount,
-                CurrentExtraRound = 0,
-                FieldCount = newFieldCount,
-                TotalPlayer = TotalPlayer
-            };
-
-        }
 
         public Tile SelfWind
         {
@@ -546,7 +504,8 @@ namespace Single
         public override string ToString()
         {
             return $"PlayerIndex: {PlayerIndex}, RoundCount: {RoundCount}, CurrentExtraRound: {CurrentExtraRound}, "
-                   + $"FieldCount: {FieldCount}, TotalPlayer: {TotalPlayer}";
+                   + $"RichiSticks: {RichiSticks}, FieldCount: {FieldCount}, TotalPlayer: {TotalPlayer}, "
+                   + $"TilesLeft: {TilesLeft}";
         }
     }
 

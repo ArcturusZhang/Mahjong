@@ -14,11 +14,6 @@ namespace Single
         public YakuSettings YakuSettings;
         private static readonly string[] TileSuits = {"m", "s", "p", "z"};
         public static ResourceManager Instance { get; private set; }
-        private Sprite[] baseTimeSprites;
-        private Sprite[] bonusTimeSprites;
-        private Sprite[] fanNumbers;
-        private Sprite[] fuNumbers;
-        private Sprite[] baseNumbers;
         private Sprite[] placeCharacters;
         private Sprite[] placeNumbers;
         private Sprite[] tileSprites;
@@ -38,22 +33,8 @@ namespace Single
         private IEnumerator LoadSpritesAsync()
         {
             var mjdesktop3 = Resources.LoadAll<Sprite>("Textures/UIElements/mjdesktop3");
-            baseTimeSprites = new Sprite[10];
-            bonusTimeSprites = new Sprite[10];
-            fanNumbers = new Sprite[10];
-            fuNumbers = new Sprite[10];
-            baseNumbers = new Sprite[10];
             placeNumbers = new Sprite[4];
             placeCharacters = new Sprite[4];
-            for (int i = 0; i < 10; i++)
-            {
-                baseTimeSprites[i] = FindByName(mjdesktop3, $"time{i}");
-                bonusTimeSprites[i] = FindByName(mjdesktop3, $"bonus{i}");
-                fanNumbers[i] = FindByName(mjdesktop3, $"fan{i}");
-                fuNumbers[i] = FindByName(mjdesktop3, $"fu{i}");
-                baseNumbers[i] = FindByName(mjdesktop3, $"base{i}");
-                yield return null;
-            }
 
             for (int i = 0; i < 4; i++)
             {
@@ -81,31 +62,6 @@ namespace Single
             }
 
             tileSprites = Resources.LoadAll<Sprite>("Textures/UIElements/tile_ui");
-        }
-
-        public Sprite BaseTime(int number)
-        {
-            return baseTimeSprites[number];
-        }
-
-        public Sprite BonusTime(int number)
-        {
-            return bonusTimeSprites[number];
-        }
-
-        public Sprite FanNumber(int number)
-        {
-            return fanNumbers[number];
-        }
-
-        public Sprite FuNumber(int number)
-        {
-            return fuNumbers[number];
-        }
-
-        public Sprite BaseNumber(int number)
-        {
-            return baseNumbers[number];
         }
 
         public Pair<Sprite, Sprite> Place(int place)

@@ -11,6 +11,8 @@ namespace UI
         public Image BaseTimeImage;
         public Image PlusImage;
         public Image[] BonusTimeImages;
+        public NumberPanelController BaseTimeController;
+        public NumberPanelController BonusTimeController;
 
         private Coroutine currentTimerCoroutine;
 
@@ -31,6 +33,7 @@ namespace UI
                 StopCoroutine(currentTimerCoroutine);
                 currentTimerCoroutine = null;
             }
+            gameObject.SetActive(true);
             mBaseTime = baseTime;
             mBonusTime = bonusTime;
             SetTime(mBaseTime, mBonusTime);
@@ -44,7 +47,8 @@ namespace UI
                 StopCoroutine(currentTimerCoroutine);
                 currentTimerCoroutine = null;
             }
-            DisableVisualElements();
+//            DisableVisualElements();
+            gameObject.SetActive(false);
             return mBonusTime;
         }
 
@@ -74,63 +78,69 @@ namespace UI
                 }
 
             callback.Invoke();
-            DisableVisualElements();
+            gameObject.SetActive(false);
+//            DisableVisualElements();
         }
 
         private void SetTime(int baseTime, int bonusTime)
         {
-            if (baseTime > 9)
-            {
-                Debug.LogWarning("Base time cannot be larger than 9");
-                baseTime = 9;
-            }
+//            if (baseTime > 9)
+//            {
+//                Debug.LogWarning("Base time cannot be larger than 9");
+//                baseTime = 9;
+//            }
 
             if (baseTime < 0) baseTime = 0;
 
-            if (bonusTime > 99)
-            {
-                Debug.LogWarning("Bonus time cannot be larger than 99");
-            }
+//            if (bonusTime > 99)
+//            {
+//                Debug.LogWarning("Bonus time cannot be larger than 99");
+//            }
 
             if (bonusTime < 0) bonusTime = 0;
 
             if (baseTime == 0)
             {
-                BaseTimeImage.gameObject.SetActive(false);
+//                BaseTimeImage.gameObject.SetActive(false);
+                BaseTimeController.gameObject.SetActive(false);
                 PlusImage.gameObject.SetActive(false);
             }
             else
             {
-                BaseTimeImage.gameObject.SetActive(true);
+//                BaseTimeImage.gameObject.SetActive(true);
+                BaseTimeController.gameObject.SetActive(true);
                 PlusImage.gameObject.SetActive(true);
-                var sprite = ResourceManager.Instance.BaseTime(baseTime);
-                BaseTimeImage.sprite = sprite;
+                BaseTimeController.SetNumber(baseTime);
+//                var sprite = ResourceManager.Instance.BaseTime(baseTime);
+//                BaseTimeImage.sprite = sprite;
             }
 
             if (bonusTime == 0)
             {
                 PlusImage.gameObject.SetActive(false);
-                BonusTimeImages[0].gameObject.SetActive(false);
-                BonusTimeImages[1].gameObject.SetActive(false);
+                BonusTimeController.gameObject.SetActive(false);
+//                BonusTimeImages[0].gameObject.SetActive(false);
+//                BonusTimeImages[1].gameObject.SetActive(false);
                 return;
             }
+            BonusTimeController.SetNumber(bonusTime);
 
-            int first = bonusTime / 10;
-            int second = bonusTime % 10;
-
-            if (first > 0)
-            {
-                BonusTimeImages[0].gameObject.SetActive(true);
-                BonusTimeImages[1].gameObject.SetActive(true);
-                BonusTimeImages[0].sprite = ResourceManager.Instance.BonusTime(first);
-                BonusTimeImages[1].sprite = ResourceManager.Instance.BonusTime(second);
-            }
-            else
-            {
-                BonusTimeImages[0].gameObject.SetActive(true);
-                BonusTimeImages[1].gameObject.SetActive(false);
-                BonusTimeImages[0].sprite = ResourceManager.Instance.BonusTime(second);
-            }
+//            int first = bonusTime / 10;
+//            int second = bonusTime % 10;
+//
+//            if (first > 0)
+//            {
+//                BonusTimeImages[0].gameObject.SetActive(true);
+//                BonusTimeImages[1].gameObject.SetActive(true);
+//                BonusTimeImages[0].sprite = ResourceManager.Instance.BonusTime(first);
+//                BonusTimeImages[1].sprite = ResourceManager.Instance.BonusTime(second);
+//            }
+//            else
+//            {
+//                BonusTimeImages[0].gameObject.SetActive(true);
+//                BonusTimeImages[1].gameObject.SetActive(false);
+//                BonusTimeImages[0].sprite = ResourceManager.Instance.BonusTime(second);
+//            }
         }
     }
 }

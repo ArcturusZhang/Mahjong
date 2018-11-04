@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34bbbe923f2045aebe5382ad17f7b144, type: 3}
+  m_Name: ScoreYellowNumbers
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 21300048, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300050, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300052, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300054, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300056, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300058, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300060, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300062, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300064, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}
+  - {fileID: 21300066, guid: e5ca4c7c1ba07f04a98969bfacca1da9, type: 3}

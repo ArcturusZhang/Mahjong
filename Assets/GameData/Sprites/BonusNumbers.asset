@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34bbbe923f2045aebe5382ad17f7b144, type: 3}
   m_Name: BonusNumbers
   m_EditorClassIdentifier: 
-  Numbers:
+  sprites:
   - {fileID: 21300104, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
   - {fileID: 21300082, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
   - {fileID: 21300084, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}

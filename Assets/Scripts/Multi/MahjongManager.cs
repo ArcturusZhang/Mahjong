@@ -40,6 +40,7 @@ namespace Multi
         public RoundEndPanelController RoundEndPanelController;
 
         [Header("General UI Elements")] public TimerController TimerController;
+        public RoundStatusPanel RoundStatusPanel;
 
         [Header("Object Reference Registrations")]
         public MahjongSelector MahjongSelector;
@@ -48,6 +49,7 @@ namespace Multi
         public MahjongSetManager MahjongSetManager;
 
         [Header("Game Status Info")] public GameStatus GameStatus;
+        public NetworkRoundStatus NetworkRoundStatus;
         [HideInInspector] public GameSettings GameSettings;
         [HideInInspector] public YakuSettings YakuSettings;
 
@@ -61,7 +63,6 @@ namespace Multi
         {
             Debug.Log("[Server] MahjongManager Awake is called");
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
 
         public override void OnStartClient()
@@ -83,25 +84,28 @@ namespace Multi
         private IEnumerator StartServerGameLoop()
         {
             yield return new WaitForSeconds(1f);
-            RpcClientPrepare(GameSettings, YakuSettings);
             stateMachine.ChangeState(new RoundPrepareState
             {
+                NetworkRoundStatus = NetworkRoundStatus,
                 GameSettings = GameSettings,
                 GameStatus = GameStatus
             });
             yield return new WaitForSeconds(1f);
+            RpcClientPrepare(GameSettings, YakuSettings);
             // Start first round
-            ServerNextRound(true);
+            ServerNextRound(true, false);
             Debug.Log("[Server] Waiting for clients' readiness message");
         }
 
         [Server]
-        private void ServerNextRound(bool newRound)
+        private void ServerNextRound(bool newRound, bool extraRound)
         {
-            RpcClientRoundStart();
+            RpcClientRoundStart(newRound, extraRound);
             stateMachine.ChangeState(new RoundStartState
             {
                 NewRound = newRound,
+                ExtraRound = extraRound,
+                NetworkRoundStatus = NetworkRoundStatus,
                 GameSettings = GameSettings,
                 GameStatus = GameStatus,
                 MahjongSetManager = MahjongSetManager,
@@ -116,6 +120,7 @@ namespace Multi
             stateMachine.ChangeState(new PlayerDrawTileState
             {
                 MahjongSetManager = MahjongSetManager,
+                NetworkRoundStatus = NetworkRoundStatus,
                 GameStatus = GameStatus,
                 Lingshang = false,
                 ServerInTurnCallback = data =>
@@ -212,6 +217,7 @@ namespace Multi
                 stateMachine.ChangeState(new PlayerDrawTileState
                 {
                     MahjongSetManager = MahjongSetManager,
+                    NetworkRoundStatus = NetworkRoundStatus,
                     GameStatus = GameStatus,
                     Lingshang = true,
                     ServerInTurnCallback = data =>
@@ -312,6 +318,7 @@ namespace Multi
                 stateMachine.ChangeState(new PlayerDrawTileState
                 {
                     MahjongSetManager = MahjongSetManager,
+                    NetworkRoundStatus = NetworkRoundStatus,
                     GameStatus = GameStatus,
                     Lingshang = true,
                     ServerInTurnCallback = data =>
@@ -425,22 +432,33 @@ namespace Multi
         [ClientRpc]
         internal void RpcClientPrepare(GameSettings gameSettings, YakuSettings yakuSettings)
         {
-            LobbyManager.Instance.LocalPlayer.PlayerHandPanel = PlayerHandPanel;
+            // assign settings
             GameSettings = gameSettings;
             YakuSettings = yakuSettings;
             PointSummaryPanelController.GameSettings = gameSettings;
             PointSummaryPanelController.YakuSettings = yakuSettings;
+            // turn mahjong set to the initial player
+            var localPlayer = LobbyManager.Instance.LocalPlayer;
+            int localPlayerIndex = localPlayer.PlayerIndex;
+            MahjongSelector.transform.localRotation = Quaternion.Euler(90, 0, -localPlayerIndex * 90);
+            Debug.Log($"Local player index: {localPlayerIndex}");
+            // assign UI Elements
+            localPlayer.PlayerHandPanel = PlayerHandPanel;
+            foreach (var player in LobbyManager.Instance.Players)
+            {
+                int index = player.PlayerIndex - localPlayerIndex;
+                if (index < 0) index += RoundStatusPanel.PointPanels.Length;
+                RoundStatusPanel.PointPanels[index].gameObject.SetActive(true);
+                player.PlayerPointInfo = RoundStatusPanel.PointPanels[index];
+            }
         }
 
         [ClientRpc]
-        internal void RpcClientRoundStart()
+        internal void RpcClientRoundStart(bool newRound, bool extraRound)
         {
             Debug.Log("ClientState_RoundStart is called");
             InGameCanvas.SetActive(true);
             InGameInfoText.Print($"Current player's index: {LobbyManager.Instance.LocalPlayer.PlayerIndex}");
-            // Read player order and put tiles to right direction
-            int wind = LobbyManager.Instance.LocalPlayer.PlayerIndex;
-            MahjongSelector.transform.Rotate(Vector3.up, 90 * wind, Space.World);
             // todo -- ui elements (dealer display, points, etc)
         }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -64,23 +62,6 @@ namespace Utils
             {
                 list.Remove(item);
             }
-        }
-
-        [Obsolete]
-        public static void SetNumber(this Image[] images, int number, Func<int, Sprite> func)
-        {
-            for (int i = 0; i < images.Length; i++)
-            {
-                if (number == 0 && i > 0) images[i].gameObject.SetActive(false);
-                else
-                {
-                    images[i].gameObject.SetActive(true);
-                    images[i].sprite = func.Invoke(number % 10);
-                }
-
-                number /= 10;
-            }
-            Assert.AreEqual(number, 0, "The display overflows.");
         }
     }
 }

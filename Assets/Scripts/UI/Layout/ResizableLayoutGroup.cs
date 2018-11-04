@@ -12,9 +12,14 @@ namespace UI.Layout
 		public int BestThreshold;
 		private Vector2 size;
 
-		public void SetLayoutHorizontal()
+		private void OnEnable()
 		{
 			size = new Vector2(BestElementSize.x * BestThreshold, BestElementSize.y);
+			((RectTransform) transform).sizeDelta = size;
+		}
+
+		public void SetLayoutHorizontal()
+		{
 			float scaleFactor = Mathf.Min(1, (float) BestThreshold / transform.childCount);
 			float offset = GetCurrentOffset(TextAlignment, scaleFactor);
 			for (int i = 0; i < transform.childCount; i++)

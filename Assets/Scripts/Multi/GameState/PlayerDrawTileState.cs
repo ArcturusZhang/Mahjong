@@ -10,6 +10,7 @@ namespace Multi.GameState
     public class PlayerDrawTileState : AbstractMahjongState
     {
         public MahjongSetManager MahjongSetManager;
+        public NetworkRoundStatus NetworkRoundStatus;
         public GameStatus GameStatus;
         public UnityAction<InTurnOperationData> ServerInTurnCallback;
         public UnityAction<DiscardTileData> ServerDiscardCallback;
@@ -32,12 +33,7 @@ namespace Multi.GameState
         {
             var nextIndex = lingshang ? MahjongSetManager.NextLingshangIndex : MahjongSetManager.NextIndex;
             var tile = lingshang ? MahjongSetManager.DrawLingshang() : MahjongSetManager.DrawTile();
-            GameStatus.RoundStatus = GameStatus.RoundStatus.RemoveTiles(1);
-            foreach (var player in GameStatus.Players)
-            {
-                player.RoundStatus = GameStatus.RoundStatus;
-            }
-
+            NetworkRoundStatus.RemoveTiles(1);
             currentTurnPlayer.LastDraw = tile;
             currentTurnPlayer.RpcYourTurnToDraw(nextIndex);
             currentTurnPlayer.connectionToClient.Send(MessageConstants.DrawTileMessageId,

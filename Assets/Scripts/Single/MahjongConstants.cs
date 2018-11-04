@@ -19,16 +19,31 @@ namespace Single
         public const float TileHeight = 0.0393334f;
         public const float UiGap = 20;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
+
         public static readonly Quaternion FaceUp = Quaternion.Euler(-90, 0, -90);
+
         // UI Settings
         public const int YakuItemColumns = 2;
+
         public const int FullItemCountPerColumn = 4;
+
         // Yaku ranks
         public const int Mangan = 2000;
         public const int Haneman = 3000;
         public const int Baiman = 4000;
         public const int Sanbaiman = 6000;
+
         public const int Yakuman = 8000;
+
+        // Character constants
+        public static readonly string[] PositionWinds = {
+            "东", "南", "西", "北"
+        };
+
+        public static readonly string[] NumberCharacters =
+        {
+            "零", "一", "二", "三", "四", "五", "六", "七", "八", "九"
+        };
 
         public static int RepeatIndex(int index, int length)
         {

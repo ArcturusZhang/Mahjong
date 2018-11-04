@@ -12,7 +12,7 @@ namespace UI
         [Header("Number settings")]
         public Transform NumberParent;
         public GameObject DigitPrefab;
-        public NumberSprites NumberSprites;
+        public SpriteBundle NumberSprites;
 
         public void SetNumber(int number)
         {
@@ -25,7 +25,7 @@ namespace UI
                 var obj = Instantiate(DigitPrefab, NumberParent);
                 obj.name = $"Digit{i}";
                 var image = obj.GetComponent<Image>();
-                image.sprite = NumberSprites.GetNumber(digits[i]);
+                image.sprite = NumberSprites.Get(digits[i]);
             }
         }
     }

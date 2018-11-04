@@ -7,11 +7,11 @@ namespace Multi.GameState
 {
     public class RoundPrepareState : AbstractMahjongState
     {
-//        public MahjongManager MahjongManager;
         public GameSettings GameSettings;
+        public NetworkRoundStatus NetworkRoundStatus;
         public GameStatus GameStatus;
         private List<Player> players;
-        
+
         public override void OnStateEnter()
         {
             base.OnStateEnter();
@@ -22,16 +22,19 @@ namespace Multi.GameState
             {
                 players[i].PlayerIndex = i;
                 players[i].TotalPlayers = players.Count;
-                players[i].Points = GameSettings.InitialPoints;
             }
-
             GameStatus.Reset();
+            NetworkRoundStatus.Initialize(players.Count);
         }
 
         public override void OnStateExit()
         {
             base.OnStateExit();
             Debug.Log($"[RoundPrepareState] Prepare finished");
+            for (int i = 0; i < players.Count; i++)
+            {
+                players[i].Points = GameSettings.InitialPoints;
+            }
         }
     }
 }
