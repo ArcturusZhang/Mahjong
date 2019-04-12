@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Single;
 using Single.MahjongDataType;
@@ -19,10 +20,10 @@ namespace UI.PointSummaryPanel
             gameObject.SetActive(false);
         }
 
-        public void SetTiles(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile)
+        public void SetTiles(Tile[] handTiles, Meld[] openMelds, Tile winningTile)
         {
             gameObject.SetActive(true);
-            handTiles.Sort();
+            Array.Sort(handTiles);
             var meldTiles = new List<SummaryMeldTile>();
             foreach (var meld in openMelds)
             {
@@ -36,7 +37,7 @@ namespace UI.PointSummaryPanel
                 }
             }
 
-            int handCount = handTiles.Count;
+            int handCount = handTiles.Length;
             int meldCount = handCount + meldTiles.Count;
             int totalCount = meldCount + 1;
             for (int i = 0; i < transform.childCount; i++)

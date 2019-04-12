@@ -16,6 +16,12 @@ Some resources are fetched from On-line web game [Majsoul](http://www.majsoul.co
 
 1. Rework RoundStatus, assign this information to a new Networked Object (Done)
 
+1. Logic for rong and tsumo
+
+1. Detailed data struct describing points transfer
+
+1. Complete summary panel
+
 1. Setting item whether allows false richi (claim richi when hand are not ready)
 
 1. Add setting items to end game when all point are lost or not

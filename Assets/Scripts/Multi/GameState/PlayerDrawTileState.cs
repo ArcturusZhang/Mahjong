@@ -74,6 +74,8 @@ namespace Multi.GameState
             }
 
             Debug.Log($"[PlayerInTurnState] Player {content.PlayerIndex} has discarded a tile {content.DiscardTile}");
+            // first turn is broken by the first discard
+            if (currentTurnPlayer.FirstTurn) currentTurnPlayer.FirstTurn = false;
             // server side data update
             if (!content.DiscardLastDraw)
             {

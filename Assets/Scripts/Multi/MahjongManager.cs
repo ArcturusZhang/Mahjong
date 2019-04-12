@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Lobby;
@@ -73,8 +74,8 @@ namespace Multi
         public override void OnStartServer()
         {
             Debug.Log("MahjongManager OnStartServer is called");
-            GameSettings = ResourceManager.Instance.GameSettings;
-            YakuSettings = ResourceManager.Instance.YakuSettings;
+            GameSettings = LobbyManager.Instance.GameSettings;
+            YakuSettings = LobbyManager.Instance.YakuSettings;
             stateMachine = new MahjongStateMachine();
             GameStatus.Players = LobbyManager.Instance.Players;
             StartCoroutine(StartServerGameLoop());
@@ -161,14 +162,14 @@ namespace Multi
                 HandTiles = playerClientData.HandTiles,
                 OpenMelds = playerClientData.OpenMelds,
                 WinningTile = playerClientData.WinningTile,
-                WinPlayerIndex = playerClientData.WinPlayerIndex,
+                PlayerIndex = playerClientData.WinPlayerIndex,
                 HandStatus = playerClientData.HandStatus,
                 RoundStatus = playerClientData.RoundStatus,
                 DoraIndicators = MahjongSetManager.DoraIndicators.ToArray(),
                 UraDoraIndicators = MahjongSetManager.UraDoraIndicators.ToArray()
             };
             // validate
-            var index = data.WinPlayerIndex;
+            var index = data.PlayerIndex;
             Assert.IsTrue(ClientUtil.ArrayEquals(data.HandTiles, GameStatus.PlayerHandTiles[index].ToArray()));
             Assert.IsTrue(ClientUtil.ArrayEquals(data.OpenMelds, GameStatus.PlayerOpenMelds[index].ToArray()));
             // todo -- winning tile also need validation 
@@ -185,13 +186,15 @@ namespace Multi
                           + $"player side data: {inTurnOperationData.PlayerClientData}");
                 // validate data from client
                 var data = ValidatePlayerSideData(inTurnOperationData.PlayerClientData);
-                // todo -- rpc call to show visual effect
-                // todo -- rpc call to show summary panel
+                var pointTransfers =
+                    MahjongScoring.GetPointsTransfers(RoundEndType.Tsumo, NetworkRoundStatus, GameStatus, data);
+                // rpc call to show visual effect and summary panel
                 RpcClientRoundEnd(new RoundEndData
                 {
-                    RoundEndType = RoundEndType.Win,
-                    LosePlayerIndex = -1,
-                    PlayerServerDataArray = new[] {data}
+                    RoundEndType = RoundEndType.Tsumo,
+                    TotalPlayer = GameStatus.TotalPlayer,
+                    PlayerServerDataArray = new[] {data},
+                    PointsTransfers = pointTransfers
                 });
                 // todo -- switch to RoundEndState
                 stateMachine.ChangeState(new RoundEndState
@@ -407,7 +410,7 @@ namespace Multi
             }
 
             Debug.Log($"[Server] No one claims out turn operations, entering next player's turn");
-            GameStatus.SetCurrentPlayerIndex(GameStatus.NextPlayerIndex);
+            GameStatus.SetCurrentPlayerIndex(GameStatus.NextPlayerIndex());
             ServerNextTurn();
         }
 
@@ -479,16 +482,17 @@ namespace Multi
         [Client]
         private IEnumerator ClientShowSummaryPanel(RoundEndData data)
         {
+            // todo -- point transfer
             int panelCount = data.PlayerServerDataArray.Length;
             for (int i = 0; i < panelCount; i++)
             {
                 var playerServerData = data.PlayerServerDataArray[i];
                 if (i < panelCount - 1)
                     yield return StartCoroutine(
-                        PointSummaryPanelController.ShowSummaryPanel(playerServerData, data.LosePlayerIndex));
+                        PointSummaryPanelController.ShowSummaryPanel(playerServerData));
                 else
                     yield return StartCoroutine(
-                        PointSummaryPanelController.ShowSummaryPanel(playerServerData, data.LosePlayerIndex,
+                        PointSummaryPanelController.ShowSummaryPanel(playerServerData,
                             () => { Debug.Log("All panel has been shown"); }));
             }
         }

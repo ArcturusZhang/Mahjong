@@ -109,9 +109,9 @@ namespace Single
             return hasYakuman ? result.Where(yakuValue => yakuValue.Type == YakuType.Yakuman).ToList() : result;
         }
 
-        public static PointInfo GetPointInfo(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile,
-            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, List<Tile> doraIndicators = null,
-            List<Tile> uraDoraIndicators = null)
+        public static PointInfo GetPointInfo(Tile[] handTiles, Meld[] openMelds, Tile winningTile,
+            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, Tile[] doraIndicators = null,
+            Tile[] uraDoraIndicators = null)
         {
             var decomposes = Decompose(handTiles, openMelds, winningTile);
             // count dora
@@ -127,8 +127,8 @@ namespace Single
             return GetPointInfo(decomposes, winningTile, handStatus, roundStatus, yakuSettings, dora, uraDora, redDora);
         }
 
-        private static int CountDora(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile,
-            List<Tile> indicators)
+        private static int CountDora(Tile[] handTiles, Meld[] openMelds, Tile winningTile,
+            Tile[] indicators)
         {
             if (indicators == null) return 0;
             int count = 0;
@@ -141,7 +141,7 @@ namespace Single
             return count;
         }
 
-        private static int CountDora(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile, Tile dora)
+        private static int CountDora(Tile[] handTiles, Meld[] openMelds, Tile winningTile, Tile dora)
         {
             int count = 0;
             foreach (var handTile in handTiles)
@@ -161,7 +161,7 @@ namespace Single
             return count;
         }
 
-        private static int CountRed(List<Tile> handTiles, List<Meld> openMelds, Tile winningTile)
+        private static int CountRed(Tile[] handTiles, Meld[] openMelds, Tile winningTile)
         {
             int count = 0;
             count += handTiles.Count(tile => tile.IsRed);
@@ -200,7 +200,8 @@ namespace Single
                 : pointInfo.BasePoint * (roundStatus.TotalPlayer + 1);
         }
 
-        private static ISet<List<Meld>> Decompose(List<Tile> handTiles, List<Meld> openMelds, Tile tile)
+        private static ISet<List<Meld>> Decompose(IReadOnlyCollection<Tile> handTiles,
+            IReadOnlyCollection<Meld> openMelds, Tile tile)
         {
             var decompose = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             int count = handTiles.Count;

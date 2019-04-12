@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Multi;
+using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.Match;
@@ -55,6 +56,9 @@ namespace Lobby
         public List<Player> Players = new List<Player>();
 
         public Player LocalPlayer;
+
+        [Header("Game Settings")] public GameSettings GameSettings;
+        public YakuSettings YakuSettings;
 
         private void Start()
         {

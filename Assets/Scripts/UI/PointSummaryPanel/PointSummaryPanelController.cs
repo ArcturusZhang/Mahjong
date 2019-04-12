@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,15 +24,15 @@ namespace UI.PointSummaryPanel
         public GameSettings MGameSettings; // todo -- to be removed, only for testing
         public YakuSettings MYakuSettings; // todo -- to be removed, only for testing
 
-        public int LosePlayerIndex { private get; set; }
+        [Obsolete] public int LosePlayerIndex { private get; set; }
         public GameSettings GameSettings { private get; set; }
         public YakuSettings YakuSettings { private get; set; }
-        public List<Tile> HandTiles { private get; set; }
-        public List<Meld> OpenMelds { private get; set; }
+        public Tile[] HandTiles { private get; set; }
+        public Meld[] OpenMelds { private get; set; }
         public Tile WinningTile { private get; set; }
         public PointInfo PointInfo { private get; set; }
-        public List<Tile> DoraIndicators { private get; set; }
-        public List<Tile> UraDoraIndicators { private get; set; }
+        public Tile[] DoraIndicators { private get; set; }
+        public Tile[] UraDoraIndicators { private get; set; }
         public int Point { private get; set; }
 
 //        // todo -- to be removed, only for testing
@@ -68,16 +69,17 @@ namespace UI.PointSummaryPanel
 //            }, 1));
 //        }
 
-        public IEnumerator ShowSummaryPanel(PlayerServerData playerServerData, int losePlayerIndex,
-            UnityAction callback = null)
+        // todo -- complete this class to fully use all the data provided in playerServerData
+        // todo -- should the appearance of point panels be handled here?
+        public IEnumerator ShowSummaryPanel(PlayerServerData playerServerData, UnityAction callback = null)
         {
             gameObject.SetActive(true);
-            LosePlayerIndex = losePlayerIndex;
-            HandTiles = playerServerData.HandTiles.ToList();
-            OpenMelds = playerServerData.OpenMelds.ToList();
+//            LosePlayerIndex = losePlayerIndex;
+            HandTiles = playerServerData.HandTiles;
+            OpenMelds = playerServerData.OpenMelds;
             WinningTile = playerServerData.WinningTile;
-            DoraIndicators = playerServerData.DoraIndicators.ToList();
-            UraDoraIndicators = playerServerData.UraDoraIndicators.ToList();
+            DoraIndicators = playerServerData.DoraIndicators;
+            UraDoraIndicators = playerServerData.UraDoraIndicators;
             PointInfo = MahjongLogic.GetPointInfo(HandTiles, OpenMelds, WinningTile, playerServerData.HandStatus,
                 playerServerData.RoundStatus, YakuSettings, DoraIndicators, UraDoraIndicators);
             Point = MahjongLogic.GetTotalPoint(PointInfo, playerServerData.RoundStatus);

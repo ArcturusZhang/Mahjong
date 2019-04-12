@@ -134,7 +134,14 @@ namespace Multi
 
         public int FieldCount => RoundData.FieldCount;
 
+        public int DealerIndex => RoundCount - 1;
+
         #endregion
+
+        public bool IsDealer(int index)
+        {
+            return index == DealerIndex;
+        }
     }
 
     [Serializable]

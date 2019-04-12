@@ -64,17 +64,24 @@ namespace Multi.ServerData
     public struct RoundEndData
     {
         public RoundEndType RoundEndType;
-        public int LosePlayerIndex;
         public int TotalPlayer;
         public PlayerServerData[] PlayerServerDataArray;
+        public PointsTransfer[] PointsTransfers;
+    }
+
+    public struct PointsTransfer
+    {
+        public int From;
+        public int To;
+        public int Amount;
     }
 
     public struct PlayerServerData
     {
+        public int PlayerIndex;
         public Tile[] HandTiles;
         public Meld[] OpenMelds;
         public Tile WinningTile;
-        public int WinPlayerIndex;
         public HandStatus HandStatus;
         public RoundStatus RoundStatus;
         public Tile[] DoraIndicators;
@@ -87,7 +94,8 @@ namespace Multi.ServerData
     /// </summary>
     public enum RoundEndType
     {
-        Win,
-        Draw
+        Tsumo,
+        Rong,
+        Draw,
     }
 }

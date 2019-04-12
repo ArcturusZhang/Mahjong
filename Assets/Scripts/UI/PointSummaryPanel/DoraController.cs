@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Single;
+﻿using Single;
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -18,17 +17,17 @@ namespace UI.PointSummaryPanel
 			Assert.AreEqual(Doras.Length, UraDoras.Length);
 		}
 
-		public void SetDoras(List<Tile> doras, List<Tile> uraDoras = null)
+		public void SetDoras(Tile[] doras, Tile[] uraDoras = null)
 		{
 			gameObject.SetActive(true);
 			if (doras == null) return;
-			for (int i = 0; i < doras.Count; i++)
+			for (int i = 0; i < doras.Length; i++)
 			{
 				Doras[i].sprite = ResourceManager.Instance.GetTileSprite(doras[i]);
 			}
 
 			if (uraDoras == null) return;
-			for (int i = 0; i < uraDoras.Count; i++)
+			for (int i = 0; i < uraDoras.Length; i++)
 			{
 				UraDoras[i].sprite = ResourceManager.Instance.GetTileSprite(uraDoras[i]);
 			}

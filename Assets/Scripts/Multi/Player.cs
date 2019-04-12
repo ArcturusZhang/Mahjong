@@ -154,8 +154,8 @@ namespace Multi
             var kongs = MahjongLogic.GetOutTurnKongs(HandTiles, discardTile);
             var handStatus = GetCurrentHandStatus(lingshang);
             var roundStatus = GetCurrentRoundState();
-            var pointInfo = MahjongLogic.GetPointInfo(HandTiles, OpenMelds, discardTile, handStatus, roundStatus,
-                MahjongManager.Instance.YakuSettings);
+            var pointInfo = MahjongLogic.GetPointInfo(HandTiles.ToArray(), OpenMelds.ToArray(), discardTile, handStatus,
+                roundStatus, MahjongManager.Instance.YakuSettings);
             Debug.Log($"Client is handling out turn operation with tile {discardTile}, chows: {chows.Count}, "
                       + $"pongs: {pongs.Count}, kongs: {kongs.Count}, point info: {pointInfo}");
             // after richi, only response to RONG
@@ -288,8 +288,8 @@ namespace Multi
             // handle tsumo
             var handStatus = GetCurrentHandStatus(content.Lingshang) | HandStatus.Tsumo;
             var roundStatus = GetCurrentRoundState();
-            var pointInfo = MahjongLogic.GetPointInfo(HandTiles, OpenMelds, lastDraw, handStatus, roundStatus,
-                MahjongManager.Instance.YakuSettings);
+            var pointInfo = MahjongLogic.GetPointInfo(HandTiles.ToArray(), OpenMelds.ToArray(), lastDraw, handStatus, 
+                roundStatus, MahjongManager.Instance.YakuSettings);
             // handle kongs
             var kongs = MahjongLogic.GetInTurnKongs(HandTiles, OpenMelds, lastDraw);
             var richiKongs = MahjongLogic.GetRichiKongs(HandTiles, OpenMelds, lastDraw);
@@ -400,7 +400,7 @@ namespace Multi
             RoundStatus roundStatus, PointInfo pointInfo, Tile lastDraw)
         {
             if (!menqing && pointInfo.BasePoint == 0 && kongs.Count == 0) return;
-            if (menqing && !Richi && Points >= ResourceManager.Instance.GameSettings.RichiMortgagePoints)
+            if (menqing && !Richi && Points >= MahjongManager.Instance.GameSettings.RichiMortgagePoints)
             {
                 MahjongManager.Instance.RichiButton.gameObject.SetActive(true);
                 ClientUtil.ReplaceListener(MahjongManager.Instance.RichiButton, () => { isRichiing = !isRichiing; });

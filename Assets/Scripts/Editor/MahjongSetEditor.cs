@@ -88,14 +88,14 @@ namespace Editor
         [MenuItem("Mahjong/Test/Test MahjongLogic")]
         public static void TestForDecompose()
         {
-            var handTiles = new List<Tile>
+            var handTiles = new Tile[]
             {
                 new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.P, 4), new Tile(Suit.P, 5, true),
                 new Tile(Suit.P, 7), new Tile(Suit.P, 8), new Tile(Suit.P, 9), new Tile(Suit.S, 2),
                 new Tile(Suit.S, 3), new Tile(Suit.S, 4), new Tile(Suit.S, 5), new Tile(Suit.S, 6),
                 new Tile(Suit.S, 7),
             };
-            var openMelds = new List<Meld>();
+            var openMelds = new Meld[0];
             var winningTile = new Tile(Suit.P, 6);
             var handStatus = HandStatus.Menqing | HandStatus.Tsumo;
             var roundStatus = new RoundStatus

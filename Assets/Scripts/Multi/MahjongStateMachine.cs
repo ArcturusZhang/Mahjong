@@ -34,14 +34,28 @@ namespace Multi
             CurrentTurnPlayer = Players[index];
         }
 
-        public int NextPlayerIndex
+//        public int NextPlayerIndex
+//        {
+//            get
+//            {
+//                int nextPlayerIndex = CurrentPlayerIndex + 1;
+//                if (nextPlayerIndex >= Players.Count) nextPlayerIndex -= Players.Count;
+//                return nextPlayerIndex;
+//            }
+//        }
+
+        public int NextPlayerIndex()
         {
-            get
-            {
-                int nextPlayerIndex = CurrentPlayerIndex + 1;
-                if (nextPlayerIndex >= Players.Count) nextPlayerIndex -= Players.Count;
-                return nextPlayerIndex;
-            }
+            return NextPlayerIndex(CurrentPlayerIndex);
         }
+
+        public int NextPlayerIndex(int current)
+        {
+            int nextPlayerIndex = current + 1;
+            if (nextPlayerIndex >= Players.Count) nextPlayerIndex -= Players.Count;
+            return nextPlayerIndex;
+        }
+
+        public int TotalPlayer => Players?.Count ?? 0;
     }
 }
