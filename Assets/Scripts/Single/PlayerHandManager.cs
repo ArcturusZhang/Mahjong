@@ -71,6 +71,7 @@ namespace Single
         private IEnumerator StopDiscarding() {
             yield return discardingWait;
             discarding = false;
+            Debug.Log("Animation done");
         }
     }
 }

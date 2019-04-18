@@ -272,13 +272,15 @@ namespace Multi
             outTurnOperations = message.Operations;
         }
 
-        private IEnumerator UpdateHandData(int playerIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers) {
+        private IEnumerator UpdateHandData(int currentIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers) {
             for (int i = 0; i < LastDraws.Length; i++) LastDraws[i] = null;
-            HandManagers[playerIndex].DiscardTile(discardingLastDraw);
+            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(currentIndex);
+            HandManagers[currentPlaceIndex].DiscardTile(discardingLastDraw);
+            Debug.Log($"Playing player {currentIndex} (place: {currentPlaceIndex}) discarding animation");
             yield return new WaitForEndOfFrame();
-            for (int index = 0; index < rivers.Length; index++) {
-                int placeIndex = GetPlaceIndexByPlayerIndex(index);
-                Rivers[placeIndex] = rivers[index];
+            for (int playerIndex = 0; playerIndex < rivers.Length; playerIndex++) {
+                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
+                Rivers[placeIndex] = rivers[playerIndex];
             }
         }
 

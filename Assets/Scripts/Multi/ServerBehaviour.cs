@@ -124,6 +124,7 @@ namespace Multi
                 CurrentRoundStatus.AddTile(playerIndex, lastDraw);
             }
             CurrentRoundStatus.AddToRiver(playerIndex, tile, isRichiing);
+            CurrentRoundStatus.SortHandTiles();
             var discardState = new PlayerDiscardTileState
             {
                 GameSettings = GameSettings,
