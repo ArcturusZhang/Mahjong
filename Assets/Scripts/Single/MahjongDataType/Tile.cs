@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Debug = Single.Debug;
 
 namespace Single.MahjongDataType
 {
@@ -28,7 +29,7 @@ namespace Single.MahjongDataType
         public bool IsYaojiu => Suit == Suit.Z || Rank == 1 || Rank == 9;
 
         public bool IsLaotou => Suit != Suit.Z && (Rank == 1 || Rank == 9);
-        
+
         public Tile Previous => new Tile(Suit, Rank - 1);
 
         public Tile Next => new Tile(Suit, Rank + 1);
@@ -47,103 +48,103 @@ namespace Single.MahjongDataType
             switch (Rank)
             {
                 case 1:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "一";
-                        case Suit.P: return "①";
-                        case Suit.S: return "１";
-                        case Suit.Z: return "东";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "一";
+                            case Suit.P: return "①";
+                            case Suit.S: return "１";
+                            case Suit.Z: return "东";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 2:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "二";
-                        case Suit.P: return "②";
-                        case Suit.S: return "２";
-                        case Suit.Z: return "南";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "二";
+                            case Suit.P: return "②";
+                            case Suit.S: return "２";
+                            case Suit.Z: return "南";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 3:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "三";
-                        case Suit.P: return "③";
-                        case Suit.S: return "３";
-                        case Suit.Z: return "西";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "三";
+                            case Suit.P: return "③";
+                            case Suit.S: return "３";
+                            case Suit.Z: return "西";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 4:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "四";
-                        case Suit.P: return "④";
-                        case Suit.S: return "４";
-                        case Suit.Z: return "北";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "四";
+                            case Suit.P: return "④";
+                            case Suit.S: return "４";
+                            case Suit.Z: return "北";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 5:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "五";
-                        case Suit.P: return "⑤";
-                        case Suit.S: return "５";
-                        case Suit.Z: return "白";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "五";
+                            case Suit.P: return "⑤";
+                            case Suit.S: return "５";
+                            case Suit.Z: return "白";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 6:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "六";
-                        case Suit.P: return "⑥";
-                        case Suit.S: return "６";
-                        case Suit.Z: return "发";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "六";
+                            case Suit.P: return "⑥";
+                            case Suit.S: return "６";
+                            case Suit.Z: return "发";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 7:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "七";
-                        case Suit.P: return "⑦";
-                        case Suit.S: return "７";
-                        case Suit.Z: return "中";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "七";
+                            case Suit.P: return "⑦";
+                            case Suit.S: return "７";
+                            case Suit.Z: return "中";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 8:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "八";
-                        case Suit.P: return "⑧";
-                        case Suit.S: return "８";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "八";
+                            case Suit.P: return "⑧";
+                            case Suit.S: return "８";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
                 case 9:
-                {
-                    switch (Suit)
                     {
-                        case Suit.M: return "九";
-                        case Suit.P: return "⑨";
-                        case Suit.S: return "９";
-                        default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        switch (Suit)
+                        {
+                            case Suit.M: return "九";
+                            case Suit.P: return "⑨";
+                            case Suit.S: return "９";
+                            default: throw new ArgumentException($"Suit = {Suit} should not happen");
+                        }
                     }
-                }
-                default: 
+                default:
                     Debug.LogError($"Rank = {Rank} should not happen");
                     return $"Suit = {Suit}, Rank = {Rank}";
             }
@@ -159,7 +160,7 @@ namespace Single.MahjongDataType
             if (obj == null) return false;
             if (obj is Tile)
             {
-                var other = (Tile) obj;
+                var other = (Tile)obj;
                 return Suit == other.Suit && Rank == other.Rank && IsRed == other.IsRed;
             }
 
@@ -190,7 +191,7 @@ namespace Single.MahjongDataType
 
             public int GetHashCode(Tile obj)
             {
-                int hash = (int) obj.Suit;
+                int hash = (int)obj.Suit;
                 hash = hash * 31 + obj.Rank;
                 hash = hash * 31 + (obj.IsRed ? 1 : 0);
                 return hash;
@@ -206,7 +207,7 @@ namespace Single.MahjongDataType
 
             public int GetHashCode(Tile obj)
             {
-                int hash = (int) obj.Suit;
+                int hash = (int)obj.Suit;
                 hash = hash * 31 + obj.Rank;
                 return hash;
             }
@@ -214,13 +215,13 @@ namespace Single.MahjongDataType
 
         public static Tile GetTile(int index)
         {
-            var suit = (Suit) (index / 9);
+            var suit = (Suit)(index / 9);
             return new Tile(suit, index % 9 + 1);
         }
 
         public static int GetIndex(Tile tile)
         {
-            return (int) tile.Suit * 9 + tile.Rank - 1;
+            return (int)tile.Suit * 9 + tile.Rank - 1;
         }
 
         public Tile Dora
@@ -241,5 +242,13 @@ namespace Single.MahjongDataType
         P = 1,
         S = 2,
         Z = 3
+    }
+
+    [Serializable]
+    public struct RiverTile
+    {
+        public Tile Tile;
+        public bool IsRichi;
+        public bool IsGone;
     }
 }

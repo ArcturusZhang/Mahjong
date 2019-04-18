@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Single.MahjongDataType
@@ -16,22 +17,27 @@ namespace Single.MahjongDataType
         [Header("Tile drawing settings")] public int InitialDrawRound = 3;
         public int TilesEveryRound = 4;
         public int TilesLastRound = 1;
-        public int TilesPerRowInRiver = 6;
-        public int MaxRowInRiver = 3;
 
         [Header("Time settings")] public int BaseTurnTime = 5;
         public int BonusTurnTime = 20;
-        public int ServerBufferTime = 2; // extra waiting time for bad networking
-        public float PlayerHandTilesSortDelay = 1f;
-        public float AutoDiscardDelayAfterRichi = 0.5f;
-        public float SummaryPanelDelayTime = 0.5f;
-        public int SummaryPanelWaitingTime = 5;
+        // public int ServerTimeOut = 30;
         
         [Header("Mahjong settings")]
         public int DiceMin = 2;
         public int DiceMax = 12;
         public int MountainReservedTiles = 14;
+        public int LingshangTilesCount = 4;
+        public int InitialDora = 1;
+        public int MaxDora = 5;
 
         public bool IsChowAllowed => AllowChows;
+
+        public Tile[] allTiles = MahjongConstants.FullTiles.ToArray();
+        
+        public Tile[] redTiles = new Tile[] {
+            new Tile(Suit.M, 5, true), 
+            new Tile(Suit.P, 5, true), 
+            new Tile(Suit.S, 5, true)
+        };
     }
 }

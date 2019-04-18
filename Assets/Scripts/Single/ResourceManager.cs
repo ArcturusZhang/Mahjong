@@ -8,7 +8,6 @@ using Utils;
 
 namespace Single
 {
-    [Obsolete]
     public class ResourceManager : MonoBehaviour
     {
         private static readonly string[] TileSuits = {"m", "s", "p", "z"};
@@ -31,6 +30,9 @@ namespace Single
 
         private IEnumerator LoadSpritesAsync()
         {
+            tileSprites = Resources.LoadAll<Sprite>("Textures/UIElements/tile_ui");
+            yield return null;
+
             var mjdesktop3 = Resources.LoadAll<Sprite>("Textures/UIElements/mjdesktop3");
             placeNumbers = new Sprite[4];
             placeCharacters = new Sprite[4];
@@ -59,8 +61,6 @@ namespace Single
 
                 yield return null;
             }
-
-            tileSprites = Resources.LoadAll<Sprite>("Textures/UIElements/tile_ui");
         }
 
         public Pair<Sprite, Sprite> Place(int place)
@@ -77,6 +77,7 @@ namespace Single
 
         public Sprite GetTileSprite(Tile tile)
         {
+            if (tileSprites == null) return null;
             var key = MahjongConstants.GetTileName(tile);
             if (!spriteDict.ContainsKey(key))
             {

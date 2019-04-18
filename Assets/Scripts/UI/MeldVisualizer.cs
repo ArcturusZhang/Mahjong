@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Debug = Single.Debug;
 
 namespace UI
 {
@@ -33,10 +34,10 @@ namespace UI
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			Debug.Log($"Meld {mMeld} is clicked");
+            Debug.Log($"Meld {mMeld} is clicked");
 			if (mCallback == null)
 			{
-				Debug.LogError("Callback is missing!");
+                Debug.LogError("Callback is missing!");
 				return;
 			}
 			mCallback.Invoke(mMeld);

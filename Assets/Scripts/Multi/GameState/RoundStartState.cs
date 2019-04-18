@@ -1,126 +1,135 @@
 using System.Collections.Generic;
 using System.Linq;
-using Multi.Messages;
+using Multi.MahjongMessages;
+using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
+using StateMachine.Interfaces;
 using UnityEngine;
-using UnityEngine.Assertions;
-using UnityEngine.Events;
 using UnityEngine.Networking;
+using Debug = Single.Debug;
 
 namespace Multi.GameState
 {
-    public class RoundStartState : AbstractMahjongState
+    /// <summary>
+    /// When the server is in this state, the server will distribute initial tiles for every player, 
+    /// and will determine the initial dora indicator(s) according to the settings.
+    /// All the data such as initial tiles, initial dora indicators, and mahjongSetData.
+    /// Transfers to PlayerDrawTileState. The state transfer will be done regardless whether enough client responds received.
+    /// </summary>
+    public class RoundStartState : IState
     {
-        public bool NewRound;
-        public bool ExtraRound;
         public GameSettings GameSettings;
-        public NetworkRoundStatus NetworkRoundStatus;
-        public GameStatus GameStatus;
-        public MahjongSetManager MahjongSetManager;
-        public UnityAction ServerCallback;
-        private List<Player> players;
-        private bool[] responseReceived;
-
-        public override void OnStateEnter()
+        public IList<Player> Players;
+        public MahjongSet MahjongSet;
+        public ServerRoundStatus CurrentRoundStatus;
+        public bool NextRound;
+        public bool ExtraRound;
+        public bool KeepSticks;
+        private ServerRoundStartMessage[] messages;
+        private bool[] responds;
+        private float firstSendTime;
+        private float lastSendTime;
+        public void OnStateEnter()
         {
-            base.OnStateEnter();
-            NetworkServer.RegisterHandler(MessageConstants.ReadinessMessageId, OnReadinessMessageReceived);
-            NetworkRoundStatus.NextRound(NewRound, ExtraRound);
-            players = GameStatus.Players;
-            // Throwing dice
-            GameStatus.Dice = Random.Range(GameSettings.DiceMin, GameSettings.DiceMax + 1);
-            int openIndex = MahjongSetManager.Open(GameStatus.Dice);
-            Debug.Log($"[RoundStartState] Dice rolls {GameStatus.Dice}");
-            // Draw tiles in turn
-            int count = DrawInitialTiles();
-            NetworkRoundStatus.RemoveTiles(count);
-            // Update data in players
-            foreach (var player in players)
+            Debug.Log("Server enters RoundStartState");
+            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
+            var doraIndicators = MahjongSet.Reset();
+            // throwing dice
+            var dice = Random.Range(GameSettings.DiceMin, GameSettings.DiceMax + 1);
+            CurrentRoundStatus.NextRound(dice, NextRound, ExtraRound, KeepSticks);
+            // draw initial tiles
+            DrawInitial();
+            Debug.Log("[Server] Initial tiles distribution done");
+            CurrentRoundStatus.SortHandTiles();
+            messages = new ServerRoundStartMessage[Players.Count];
+            responds = new bool[Players.Count];
+            for (int index = 0; index < Players.Count; index++)
             {
-                player.BonusTurnTime = GameSettings.BonusTurnTime;
-                player.HandTilesCount = MahjongConstants.CompleteHandTilesCount;
-                player.Richi = false;
-                player.WRichi = false;
-                player.FirstTurn = true;
-            }
-            var doraTiles = MahjongSetManager.DoraIndicators.ToArray();
-            var doraIndices = MahjongSetManager.DoraIndicatorIndices.ToArray();
-            // Sending initial tiles message
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].connectionToClient.Send(MessageConstants.InitialDrawingMessageId, new InitialDrawingMessage
+                var tiles = CurrentRoundStatus.HandTiles(index);
+                Debug.Log($"[Server] Hand tiles of player {index}: {string.Join("", tiles)}");
+                messages[index] = new ServerRoundStartMessage
                 {
-                    Dice = GameStatus.Dice,
-                    TotalPlayers = players.Count,
-                    MountainOpenIndex = openIndex,
-                    Tiles = GameStatus.PlayerHandTiles[i].ToArray(),
-                    DoraIndicators = doraTiles,
-                    DoraIndicatorIndices = doraIndices
-                });
-                GameStatus.PlayerHandTiles[i].Sort();
+                    PlayerIndex = index,
+                    Field = CurrentRoundStatus.Field,
+                    Dice = CurrentRoundStatus.Dice,
+                    Extra = CurrentRoundStatus.Extra,
+                    RichiSticks = CurrentRoundStatus.RichiSticks,
+                    OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex,
+                    Points = CurrentRoundStatus.Points.ToArray(),
+                    InitialHandTiles = tiles.ToArray(),
+                    MahjongSetData = MahjongSet.Data
+                };
+                Players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[index]);
             }
-
-            // wait for all the client has done drawing initial tiles
-            responseReceived = new bool[players.Count];
+            firstSendTime = Time.time;
+            lastSendTime = Time.time;
         }
 
-        private int DrawInitialTiles()
+        public void OnStateUpdate()
         {
-            int count = 0;
-            for (int turn = 0; turn < players.Count; turn++)
+            if (responds.All(r => r) || Time.time - firstSendTime >= ServerConstants.ServerTimeOut)
             {
-                var current = CurrentPlayerIndex(turn);
-                GameStatus.PlayerHandTiles[current] = new List<Tile>();
-                GameStatus.PlayerOpenMelds[current] = new List<Meld>();
+                ServerNextState();
+                return;
             }
-
-            // draw tiles
-            for (int round = 0; round < GameSettings.InitialDrawRound; round++)
-            for (int turn = 0; turn < players.Count; turn++)
+            if (Time.time - lastSendTime >= ServerConstants.MessageResendInterval)
             {
-                var tiles = MahjongSetManager.DrawTiles(GameSettings.TilesEveryRound);
-                count += tiles.Count;
-                var current = CurrentPlayerIndex(turn);
-                GameStatus.PlayerHandTiles[current].AddRange(tiles);
+                lastSendTime = Time.time;
+                for (int i = 0; i < Players.Count; i++)
+                {
+                    if (responds[i]) continue;
+                    Players[i].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[i]);
+                }
             }
+        }
 
-            for (int turn = 0; turn < players.Count; turn++)
-            {
-                var tile = MahjongSetManager.DrawTile();
-                count++;
-                var current = CurrentPlayerIndex(turn);
-                GameStatus.PlayerHandTiles[current].Add(tile);
-            }
-
-            Assert.AreEqual(
-                MahjongConstants.RepeatIndex(MahjongSetManager.NextIndex - MahjongSetManager.OpenIndex,
-                    MahjongConstants.TotalTilesCount), count,
-                $"MahjongSetManager {MahjongSetManager.NextIndex - MahjongSetManager.OpenIndex}, count {count}");
-
-            return count;
+        private void ServerNextState()
+        {
+            ServerBehaviour.Instance.DrawTile(CurrentRoundStatus.OyaPlayerIndex);
         }
 
         private void OnReadinessMessageReceived(NetworkMessage message)
         {
-            var content = message.ReadMessage<ReadinessMessage>();
-            Debug.Log($"[Server] Player {content.PlayerIndex} is ready.");
-            responseReceived[content.PlayerIndex] = true;
-            if (!responseReceived.All(received => received)) return;
-            Debug.Log($"[Server] All players have done their initial drawing, entering next state");
-            ServerCallback.Invoke();
+            var content = message.ReadMessage<ClientReadinessMessage>();
+            Debug.Log($"Received ClientReadinessMessage: {content}");
+            if (content.Content != MahjongConstants.CompleteHandTilesCount)
+            {
+                Debug.LogError("Something is wrong, the received readiness meassage contains invalid content");
+                return;
+            }
+            responds[content.PlayerIndex] = true;
         }
 
-        public override void OnStateExit()
+        public void OnStateExit()
         {
-            base.OnStateExit();
-            NetworkServer.UnregisterHandler(MessageConstants.ReadinessMessageId);
-            GameStatus.SetCurrentPlayerIndex(NetworkRoundStatus.RoundCount - 1);
+            Debug.Log("Server exits RoundStartState");
+            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
 
-        private int CurrentPlayerIndex(int turn)
+        private void DrawInitial()
         {
-            return MahjongConstants.RepeatIndex(NetworkRoundStatus.RoundCount - 1 + turn, players.Count);
+            for (int round = 0; round < GameSettings.InitialDrawRound; round++)
+            {
+                // Draw 4 tiles for each player
+                for (int index = 0; index < Players.Count; index++)
+                {
+                    for (int i = 0; i < GameSettings.TilesEveryRound; i++)
+                    {
+                        var tile = MahjongSet.DrawTile();
+                        CurrentRoundStatus.AddTile(index, tile);
+                    }
+                }
+            }
+            // Last round, 1 tile for each player
+            for (int index = 0; index < Players.Count; index++)
+            {
+                for (int i = 0; i < GameSettings.TilesLastRound; i++)
+                {
+                    var tile = MahjongSet.DrawTile();
+                    CurrentRoundStatus.AddTile(index, tile);
+                }
+            }
         }
     }
 }

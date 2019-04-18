@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Single.MahjongDataType;
 using UnityEngine;
 
@@ -14,13 +15,26 @@ namespace Single
         public const int CompleteHandTilesCount = 13;
         public const int FullHandTilesCount = 14;
         public const float Gap = 0.0005f;
+        public const int TilesPerRowInRiver = 6;
+        public const int MaxRowInRiver = 3;
+        public const float TileRiverGapCol = 0.002f;
+        public const float TileRiverGapRow = 0.0025f;
         public const float TileWidth = 0.026667f;
         public const float TileThickness = 0.016f;
         public const float TileHeight = 0.0393334f;
         public const float UiGap = 20;
+        public const float HandTileWidth = 0.028f;
+        public const float LastDrawGap = 0.041f;
+        public const float PlayerHandTilesSortDelay = 1f;
+        public const float AutoDiscardDelayAfterRichi = 0.5f;
+        public const float SummaryPanelDelayTime = 0.5f;
+        public const int SummaryPanelWaitingTime = 5;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
-
         public static readonly Quaternion FaceUp = Quaternion.Euler(-90, 0, -90);
+        public static readonly Quaternion FaceDownOnWall = Quaternion.Euler(180, 180, -90);
+        public static readonly Quaternion FaceUpOnWall = Quaternion.Euler(0, 180, -90);
+        public static readonly Quaternion RichiTile = Quaternion.Euler(0, -90, 0);
+        public static readonly Quaternion RiverTile = Quaternion.Euler(-90, -90, 0);
 
         // UI Settings
         public const int YakuItemColumns = 2;
@@ -61,30 +75,48 @@ namespace Single
         public static MeldInstanceType GetMeldDirection(int currentPlayerIndex, int discardPlayerIndex,
             bool isKong = false)
         {
-            if (RepeatIndex(currentPlayerIndex + 1, WallCount) == discardPlayerIndex) 
+            if (RepeatIndex(currentPlayerIndex + 1, WallCount) == discardPlayerIndex)
                 return !isKong ? MeldInstanceType.Right : MeldInstanceType.RightKong;
-            if (RepeatIndex(currentPlayerIndex - 1, WallCount) == discardPlayerIndex) 
+            if (RepeatIndex(currentPlayerIndex - 1, WallCount) == discardPlayerIndex)
                 return !isKong ? MeldInstanceType.Left : MeldInstanceType.LeftKong;
             return !isKong ? MeldInstanceType.Opposite : MeldInstanceType.OppositeKong;
         }
-    }
 
-    [Flags]
-    public enum InTurnOperation
-    {
-        Discard = 1 << 0,
-        Richi = 1 << 1,
-        Tsumo = 1 << 2,
-        Kong = 1 << 3,
-    }
-
-    [Flags]
-    public enum OutTurnOperation
-    {
-        Skip = 1 << 0,
-        Chow = 1 << 1,
-        Pong = 1 << 2,
-        Kong = 1 << 3,
-        Rong = 1 << 4,
+        public static List<Tile> FullTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1),
+            new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 2),
+            new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 3),
+            new Tile(Suit.M, 4), new Tile(Suit.M, 4), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5),
+            new Tile(Suit.M, 6), new Tile(Suit.M, 6), new Tile(Suit.M, 6), new Tile(Suit.M, 6),
+            new Tile(Suit.M, 7), new Tile(Suit.M, 7), new Tile(Suit.M, 7), new Tile(Suit.M, 7),
+            new Tile(Suit.M, 8), new Tile(Suit.M, 8), new Tile(Suit.M, 8), new Tile(Suit.M, 8),
+            new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9),
+            new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1),
+            new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2),
+            new Tile(Suit.P, 3), new Tile(Suit.P, 3), new Tile(Suit.P, 3), new Tile(Suit.P, 3),
+            new Tile(Suit.P, 4), new Tile(Suit.P, 4), new Tile(Suit.P, 4), new Tile(Suit.P, 4),
+            new Tile(Suit.P, 5), new Tile(Suit.P, 5), new Tile(Suit.P, 5), new Tile(Suit.P, 5),
+            new Tile(Suit.P, 6), new Tile(Suit.P, 6), new Tile(Suit.P, 6), new Tile(Suit.P, 6),
+            new Tile(Suit.P, 7), new Tile(Suit.P, 7), new Tile(Suit.P, 7), new Tile(Suit.P, 7),
+            new Tile(Suit.P, 8), new Tile(Suit.P, 8), new Tile(Suit.P, 8), new Tile(Suit.P, 8),
+            new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9),
+            new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1),
+            new Tile(Suit.S, 2), new Tile(Suit.S, 2), new Tile(Suit.S, 2), new Tile(Suit.S, 2),
+            new Tile(Suit.S, 3), new Tile(Suit.S, 3), new Tile(Suit.S, 3), new Tile(Suit.S, 3),
+            new Tile(Suit.S, 4), new Tile(Suit.S, 4), new Tile(Suit.S, 4), new Tile(Suit.S, 4),
+            new Tile(Suit.S, 5), new Tile(Suit.S, 5), new Tile(Suit.S, 5), new Tile(Suit.S, 5),
+            new Tile(Suit.S, 6), new Tile(Suit.S, 6), new Tile(Suit.S, 6), new Tile(Suit.S, 6),
+            new Tile(Suit.S, 7), new Tile(Suit.S, 7), new Tile(Suit.S, 7), new Tile(Suit.S, 7),
+            new Tile(Suit.S, 8), new Tile(Suit.S, 8), new Tile(Suit.S, 8), new Tile(Suit.S, 8),
+            new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9),
+            new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1),
+            new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2),
+            new Tile(Suit.Z, 3), new Tile(Suit.Z, 3), new Tile(Suit.Z, 3), new Tile(Suit.Z, 3),
+            new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4),
+            new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5),
+            new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6),
+            new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7)
+        };
     }
 }

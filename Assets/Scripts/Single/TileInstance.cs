@@ -19,7 +19,7 @@ namespace Single
 		{
 			Tile = tile;
 			var material = meshRenderer.material;
-			material.mainTexture = ResourceManager.Instance.GetTileTexture(tile);
+			material.mainTexture = ResourceManager.Instance?.GetTileTexture(tile);
 		}
 	}
 }

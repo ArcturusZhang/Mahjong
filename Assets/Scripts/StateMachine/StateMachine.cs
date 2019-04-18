@@ -4,15 +4,14 @@ using StateMachine.Interfaces;
 namespace StateMachine
 {
     [Serializable]
-    public abstract class StateMachine
+    public class StateMachine : IStateMachine
     {
         private IState currentState;
-        private IState previousState;
+        // private IState previousState;
         public virtual void ChangeState(IState newState)
         {
             if (newState == null) throw new ArgumentException("New state cannot be null!");
-            previousState = currentState;
-            previousState?.OnStateExit();
+            currentState?.OnStateExit();
             currentState = newState;
             currentState.OnStateEnter();
         }
@@ -22,13 +21,13 @@ namespace StateMachine
             currentState?.OnStateUpdate();
         }
 
-        public virtual void RollbackToPreviousState()
-        {
-            currentState.OnStateExit();
-            currentState = previousState;
-            currentState.OnStateEnter();
-        }
+        // public virtual void RollbackToPreviousState()
+        // {
+        //     currentState.OnStateExit();
+        //     currentState = previousState;
+        //     currentState.OnStateEnter();
+        // }
 
-        public Type CurrentState => currentState.GetType();
+        public Type CurrentStateType => currentState?.GetType();
     }
 }

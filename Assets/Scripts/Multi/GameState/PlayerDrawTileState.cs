@@ -1,104 +1,126 @@
-using Multi.Messages;
+using System.Collections.Generic;
+using System.Linq;
+using Multi.MahjongMessages;
 using Multi.ServerData;
 using Single;
+using Single.MahjongDataType;
+using StateMachine.Interfaces;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.Networking;
+using Debug = Single.Debug;
 
 namespace Multi.GameState
 {
-    public class PlayerDrawTileState : AbstractMahjongState
+    // todo -- draw lingshang tile
+    public class PlayerDrawTileState : IState
     {
-        public MahjongSetManager MahjongSetManager;
-        public NetworkRoundStatus NetworkRoundStatus;
-        public GameStatus GameStatus;
-        public UnityAction<InTurnOperationData> ServerInTurnCallback;
-        public UnityAction<DiscardTileData> ServerDiscardCallback;
-        public bool Lingshang;
-        private int currentPlayerIndex;
-        private Player currentTurnPlayer;
+        public GameSettings GameSettings;
+        public int CurrentPlayerIndex;
+        public IList<Player> Players;
+        public MahjongSet MahjongSet;
+        public ServerRoundStatus CurrentRoundStatus;
+        private MessageBase[] messages;
+        private bool[] responds;
+        private float lastSendTime;
+        private float firstSendTime;
+        private float serverTimeOut;
 
-        public override void OnStateEnter()
+        public void OnStateEnter()
         {
-            base.OnStateEnter();
-            NetworkServer.RegisterHandler(MessageConstants.InTurnOperationMessageId, OnInTurnOperationMessageReceived);
-            NetworkServer.RegisterHandler(MessageConstants.DiscardTileMessageId, OnDiscardTileMessageReceived);
-            currentPlayerIndex = GameStatus.CurrentPlayerIndex;
-            currentTurnPlayer = GameStatus.CurrentTurnPlayer;
-            DrawTile(Lingshang);
-            Debug.Log("Server now waiting for turn time to expire or receive a DiscardTileMessage");
-        }
-
-        private void DrawTile(bool lingshang)
-        {
-            var nextIndex = lingshang ? MahjongSetManager.NextLingshangIndex : MahjongSetManager.NextIndex;
-            var tile = lingshang ? MahjongSetManager.DrawLingshang() : MahjongSetManager.DrawTile();
-            NetworkRoundStatus.RemoveTiles(1);
-            currentTurnPlayer.LastDraw = tile;
-            currentTurnPlayer.RpcYourTurnToDraw(nextIndex);
-            currentTurnPlayer.connectionToClient.Send(MessageConstants.DrawTileMessageId,
-                new DrawTileMessage {PlayerIndex = GameStatus.CurrentPlayerIndex, Tile = tile, Lingshang = false});
-        }
-
-        private void OnInTurnOperationMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<InTurnOperationMessage>();
-            if (content.PlayerIndex != currentPlayerIndex)
+            Debug.Log($"Server enters {GetType().Name}");
+            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
+            NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
+            var tile = MahjongSet.DrawTile();
+            Debug.Log($"[Server] Distribute a tile {tile} to current turn player {CurrentPlayerIndex}.");
+            CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
+            CurrentRoundStatus.LastDraw = tile;
+            messages = new MessageBase[Players.Count];
+            responds = new bool[Players.Count];
+            for (int i = 0; i < Players.Count; i++)
             {
-                Debug.Log($"[PlayerInTurnState] Received discarding message from player {content.PlayerIndex}"
-                          + $" in player {currentPlayerIndex}'s turn, ignoring");
+                if (i == CurrentPlayerIndex) continue;
+                messages[i] = new ServerOtherDrawTileMessage
+                {
+                    PlayerIndex = i,
+                    CurrentTurnPlayerIndex = CurrentPlayerIndex,
+                    MahjongSetData = MahjongSet.Data
+                };
+                Players[i].connectionToClient.Send(MessageIds.ServerOtherDrawTileMessage, messages[i]);
+            }
+            messages[CurrentPlayerIndex] = new ServerDrawTileMessage
+            {
+                PlayerIndex = CurrentPlayerIndex,
+                Tile = tile,
+                BonusTurnTime = Players[CurrentPlayerIndex].BonusTurnTime,
+                Operations = GetOperations(CurrentPlayerIndex),
+                MahjongSetData = MahjongSet.Data
+            };
+            Players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerDrawTileMessage, messages[CurrentPlayerIndex]);
+            firstSendTime = Time.time;
+            lastSendTime = Time.time;
+            serverTimeOut = GameSettings.BaseTurnTime + Players[CurrentPlayerIndex].BonusTurnTime + ServerConstants.ServerTimeBuffer;
+        }
+
+        // todo -- complete this
+        private InTurnOperationType GetOperations(int index)
+        {
+            return InTurnOperationType.Discard;
+        }
+
+        private void OnReadinessMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ClientReadinessMessage>();
+            Debug.Log($"[Server] Received ClientReadinessMessage: {content}");
+            if (content.Content != MessageIds.ServerDrawTileMessage)
+            {
+                Debug.LogError("Something is wrong, the received readiness message contains invalid content.");
                 return;
             }
-
-            // rpc data update
-            currentTurnPlayer.BonusTurnTime = content.BonusTurnTime;
-            // handle result in callback
-            ServerInTurnCallback.Invoke(new InTurnOperationData
-            {
-                PlayerIndex = content.PlayerIndex,
-                LastDraw = content.LastDraw,
-                Meld = content.Meld,
-                Operation = content.Operation,
-                PlayerClientData = content.PlayerClientData
-            });
+            responds[content.PlayerIndex] = true;
         }
 
-        private void OnDiscardTileMessageReceived(NetworkMessage message)
+        private void OnDiscardTileReceived(NetworkMessage message)
         {
-            var content = message.ReadMessage<DiscardTileMessage>();
-            if (content.PlayerIndex != currentPlayerIndex)
+            var content = message.ReadMessage<ClientDiscardRequestMessage>();
+            if (content.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
             {
-                Debug.Log($"[PlayerInTurnState] Received discarding message from player {content.PlayerIndex}"
-                          + $" in player {currentPlayerIndex}'s turn, ignoring");
+                Debug.Log($"[Server] It is not player {content.PlayerIndex}'s turn to discard a tile, ignoring this message");
                 return;
             }
-
-            Debug.Log($"[PlayerInTurnState] Player {content.PlayerIndex} has discarded a tile {content.DiscardTile}");
-            // first turn is broken by the first discard
-            if (currentTurnPlayer.FirstTurn) currentTurnPlayer.FirstTurn = false;
-            // server side data update
-            if (!content.DiscardLastDraw)
-            {
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Remove(content.DiscardTile);
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Add(currentTurnPlayer.LastDraw);
-                GameStatus.PlayerHandTiles[currentPlayerIndex].Sort();
-            }
-
-            // rpc data update
-            currentTurnPlayer.BonusTurnTime = content.BonusTurnTime;
-            ServerDiscardCallback.Invoke(new DiscardTileData
-            {
-                DiscardTile = content.DiscardTile,
-                DiscardLastDraw = content.DiscardLastDraw,
-                Operation = content.Operation
-            });
+            // handle message
+            Debug.Log($"[Server] Received ClientDiscardRequestMessage {content}");
+            // Change to discardTileState
+            ServerBehaviour.Instance.DiscardTile(content.PlayerIndex, content.Tile, content.IsRichiing, content.DiscardingLastDraw, content.BonusTurnTime);
         }
 
-        public override void OnStateExit()
+        public void OnStateUpdate()
         {
-            base.OnStateExit();
-            NetworkServer.UnregisterHandler(MessageConstants.InTurnOperationMessageId);
-            NetworkServer.UnregisterHandler(MessageConstants.DiscardTileMessageId);
+            Debug.Log($"Server is in {GetType().Name}", false);
+            // Sending messages until received all responds from all players
+            if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
+            {
+                // resend message
+                for (int i = 0; i < Players.Count; i++)
+                {
+                    if (responds[i]) continue;
+                    Players[i].connectionToClient.Send(
+                        i == CurrentPlayerIndex ? MessageIds.ServerDrawTileMessage : MessageIds.ServerOtherDrawTileMessage,
+                        messages[i]);
+                }
+            }
+            // Time out
+            if (Time.time - firstSendTime > serverTimeOut)
+            {
+                // force auto discard
+                ServerBehaviour.Instance.DiscardTile(CurrentPlayerIndex, (Tile)CurrentRoundStatus.LastDraw, false, true, 0);
+            }
+        }
+
+        public void OnStateExit()
+        {
+            Debug.Log($"Server exits {GetType().Name}");
+            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
+            NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
         }
     }
 }
