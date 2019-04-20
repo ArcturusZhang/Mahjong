@@ -8,6 +8,7 @@ namespace Multi.MahjongMessages
         public const short ServerOtherDrawTileMessage = 103;
         public const short ServerDiscardOperationMessage = 104;
         public const short ServerTurnEndMessage = 105;
+        public const short ServerRoundDrawMessage = 106;
 
         // Client to server messages
         public const short ClientReadinessMessage = 200;

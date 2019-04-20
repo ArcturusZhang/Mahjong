@@ -251,4 +251,17 @@ namespace Single.MahjongDataType
         public bool IsRichi;
         public bool IsGone;
     }
+
+    [Serializable]
+    public struct RiverData
+    {
+        public RiverTile[] River;
+    }
+
+    [Serializable]
+    public struct WaitingData
+    {
+        public Tile[] HandTiles;
+        public Tile[] WaitingTiles;
+    }
 }

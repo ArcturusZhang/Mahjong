@@ -14,12 +14,14 @@ namespace Multi.GameState
     public class PlayerDiscardTileState : IState
     {
         public GameSettings GameSettings;
+        public YakuSettings YakuSettings;
         public int CurrentPlayerIndex;
         public IList<Player> Players;
         public Tile DiscardTile;
         public bool IsRichiing;
         public bool DiscardLastDraw;
         public ServerRoundStatus CurrentRoundStatus;
+        public MahjongSetData MahjongSetData;
         private Player currentPlayer;
         private MessageBase[] messages;
         private bool[] responds;
@@ -57,7 +59,7 @@ namespace Multi.GameState
                     Tile = DiscardTile,
                     BonusTurnTime = Players[i].BonusTurnTime,
                     Operations = GetOperations(i),
-                    HandTiles = CurrentRoundStatus.HandTiles(i).ToArray(),
+                    HandTiles = CurrentRoundStatus.HandTiles(i),
                     Rivers = rivers
                 };
             }
@@ -82,12 +84,64 @@ namespace Multi.GameState
         private OutTurnOperation[] GetOperations(int playerIndex)
         {
             if (playerIndex == CurrentPlayerIndex) return new OutTurnOperation[] {
-                new OutTurnOperation {Type = OutTurnOperationType.Skip}
+                new OutTurnOperation { Type = OutTurnOperationType.Skip}
             };
-            // todo -- other players' operations
-            return new OutTurnOperation[] {
-                new OutTurnOperation {Type = OutTurnOperationType.Skip}
+            // other players' operations
+            var operations = new List<OutTurnOperation> {
+                new OutTurnOperation { Type = OutTurnOperationType.Skip}
             };
+            var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
+            var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
+            // test rong
+            var hasWin = MahjongLogic.HasWin(handTiles, openMelds, DiscardTile);
+            if (hasWin)
+            {
+                // test if this player can claim a rong
+                var handStatus = HandStatus.Nothing;
+                // test menqing
+                if (openMelds.Length == 0 || openMelds.All(m => m.IsKong && !m.Revealed))
+                    handStatus |= HandStatus.Menqing;
+                // test tsumo -- no-need
+                // test richi
+                if (CurrentRoundStatus.RichiStatus[playerIndex])
+                {
+                    handStatus |= HandStatus.Richi;
+                    // test one-shot
+                    if (CurrentRoundStatus.OneShotStatus[playerIndex])
+                        handStatus |= HandStatus.OneShot;
+                    // test if WRichi -- todo
+                }
+                // test first turn -- todo
+                // test lingshang -- no-need
+                // test lastdraw
+                if (MahjongSetData.TilesRemain == GameSettings.MountainReservedTiles)
+                    handStatus |= HandStatus.LastDraw;
+                var roundStatus = new RoundStatus
+                {
+                    PlayerIndex = playerIndex,
+                    OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex,
+                    CurrentExtraRound = CurrentRoundStatus.Extra,
+                    RichiSticks = CurrentRoundStatus.RichiSticks,
+                    FieldCount = CurrentRoundStatus.Field,
+                    TotalPlayer = Players.Count
+                };
+                var point = MahjongLogic.GetPointInfo(handTiles, openMelds, DiscardTile, handStatus,
+                    roundStatus, YakuSettings);
+                Debug.Log($"PointInfo: {point}");
+                // test if enough fan
+                if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
+                {
+                    operations.Add(new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.Rong,
+                        Tile = DiscardTile
+                    });
+                }
+            }
+            // test kong -- todo
+            // test pong -- todo
+            // test chow -- todo
+            return operations.ToArray();
         }
 
         public void OnStateUpdate()

@@ -7,14 +7,14 @@ namespace Single.MahjongDataType
     [Serializable]
     public struct PointInfo : IComparable<PointInfo>
     {
-        public int Fu;
-        public int Fan;
-        public YakuValue[] Yakus;
-        public bool IsYakuman;
-        public bool Is青天井;
-        public int Dora;
-        public int UraDora;
-        public int RedDora;
+        public int Fu { get; }
+        private int Fan;
+        private YakuValue[] Yakus;
+        public bool IsYakuman { get; }
+        public bool Is青天井 { get; }
+        public int Dora { get; }
+        public int UraDora { get; }
+        public int RedDora { get; }
 
         public PointInfo(int fu, IList<YakuValue> yakuValues, bool 青天井, int dora = 0, int uraDora = 0, int redDora = 0)
         {
@@ -42,6 +42,7 @@ namespace Single.MahjongDataType
                     if (yaku.Type == YakuType.Yakuman) IsYakuman = true;
                 }
             }
+            FanWithoutDora = yakuValues.Sum(y => y.Type == YakuType.Yakuman ? y.Value * YakuSettings.YakumanBaseFan : y.Value);
 
             if (yakuValues.Count == 0)
             {
@@ -53,7 +54,7 @@ namespace Single.MahjongDataType
             if (青天井)
             {
                 TotalFan = Fan + dora + uraDora + redDora;
-                int point = Fu * (int) Math.Pow(2, TotalFan + 2);
+                int point = Fu * (int)Math.Pow(2, TotalFan + 2);
                 BasePoint = MahjongLogic.ToNextUnit(point, 100);
             }
             else if (IsYakuman)
@@ -71,7 +72,7 @@ namespace Single.MahjongDataType
                 else if (TotalFan >= 5) BasePoint = MahjongConstants.Mangan;
                 else
                 {
-                    int point = Fu * (int) Math.Pow(2, TotalFan + 2);
+                    int point = Fu * (int)Math.Pow(2, TotalFan + 2);
                     point = MahjongLogic.ToNextUnit(point, 100);
                     BasePoint = Math.Min(MahjongConstants.Mangan, point);
                 }
@@ -81,6 +82,15 @@ namespace Single.MahjongDataType
 
         public int BasePoint { get; }
         public int TotalFan { get; }
+        public int FanWithoutDora { get; }
+
+        public IList<YakuValue> YakuList
+        {
+            get
+            {
+                return new List<YakuValue>(Yakus);
+            }
+        }
 
         public override string ToString()
         {

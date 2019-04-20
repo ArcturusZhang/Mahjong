@@ -24,9 +24,10 @@ namespace Single
         public const float TileHeight = 0.0393334f;
         public const float UiGap = 20;
         public const float HandTileWidth = 0.028f;
-        public const float LastDrawGap = 0.041f;
-        public const float PlayerHandTilesSortDelay = 1f;
+        public const float LastDrawGap = HandTileWidth / 2;
+        public const float PlayerHandTilesSortDelay = 0.75f;
         public const float AutoDiscardDelayAfterRichi = 0.5f;
+        public const float ReadyPanelDelay = 0.5f;
         public const float SummaryPanelDelayTime = 0.5f;
         public const int SummaryPanelWaitingTime = 5;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
@@ -91,6 +92,59 @@ namespace Single
             new Tile(Suit.M, 6), new Tile(Suit.M, 6), new Tile(Suit.M, 6), new Tile(Suit.M, 6),
             new Tile(Suit.M, 7), new Tile(Suit.M, 7), new Tile(Suit.M, 7), new Tile(Suit.M, 7),
             new Tile(Suit.M, 8), new Tile(Suit.M, 8), new Tile(Suit.M, 8), new Tile(Suit.M, 8),
+            new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9),
+            new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1),
+            new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2),
+            new Tile(Suit.P, 3), new Tile(Suit.P, 3), new Tile(Suit.P, 3), new Tile(Suit.P, 3),
+            new Tile(Suit.P, 4), new Tile(Suit.P, 4), new Tile(Suit.P, 4), new Tile(Suit.P, 4),
+            new Tile(Suit.P, 5), new Tile(Suit.P, 5), new Tile(Suit.P, 5), new Tile(Suit.P, 5),
+            new Tile(Suit.P, 6), new Tile(Suit.P, 6), new Tile(Suit.P, 6), new Tile(Suit.P, 6),
+            new Tile(Suit.P, 7), new Tile(Suit.P, 7), new Tile(Suit.P, 7), new Tile(Suit.P, 7),
+            new Tile(Suit.P, 8), new Tile(Suit.P, 8), new Tile(Suit.P, 8), new Tile(Suit.P, 8),
+            new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9),
+            new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1),
+            new Tile(Suit.S, 2), new Tile(Suit.S, 2), new Tile(Suit.S, 2), new Tile(Suit.S, 2),
+            new Tile(Suit.S, 3), new Tile(Suit.S, 3), new Tile(Suit.S, 3), new Tile(Suit.S, 3),
+            new Tile(Suit.S, 4), new Tile(Suit.S, 4), new Tile(Suit.S, 4), new Tile(Suit.S, 4),
+            new Tile(Suit.S, 5), new Tile(Suit.S, 5), new Tile(Suit.S, 5), new Tile(Suit.S, 5),
+            new Tile(Suit.S, 6), new Tile(Suit.S, 6), new Tile(Suit.S, 6), new Tile(Suit.S, 6),
+            new Tile(Suit.S, 7), new Tile(Suit.S, 7), new Tile(Suit.S, 7), new Tile(Suit.S, 7),
+            new Tile(Suit.S, 8), new Tile(Suit.S, 8), new Tile(Suit.S, 8), new Tile(Suit.S, 8),
+            new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9),
+            new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1),
+            new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2),
+            new Tile(Suit.Z, 3), new Tile(Suit.Z, 3), new Tile(Suit.Z, 3), new Tile(Suit.Z, 3),
+            new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4),
+            new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5),
+            new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6),
+            new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7)
+        };
+
+        public static List<Tile> TwoPlayerTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1),
+            new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9),
+            new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1),
+            new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2),
+            new Tile(Suit.P, 3), new Tile(Suit.P, 3), new Tile(Suit.P, 3), new Tile(Suit.P, 3),
+            new Tile(Suit.P, 4), new Tile(Suit.P, 4), new Tile(Suit.P, 4), new Tile(Suit.P, 4),
+            new Tile(Suit.P, 5), new Tile(Suit.P, 5), new Tile(Suit.P, 5), new Tile(Suit.P, 5),
+            new Tile(Suit.P, 6), new Tile(Suit.P, 6), new Tile(Suit.P, 6), new Tile(Suit.P, 6),
+            new Tile(Suit.P, 7), new Tile(Suit.P, 7), new Tile(Suit.P, 7), new Tile(Suit.P, 7),
+            new Tile(Suit.P, 8), new Tile(Suit.P, 8), new Tile(Suit.P, 8), new Tile(Suit.P, 8),
+            new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9),
+            new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1),
+            new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9),
+            new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1),
+            new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2),
+            new Tile(Suit.Z, 3), new Tile(Suit.Z, 3), new Tile(Suit.Z, 3), new Tile(Suit.Z, 3),
+            new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4),
+            new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5),
+            new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6),
+            new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7)
+        };
+
+        public static List<Tile> ThreePlayerTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1),
             new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9),
             new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1),
             new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2), new Tile(Suit.P, 2),

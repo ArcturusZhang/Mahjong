@@ -1,7 +1,9 @@
+using System.Text;
 using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
 using UnityEngine.Networking;
+using System.Linq;
 
 namespace Multi.MahjongMessages
 {
@@ -111,15 +113,29 @@ namespace Multi.MahjongMessages
         }
     }
 
-    public class ServerTurnEndMessage : MessageBase {
+    public class ServerTurnEndMessage : MessageBase
+    {
         public int PlayerIndex;
-        public int OperationPlayerIndex;
-        public OutTurnOperation Operation;
+        public OutTurnOperationType ChosenOperationType;
+        public OutTurnOperation[] Operations;
 
-        public override string ToString() {
-            return $"PlayerIndex: {PlayerIndex}\n" 
-                + $"OperationPlayerIndex: {OperationPlayerIndex}\n"
-                + $"Operation: {Operation}";
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}\n"
+                + $"ChosenOperationType: {ChosenOperationType}\n"
+                + $"Operations for each player: {string.Join(", ", Operations)}";
+        }
+    }
+
+    public class ServerRoundDrawMessage : MessageBase
+    {
+        public WaitingData[] WaitingData;
+
+        public override string ToString()
+        {
+            var list = WaitingData.Select((t, i) =>
+                $"Player {i}: \nHandTiles: {string.Join("", t.HandTiles)}, Waiting: {string.Join("", t.WaitingTiles)}");
+            return string.Join("\n", list);
         }
     }
 

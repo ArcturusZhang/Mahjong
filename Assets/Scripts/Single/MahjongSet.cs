@@ -17,10 +17,11 @@ namespace Single
         private int lingShangDrawn = 0;
         private int doraTurned = 0;
 
-        public MahjongSet(GameSettings settings)
+        public MahjongSet(GameSettings settings, IEnumerable<Tile> tiles)
         {
             this.settings = settings;
-            allTiles = new List<Tile>(settings.allTiles);
+            allTiles = new List<Tile>(tiles);
+            Debug.Log($"In current settings, total count of all tiles is {allTiles.Count}");
             for (int i = 0; i < settings.redTiles.Length; i++)
             {
                 var red = settings.redTiles[i];
@@ -148,7 +149,8 @@ namespace Single
                     DoraTurned = DoraTurned,
                     LingShangDrawn = LingShangDrawn,
                     TilesRemain = TilesRemain,
-                    DoraIndicators = DoraIndicators
+                    DoraIndicators = DoraIndicators,
+                    TotalTiles = allTiles.Count
                 };
             }
         }
@@ -162,6 +164,7 @@ namespace Single
         public int LingShangDrawn;
         public int TilesRemain;
         public Tile[] DoraIndicators;
+        public int TotalTiles;
 
         public override string ToString()
         {
@@ -169,7 +172,8 @@ namespace Single
                 + $"DoraTurned: {DoraTurned}\n"
                 + $"LingShangDrawn: {LingShangDrawn}\n"
                 + $"TilesRemain: {TilesRemain}\n"
-                + $"DoraIndicators: {string.Join("", DoraIndicators)}";
+                + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
+                + $"TotalTiles: {TotalTiles}";
         }
     }
 }

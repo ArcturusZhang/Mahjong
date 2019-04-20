@@ -3,29 +3,20 @@ using Single.MahjongDataType;
 
 namespace Single
 {
-    [Flags]
     public enum InTurnOperationType
     {
-        Discard = 1 << 0,
-        Richi = 1 << 1,
-        Tsumo = 1 << 2,
-        Kong = 1 << 3,
+        Discard, Richi, Tsumo, Kong,
     }
 
-    [Flags]
     public enum OutTurnOperationType
     {
-        Skip = 1 << 0,
-        Chow = 1 << 1,
-        Pong = 1 << 2,
-        Kong = 1 << 3,
-        Rong = 1 << 4,
-        RoundEnd = 1 << 5
+        Skip, Chow, Pong, Kong, Rong, RoundDraw,
     }
 
     [Serializable]
     public struct OutTurnOperation
     {
+        // public int PlayerIndex;
         public OutTurnOperationType Type;
         public Tile Tile;
         public Meld Meld;
@@ -35,6 +26,7 @@ namespace Single
             switch (Type)
             {
                 case OutTurnOperationType.Skip:
+                case OutTurnOperationType.RoundDraw:
                     return $"Type: {Type}";
                 case OutTurnOperationType.Chow:
                 case OutTurnOperationType.Pong:
@@ -43,6 +35,7 @@ namespace Single
                 case OutTurnOperationType.Rong:
                     return $"Type: {Type}, Tile: {Tile}";
                 default:
+                    Debug.LogWarning(Type);
                     throw new Exception("This will never happen");
             }
         }

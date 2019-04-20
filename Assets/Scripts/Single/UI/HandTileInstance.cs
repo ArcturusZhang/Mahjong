@@ -9,16 +9,17 @@ using Debug = Single.Debug;
 
 public class HandTileInstance : MonoBehaviour
 {
-    public Tile Tile;
-    public Image TileImage;
-    public bool IsLastDraw;
+    private Tile Tile;
+    [SerializeField] private Image TileImage;
+    [SerializeField] private bool IsLastDraw;
 
-    [SerializeField] private ResourceManager manager;
-
-    private void Update()
+    public void SetTile(Tile tile)
     {
-        if (manager == null) manager = ResourceManager.Instance;
-        var sprite = manager.GetTileSprite(Tile);
+        var sprite = ResourceManager.Instance?.GetTileSprite(tile);
+        if (sprite == null) {
+            Debug.LogWarning($"Sprite gets null when applied on tile {tile}");
+        }
+        Tile = tile;
         TileImage.sprite = sprite;
     }
 

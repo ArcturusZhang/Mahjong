@@ -819,6 +819,7 @@ GameObject:
   - component: {fileID: 2679343211342669363}
   - component: {fileID: 1392516007808008190}
   - component: {fileID: 1880251547914831493}
+  - component: {fileID: 1497591487079192823}
   m_Layer: 5
   m_Name: BoardCanvas
   m_TagString: Untagged
@@ -946,6 +947,18 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &1497591487079192823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2679343211342669361}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81e308f1cd13cf444beea0e009f8d414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2679343211355247859
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,14 +1090,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8692730c18a6944da6182fd5dc1f2c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TotalPlayers: 0
-  Places: 
-  Points: 
   TextFields:
   - {fileID: 2679343210193025131}
   - {fileID: 2679343210805529042}
   - {fileID: 2679343210384484582}
   - {fileID: 2679343210181846395}
+  TotalPlayers: 0
+  Places: 
+  Points: 
 --- !u!1 &3406396582789801675
 GameObject:
   m_ObjectHideFlags: 0
@@ -1397,7 +1410,7 @@ GameObject:
   - component: {fileID: 36295314581030380}
   - component: {fileID: 6444133661615718752}
   m_Layer: 5
-  m_Name: Places
+  m_Name: Positions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

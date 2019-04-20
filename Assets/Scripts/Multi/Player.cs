@@ -73,9 +73,15 @@ namespace Multi
 
         public void SkipOutTurnOperation(int bonusTurnTime)
         {
-            var message = new ClientOperationMessage {
+            OperationTaken(new OutTurnOperation { Type = OutTurnOperationType.Skip }, bonusTurnTime);
+        }
+
+        public void OperationTaken(OutTurnOperation operation, int bonusTurnTime)
+        {
+            var message = new ClientOperationMessage
+            {
                 PlayerIndex = PlayerIndex,
-                Operation = new OutTurnOperation {Type = OutTurnOperationType.Skip},
+                Operation = operation,
                 BonusTurnTime = bonusTurnTime
             };
             connectionToServer.Send(MessageIds.ClientOperationMessage, message);
@@ -89,6 +95,7 @@ namespace Multi
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerOtherDrawTileMessage, OnOtherPlayerDrawTileMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
         }
 
         private void OnGamePrepareMessageReceived(NetworkMessage message)
@@ -172,12 +179,22 @@ namespace Multi
             ClientBehaviour.Instance.PlayerOutTurnOperation(content);
         }
 
-        private void OnTurnEndMessageReceived(NetworkMessage message) {
+        private void OnTurnEndMessageReceived(NetworkMessage message)
+        {
             var content = message.ReadMessage<ServerTurnEndMessage>();
             Debug.Log($"ServerTurnEndMessage received: {content}");
             // this message do not require confirm
             // invoke client method for turn end operations
             ClientBehaviour.Instance.PlayerTurnEnd(content);
+        }
+
+        private void OnRoundDrawMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ServerRoundDrawMessage>();
+            Debug.Log($"ServerRoundDrawMessage received: {content}");
+            // this message do not require confirm
+            // invoke client method for round draw operations
+            ClientBehaviour.Instance.RoundDraw(content);
         }
     }
 }

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Layout
+namespace Single.UI.Layout
 {
 	public class ResizableLayoutGroup : MonoBehaviour, ILayoutGroup
 	{

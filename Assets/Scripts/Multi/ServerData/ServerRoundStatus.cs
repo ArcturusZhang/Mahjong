@@ -24,6 +24,7 @@ namespace Multi.ServerData
         private int[] points;
         private Tile? lastDraw = null;
         private bool[] richiStatus;
+        private bool[] oneShotStatus;
         private List<RiverTile>[] rivers;
 
         public ServerRoundStatus(List<Player> players)
@@ -58,6 +59,7 @@ namespace Multi.ServerData
             }
         }
         public bool[] RichiStatus => richiStatus;
+        public bool[] OneShotStatus => oneShotStatus;
 
         public string[] PlayerNames => players.Select(player => player.PlayerName).ToArray();
 
@@ -66,16 +68,16 @@ namespace Multi.ServerData
             get { return players.AsReadOnly(); }
         }
 
-        public IList<Tile> HandTiles(int index)
+        public Tile[] HandTiles(int index)
         {
             CheckRange(index);
-            return handTiles[index].AsReadOnly();
+            return handTiles[index].ToArray();
         }
 
-        public IList<Meld> OpenMelds(int index)
+        public Meld[] OpenMelds(int index)
         {
             CheckRange(index);
-            return openMelds[index].AsReadOnly();
+            return openMelds[index].ToArray();
         }
 
         public RiverData[] Rivers
@@ -222,6 +224,7 @@ namespace Multi.ServerData
                 rivers[i] = new List<RiverTile>();
             }
             richiStatus = new bool[players.Count];
+            oneShotStatus = new bool[players.Count];
         }
 
         private void CheckRange(int index)
@@ -229,11 +232,5 @@ namespace Multi.ServerData
             if (index < 0 || index >= players.Count)
                 throw new IndexOutOfRangeException($"Player index out of range, should be within {0} to {players.Count - 1}");
         }
-    }
-
-    [Serializable]
-    public struct RiverData
-    {
-        public RiverTile[] River;
     }
 }

@@ -57,7 +57,7 @@ namespace Multi.GameState
                     RichiSticks = CurrentRoundStatus.RichiSticks,
                     OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex,
                     Points = CurrentRoundStatus.Points.ToArray(),
-                    InitialHandTiles = tiles.ToArray(),
+                    InitialHandTiles = tiles,
                     MahjongSetData = MahjongSet.Data
                 };
                 Players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[index]);

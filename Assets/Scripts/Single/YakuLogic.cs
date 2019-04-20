@@ -367,7 +367,7 @@ namespace Single
             if (!handStatus.HasFlag(HandStatus.Tsumo) || !handStatus.HasFlag(HandStatus.Menqing) ||
                 !handStatus.HasFlag(HandStatus.FirstTurn))
                 return new YakuValue();
-            return roundStatus.PlayerIndex == roundStatus.RoundCount - 1
+            return roundStatus.IsDealer
                 ? new YakuValue {Name = "天和", Value = 1, Type = YakuType.Yakuman}
                 : new YakuValue {Name = "地和", Value = 1, Type = YakuType.Yakuman};
         }
@@ -479,33 +479,31 @@ namespace Single
     public struct RoundStatus
     {
         public int PlayerIndex;
-        public int RoundCount;
+        public int OyaPlayerIndex;
         public int CurrentExtraRound;
         public int RichiSticks;
-        public int FieldCount;
+        public int FieldCount; // Starts with 0
         public int TotalPlayer;
-        public int TilesLeft;
 
         public Tile SelfWind
         {
             get
             {
-                int index = PlayerIndex - (RoundCount - 1) + 1;
-                if (index <= 0) index += TotalPlayer;
-                Assert.IsTrue(index > 0 && index <= 4, "Self wind should be one of E, S, W, N");
-                return new Tile(Suit.Z, index);
+                int offSet = PlayerIndex - OyaPlayerIndex;
+                if (offSet < 0) offSet += TotalPlayer;
+                Assert.IsTrue(offSet >= 0 && offSet < 4, "Self wind should be one of E, S, W, N");
+                return new Tile(Suit.Z, offSet + 1);
             }
         }
 
-        public Tile PrevailingWind => new Tile(Suit.Z, FieldCount);
+        public Tile PrevailingWind => new Tile(Suit.Z, FieldCount + 1);
 
-        public bool IsDealer => PlayerIndex + 1 == RoundCount;
+        public bool IsDealer => PlayerIndex == OyaPlayerIndex;
 
         public override string ToString()
         {
-            return $"PlayerIndex: {PlayerIndex}, RoundCount: {RoundCount}, CurrentExtraRound: {CurrentExtraRound}, "
-                   + $"RichiSticks: {RichiSticks}, FieldCount: {FieldCount}, TotalPlayer: {TotalPlayer}, "
-                   + $"TilesLeft: {TilesLeft}";
+            return $"PlayerIndex: {PlayerIndex}, OyaPlayerIndex: {OyaPlayerIndex}, CurrentExtraRound: {CurrentExtraRound}, "
+                   + $"RichiSticks: {RichiSticks}, FieldCount: {FieldCount}, TotalPlayer: {TotalPlayer}";
         }
     }
 

@@ -201,17 +201,18 @@ namespace Single
                 : pointInfo.BasePoint * (roundStatus.TotalPlayer + 1);
         }
 
-        private static ISet<List<Meld>> Decompose(IReadOnlyCollection<Tile> handTiles,
-            IReadOnlyCollection<Meld> openMelds, Tile tile)
+        private static ISet<List<Meld>> Decompose(IList<Tile> handTiles,
+            IList<Meld> openMelds, Tile tile)
         {
             var decompose = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             int count = handTiles.Count;
             if (count % 3 != 1) return decompose;
             var allTiles = new List<Tile>(handTiles) {tile};
             var hand = CountTiles(allTiles);
+            Debug.Log($"Hand tile distribution: {string.Join(",", hand)}");
             AnalyzeNormal(hand, decompose);
-            Analyze7Pairs(count, hand, decompose);
-            Analyze13Orphans(count, hand, decompose);
+            Analyze7Pairs(hand, decompose);
+            Analyze13Orphans(hand, decompose);
             if (decompose.Count == 0) return decompose;
             var result = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             foreach (var sub in decompose)
@@ -224,12 +225,12 @@ namespace Single
             return result;
         }
 
-        public static bool HasWin(List<Tile> handTiles, List<Meld> openMelds, Tile tile)
+        public static bool HasWin(IList<Tile> handTiles, IList<Meld> openMelds, Tile tile)
         {
             return Decompose(handTiles, openMelds, tile).Count > 0;
         }
 
-        public static IList<Tile> WinningTiles(List<Tile> handTiles, List<Meld> openMelds)
+        public static IList<Tile> WinningTiles(IList<Tile> handTiles, IList<Meld> openMelds)
         {
             var list = new List<Tile>();
             for (int index = 0; index < MahjongConstants.TileKinds; index++)
@@ -328,9 +329,9 @@ namespace Single
             }
         }
 
-        private static void Analyze7Pairs(int total, int[] hand, HashSet<List<Meld>> result)
+        private static void Analyze7Pairs(int[] hand, HashSet<List<Meld>> result)
         {
-            if (total != MahjongConstants.FullHandTilesCount) return;
+            if (hand.Sum() != MahjongConstants.FullHandTilesCount) return;
             var sub = new List<Meld>();
             for (int index = 0; index < hand.Length; index++)
             {
@@ -341,15 +342,13 @@ namespace Single
                     sub.Add(new Meld(false, tile, tile));
                 }
             }
-
             sub.Sort();
-
             result.Add(sub);
         }
 
-        private static void Analyze13Orphans(int total, int[] hand, HashSet<List<Meld>> result)
+        private static void Analyze13Orphans(int[] hand, HashSet<List<Meld>> result)
         {
-            if (total != MahjongConstants.FullHandTilesCount) return;
+            if (hand.Sum() != MahjongConstants.FullHandTilesCount) return;
             var sub = new List<Meld>();
             int kinds = 0;
             for (int index = 0; index < hand.Length; index++)
@@ -364,7 +363,6 @@ namespace Single
                     if (hand[index] == 2) sub.Add(new Meld(false, tile, tile));
                 }
             }
-
             Assert.AreEqual(kinds, 13, "Something wrong happened");
             sub.Sort();
             result.Add(sub);

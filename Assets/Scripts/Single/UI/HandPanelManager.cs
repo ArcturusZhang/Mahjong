@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Single.UI
 {
-    public class HandTilesManager : MonoBehaviour
+    public class HandPanelManager : MonoBehaviour
     {
         public HandTileInstance[] HandTileInstances;
         public HandTileInstance LastDrawInstance;
@@ -24,7 +24,7 @@ namespace Single.UI
             for (int i = 0; i < length; i++)
             {
                 HandTileInstances[i].gameObject.SetActive(true);
-                HandTileInstances[i].Tile = Tiles[i];
+                HandTileInstances[i].SetTile(Tiles[i]);
             }
             for (int i = length; i < HandTileInstances.Length; i++)
             {
@@ -38,8 +38,8 @@ namespace Single.UI
                 LastDrawInstance.gameObject.SetActive(false);
             else
             {
+                LastDrawInstance.SetTile((Tile)LastDraw);
                 LastDrawInstance.gameObject.SetActive(true);
-                LastDrawInstance.Tile = (Tile)LastDraw;
             }
         }
     }

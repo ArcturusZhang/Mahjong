@@ -10,18 +10,18 @@ namespace Single.MahjongDataType
         public int RichiMortgagePoints = 1000;
         public int ExtraRoundBonusPerPlayer = 100;
         public int NotReadyPunishPerPlayer = 1000;
-        public bool GameEndsWhenLoseAllPoints = true;
+        public PointsToGameEnd GameEndsWhenPointsLow = PointsToGameEnd.Negative;
+        public int MinimumFanConstraint = 1;
         public bool AllowDiscardSameAfterOpen = false;
         public bool AllowChows = true;
-        
+
         [Header("Tile drawing settings")] public int InitialDrawRound = 3;
         public int TilesEveryRound = 4;
         public int TilesLastRound = 1;
 
         [Header("Time settings")] public int BaseTurnTime = 5;
         public int BonusTurnTime = 20;
-        // public int ServerTimeOut = 30;
-        
+
         [Header("Mahjong settings")]
         public int DiceMin = 2;
         public int DiceMax = 12;
@@ -32,12 +32,32 @@ namespace Single.MahjongDataType
 
         public bool IsChowAllowed => AllowChows;
 
-        public Tile[] allTiles = MahjongConstants.FullTiles.ToArray();
-        
         public Tile[] redTiles = new Tile[] {
-            new Tile(Suit.M, 5, true), 
-            new Tile(Suit.P, 5, true), 
+            new Tile(Suit.M, 5, true),
+            new Tile(Suit.P, 5, true),
             new Tile(Suit.S, 5, true)
         };
+
+        public Tile[] GetAllTiles(int totalPlayers)
+        {
+            switch (totalPlayers)
+            {
+                case 2:
+                    return MahjongConstants.TwoPlayerTiles.ToArray();
+                case 3:
+                    return MahjongConstants.ThreePlayerTiles.ToArray();
+                case 4:
+                    return MahjongConstants.FullTiles.ToArray();
+                default:
+                    Debug.LogError($"This should not happen, totalPlayers: {totalPlayers}");
+                    return null;
+            }
+        }
+
+        public enum PointsToGameEnd {
+            Negative,
+            Zero,
+            Never
+        }
     }
 }

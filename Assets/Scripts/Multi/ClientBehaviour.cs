@@ -18,16 +18,19 @@ namespace Multi
         public static ClientBehaviour Instance { get; private set; }
 
         [Header("Game Managers")]
-        public RoundInfoManager RoundInfoManager;
+        // public RoundInfoManager RoundInfoManager;
+        // public PointsManager PointsManager;
+        // public PositionManager PositionManager;
+        // public RichiStatusManager RichiStatusManager;
+        public BoardInfoManager BoardInfoManager;
         public YamaManager YamaManager;
         public PlayerHandManager[] HandManagers;
         public PlayerRiverManager[] RiverManagers;
-        public PointsManager PointsManager;
         public PlayerInfoManager PlayerInfoManager;
-        public PositionManager PositionManager;
-        public RichiStatusManager RichiStatusManager;
-        public HandTilesManager HandTilesManager;
+        public HandPanelManager HandPanelManager;
         public TimerController TurnTimeController;
+        public OutTurnPanelManager OutTurnPanelManager;
+        public RoundDrawPanelManager[] DrawPanelManagers;
 
         [Header("Settings")]
         public GameSettings GameSettings;
@@ -52,7 +55,6 @@ namespace Multi
         public int Extra;
         public int RichiSticks;
         public MahjongSetData MahjongSetData;
-        private OutTurnOperation[] outTurnOperations;
 
         private void OnEnable()
         {
@@ -71,13 +73,9 @@ namespace Multi
             UpdateYamaManager();
             UpdateHandManager();
             UpdateRiverManager();
-            UpdatePointsManager();
             UpdatePlayerInfoManager();
-            UpdatePositionManager();
-            UpdateRoundInfoManager();
-            UpdateRichiStatusManager();
+            UpdateBoardInfoManager();
             UpdateHandPanelManager();
-            // todo -- update operation info
         }
 
         private void UpdateYamaManager()
@@ -112,13 +110,6 @@ namespace Multi
             }
         }
 
-        private void UpdatePointsManager()
-        {
-            PointsManager.TotalPlayers = TotalPlayers;
-            PointsManager.Places = Places;
-            PointsManager.Points = Points;
-        }
-
         private void UpdatePlayerInfoManager()
         {
             PlayerInfoManager.TotalPlayers = TotalPlayers;
@@ -126,32 +117,18 @@ namespace Multi
             PlayerInfoManager.Names = PlayerNames;
         }
 
-        private void UpdatePositionManager()
+        private void UpdateBoardInfoManager()
         {
-            PositionManager.TotalPlayers = TotalPlayers;
-            PositionManager.Places = Places;
-            PositionManager.OyaPlayerIndex = OyaPlayerIndex;
-        }
-
-        private void UpdateRoundInfoManager()
-        {
-            RoundInfoManager.OyaPlayerIndex = OyaPlayerIndex;
-            RoundInfoManager.Field = Field;
-            RoundInfoManager.RichiSticks = RichiSticks;
-            RoundInfoManager.Extra = Extra;
-        }
-
-        private void UpdateRichiStatusManager()
-        {
-            RichiStatusManager.TotalPlayers = TotalPlayers;
-            RichiStatusManager.Places = Places;
-            RichiStatusManager.RichiStatus = RichiStatus;
+            BoardInfoManager.UpdateRoundInfo(OyaPlayerIndex, Field, Extra, RichiSticks);
+            BoardInfoManager.UpdatePoints(TotalPlayers, Places, Points);
+            BoardInfoManager.UpdatePosition(TotalPlayers, OyaPlayerIndex, Places);
+            BoardInfoManager.UpdateRichiStatus(TotalPlayers, Places, RichiStatus);
         }
 
         private void UpdateHandPanelManager()
         {
-            HandTilesManager.Tiles = LocalPlayerHandTiles;
-            HandTilesManager.LastDraw = LastDraws[0];
+            HandPanelManager.Tiles = LocalPlayerHandTiles;
+            HandPanelManager.LastDraw = LastDraws[0];
         }
 
         /// <summary>
@@ -191,6 +168,7 @@ namespace Multi
         public void StartRound(ServerRoundStartMessage message)
         {
             // todo -- add animation here
+            // data update
             var tiles = message.InitialHandTiles;
             for (int i = 0; i < TileCounts.Length; i++)
             {
@@ -211,6 +189,12 @@ namespace Multi
             UpdatePoints(message.Points);
             // All player should not be in richi status
             RichiStatus = new bool[4];
+            // ui elements update
+            for (int i = 0; i < HandManagers.Length; i++)
+            {
+                HandManagers[i].StandUp();
+            }
+            HandPanelManager.gameObject.SetActive(true);
         }
 
         public void PlayerDrawTurn(ServerDrawTileMessage message)
@@ -225,12 +209,11 @@ namespace Multi
             BonusTurnTime = message.BonusTurnTime;
             MahjongSetData = message.MahjongSetData;
             // todo -- UI events
-            UnityEngine.Events.UnityAction callback = () =>
+            TurnTimeController.StartCountDown(GameSettings.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
                 LocalPlayer.DiscardTile(tile, false, true, 0);
-            };
-            TurnTimeController.StartCountDown(GameSettings.BaseTurnTime, BonusTurnTime, callback);
+            });
         }
 
         public void OtherPlayerDrawTurn(ServerOtherDrawTileMessage message)
@@ -252,33 +235,42 @@ namespace Multi
             // update hand tiles
             LocalPlayerHandTiles = new List<Tile>(message.HandTiles);
             StartCoroutine(UpdateHandData(message.CurrentTurnPlayerIndex, message.DiscardingLastDraw, message.Tile, message.Rivers));
+            BonusTurnTime = message.BonusTurnTime;
             // check if message contains a valid operation
             if (message.Operations == null || message.Operations.Length == 0)
             {
                 Debug.LogError("Received with no operations, this should not happen");
                 LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-                outTurnOperations = null;
+                OutTurnPanelManager.Disable();
                 return;
             }
-            // if all the operations are skip, just skip this turn.
+            // if all the operations are skip, automatically skip this turn.
             if (message.Operations.All(op => op.Type == OutTurnOperationType.Skip))
             {
                 Debug.Log("Only operation is skip, skipping turn.");
                 LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-                outTurnOperations = null;
+                OutTurnPanelManager.Disable();
                 return;
             }
-            // if not, wait for the player to choose an operation.
-            outTurnOperations = message.Operations;
+            OutTurnPanelManager.SetOperations(message.Operations);
+            // if there are valid operations, assign operations
+            TurnTimeController.StartCountDown(GameSettings.BaseTurnTime, message.BonusTurnTime, () =>
+            {
+                Debug.Log("Time out! Automatically skip this turn");
+                LocalPlayer.SkipOutTurnOperation(0);
+                OutTurnPanelManager.Disable();
+            });
         }
 
-        private IEnumerator UpdateHandData(int currentIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers) {
+        private IEnumerator UpdateHandData(int currentIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers)
+        {
             for (int i = 0; i < LastDraws.Length; i++) LastDraws[i] = null;
             int currentPlaceIndex = GetPlaceIndexByPlayerIndex(currentIndex);
             HandManagers[currentPlaceIndex].DiscardTile(discardingLastDraw);
             Debug.Log($"Playing player {currentIndex} (place: {currentPlaceIndex}) discarding animation");
             yield return new WaitForEndOfFrame();
-            for (int playerIndex = 0; playerIndex < rivers.Length; playerIndex++) {
+            for (int playerIndex = 0; playerIndex < rivers.Length; playerIndex++)
+            {
                 int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
                 Rivers[placeIndex] = rivers[playerIndex];
             }
@@ -287,9 +279,43 @@ namespace Multi
         public void PlayerTurnEnd(ServerTurnEndMessage message)
         {
             // show operation related animation, etc.
-            Debug.Log($"Turn ends, operation {message.Operation} is taking.");
-            outTurnOperations = null;
+            Debug.Log($"Turn ends, operation {message.Operations} is taking.");
             // todo -- do some cleaning, etc
+        }
+
+        public void RoundDraw(ServerRoundDrawMessage message)
+        {
+            // checking
+            if (!LastDraws.All(l => l == null))
+                Debug.LogError("Someone still holding a lastDraw, this should not happen!");
+            // hide hand panel
+            HideHandPanel();
+            // reveal hand tiles on table
+            Debug.Log("Revealing hand tiles");
+            var waitingDataArray = message.WaitingData;
+            for (int playerIndex = 0; playerIndex < waitingDataArray.Length; playerIndex++)
+            {
+                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
+                CheckReadyOrNot(placeIndex, waitingDataArray[playerIndex]);
+            }
+        }
+
+        private void CheckReadyOrNot(int placeIndex, WaitingData data)
+        {
+            // Show tiles and corresponding panel
+            if (data.WaitingTiles == null || data.WaitingTiles.Length == 0)
+            {
+                // no-ting
+                HandManagers[placeIndex].CloseDown();
+                DrawPanelManagers[placeIndex].NotReady();
+            }
+            else
+            {
+                // ting
+                HandManagers[placeIndex].Reveal();
+                HandManagers[placeIndex].Tiles = data.HandTiles.ToList();
+                DrawPanelManagers[placeIndex].Ready(data.WaitingTiles);
+            }
         }
 
         public void OnDiscardTile(Tile tile, bool isLastDraw)
@@ -297,6 +323,84 @@ namespace Multi
             Debug.Log($"Sending request of discarding tile {tile}");
             int bonusTimeLeft = TurnTimeController.StopCountDown();
             LocalPlayer.DiscardTile(tile, IsRichiing, isLastDraw, bonusTimeLeft);
+        }
+
+        public void OnSkipButtonClicked()
+        {
+            int bonusTimeLeft = TurnTimeController.StopCountDown();
+            Debug.Log($"Sending request of skipping out turn operation with bonus turn time {bonusTimeLeft}");
+            LocalPlayer.SkipOutTurnOperation(bonusTimeLeft);
+            OutTurnPanelManager.Disable();
+        }
+
+        public void OnRongButtonClicked(OutTurnOperation operation)
+        {
+            if (operation.Type != OutTurnOperationType.Rong)
+            {
+                Debug.LogError($"Cannot send a operation with type {operation.Type} within OnRongButtonClicked method");
+                return;
+            }
+            int bonusTimeLeft = TurnTimeController.StopCountDown();
+            Debug.Log($"Sending request of rong operation with bonus turn time {bonusTimeLeft}");
+            LocalPlayer.OperationTaken(operation, bonusTimeLeft);
+            OutTurnPanelManager.Disable();
+        }
+
+        public void OnKongButtonClicked(OutTurnOperation operation)
+        {
+            if (operation.Type != OutTurnOperationType.Kong)
+            {
+                Debug.LogError($"Cannot send a operation with type {operation.Type} within OnKongButtonClicked method");
+                return;
+            }
+            int bonusTimeLeft = TurnTimeController.StopCountDown();
+            Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
+            LocalPlayer.OperationTaken(operation, bonusTimeLeft);
+            OutTurnPanelManager.Disable();
+        }
+
+        public void OnChowButtonClicked(OutTurnOperation[] operationOptions, OutTurnOperation[] originalOperations)
+        {
+            if (operationOptions == null || operationOptions.Length == 0)
+            {
+                Debug.LogError("The operations are null or empty in OnChowButtonClicked method, this should not happen.");
+                return;
+            }
+            if (!operationOptions.All(op => op.Type == OutTurnOperationType.Chow))
+            {
+                Debug.LogError("There are incompatible type within OnChowButtonClicked method");
+                return;
+            }
+            if (operationOptions.Length == 1)
+            {
+                int bonusTimeLeft = TurnTimeController.StopCountDown();
+                Debug.Log($"Sending request of chow operation with bonus turn time {bonusTimeLeft}");
+                LocalPlayer.OperationTaken(operationOptions[0], bonusTimeLeft);
+                OutTurnPanelManager.Disable();
+                return;
+            }
+            // todo -- chow selection logic here
+        }
+
+        public void OnPongButtonClicked(OutTurnOperation[] operationOptions, OutTurnOperation[] originalOperations) {
+            if (operationOptions == null || operationOptions.Length == 0)
+            {
+                Debug.LogError("The operations are null or empty in OnPongButtonClicked method, this should not happen.");
+                return;
+            }
+            if (!operationOptions.All(op => op.Type == OutTurnOperationType.Chow))
+            {
+                Debug.LogError("There are incompatible type within OnPongButtonClicked method");
+                return;
+            }
+            if (operationOptions.Length == 1) {
+                int bonusTimeLeft = TurnTimeController.StopCountDown();
+                Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
+                LocalPlayer.OperationTaken(operationOptions[0], bonusTimeLeft);
+                OutTurnPanelManager.Disable();
+                return;
+            }
+            // todo -- pong selection logic here
         }
 
         private void UpdatePoints(int[] points)
@@ -317,6 +421,16 @@ namespace Multi
                 else
                     PlayerNames[i] = null;
             }
+        }
+
+        private void HideHandPanel()
+        {
+            HandPanelManager.gameObject.SetActive(false);
+        }
+
+        private void ShowHandPanel()
+        {
+            HandPanelManager.gameObject.SetActive(true);
         }
 
         private int GetPlaceIndexByPlayerIndex(int playerIndex)

@@ -44,7 +44,6 @@ namespace Multi
             Debug.Log("[Server] OnStartServer");
             GameSettings = LobbyManager.Instance.GameSettings;
             YakuSettings = LobbyManager.Instance.YakuSettings;
-            mahjongSet = new MahjongSet(GameSettings);
             var waitingState = new WaitForLoadingState
             {
                 TotalPlayers = LobbyManager.Instance._playerNumber,
@@ -61,6 +60,7 @@ namespace Multi
         public void GamePrepare()
         {
             CurrentRoundStatus = new ServerRoundStatus(LobbyManager.Instance.Players);
+            mahjongSet = new MahjongSet(GameSettings, GameSettings.GetAllTiles(LobbyManager.Instance.Players.Count));
             var prepareState = new GamePrepareState
             {
                 GameSettings = GameSettings,
@@ -107,7 +107,8 @@ namespace Multi
 
         public void DiscardTile(int playerIndex, Tile tile, bool isRichiing, bool discardLastDraw, int bonusTurnTime)
         {
-            if (CurrentRoundStatus.CurrentPlayerIndex != playerIndex) {
+            if (CurrentRoundStatus.CurrentPlayerIndex != playerIndex)
+            {
                 Debug.LogError("PlayerIndex does not match, this should not happen!");
             }
             if (CurrentRoundStatus.LastDraw == null)
@@ -128,12 +129,14 @@ namespace Multi
             var discardState = new PlayerDiscardTileState
             {
                 GameSettings = GameSettings,
+                YakuSettings = YakuSettings,
                 CurrentPlayerIndex = playerIndex,
                 Players = LobbyManager.Instance.Players,
                 DiscardTile = tile,
                 IsRichiing = isRichiing,
                 DiscardLastDraw = discardLastDraw,
-                CurrentRoundStatus = CurrentRoundStatus
+                CurrentRoundStatus = CurrentRoundStatus,
+                MahjongSetData = mahjongSet.Data
             };
             StateMachine.ChangeState(discardState);
         }
@@ -141,7 +144,8 @@ namespace Multi
         // todo -- this method needs more info to work (operations other players take, etc)
         public void TurnEnd(int playerIndex, bool isRichiing, OutTurnOperation[] operations)
         {
-            var turnEndState = new TurnEndState {
+            var turnEndState = new TurnEndState
+            {
                 GameSettings = GameSettings,
                 CurrentPlayerIndex = playerIndex,
                 Players = LobbyManager.Instance.Players,
@@ -153,15 +157,28 @@ namespace Multi
             StateMachine.ChangeState(turnEndState);
         }
 
-        public void PerformOperation(int playerIndex, OutTurnOperation operation) {
-            var operationPerformState = new OperationPerformState {
+        public void PerformOperation(int newPlayerIndex, OutTurnOperation operation)
+        {
+            var operationPerformState = new OperationPerformState
+            {
 
             };
             StateMachine.ChangeState(operationPerformState);
         }
 
-        public void RoundDraw() {
+        public void RoundSummary(int currentPlayerIndex, OutTurnOperation[] operations) {
+            // todo -- calculate points
             StateMachine.ChangeState(new IdleState());
+        }
+
+        public void RoundDraw()
+        {
+            var drawState = new RoundDrawState {
+                GameSettings = GameSettings,
+                Players = LobbyManager.Instance.Players,
+                CurrentRoundStatus = CurrentRoundStatus
+            };
+            StateMachine.ChangeState(drawState);
         }
 
         public void Idle()
