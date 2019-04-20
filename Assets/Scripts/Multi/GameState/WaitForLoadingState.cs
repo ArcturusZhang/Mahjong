@@ -3,7 +3,7 @@ using Multi.MahjongMessages;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Networking;
-using Debug = Single.Debug;
+
 
 namespace Multi.GameState
 {

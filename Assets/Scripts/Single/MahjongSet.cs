@@ -4,7 +4,7 @@ using Single.Exceptions;
 using Single.MahjongDataType;
 using UnityEngine;
 using Utils;
-using Debug = Single.Debug;
+
 
 namespace Single
 {

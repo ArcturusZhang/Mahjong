@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Debug = Single.Debug;
+
 
 namespace Single.MahjongDataType
 {

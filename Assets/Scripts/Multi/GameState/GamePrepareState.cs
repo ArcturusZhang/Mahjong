@@ -7,7 +7,7 @@ using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Networking;
 using Utils;
-using Debug = Single.Debug;
+
 
 namespace Multi.GameState
 {

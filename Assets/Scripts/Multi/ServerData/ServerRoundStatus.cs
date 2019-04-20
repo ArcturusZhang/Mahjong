@@ -4,7 +4,7 @@ using System.Linq;
 using Single.Exceptions;
 using Single.MahjongDataType;
 using UnityEngine;
-using Debug = Single.Debug;
+
 
 namespace Multi.ServerData
 {

@@ -5,7 +5,7 @@ using Single;
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.UI;
-using Debug = Single.Debug;
+
 
 public class HandTileInstance : MonoBehaviour
 {

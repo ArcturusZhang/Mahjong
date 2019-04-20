@@ -9,7 +9,7 @@ using Single.MahjongDataType;
 using Single.UI;
 using UI;
 using UnityEngine;
-using Debug = Single.Debug;
+
 
 namespace Multi
 {

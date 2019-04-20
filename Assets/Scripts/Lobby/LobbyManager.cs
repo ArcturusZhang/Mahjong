@@ -10,7 +10,7 @@ using UnityEngine.Networking.Types;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Utils;
-using Debug = Single.Debug;
+
 
 namespace Lobby
 {

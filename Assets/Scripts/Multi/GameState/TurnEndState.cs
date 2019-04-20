@@ -7,7 +7,7 @@ using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Assertions;
-using Debug = Single.Debug;
+
 
 namespace Multi.GameState
 {
@@ -119,7 +119,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}", false);
+            Debug.Log($"Server is in {GetType().Name}");
             if (Time.time - firstTime > serverTurnEndTimeOut)
             {
                 TurnEndTimeOut();

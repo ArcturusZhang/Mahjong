@@ -5,7 +5,7 @@ using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
 using StateMachine.Interfaces;
-using Debug = Single.Debug;
+using UnityEngine;
 
 namespace Multi.GameState
 {
@@ -45,7 +45,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}", false);
+            Debug.Log($"Server is in {GetType().Name}");
         }
     }
 }

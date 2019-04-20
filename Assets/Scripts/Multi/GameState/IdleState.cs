@@ -1,6 +1,6 @@
 using StateMachine.Interfaces;
 using UnityEngine;
-using Debug = Single.Debug;
+
 
 namespace Multi.GameState
 {
@@ -18,7 +18,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log("Exit IdleState", false);
+            Debug.Log("Exit IdleState");
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Single.MahjongDataType;
 using UnityEngine;
-using Debug = Single.Debug;
+
 
 namespace Single
 {
@@ -46,7 +46,7 @@ namespace Single
         {
             if (Count > handHolder.childCount)
             {
-                Debug.LogWarning($"Not enough tiles to show, cap to {handHolder.childCount}", false);
+                Debug.LogWarning($"Not enough tiles to show, cap to {handHolder.childCount}");
             }
             for (int i = 0; i < handHolder.childCount; i++)
             {

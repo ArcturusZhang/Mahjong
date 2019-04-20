@@ -7,7 +7,7 @@ using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Networking;
-using Debug = Single.Debug;
+
 
 namespace Multi.GameState
 {
@@ -95,7 +95,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}", false);
+            Debug.Log($"Server is in {GetType().Name}");
             // Sending messages until received all responds from all players
             if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
             {

@@ -7,7 +7,7 @@ using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Networking;
-using Debug = Single.Debug;
+
 
 namespace Multi.GameState
 {
@@ -146,7 +146,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}", false);
+            Debug.Log($"Server is in {GetType().Name}");
             // Send messages again until get enough responds or time out
             if (Time.time - firstSendTime > serverTimeOut)
             {
