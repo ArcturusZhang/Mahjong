@@ -15,10 +15,12 @@ namespace Multi.GameState
     public class PlayerDrawTileState : IState
     {
         public GameSettings GameSettings;
+        public YakuSettings YakuSettings;
         public int CurrentPlayerIndex;
         public IList<Player> Players;
         public MahjongSet MahjongSet;
         public ServerRoundStatus CurrentRoundStatus;
+        private Tile justDraw;
         private MessageBase[] messages;
         private bool[] responds;
         private float lastSendTime;
@@ -29,11 +31,12 @@ namespace Multi.GameState
         {
             Debug.Log($"Server enters {GetType().Name}");
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
+            NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
-            var tile = MahjongSet.DrawTile();
-            Debug.Log($"[Server] Distribute a tile {tile} to current turn player {CurrentPlayerIndex}.");
+            justDraw = MahjongSet.DrawTile();
+            Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}.");
             CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
-            CurrentRoundStatus.LastDraw = tile;
+            CurrentRoundStatus.LastDraw = justDraw;
             messages = new MessageBase[Players.Count];
             responds = new bool[Players.Count];
             for (int i = 0; i < Players.Count; i++)
@@ -50,7 +53,7 @@ namespace Multi.GameState
             messages[CurrentPlayerIndex] = new ServerDrawTileMessage
             {
                 PlayerIndex = CurrentPlayerIndex,
-                Tile = tile,
+                Tile = justDraw,
                 BonusTurnTime = Players[CurrentPlayerIndex].BonusTurnTime,
                 Operations = GetOperations(CurrentPlayerIndex),
                 MahjongSetData = MahjongSet.Data
@@ -62,9 +65,23 @@ namespace Multi.GameState
         }
 
         // todo -- complete this
-        private InTurnOperationType GetOperations(int index)
+        private InTurnOperation[] GetOperations(int playerIndex)
         {
-            return InTurnOperationType.Discard;
+            var operations = new List<InTurnOperation> { new InTurnOperation { Type = InTurnOperationType.Discard } };
+            var point = GetPointInfo(playerIndex, HandStatus.Tsumo, justDraw);
+            // test if enough
+            if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
+            {
+                operations.Add(new InTurnOperation
+                {
+                    Type = InTurnOperationType.Tsumo,
+                    Tile = justDraw
+                });
+            }
+            // test richi -- todo
+            // test kong -- todo
+            // test bei -- todo
+            return operations.ToArray();
         }
 
         private void OnReadinessMessageReceived(NetworkMessage message)
@@ -93,9 +110,85 @@ namespace Multi.GameState
             ServerBehaviour.Instance.DiscardTile(content.PlayerIndex, content.Tile, content.IsRichiing, content.DiscardingLastDraw, content.BonusTurnTime);
         }
 
+        private void OnInTurnOperationReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ClientInTurnOperationMessage>();
+            if (content.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
+            {
+                Debug.Log($"[Server] It is not player {content.PlayerIndex}'s turn to perform a in turn operation, ignoring this message");
+                return;
+            }
+            // handle message according to its type
+            Debug.Log($"[Server] Received ClientInTurnOperationMessage {content}");
+            var operation = content.Operation;
+            switch (operation.Type)
+            {
+                case InTurnOperationType.Tsumo:
+                    HandleTsumo(operation);
+                    break;
+                case InTurnOperationType.Bei:
+                case InTurnOperationType.Kong:
+                    // todo
+                    break;
+                default:
+                    Debug.LogError($"[Server] This type of in turn operation should not be sent to server.");
+                    break;
+            }
+        }
+
+        private void HandleTsumo(InTurnOperation operation)
+        {
+            int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
+            var point = GetPointInfo(playerIndex, HandStatus.Tsumo, operation.Tile);
+            if (point.FanWithoutDora < GameSettings.MinimumFanConstraint)
+                Debug.LogError($"Tsumo requires minimum fan of {GameSettings.MinimumFanConstraint}, but the point only contains {point.FanWithoutDora} fans");
+            ServerBehaviour.Instance.HandleTsumo(playerIndex, point);
+        }
+
+        private PointInfo GetPointInfo(int playerIndex, HandStatus baseHandStatus, Tile tile)
+        {
+            var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
+            var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
+            var handStatus = baseHandStatus;
+            if (MahjongLogic.TestMenqing(openMelds))
+                handStatus |= HandStatus.Menqing;
+            // test richi
+            if (CurrentRoundStatus.RichiStatus[playerIndex])
+            {
+                handStatus |= HandStatus.Richi;
+                // test one-shot
+                if (CurrentRoundStatus.OneShotStatus[playerIndex])
+                    handStatus |= HandStatus.OneShot;
+                // test WRichi -- todo
+            }
+            // test first turn -- todo
+            // test lingshang -- todo
+            // test haidi
+            if (MahjongSet.TilesRemain == GameSettings.MountainReservedTiles)
+                handStatus |= HandStatus.Haidi;
+            var roundStatus = new RoundStatus
+            {
+                PlayerIndex = playerIndex,
+                OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex,
+                CurrentExtraRound = CurrentRoundStatus.Extra,
+                RichiSticks = CurrentRoundStatus.RichiSticks,
+                FieldCount = CurrentRoundStatus.Field,
+                TotalPlayer = Players.Count
+            };
+            var allTiles = MahjongSet.AllTiles;
+            var doraTiles = MahjongSet.DoraIndicators.Select(indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var point = MahjongLogic.GetPointInfo(handTiles, openMelds, tile,
+                handStatus, roundStatus, YakuSettings, doraTiles, uraDoraTiles);
+            Debug.Log($"[Server] HandTiles: {string.Join("", handTiles)}\n"
+                + $"OpenMelds: {string.Join(",", openMelds)}\n"
+                + $"PointInfo: {point}");
+            return point;
+        }
+
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}");
+            // Debug.Log($"Server is in {GetType().Name}");
             // Sending messages until received all responds from all players
             if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
             {

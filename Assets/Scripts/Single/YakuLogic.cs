@@ -142,7 +142,7 @@ namespace Single
         public static YakuValue 海底(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
             RoundStatus roundStatus, YakuSettings settings)
         {
-            if (!handStatus.HasFlag(HandStatus.LastDraw)) return new YakuValue();
+            if (!handStatus.HasFlag(HandStatus.Haidi)) return new YakuValue();
             return handStatus.HasFlag(HandStatus.Tsumo)
                 ? new YakuValue {Name = "海底捞月", Value = 1}
                 : new YakuValue {Name = "河底摸鱼", Value = 1};
@@ -517,7 +517,7 @@ namespace Single
         WRichi = 1 << 4,
         FirstTurn = 1 << 5,
         Lingshang = 1 << 6,
-        LastDraw = 1 << 7,
+        Haidi = 1 << 7,
         RobbKong = 1 << 8,
         OneShot = 1 << 9
     }

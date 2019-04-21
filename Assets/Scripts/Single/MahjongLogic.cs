@@ -97,8 +97,8 @@ namespace Single
             if (decompose == null || decompose.Count == 0) return result;
             foreach (var yakuMethod in YakuMethods)
             {
-                var value = (YakuValue) yakuMethod.Invoke(yakuSettings,
-                    new object[] {decompose, winningTile, handStatus, roundStatus, yakuSettings});
+                var value = (YakuValue)yakuMethod.Invoke(yakuSettings,
+                    new object[] { decompose, winningTile, handStatus, roundStatus, yakuSettings });
                 if (value.Value != 0)
                 {
                     result.Add(value);
@@ -111,31 +111,30 @@ namespace Single
         }
 
         public static PointInfo GetPointInfo(Tile[] handTiles, Meld[] openMelds, Tile winningTile,
-            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, Tile[] doraIndicators = null,
-            Tile[] uraDoraIndicators = null)
+            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, Tile[] doraTiles = null,
+            Tile[] uraDoraTiles = null)
         {
             var decomposes = Decompose(handTiles, openMelds, winningTile);
+            if (decomposes.Count == 0) return new PointInfo();
             // count dora
-            int dora = CountDora(handTiles, openMelds, winningTile, doraIndicators);
+            int dora = CountDora(handTiles, openMelds, winningTile, doraTiles);
             int uraDora = 0;
             if (handStatus.HasFlag(HandStatus.Richi) || handStatus.HasFlag(HandStatus.WRichi))
             {
-                Assert.IsNotNull(uraDoraIndicators, "There should be uraDoras after richi");
-                uraDora = CountDora(handTiles, openMelds, winningTile, uraDoraIndicators);
+                Assert.IsNotNull(uraDoraTiles, "There should be uraDoras after richi");
+                uraDora = CountDora(handTiles, openMelds, winningTile, uraDoraTiles);
             }
 
             int redDora = CountRed(handTiles, openMelds, winningTile);
             return GetPointInfo(decomposes, winningTile, handStatus, roundStatus, yakuSettings, dora, uraDora, redDora);
         }
 
-        private static int CountDora(Tile[] handTiles, Meld[] openMelds, Tile winningTile,
-            Tile[] indicators)
+        private static int CountDora(Tile[] handTiles, Meld[] openMelds, Tile winningTile, Tile[] doraTiles)
         {
-            if (indicators == null) return 0;
+            if (doraTiles == null) return 0;
             int count = 0;
-            foreach (var doraIndicator in indicators)
+            foreach (var dora in doraTiles)
             {
-                var dora = doraIndicator.Dora;
                 count += CountDora(handTiles, openMelds, winningTile, dora);
             }
 
@@ -207,7 +206,7 @@ namespace Single
             var decompose = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             int count = handTiles.Count;
             if (count % 3 != 1) return decompose;
-            var allTiles = new List<Tile>(handTiles) {tile};
+            var allTiles = new List<Tile>(handTiles) { tile };
             var hand = CountTiles(allTiles);
             Debug.Log($"Hand tile distribution: {string.Join(",", hand)}");
             AnalyzeNormal(hand, decompose);
@@ -269,7 +268,7 @@ namespace Single
 
         private static void FindCompleteForm(int suitOfTwo, int[] hand, HashSet<List<Meld>> result)
         {
-            var suit = (Suit) suitOfTwo;
+            var suit = (Suit)suitOfTwo;
             int start = suitOfTwo * 9;
             int end = suit == Suit.Z ? start + 7 : start + 9;
             for (int rank = start; rank < end; rank++)
@@ -420,18 +419,12 @@ namespace Single
             return array;
         }
 
-        public static bool TestMenqing(List<Meld> openMelds)
+        public static bool TestMenqing(IList<Meld> openMelds)
         {
-            if (openMelds.Count == 0) return true;
-            foreach (var meld in openMelds)
-            {
-                if (meld.Revealed) return false;
-            }
-
-            return true;
+            return openMelds.Count == 0 || openMelds.All(m => m.IsKong && !m.Revealed);
         }
 
-        // todo -- this may contain bugs
+        [System.Obsolete]
         public static ISet<Meld> GetChows(List<Tile> handTiles, Tile discardTile)
         {
             var result = new HashSet<Meld>();
@@ -441,19 +434,20 @@ namespace Single
             var tilesN1 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank + 1);
             var tilesN2 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank + 2);
             foreach (var tileP2 in tilesP2)
-            foreach (var tileP1 in tilesP1)
-                result.Add(new Meld(true, tileP2, tileP1, discardTile));
+                foreach (var tileP1 in tilesP1)
+                    result.Add(new Meld(true, tileP2, tileP1, discardTile));
 
             foreach (var tileP1 in tilesP1)
-            foreach (var tileN1 in tilesN1)
-                result.Add(new Meld(true, tileP1, discardTile, tileN1));
+                foreach (var tileN1 in tilesN1)
+                    result.Add(new Meld(true, tileP1, discardTile, tileN1));
 
             foreach (var tileN1 in tilesN1)
-            foreach (var tileN2 in tilesN2)
-                result.Add(new Meld(true, discardTile, tileN1, tileN2));
+                foreach (var tileN2 in tilesN2)
+                    result.Add(new Meld(true, discardTile, tileN1, tileN2));
             return result;
         }
 
+        [System.Obsolete]
         public static ISet<Meld> GetPongs(List<Tile> handTiles, Tile discardTile)
         {
             var result = new HashSet<Meld>();
@@ -475,6 +469,7 @@ namespace Single
             return result;
         }
 
+        [System.Obsolete]
         public static ISet<Meld> GetOutTurnKongs(List<Tile> handTiles, Tile discardTile)
         {
             var result = new HashSet<Meld>();
@@ -486,6 +481,7 @@ namespace Single
             return result;
         }
 
+        [System.Obsolete]
         public static ISet<Meld> GetInTurnKongs(List<Tile> handTiles, List<Meld> openMelds, Tile lastDraw)
         {
             var result = new HashSet<Meld>();
@@ -495,7 +491,7 @@ namespace Single
             if (addedKongIndex >= 0)
             {
                 var meld = openMelds[addedKongIndex];
-                var tiles = new List<Tile>(meld.Tiles) {lastDraw};
+                var tiles = new List<Tile>(meld.Tiles) { lastDraw };
                 result.Add(new Meld(true, tiles.ToArray()));
             }
 
@@ -504,7 +500,7 @@ namespace Single
             foreach (var handTile in handTiles)
             {
                 if (tilesCount.ContainsKey(handTile)) tilesCount[handTile].Add(handTile);
-                else tilesCount.Add(handTile, new List<Tile> {handTile});
+                else tilesCount.Add(handTile, new List<Tile> { handTile });
             }
 
             if (tilesCount.ContainsKey(lastDraw) && tilesCount[lastDraw].Count >= 3)
@@ -521,6 +517,7 @@ namespace Single
             return result;
         }
 
+        [System.Obsolete]
         public static ISet<Meld> GetRichiKongs(List<Tile> handTiles, List<Meld> openMelds, Tile lastDraw)
         {
             var result = new HashSet<Meld>();
@@ -531,6 +528,32 @@ namespace Single
         {
             var strings = decomposes.Select(list => $"[{string.Join(", ", list)}");
             return string.Join("; ", strings);
+        }
+
+        public static Tile GetDoraTile(Tile doraIndicator, IList<Tile> allTiles = null)
+        {
+            if (allTiles == null) allTiles = MahjongConstants.FullTiles;
+            if (!allTiles.Contains(doraIndicator, Tile.TileIgnoreColorEqualityComparer))
+            {
+                Debug.LogError($"Full tile set does not contain tile {doraIndicator}, return itself");
+                return doraIndicator;
+            }
+            int repeat;
+            if (doraIndicator.Suit == Suit.Z)
+            {
+                if (doraIndicator.Rank <= 4) repeat = 4;
+                else repeat = 3;
+            }
+            else repeat = 9;
+            int rank = doraIndicator.Rank;
+            Tile dora;
+            do
+            {
+                rank++;
+                if (rank > repeat) rank -= repeat;
+                dora = new Tile(doraIndicator.Suit, rank);
+            } while (!allTiles.Contains(dora, Tile.TileIgnoreColorEqualityComparer));
+            return dora;
         }
     }
 }

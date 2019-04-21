@@ -6,7 +6,35 @@ namespace Single
 {
     public enum InTurnOperationType
     {
-        Discard, Richi, Tsumo, Kong,
+        Discard, Richi, Tsumo, Bei, Kong,
+    }
+
+    [Serializable]
+    public struct InTurnOperation
+    {
+        public InTurnOperationType Type;
+        public Tile Tile;
+        public Meld Meld;
+        public Tile[] RichiLockTiles;
+
+        public override string ToString()
+        {
+            switch (Type)
+            {
+                case InTurnOperationType.Discard:
+                case InTurnOperationType.Tsumo:
+                    return $"Type: {Type}, Tile: {Tile}";
+                case InTurnOperationType.Richi:
+                    return $"Type: {Type}, Tile: {Tile}, RichiLockTiles: {string.Join("", RichiLockTiles)}";
+                case InTurnOperationType.Bei:
+                    return $"Type: {Type}";
+                case InTurnOperationType.Kong:
+                    return $"Type: {Type}, Tile: {Tile}, Meld: {Meld}";
+                default:
+                    Debug.LogWarning($"Unknown type: {Type}");
+                    throw new Exception("This will never happen");
+            }
+        }
     }
 
     public enum OutTurnOperationType
@@ -17,7 +45,6 @@ namespace Single
     [Serializable]
     public struct OutTurnOperation
     {
-        // public int PlayerIndex;
         public OutTurnOperationType Type;
         public Tile Tile;
         public Meld Meld;
@@ -36,7 +63,7 @@ namespace Single
                 case OutTurnOperationType.Rong:
                     return $"Type: {Type}, Tile: {Tile}";
                 default:
-                    Debug.LogWarning(Type);
+                    Debug.LogWarning($"Unknown type: {Type}");
                     throw new Exception("This will never happen");
             }
         }

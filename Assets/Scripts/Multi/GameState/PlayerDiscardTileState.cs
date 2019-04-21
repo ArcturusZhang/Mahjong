@@ -35,7 +35,7 @@ namespace Multi.GameState
         {
             Debug.Log($"Server enters {GetType().Name}");
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
-            NetworkServer.RegisterHandler(MessageIds.ClientOperationMessage, OnOperationMessageReceived);
+            NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOperationMessageReceived);
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
             {
                 Debug.LogError("[Server] currentPlayerIndex does not match, this should not happen");
@@ -93,13 +93,12 @@ namespace Multi.GameState
             var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
             var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
             // test rong
-            var hasWin = MahjongLogic.HasWin(handTiles, openMelds, DiscardTile);
-            if (hasWin)
+            if (MahjongLogic.HasWin(handTiles, openMelds, DiscardTile))
             {
                 // test if this player can claim a rong
                 var handStatus = HandStatus.Nothing;
                 // test menqing
-                if (openMelds.Length == 0 || openMelds.All(m => m.IsKong && !m.Revealed))
+                if (MahjongLogic.TestMenqing(openMelds))
                     handStatus |= HandStatus.Menqing;
                 // test tsumo -- no-need
                 // test richi
@@ -109,13 +108,13 @@ namespace Multi.GameState
                     // test one-shot
                     if (CurrentRoundStatus.OneShotStatus[playerIndex])
                         handStatus |= HandStatus.OneShot;
-                    // test if WRichi -- todo
+                    // test WRichi -- todo
                 }
                 // test first turn -- todo
                 // test lingshang -- no-need
-                // test lastdraw
+                // test haidi
                 if (MahjongSetData.TilesRemain == GameSettings.MountainReservedTiles)
-                    handStatus |= HandStatus.LastDraw;
+                    handStatus |= HandStatus.Haidi;
                 var roundStatus = new RoundStatus
                 {
                     PlayerIndex = playerIndex,
@@ -128,7 +127,7 @@ namespace Multi.GameState
                 var point = MahjongLogic.GetPointInfo(handTiles, openMelds, DiscardTile, handStatus,
                     roundStatus, YakuSettings);
                 Debug.Log($"PointInfo: {point}");
-                // test if enough fan
+                // test if enough
                 if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
                 {
                     operations.Add(new OutTurnOperation
@@ -146,7 +145,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}");
+            // Debug.Log($"Server is in {GetType().Name}");
             // Send messages again until get enough responds or time out
             if (Time.time - firstSendTime > serverTimeOut)
             {
@@ -189,7 +188,7 @@ namespace Multi.GameState
 
         private void OnOperationMessageReceived(NetworkMessage message)
         {
-            var content = message.ReadMessage<ClientOperationMessage>();
+            var content = message.ReadMessage<ClientOutTurnOperationMessage>();
             Debug.Log($"[Server] Received ClientOperationMessage: {content}");
             operationResponds[content.PlayerIndex] = true;
             outTurnOperations[content.PlayerIndex] = content.Operation;
@@ -200,7 +199,7 @@ namespace Multi.GameState
         {
             Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
-            NetworkServer.UnregisterHandler(MessageIds.ClientOperationMessage);
+            NetworkServer.UnregisterHandler(MessageIds.ClientOutTurnOperationMessage);
         }
     }
 }

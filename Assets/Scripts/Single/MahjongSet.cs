@@ -135,10 +135,12 @@ namespace Single
             }
         }
 
+        public IList<Tile> AllTiles => allTiles.AsReadOnly();
         public int TilesDrawn => tilesDrawn;
         public int DoraTurned => doraTurned;
         public int LingShangDrawn => lingShangDrawn;
         public int TilesRemain => allTiles.Count - tilesDrawn - lingShangDrawn;
+
         public MahjongSetData Data
         {
             get

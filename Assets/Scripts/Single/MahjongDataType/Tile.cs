@@ -145,7 +145,6 @@ namespace Single.MahjongDataType
                         }
                     }
                 default:
-                    Debug.LogError($"Rank = {Rank} should not happen");
                     return $"Suit = {Suit}, Rank = {Rank}";
             }
         }
@@ -222,17 +221,6 @@ namespace Single.MahjongDataType
         public static int GetIndex(Tile tile)
         {
             return (int)tile.Suit * 9 + tile.Rank - 1;
-        }
-
-        public Tile Dora
-        {
-            get
-            {
-                int repeat = Suit == Suit.Z ? 7 : 9;
-                int rank = Rank + 1;
-                if (rank > repeat) rank -= repeat;
-                return new Tile(Suit, rank);
-            }
         }
     }
 

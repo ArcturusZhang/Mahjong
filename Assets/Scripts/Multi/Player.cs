@@ -71,20 +71,31 @@ namespace Multi
             connectionToServer.Send(MessageIds.ClientDiscardTileMessage, message);
         }
 
-        public void SkipOutTurnOperation(int bonusTurnTime)
+        public void InTurnOperationTaken(InTurnOperation operation, int bonusTurnTime)
         {
-            OperationTaken(new OutTurnOperation { Type = OutTurnOperationType.Skip }, bonusTurnTime);
-        }
-
-        public void OperationTaken(OutTurnOperation operation, int bonusTurnTime)
-        {
-            var message = new ClientOperationMessage
+            var message = new ClientInTurnOperationMessage
             {
                 PlayerIndex = PlayerIndex,
                 Operation = operation,
                 BonusTurnTime = bonusTurnTime
             };
-            connectionToServer.Send(MessageIds.ClientOperationMessage, message);
+            connectionToServer.Send(MessageIds.ClientInTurnOperationMessage, message);
+        }
+
+        public void SkipOutTurnOperation(int bonusTurnTime)
+        {
+            OutTurnOperationTaken(new OutTurnOperation { Type = OutTurnOperationType.Skip }, bonusTurnTime);
+        }
+
+        public void OutTurnOperationTaken(OutTurnOperation operation, int bonusTurnTime)
+        {
+            var message = new ClientOutTurnOperationMessage
+            {
+                PlayerIndex = PlayerIndex,
+                Operation = operation,
+                BonusTurnTime = bonusTurnTime
+            };
+            connectionToServer.Send(MessageIds.ClientOutTurnOperationMessage, message);
         }
 
         private void RegisterHandlers()
@@ -96,6 +107,7 @@ namespace Multi
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPlayerTsumoMessage, OnPlayerTsumoMessageReceived);
         }
 
         private void OnGamePrepareMessageReceived(NetworkMessage message)
@@ -195,6 +207,15 @@ namespace Multi
             // this message do not require confirm
             // invoke client method for round draw operations
             ClientBehaviour.Instance.RoundDraw(content);
+        }
+
+        private void OnPlayerTsumoMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ServerPlayerTsumoMessage>();
+            Debug.Log($"ServerPlayerTsumoMessage received: {content}");
+            // this message do not require confirm
+            // invoke client method for tsumo operation
+            ClientBehaviour.Instance.PlayerTsumo(content);
         }
     }
 }

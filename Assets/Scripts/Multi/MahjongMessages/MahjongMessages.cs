@@ -8,10 +8,6 @@ using System.Linq;
 namespace Multi.MahjongMessages
 {
     // Server to client messages
-    // public class ServerGameSyncMessage : MessageBase
-    // {
-    //     // todo
-    // }
     public class ServerGamePrepareMessage : MessageBase
     {
         public int TotalPlayers;
@@ -61,7 +57,7 @@ namespace Multi.MahjongMessages
         public int PlayerIndex;
         public Tile Tile;
         public int BonusTurnTime;
-        public InTurnOperationType Operations;
+        public InTurnOperation[] Operations;
         public MahjongSetData MahjongSetData;
 
         public override string ToString()
@@ -69,7 +65,7 @@ namespace Multi.MahjongMessages
             return $"PlayerIndex: {PlayerIndex}\n"
                 + $"Tile: {Tile}\n"
                 + $"BonusTurnTime: {BonusTurnTime}\n"
-                + $"Operations: {Operations}\n"
+                + $"Operations: {string.Join(",", Operations)}\n"
                 + $"MahjongSetData: {MahjongSetData}";
         }
     }
@@ -138,6 +134,26 @@ namespace Multi.MahjongMessages
             return string.Join("\n", list);
         }
     }
+    public class ServerPlayerTsumoMessage : MessageBase
+    {
+        public int TsumoPlayerIndex;
+        public Tile[] TsumoPlayerHandTiles;
+        public Meld[] TsumoPlayerOpenMelds;
+        public Tile[] DoraIndicators;
+        public bool IsRichi;
+        public Tile[] UraDoraIndicators;
+        public PointInfo TsumoPointInfo;
+
+        public override string ToString()
+        {
+            return $"TsumoPlayerIndex: {TsumoPlayerIndex}\n"
+                + $"HandTiles: {string.Join("", TsumoPlayerHandTiles)}\n"
+                + $"OpenMelds: {string.Join(",", TsumoPlayerOpenMelds)}\n"
+                + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
+                + $"UraDoraIndicators: {string.Join("", UraDoraIndicators)}\n"
+                + $"TsumoPointSummary: {TsumoPointInfo}";
+        }
+    }
 
     // Client to server messages
     public class ClientReadinessMessage : MessageBase
@@ -170,7 +186,21 @@ namespace Multi.MahjongMessages
         }
     }
 
-    public class ClientOperationMessage : MessageBase
+    public class ClientInTurnOperationMessage : MessageBase
+    {
+        public int PlayerIndex;
+        public InTurnOperation Operation;
+        public int BonusTurnTime;
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}\n"
+                + $"Operation: {Operation}\n"
+                + $"BonusTurnTime: {BonusTurnTime}";
+        }
+    }
+
+    public class ClientOutTurnOperationMessage : MessageBase
     {
         public int PlayerIndex;
         public OutTurnOperation Operation;
@@ -181,6 +211,16 @@ namespace Multi.MahjongMessages
             return $"PlayerIndex: {PlayerIndex}\n"
                 + $"Operation: {Operation}\n"
                 + $"BonusTurnTime: {BonusTurnTime}";
+        }
+    }
+
+    public class ClientNextRoundMessage : MessageBase
+    {
+        public int PlayerIndex;
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}";
         }
     }
 }

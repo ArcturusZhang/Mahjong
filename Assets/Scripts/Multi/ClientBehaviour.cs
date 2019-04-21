@@ -29,6 +29,7 @@ namespace Multi
         public PlayerInfoManager PlayerInfoManager;
         public HandPanelManager HandPanelManager;
         public TimerController TurnTimeController;
+        public InTurnPanelManager InTurnPanelManager;
         public OutTurnPanelManager OutTurnPanelManager;
         public RoundDrawPanelManager[] DrawPanelManagers;
 
@@ -214,6 +215,7 @@ namespace Multi
                 Debug.Log("Time out! Automatically discarding last drawn tile");
                 LocalPlayer.DiscardTile(tile, false, true, 0);
             });
+            InTurnPanelManager.SetOperations(message.Operations);
         }
 
         public void OtherPlayerDrawTurn(ServerOtherDrawTileMessage message)
@@ -283,13 +285,17 @@ namespace Multi
             // todo -- do some cleaning, etc
         }
 
+        public void PlayerTsumo(ServerPlayerTsumoMessage message)
+        {
+            // show tsumo animation
+            // show summary panel
+        }
+
         public void RoundDraw(ServerRoundDrawMessage message)
         {
             // checking
             if (!LastDraws.All(l => l == null))
                 Debug.LogError("Someone still holding a lastDraw, this should not happen!");
-            // hide hand panel
-            HideHandPanel();
             // reveal hand tiles on table
             Debug.Log("Revealing hand tiles");
             var waitingDataArray = message.WaitingData;
@@ -325,37 +331,65 @@ namespace Multi
             LocalPlayer.DiscardTile(tile, IsRichiing, isLastDraw, bonusTimeLeft);
         }
 
-        public void OnSkipButtonClicked()
+        public void OnInTurnSkipButtonClicked()
         {
-            int bonusTimeLeft = TurnTimeController.StopCountDown();
-            Debug.Log($"Sending request of skipping out turn operation with bonus turn time {bonusTimeLeft}");
-            LocalPlayer.SkipOutTurnOperation(bonusTimeLeft);
-            OutTurnPanelManager.Disable();
+            Debug.Log("In turn skip button clicked, hide buttons");
+            InTurnPanelManager.Disable();
         }
 
-        public void OnRongButtonClicked(OutTurnOperation operation)
+        public void OnTsumoButtonClicked(InTurnOperation operation)
         {
-            if (operation.Type != OutTurnOperationType.Rong)
+            if (operation.Type != InTurnOperationType.Tsumo)
             {
-                Debug.LogError($"Cannot send a operation with type {operation.Type} within OnRongButtonClicked method");
+                Debug.LogError($"Cannot send a operation with type {operation.Type} within OnTsumoButtonClicked method");
                 return;
             }
             int bonusTimeLeft = TurnTimeController.StopCountDown();
-            Debug.Log($"Sending request of rong operation with bonus turn time {bonusTimeLeft}");
-            LocalPlayer.OperationTaken(operation, bonusTimeLeft);
-            OutTurnPanelManager.Disable();
+            Debug.Log($"Sending request of tsumo operation with bonus turn time {bonusTimeLeft}");
+            LocalPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
+            InTurnPanelManager.Disable();
         }
 
-        public void OnKongButtonClicked(OutTurnOperation operation)
+        public void OnRichiButtonClicked(InTurnOperation operation, InTurnOperation[] originalOperations)
         {
-            if (operation.Type != OutTurnOperationType.Kong)
+            if (operation.Type != InTurnOperationType.Richi)
             {
-                Debug.LogError($"Cannot send a operation with type {operation.Type} within OnKongButtonClicked method");
+                Debug.LogError($"Cannot send a operation with type {operation.Type} within OnRichiButtonClicked method");
                 return;
             }
+            // show richi selection panel -- todo
+            Debug.Log("Showing richi selection panel");
+            // todo
+        }
+
+        public void OnInTurnKongButtonClicked(InTurnOperation[] operationOptions, InTurnOperation[] originalOperations)
+        {
+            if (operationOptions == null || operationOptions.Length == 0)
+            {
+                Debug.LogError("The operations are null or empty in OnInTurnKongButtonClicked method, this should not happen.");
+                return;
+            }
+            if (!operationOptions.All(op => op.Type == InTurnOperationType.Kong))
+            {
+                Debug.LogError("There are incompatible type within OnInTurnKongButtonClicked method");
+                return;
+            }
+            if (operationOptions.Length == 1)
+            {
+                int bonusTimeLeft = TurnTimeController.StopCountDown();
+                Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
+                LocalPlayer.InTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                InTurnPanelManager.Disable();
+                return;
+            }
+            // todo -- show kong selection panel here
+        }
+
+        public void OnOutTurnButtonClicked(OutTurnOperation operation)
+        {
             int bonusTimeLeft = TurnTimeController.StopCountDown();
-            Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
-            LocalPlayer.OperationTaken(operation, bonusTimeLeft);
+            Debug.Log($"Sending request of operation {operation} with bonus turn time {bonusTimeLeft}");
+            LocalPlayer.OutTurnOperationTaken(operation, bonusTimeLeft);
             OutTurnPanelManager.Disable();
         }
 
@@ -375,14 +409,15 @@ namespace Multi
             {
                 int bonusTimeLeft = TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of chow operation with bonus turn time {bonusTimeLeft}");
-                LocalPlayer.OperationTaken(operationOptions[0], bonusTimeLeft);
+                LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 OutTurnPanelManager.Disable();
                 return;
             }
             // todo -- chow selection logic here
         }
 
-        public void OnPongButtonClicked(OutTurnOperation[] operationOptions, OutTurnOperation[] originalOperations) {
+        public void OnPongButtonClicked(OutTurnOperation[] operationOptions, OutTurnOperation[] originalOperations)
+        {
             if (operationOptions == null || operationOptions.Length == 0)
             {
                 Debug.LogError("The operations are null or empty in OnPongButtonClicked method, this should not happen.");
@@ -393,10 +428,11 @@ namespace Multi
                 Debug.LogError("There are incompatible type within OnPongButtonClicked method");
                 return;
             }
-            if (operationOptions.Length == 1) {
+            if (operationOptions.Length == 1)
+            {
                 int bonusTimeLeft = TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
-                LocalPlayer.OperationTaken(operationOptions[0], bonusTimeLeft);
+                LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 OutTurnPanelManager.Disable();
                 return;
             }
@@ -421,16 +457,6 @@ namespace Multi
                 else
                     PlayerNames[i] = null;
             }
-        }
-
-        private void HideHandPanel()
-        {
-            HandPanelManager.gameObject.SetActive(false);
-        }
-
-        private void ShowHandPanel()
-        {
-            HandPanelManager.gameObject.SetActive(true);
         }
 
         private int GetPlaceIndexByPlayerIndex(int playerIndex)

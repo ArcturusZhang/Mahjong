@@ -45,7 +45,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}");
+            // Debug.Log($"Server is in {GetType().Name}");
         }
     }
 }

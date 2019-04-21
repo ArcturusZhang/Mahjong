@@ -46,4 +46,27 @@ public class MahjongLogicTest
         };
         Debug.Log($"Hand tiles: {string.Join("", handTiles)}\nWaiting tiles: {string.Join("", MahjongLogic.WinningTiles(handTiles, new List<Meld>()))}");
     }
+
+    [MenuItem("MahjongLogic/Test dora")]
+    public static void TestDora() {
+        var allTiles = MahjongConstants.TwoPlayerTiles;
+        var indicator = new Tile(Suit.Z, 2);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.Z, 7);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.Z, 4);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.S, 7);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.S, 9);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.S, 1);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.M, 1);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.M, 4);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+        indicator = new Tile(Suit.M, 9);
+        Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+    }
 }

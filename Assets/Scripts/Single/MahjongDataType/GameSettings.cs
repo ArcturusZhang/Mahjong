@@ -14,6 +14,7 @@ namespace Single.MahjongDataType
         public int MinimumFanConstraint = 1;
         public bool AllowDiscardSameAfterOpen = false;
         public bool AllowChows = true;
+        public bool AllowRichiWhenNotReady = true;
 
         [Header("Tile drawing settings")] public int InitialDrawRound = 3;
         public int TilesEveryRound = 4;

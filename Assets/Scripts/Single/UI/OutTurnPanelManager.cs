@@ -14,32 +14,32 @@ namespace Single.UI
         public Button PongButton;
         public Button KongButton;
         public Button SkipButton;
-        // private OutTurnOperation[] operations = null;
 
         public void SetOperations(OutTurnOperation[] operations)
         {
-            // this.operations = operations;
             // only valid operation is skip: this should not happen
             if (operations.All(op => op.Type == OutTurnOperationType.Skip))
             {
                 Debug.LogError("This logic should not be reached.");
-                ClientBehaviour.Instance.OnSkipButtonClicked();
                 return;
             }
+            SkipButton.onClick.RemoveAllListeners();
             SkipButton.gameObject.SetActive(true);
+            var skipOperation = System.Array.Find(operations, op => op.Type == OutTurnOperationType.Skip);
+            SkipButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnButtonClicked(skipOperation));
             if (operations.Any(op => op.Type == OutTurnOperationType.Rong))
             {
                 RongButton.onClick.RemoveAllListeners();
                 RongButton.gameObject.SetActive(true);
                 var rongOperation = System.Array.Find(operations, op => op.Type == OutTurnOperationType.Rong);
-                RongButton.onClick.AddListener(() => ClientBehaviour.Instance.OnRongButtonClicked(rongOperation));
+                RongButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnButtonClicked(rongOperation));
             }
             if (operations.Any(op => op.Type == OutTurnOperationType.Kong))
             {
                 KongButton.onClick.RemoveAllListeners();
                 KongButton.gameObject.SetActive(true);
                 var kongOperation = System.Array.Find(operations, op => op.Type == OutTurnOperationType.Kong);
-                KongButton.onClick.AddListener(() => ClientBehaviour.Instance.OnKongButtonClicked(kongOperation));
+                KongButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnButtonClicked(kongOperation));
             }
             if (operations.Any(op => op.Type == OutTurnOperationType.Chow))
             {

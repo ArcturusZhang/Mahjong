@@ -97,6 +97,7 @@ namespace Multi
             var drawState = new PlayerDrawTileState
             {
                 GameSettings = GameSettings,
+                YakuSettings = YakuSettings,
                 CurrentPlayerIndex = playerIndex,
                 Players = LobbyManager.Instance.Players,
                 MahjongSet = mahjongSet,
@@ -157,7 +158,7 @@ namespace Multi
             StateMachine.ChangeState(turnEndState);
         }
 
-        public void PerformOperation(int newPlayerIndex, OutTurnOperation operation)
+        public void PerformOutTurnOperation(int newPlayerIndex, OutTurnOperation operation)
         {
             var operationPerformState = new OperationPerformState
             {
@@ -166,14 +167,30 @@ namespace Multi
             StateMachine.ChangeState(operationPerformState);
         }
 
-        public void RoundSummary(int currentPlayerIndex, OutTurnOperation[] operations) {
+        public void HandleTsumo(int currentPlayerIndex, PointInfo pointInfo)
+        {
+            var tsumoState = new PlayerTsumoState
+            {
+                GameSettings = GameSettings,
+                TsumoPlayerIndex = currentPlayerIndex,
+                Players = LobbyManager.Instance.Players,
+                CurrentRoundStatus = CurrentRoundStatus,
+                MahjongSet = mahjongSet,
+                TsumoPointInfo = pointInfo
+            };
+            StateMachine.ChangeState(tsumoState);
+        }
+
+        public void HandleRong(int currentPlayerIndex, OutTurnOperation[] operations)
+        {
             // todo -- calculate points
             StateMachine.ChangeState(new IdleState());
         }
 
         public void RoundDraw()
         {
-            var drawState = new RoundDrawState {
+            var drawState = new RoundDrawState
+            {
                 GameSettings = GameSettings,
                 Players = LobbyManager.Instance.Players,
                 CurrentRoundStatus = CurrentRoundStatus

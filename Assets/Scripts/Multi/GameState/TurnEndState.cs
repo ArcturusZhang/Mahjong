@@ -119,7 +119,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            Debug.Log($"Server is in {GetType().Name}");
+            // Debug.Log($"Server is in {GetType().Name}");
             if (Time.time - firstTime > serverTurnEndTimeOut)
             {
                 TurnEndTimeOut();
@@ -133,7 +133,7 @@ namespace Multi.GameState
             switch (operationChosen)
             {
                 case OutTurnOperationType.Rong:
-                    ServerBehaviour.Instance.RoundSummary(CurrentPlayerIndex, Operations);
+                    ServerBehaviour.Instance.HandleRong(CurrentPlayerIndex, Operations);
                     break;
                 case OutTurnOperationType.RoundDraw:
                     ServerBehaviour.Instance.RoundDraw();
@@ -143,7 +143,7 @@ namespace Multi.GameState
                 case OutTurnOperationType.Chow:
                     int index = System.Array.FindIndex(Operations, op => op.Type != OutTurnOperationType.Skip);
                     Assert.IsTrue(index >= 0, "There should be a valid operation to find");
-                    ServerBehaviour.Instance.PerformOperation(index, Operations[index]);
+                    ServerBehaviour.Instance.PerformOutTurnOperation(index, Operations[index]);
                     break;
                 case OutTurnOperationType.Skip:
                     int nextPlayer = CurrentPlayerIndex + 1;
