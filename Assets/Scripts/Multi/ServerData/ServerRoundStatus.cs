@@ -60,7 +60,7 @@ namespace Multi.ServerData
         }
         public bool[] RichiStatus => richiStatus;
         public bool[] OneShotStatus => oneShotStatus;
-
+        public int TotalPlayers => players.Count;
         public string[] PlayerNames => players.Select(player => player.PlayerName).ToArray();
 
         public IList<Player> Players
@@ -78,6 +78,14 @@ namespace Multi.ServerData
         {
             CheckRange(index);
             return openMelds[index].ToArray();
+        }
+
+        public PlayerHandData HandData(int index) {
+            CheckRange(index);
+            return new PlayerHandData {
+                HandTiles = HandTiles(index),
+                OpenMelds = OpenMelds(index)
+            };
         }
 
         public RiverData[] Rivers
@@ -196,6 +204,10 @@ namespace Multi.ServerData
             {
                 SortHandTiles(i);
             }
+        }
+
+        public bool IsDealer(int index) {
+            return index == OyaPlayerIndex;
         }
 
         // todo -- dealing with extra and new

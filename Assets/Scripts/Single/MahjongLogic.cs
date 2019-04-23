@@ -121,7 +121,6 @@ namespace Single
             int uraDora = 0;
             if (handStatus.HasFlag(HandStatus.Richi) || handStatus.HasFlag(HandStatus.WRichi))
             {
-                Assert.IsNotNull(uraDoraTiles, "There should be uraDoras after richi");
                 uraDora = CountDora(handTiles, openMelds, winningTile, uraDoraTiles);
             }
 
@@ -208,7 +207,6 @@ namespace Single
             if (count % 3 != 1) return decompose;
             var allTiles = new List<Tile>(handTiles) { tile };
             var hand = CountTiles(allTiles);
-            Debug.Log($"Hand tile distribution: {string.Join(",", hand)}");
             AnalyzeNormal(hand, decompose);
             Analyze7Pairs(hand, decompose);
             Analyze13Orphans(hand, decompose);

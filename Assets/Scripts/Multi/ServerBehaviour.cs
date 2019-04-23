@@ -12,7 +12,9 @@ using UnityEngine.Networking;
 
 namespace Multi
 {
-    // This class only takes effect on server
+    /// <summary>
+    /// This class only takes effect on server
+    /// </summary>
     public class ServerBehaviour : NetworkBehaviour
     {
         public GameSettings GameSettings;
@@ -143,13 +145,15 @@ namespace Multi
         }
 
         // todo -- this method needs more info to work (operations other players take, etc)
-        public void TurnEnd(int playerIndex, bool isRichiing, OutTurnOperation[] operations)
+        public void TurnEnd(int playerIndex, Tile discardingTile, bool isRichiing, OutTurnOperation[] operations)
         {
             var turnEndState = new TurnEndState
             {
                 GameSettings = GameSettings,
+                YakuSettings = YakuSettings,
                 CurrentPlayerIndex = playerIndex,
                 Players = LobbyManager.Instance.Players,
+                DiscardingTile = discardingTile,
                 IsRichiing = isRichiing,
                 Operations = operations,
                 CurrentRoundStatus = CurrentRoundStatus,
@@ -167,13 +171,14 @@ namespace Multi
             StateMachine.ChangeState(operationPerformState);
         }
 
-        public void HandleTsumo(int currentPlayerIndex, PointInfo pointInfo)
+        public void HandleTsumo(int currentPlayerIndex, Tile winningTile, PointInfo pointInfo)
         {
             var tsumoState = new PlayerTsumoState
             {
                 GameSettings = GameSettings,
-                TsumoPlayerIndex = currentPlayerIndex,
                 Players = LobbyManager.Instance.Players,
+                TsumoPlayerIndex = currentPlayerIndex,
+                WinningTile = winningTile,
                 CurrentRoundStatus = CurrentRoundStatus,
                 MahjongSet = mahjongSet,
                 TsumoPointInfo = pointInfo
@@ -181,10 +186,18 @@ namespace Multi
             StateMachine.ChangeState(tsumoState);
         }
 
-        public void HandleRong(int currentPlayerIndex, OutTurnOperation[] operations)
+        public void HandleRong(int currentPlayerIndex, Tile winningTile, int[] rongPlayerIndices, PointInfo[] rongPointInfos)
         {
-            // todo -- calculate points
-            StateMachine.ChangeState(new IdleState());
+            var rongState = new PlayerRongState {
+                GameSettings = GameSettings,
+                Players = LobbyManager.Instance.Players,
+                RongPlayerIndices = rongPlayerIndices,
+                WinningTile = winningTile,
+                CurrentRoundStatus = CurrentRoundStatus,
+                MahjongSet = mahjongSet,
+                RongPointInfos = rongPointInfos
+            };
+            StateMachine.ChangeState(rongState);
         }
 
         public void RoundDraw()

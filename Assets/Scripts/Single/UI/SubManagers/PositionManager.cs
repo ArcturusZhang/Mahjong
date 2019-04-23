@@ -4,7 +4,7 @@ using UI.ResourcesBundle;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Single.UI
+namespace Single.UI.SubManagers
 {
     public class PositionManager : MonoBehaviour
     {

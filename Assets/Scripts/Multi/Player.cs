@@ -98,6 +98,13 @@ namespace Multi
             connectionToServer.Send(MessageIds.ClientOutTurnOperationMessage, message);
         }
 
+        public void RequestNewRound() {
+            var message = new ClientNextRoundMessage {
+                PlayerIndex = PlayerIndex
+            };
+            connectionToServer.Send(MessageIds.ClientNextRoundMessage, message);
+        }
+
         private void RegisterHandlers()
         {
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPrepareMessage, OnGamePrepareMessageReceived);
@@ -107,7 +114,8 @@ namespace Multi
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPlayerTsumoMessage, OnPlayerTsumoMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTsumoMessage, OnPlayerTsumoMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRongMessage, OnPlayerRongMessageReceived);
         }
 
         private void OnGamePrepareMessageReceived(NetworkMessage message)
@@ -216,6 +224,14 @@ namespace Multi
             // this message do not require confirm
             // invoke client method for tsumo operation
             ClientBehaviour.Instance.PlayerTsumo(content);
+        }
+
+        private void OnPlayerRongMessageReceived(NetworkMessage message) {
+            var content = message.ReadMessage<ServerPlayerRongMessage>();
+            Debug.Log($"ServerPlayerRongMessage received: {content}");
+            // this message do not require confirm
+            // invoke client method for rong operations
+            ClientBehaviour.Instance.PlayerRong(content);
         }
     }
 }

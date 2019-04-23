@@ -19,7 +19,7 @@ namespace Single
         private Sprite fourRichi;
         private Sprite fourKongs;
         private readonly IDictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
-        private readonly IDictionary<string, Sprite> spriteDict = new Dictionary<string, Sprite>();
+        private IDictionary<string, Sprite> spriteDict;
 
         private void Awake()
         {
@@ -32,6 +32,7 @@ namespace Single
         {
             tileSprites = Resources.LoadAll<Sprite>("Textures/UIElements/tile_ui");
             yield return null;
+            spriteDict = tileSprites.ToDictionary(sprite => sprite.name);
 
             var mjdesktop3 = Resources.LoadAll<Sprite>("Textures/UIElements/mjdesktop3");
             placeNumbers = new Sprite[4];
@@ -63,12 +64,6 @@ namespace Single
             }
         }
 
-        public Pair<Sprite, Sprite> Place(int place)
-        {
-            if (place <= 0 || place > 4) return new Pair<Sprite, Sprite>(null, null);
-            return new Pair<Sprite, Sprite>(placeNumbers[place - 1], placeCharacters[place - 1]);
-        }
-
         public Texture2D GetTileTexture(Tile tile)
         {
             var key = MahjongConstants.GetTileName(tile);
@@ -77,20 +72,16 @@ namespace Single
 
         public Sprite GetTileSprite(Tile tile)
         {
-            if (tileSprites == null) return null;
-            var key = MahjongConstants.GetTileName(tile);
-            if (!spriteDict.ContainsKey(key))
-            {
-                foreach (var sprite in tileSprites)
-                {
-                    if (key.Equals(sprite.name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        spriteDict.Add(key, sprite);
-                    }
-                }
+            if (tileSprites == null) {
+                Debug.LogError("tileSprite is null, something is wrong, please wait and try again.");
+                return null;
             }
-
+            var key = MahjongConstants.GetTileName(tile);
             return spriteDict[key];
+        }
+
+        public Sprite GetTileSpriteByName(string name) {
+            return spriteDict[name];
         }
 
         private static Sprite FindByName(Sprite[] sprites, string name)

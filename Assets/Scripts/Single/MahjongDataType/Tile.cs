@@ -231,25 +231,4 @@ namespace Single.MahjongDataType
         S = 2,
         Z = 3
     }
-
-    [Serializable]
-    public struct RiverTile
-    {
-        public Tile Tile;
-        public bool IsRichi;
-        public bool IsGone;
-    }
-
-    [Serializable]
-    public struct RiverData
-    {
-        public RiverTile[] River;
-    }
-
-    [Serializable]
-    public struct WaitingData
-    {
-        public Tile[] HandTiles;
-        public Tile[] WaitingTiles;
-    }
 }

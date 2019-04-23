@@ -2,26 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using Lobby;
+using Multi;
 using Multi.MahjongMessages;
-using Multi.ServerData;
-using Single;
 using Single.MahjongDataType;
 using Single.UI;
-using UI;
+using Single.UI.Controller;
 using UnityEngine;
 
 
-namespace Multi
+namespace Single
 {
     public class ClientBehaviour : MonoBehaviour
     {
         public static ClientBehaviour Instance { get; private set; }
 
         [Header("Game Managers")]
-        // public RoundInfoManager RoundInfoManager;
-        // public PointsManager PointsManager;
-        // public PositionManager PositionManager;
-        // public RichiStatusManager RichiStatusManager;
         public BoardInfoManager BoardInfoManager;
         public YamaManager YamaManager;
         public PlayerHandManager[] HandManagers;
@@ -32,6 +27,7 @@ namespace Multi
         public InTurnPanelManager InTurnPanelManager;
         public OutTurnPanelManager OutTurnPanelManager;
         public RoundDrawPanelManager[] DrawPanelManagers;
+        public PointSummaryPanelManager PointSummaryPanelManager;
 
         [Header("Settings")]
         public GameSettings GameSettings;
@@ -287,8 +283,70 @@ namespace Multi
 
         public void PlayerTsumo(ServerPlayerTsumoMessage message)
         {
-            // show tsumo animation
+            // show tsumo animation -- todo
             // show summary panel
+            var data = new SummaryPanelData
+            {
+                HandInfo = new PlayerHandInfo
+                {
+                    HandTiles = message.TsumoHandData.HandTiles,
+                    OpenMelds = message.TsumoHandData.OpenMelds,
+                    WinningTile = message.WinningTile,
+                    DoraIndicators = message.DoraIndicators,
+                    UraDoraIndicators = message.UraDoraIndicators,
+                    IsTsumo = true
+                },
+                PointInfo = new PointInfo(message.TsumoPointInfo),
+                Multiplier = message.Multiplier,
+                PlayerName = message.TsumoPlayerName
+            };
+            PointSummaryPanelManager.ShowPanel(data, () =>
+            {
+                Debug.Log("Sending request for a new round");
+                LocalPlayer.RequestNewRound();
+            });
+        }
+
+        public void PlayerRong(ServerPlayerRongMessage message)
+        {
+            // show rong animation -- todo
+            // show summary panel
+            // get indices of all array
+            var indices = message.RongPlayerIndices.Select((playerIndex, index) => index).ToArray();
+            var dataArray = indices.Select(index => new SummaryPanelData
+            {
+                HandInfo = new PlayerHandInfo
+                {
+                    HandTiles = message.HandData[index].HandTiles,
+                    OpenMelds = message.HandData[index].OpenMelds,
+                    WinningTile = message.WinningTile,
+                    DoraIndicators = message.DoraIndicators,
+                    UraDoraIndicators = message.UraDoraIndicators,
+                    IsTsumo = false
+                },
+                PointInfo = new PointInfo(message.RongPointInfos[index]),
+                Multiplier = message.Multipliers[index],
+                PlayerName = message.RongPlayerNames[index]
+            });
+            var dataQueue = new Queue<SummaryPanelData>(dataArray);
+            ShowRongPanel(dataQueue);
+        }
+
+        private void ShowRongPanel(Queue<SummaryPanelData> queue)
+        {
+            if (queue.Count > 0)
+            {
+                // show panel for this data
+                var data = queue.Dequeue();
+                PointSummaryPanelManager.ShowPanel(data, () => ShowRongPanel(queue));
+                // todo wait between two panels
+            }
+            else
+            {
+                // no more data to show
+                Debug.Log("Sending request for a new round.");
+                LocalPlayer.RequestNewRound();
+            }
         }
 
         public void RoundDraw(ServerRoundDrawMessage message)

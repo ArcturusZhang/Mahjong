@@ -90,57 +90,35 @@ namespace Multi.GameState
             var operations = new List<OutTurnOperation> {
                 new OutTurnOperation { Type = OutTurnOperationType.Skip}
             };
-            var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
-            var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
-            // test rong
-            if (MahjongLogic.HasWin(handTiles, openMelds, DiscardTile))
+            var point = GetRongInfo(playerIndex, DiscardTile);
+            Debug.Log($"PointInfo: {point}");
+            // test if enough
+            if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
             {
-                // test if this player can claim a rong
-                var handStatus = HandStatus.Nothing;
-                // test menqing
-                if (MahjongLogic.TestMenqing(openMelds))
-                    handStatus |= HandStatus.Menqing;
-                // test tsumo -- no-need
-                // test richi
-                if (CurrentRoundStatus.RichiStatus[playerIndex])
+                operations.Add(new OutTurnOperation
                 {
-                    handStatus |= HandStatus.Richi;
-                    // test one-shot
-                    if (CurrentRoundStatus.OneShotStatus[playerIndex])
-                        handStatus |= HandStatus.OneShot;
-                    // test WRichi -- todo
-                }
-                // test first turn -- todo
-                // test lingshang -- no-need
-                // test haidi
-                if (MahjongSetData.TilesRemain == GameSettings.MountainReservedTiles)
-                    handStatus |= HandStatus.Haidi;
-                var roundStatus = new RoundStatus
-                {
-                    PlayerIndex = playerIndex,
-                    OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex,
-                    CurrentExtraRound = CurrentRoundStatus.Extra,
-                    RichiSticks = CurrentRoundStatus.RichiSticks,
-                    FieldCount = CurrentRoundStatus.Field,
-                    TotalPlayer = Players.Count
-                };
-                var point = MahjongLogic.GetPointInfo(handTiles, openMelds, DiscardTile, handStatus,
-                    roundStatus, YakuSettings);
-                Debug.Log($"PointInfo: {point}");
-                // test if enough
-                if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
-                {
-                    operations.Add(new OutTurnOperation
-                    {
-                        Type = OutTurnOperationType.Rong,
-                        Tile = DiscardTile
-                    });
-                }
+                    Type = OutTurnOperationType.Rong,
+                    Tile = DiscardTile
+                });
             }
             // test kong -- todo
             // test pong -- todo
             // test chow -- todo
             return operations.ToArray();
+        }
+
+        private PointInfo GetRongInfo(int playerIndex, Tile discard)
+        {
+            var baseHandStatus = HandStatus.Nothing;
+            // test haidi
+            if (MahjongSetData.TilesRemain == GameSettings.MountainReservedTiles)
+                baseHandStatus |= HandStatus.Haidi;
+            // test lingshang -- not gonna happen
+            // just test if this player can claim rong, no need for dora
+            var point = ServerMahjongLogic.GetPointInfo(
+                playerIndex, CurrentRoundStatus, discard, baseHandStatus,
+                null, null, YakuSettings);
+            return point;
         }
 
         public void OnStateUpdate()
@@ -158,7 +136,7 @@ namespace Multi.GameState
                         outTurnOperations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                     }
                 }
-                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, IsRichiing, outTurnOperations);
+                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, outTurnOperations);
                 return;
             }
             if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
@@ -170,7 +148,7 @@ namespace Multi.GameState
             if (operationResponds.All(r => r))
             {
                 Debug.Log("[Server] Server received all operation response, ending this turn.");
-                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, IsRichiing, outTurnOperations);
+                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, outTurnOperations);
             }
         }
 

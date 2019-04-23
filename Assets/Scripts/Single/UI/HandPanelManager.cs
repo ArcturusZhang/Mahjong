@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Single.MahjongDataType;
+using Single.UI.Layout;
 using UnityEngine;
 
 namespace Single.UI

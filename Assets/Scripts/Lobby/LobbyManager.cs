@@ -21,7 +21,8 @@ namespace Lobby
         public static LobbyManager Instance { get; private set; }
 
 
-        [Header("Unity UI Lobby")] [Tooltip("Time in second between all players ready & match start")]
+        [Header("Unity UI Lobby")]
+        [Tooltip("Time in second between all players ready & match start")]
         public float prematchCountdown = 5.0f;
 
         [Space] [Header("UI Reference")] public LobbyTopPanel topPanel;
@@ -61,7 +62,7 @@ namespace Lobby
         [Header("Game Settings")] public GameSettings GameSettings;
         public YakuSettings YakuSettings;
 
-        private void Start()
+        public void Start()
         {
             Instance = this;
             _lobbyHooks = GetComponent<LobbyHook>();
@@ -73,7 +74,7 @@ namespace Lobby
             DontDestroyOnLoad(gameObject);
 
             SetServerInfo("Offline", "None");
-            
+
             Debug.Log("All players are cleared.");
         }
 
@@ -196,7 +197,7 @@ namespace Lobby
         public void RemovePlayer(Player player)
         {
             Players.Remove(player);
-//            ServerReturnToLobby(); // todo -- player leaves will cause the game back to lobby
+            //            ServerReturnToLobby(); // todo -- player leaves will cause the game back to lobby
         }
 
         public void RemovePlayer(LobbyPlayer player)
@@ -213,7 +214,7 @@ namespace Lobby
         {
             if (_isMatchmaking)
             {
-                matchMaker.DestroyMatch((NetworkID) _currentMatchID, 0, OnDestroyMatch);
+                matchMaker.DestroyMatch((NetworkID)_currentMatchID, 0, OnDestroyMatch);
                 _disconnectServer = true;
             }
             else
@@ -273,7 +274,7 @@ namespace Lobby
         public override void OnMatchCreate(bool success, string extendedInfo, MatchInfo matchInfo)
         {
             base.OnMatchCreate(success, extendedInfo, matchInfo);
-            _currentMatchID = (ulong) matchInfo.networkId;
+            _currentMatchID = (ulong)matchInfo.networkId;
         }
 
         public override void OnDestroyMatch(bool success, string extendedInfo)
@@ -452,7 +453,7 @@ namespace Lobby
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
             base.OnClientSceneChanged(conn);
-//            conn.Send(MessageConstants.SceneLoadedMessageId, new SceneLoadedMessage {PlayerIndex = });
+            //            conn.Send(MessageConstants.SceneLoadedMessageId, new SceneLoadedMessage {PlayerIndex = });
         }
     }
 }

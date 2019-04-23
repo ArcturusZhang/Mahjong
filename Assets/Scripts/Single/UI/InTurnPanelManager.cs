@@ -21,7 +21,9 @@ namespace Single.UI
                 ClientBehaviour.Instance.OnInTurnSkipButtonClicked();
                 return;
             }
+            SkipButton.onClick.RemoveAllListeners();
             SkipButton.gameObject.SetActive(true);
+            SkipButton.onClick.AddListener(ClientBehaviour.Instance.OnInTurnSkipButtonClicked);
             if (operations.Any(op => op.Type == InTurnOperationType.Tsumo)) {
                 TsumoButton.onClick.RemoveAllListeners();
                 TsumoButton.gameObject.SetActive(true);

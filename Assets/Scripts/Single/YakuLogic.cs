@@ -317,9 +317,7 @@ namespace Single
         public static YakuValue 一色系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
             RoundStatus roundStatus, YakuSettings settings)
         {
-//            var allZ = decompose.All(meld => meld.Suit == Suit.Z);
-//            if (allZ) return new YakuValue {Name = "字一色", Value = 1, Type = YakuType.Yakuman};
-            // this has already been handled in 全带系 
+            // 字一色 has already been handled in 全带系 
             var allM = decompose.All(meld => meld.Suit == Suit.M || meld.Suit == Suit.Z);
             var allS = decompose.All(meld => meld.Suit == Suit.S || meld.Suit == Suit.Z);
             var allP = decompose.All(meld => meld.Suit == Suit.P || meld.Suit == Suit.Z);
@@ -473,53 +471,6 @@ namespace Single
         {
             return $"Name = {Name}, Value = {Value}, Type = {Type}";
         }
-    }
-
-    [Serializable]
-    public struct RoundStatus
-    {
-        public int PlayerIndex;
-        public int OyaPlayerIndex;
-        public int CurrentExtraRound;
-        public int RichiSticks;
-        public int FieldCount; // Starts with 0
-        public int TotalPlayer;
-
-        public Tile SelfWind
-        {
-            get
-            {
-                int offSet = PlayerIndex - OyaPlayerIndex;
-                if (offSet < 0) offSet += TotalPlayer;
-                Assert.IsTrue(offSet >= 0 && offSet < 4, "Self wind should be one of E, S, W, N");
-                return new Tile(Suit.Z, offSet + 1);
-            }
-        }
-
-        public Tile PrevailingWind => new Tile(Suit.Z, FieldCount + 1);
-
-        public bool IsDealer => PlayerIndex == OyaPlayerIndex;
-
-        public override string ToString()
-        {
-            return $"PlayerIndex: {PlayerIndex}, OyaPlayerIndex: {OyaPlayerIndex}, CurrentExtraRound: {CurrentExtraRound}, "
-                   + $"RichiSticks: {RichiSticks}, FieldCount: {FieldCount}, TotalPlayer: {TotalPlayer}";
-        }
-    }
-
-    [Flags]
-    public enum HandStatus
-    {
-        Nothing = 1 << 0,
-        Menqing = 1 << 1,
-        Tsumo = 1 << 2,
-        Richi = 1 << 3,
-        WRichi = 1 << 4,
-        FirstTurn = 1 << 5,
-        Lingshang = 1 << 6,
-        Haidi = 1 << 7,
-        RobbKong = 1 << 8,
-        OneShot = 1 << 9
     }
 
     public enum YakuType

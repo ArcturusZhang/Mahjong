@@ -137,21 +137,51 @@ namespace Multi.MahjongMessages
     public class ServerPlayerTsumoMessage : MessageBase
     {
         public int TsumoPlayerIndex;
-        public Tile[] TsumoPlayerHandTiles;
-        public Meld[] TsumoPlayerOpenMelds;
+        public string TsumoPlayerName;
+        public PlayerHandData TsumoHandData;
+        public Tile WinningTile;
         public Tile[] DoraIndicators;
-        public bool IsRichi;
         public Tile[] UraDoraIndicators;
-        public PointInfo TsumoPointInfo;
+        public bool IsRichi;
+        public NetworkPointInfo TsumoPointInfo;
+        public int Multiplier;
 
         public override string ToString()
         {
             return $"TsumoPlayerIndex: {TsumoPlayerIndex}\n"
-                + $"HandTiles: {string.Join("", TsumoPlayerHandTiles)}\n"
-                + $"OpenMelds: {string.Join(",", TsumoPlayerOpenMelds)}\n"
+                + $"HandData: {TsumoHandData}\n"
+                + $"WinningTile: {WinningTile}\n"
                 + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
                 + $"UraDoraIndicators: {string.Join("", UraDoraIndicators)}\n"
+                + $"IsRichi: {IsRichi}\n"
+                + $"PointMultiplier: {Multiplier}\n"
                 + $"TsumoPointSummary: {TsumoPointInfo}";
+        }
+    }
+
+    public class ServerPlayerRongMessage : MessageBase
+    {
+        public int[] RongPlayerIndices;
+        public string[] RongPlayerNames;
+        public PlayerHandData[] HandData;
+        public Tile WinningTile;
+        public Tile[] DoraIndicators;
+        public Tile[] UraDoraIndicators;
+        public bool[] IsRichi;
+        public NetworkPointInfo[] RongPointInfos;
+        public int[] Multipliers;
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {string.Join(",", RongPlayerIndices)}\n"
+                + $"PlayerName: {string.Join(",", RongPlayerNames)}\n"
+                + $"HandData: {string.Join(",", HandData)}\n"
+                + $"WinningTile: {WinningTile}\n"
+                + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
+                + $"UraDoraIndicators: {string.Join("", UraDoraIndicators)}\n"
+                + $"IsRichi: {string.Join(",", IsRichi)}\n"
+                + $"Multipliers: {string.Join(",", Multipliers)}\n"
+                + $"PointSummaries: {string.Join(";", RongPointInfos)}";
         }
     }
 

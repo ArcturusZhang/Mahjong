@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Multi.MahjongMessages;
 
 namespace Single.MahjongDataType
 {
@@ -78,6 +79,11 @@ namespace Single.MahjongDataType
                 }
             }
             Array.Sort(Yakus);
+        }
+
+        public PointInfo(NetworkPointInfo netInfo) 
+            : this(netInfo.Fu, netInfo.YakuValues, netInfo.IsQTJ, netInfo.Dora, netInfo.UraDora, netInfo.RedDora)
+        {
         }
 
         public int BasePoint { get; }

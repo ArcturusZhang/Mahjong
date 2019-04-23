@@ -55,6 +55,10 @@ namespace Single.MahjongDataType
             }
         }
 
+        public int GetMultiplier(bool isDealer, int totalPlayers) {
+            return isDealer ? 6 : 4; // this is for 4-player mahjong -- todo
+        }
+
         public enum PointsToGameEnd {
             Negative,
             Zero,

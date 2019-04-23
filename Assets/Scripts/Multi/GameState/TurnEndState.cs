@@ -19,8 +19,10 @@ namespace Multi.GameState
     public class TurnEndState : IState
     {
         public GameSettings GameSettings;
+        public YakuSettings YakuSettings;
         public int CurrentPlayerIndex;
         public List<Player> Players;
+        public Tile DiscardingTile;
         public bool IsRichiing;
         public OutTurnOperation[] Operations;
         public ServerRoundStatus CurrentRoundStatus;
@@ -58,6 +60,7 @@ namespace Multi.GameState
 
         private void ChooseOperations()
         {
+            Debug.Log($"Operation before choosing: {string.Join(",", Operations)}");
             // test every circumstances by priority
             // test for rong
             if (Operations.Any(op => op.Type == OutTurnOperationType.Rong))
@@ -115,6 +118,8 @@ namespace Multi.GameState
             }
             // no particular operations -- skip
             operationChosen = OutTurnOperationType.Skip;
+            // todo -- check if 3 rong
+            Debug.Log($"Operation after choosing: {string.Join(",", Operations)}");
         }
 
         public void OnStateUpdate()
@@ -133,7 +138,7 @@ namespace Multi.GameState
             switch (operationChosen)
             {
                 case OutTurnOperationType.Rong:
-                    ServerBehaviour.Instance.HandleRong(CurrentPlayerIndex, Operations);
+                    HandleRong();
                     break;
                 case OutTurnOperationType.RoundDraw:
                     ServerBehaviour.Instance.RoundDraw();
@@ -155,6 +160,44 @@ namespace Multi.GameState
                     Debug.LogError($"Unknown type of out turn operation: {operationChosen}");
                     break;
             }
+        }
+
+        private void HandleRong()
+        {
+            var rongPlayerIndexList = new List<int>();
+            for (int i = 0; i < Operations.Length; i++)
+            {
+                if (Operations[i].Type == OutTurnOperationType.Rong)
+                    rongPlayerIndexList.Add(i);
+            }
+            var rongPlayerIndices = rongPlayerIndexList.ToArray();
+            var rongPointInfos = new PointInfo[rongPlayerIndices.Length];
+            for (int playerIndex = 0; playerIndex < rongPlayerIndices.Length; playerIndex++)
+            {
+                rongPointInfos[playerIndex] = GetRongInfo(playerIndex, DiscardingTile);
+            }
+            Debug.Log($"[Server] Players who claimed rong: {string.Join(", ", rongPlayerIndices)}, "
+                + $"corresponding pointInfos: {string.Join(";", rongPointInfos)}");
+            ServerBehaviour.Instance.HandleRong(CurrentPlayerIndex, DiscardingTile, rongPlayerIndices, rongPointInfos);
+        }
+
+        private PointInfo GetRongInfo(int playerIndex, Tile discard)
+        {
+            var baseHandStatus = HandStatus.Nothing;
+            // test haidi
+            if (MahjongSet.TilesRemain == GameSettings.MountainReservedTiles)
+                baseHandStatus |= HandStatus.Haidi;
+            // test lingshang -- not gonna happen
+            var allTiles = MahjongSet.AllTiles;
+            var doraTiles = MahjongSet.DoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var point = ServerMahjongLogic.GetPointInfo(
+                playerIndex, CurrentRoundStatus, discard, baseHandStatus,
+                doraTiles, uraDoraTiles, YakuSettings);
+            Debug.Log($"TurnEndState: pointInfo: {point}");
+            return point;
         }
 
         public void OnStateExit()

@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 using UnityEngine.UI;
 using Utils;
 
-namespace UI
+namespace Single.UI.Controller
 {
     public class NumberPanelController : MonoBehaviour
     {

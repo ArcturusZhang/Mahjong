@@ -1,28 +1,20 @@
 ﻿using System.Collections;
-using Single;
+using Single.UI.Controller;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace UI
+namespace Single.UI.Controller
 {
     public class TimerController : MonoBehaviour
     {
         public Image PlusImage;
         public NumberPanelController BaseTimeController;
         public NumberPanelController BonusTimeController;
-
-        private Coroutine currentTimerCoroutine;
-
-        private WaitForSeconds wait;
-
+        private Coroutine currentTimerCoroutine = null;
+        private WaitForSeconds wait = new WaitForSeconds(1f);
         private int mBaseTime;
         private int mBonusTime;
-
-        private void Awake()
-        {
-            wait = new WaitForSeconds(1f);
-        }
 
         public bool IsCountingDown => currentTimerCoroutine != null;
 
@@ -78,6 +70,7 @@ namespace UI
 
             callback.Invoke();
             gameObject.SetActive(false);
+            currentTimerCoroutine = null;
         }
 
         private void SetTime(int baseTime, int bonusTime)

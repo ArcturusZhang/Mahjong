@@ -29,7 +29,7 @@ namespace Single
         public const float AutoDiscardDelayAfterRichi = 0.5f;
         public const float ReadyPanelDelay = 0.5f;
         public const float SummaryPanelDelayTime = 0.5f;
-        public const int SummaryPanelWaitingTime = 5;
+        public const int SummaryPanelWaitingTime = 3;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
         public static readonly Quaternion FaceUp = Quaternion.Euler(-90, 0, -90);
         public static readonly Quaternion FaceDownOnWall = Quaternion.Euler(180, 180, -90);
@@ -39,7 +39,6 @@ namespace Single
 
         // UI Settings
         public const int YakuItemColumns = 2;
-
         public const int FullItemCountPerColumn = 4;
 
         // Yaku ranks

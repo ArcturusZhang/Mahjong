@@ -4,7 +4,7 @@ using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Single.UI
+namespace Single.UI.SubManagers
 {
     public class RoundInfoManager : MonoBehaviour
     {

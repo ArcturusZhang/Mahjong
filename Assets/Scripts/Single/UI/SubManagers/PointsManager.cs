@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Single.UI
+namespace Single.UI.SubManagers
 {
-    public class RichiStatusManager : MonoBehaviour
+    public class PointsManager : MonoBehaviour
     {
-        public Image[] RichiSticks;
+        public Text[] TextFields;
         [HideInInspector] public int TotalPlayers;
         [HideInInspector] public int[] Places;
-        [HideInInspector] public bool[] RichiStatus;
+        [HideInInspector] public int[] Points;
+
         private void Update()
         {
             for (int i = 0; i < Places.Length; i++)
             {
                 if (IsValidPlayer(Places[i]))
                 {
-                    RichiSticks[i].gameObject.SetActive(RichiStatus[i]);
+                    TextFields[i].gameObject.SetActive(true);
+                    TextFields[i].text = Points[i].ToString();
                 }
                 else
-                {
-                    RichiSticks[i].gameObject.SetActive(false);
-                }
+                    TextFields[i].gameObject.SetActive(false);
             }
         }
 

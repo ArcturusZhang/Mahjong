@@ -68,7 +68,7 @@ namespace Multi.GameState
         private InTurnOperation[] GetOperations(int playerIndex)
         {
             var operations = new List<InTurnOperation> { new InTurnOperation { Type = InTurnOperationType.Discard } };
-            var point = GetPointInfo(playerIndex, HandStatus.Tsumo, justDraw);
+            var point = GetTsumoInfo(playerIndex, justDraw);
             // test if enough
             if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
             {
@@ -139,50 +139,27 @@ namespace Multi.GameState
         private void HandleTsumo(InTurnOperation operation)
         {
             int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
-            var point = GetPointInfo(playerIndex, HandStatus.Tsumo, operation.Tile);
+            var point = GetTsumoInfo(playerIndex, operation.Tile);
             if (point.FanWithoutDora < GameSettings.MinimumFanConstraint)
                 Debug.LogError($"Tsumo requires minimum fan of {GameSettings.MinimumFanConstraint}, but the point only contains {point.FanWithoutDora} fans");
-            ServerBehaviour.Instance.HandleTsumo(playerIndex, point);
+            ServerBehaviour.Instance.HandleTsumo(playerIndex, operation.Tile, point);
         }
 
-        private PointInfo GetPointInfo(int playerIndex, HandStatus baseHandStatus, Tile tile)
+        private PointInfo GetTsumoInfo(int playerIndex, Tile tile)
         {
-            var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
-            var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
-            var handStatus = baseHandStatus;
-            if (MahjongLogic.TestMenqing(openMelds))
-                handStatus |= HandStatus.Menqing;
-            // test richi
-            if (CurrentRoundStatus.RichiStatus[playerIndex])
-            {
-                handStatus |= HandStatus.Richi;
-                // test one-shot
-                if (CurrentRoundStatus.OneShotStatus[playerIndex])
-                    handStatus |= HandStatus.OneShot;
-                // test WRichi -- todo
-            }
-            // test first turn -- todo
-            // test lingshang -- todo
+            var baseHandStatus = HandStatus.Tsumo;
             // test haidi
             if (MahjongSet.TilesRemain == GameSettings.MountainReservedTiles)
-                handStatus |= HandStatus.Haidi;
-            var roundStatus = new RoundStatus
-            {
-                PlayerIndex = playerIndex,
-                OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex,
-                CurrentExtraRound = CurrentRoundStatus.Extra,
-                RichiSticks = CurrentRoundStatus.RichiSticks,
-                FieldCount = CurrentRoundStatus.Field,
-                TotalPlayer = Players.Count
-            };
+                baseHandStatus |= HandStatus.Haidi;
+            // test lingshang -- todo
             var allTiles = MahjongSet.AllTiles;
-            var doraTiles = MahjongSet.DoraIndicators.Select(indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
-            var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
-            var point = MahjongLogic.GetPointInfo(handTiles, openMelds, tile,
-                handStatus, roundStatus, YakuSettings, doraTiles, uraDoraTiles);
-            Debug.Log($"[Server] HandTiles: {string.Join("", handTiles)}\n"
-                + $"OpenMelds: {string.Join(",", openMelds)}\n"
-                + $"PointInfo: {point}");
+            var doraTiles = MahjongSet.DoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var point = ServerMahjongLogic.GetPointInfo(
+                playerIndex, CurrentRoundStatus, tile, baseHandStatus,
+                doraTiles, uraDoraTiles, YakuSettings);
             return point;
         }
 
