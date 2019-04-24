@@ -1,0 +1,68 @@
+using System.Reflection;
+using UI.DataBinding.DataVerify;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace UI.DataBinding
+{
+    public class IntDataBinding : MonoBehaviour, IBindData
+    {
+        public ScriptableObject Target { get; set; }
+        [SerializeField] private string fieldName;
+        private InputField inputField;
+        private FieldInfo fieldInfo;
+        private Verifier verifier;
+
+        private void OnEnable()
+        {
+            inputField = GetComponentInChildren<InputField>();
+            verifier = GetComponent<Verifier>();
+            inputField.onEndEdit.AddListener(VerifyData);
+        }
+
+        public void Apply()
+        {
+            if (!CheckNull()) return;
+            int value = (int)fieldInfo.GetValue(Target);
+            inputField.text = value.ToString();
+        }
+
+        public void UpdateBind()
+        {
+            if (!CheckNull()) return;
+            if (inputField.isFocused) return;
+            var value = int.Parse(inputField.text);
+            fieldInfo.SetValue(Target, value);
+        }
+
+        private void VerifyData(string data)
+        {
+            if (!CheckNull() || verifier == null) return;
+            inputField.text = verifier.Verify(data, fieldInfo.GetValue(Target).ToString());
+        }
+
+        private bool CheckNull()
+        {
+            if (Target == null)
+            {
+                Debug.LogError("Binding target cannot be null");
+                return false;
+            }
+            if (inputField == null)
+            {
+                Debug.LogError("No input field found");
+                return false;
+            }
+            if (fieldInfo == null)
+            {
+                fieldInfo = Target.GetType().GetField(fieldName, BindingFlags.Public | BindingFlags.Instance);
+                if (fieldInfo == null)
+                {
+                    Debug.LogError($"Unknown field name: {fieldName}");
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+}

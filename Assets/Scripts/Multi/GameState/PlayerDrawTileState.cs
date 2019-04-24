@@ -14,12 +14,12 @@ namespace Multi.GameState
     // todo -- draw lingshang tile
     public class PlayerDrawTileState : IState
     {
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
         public int CurrentPlayerIndex;
-        public IList<Player> Players;
         public MahjongSet MahjongSet;
         public ServerRoundStatus CurrentRoundStatus;
+        private GameSettings gameSettings;
+        private YakuSettings yakuSettings;
+        private IList<Player> players;
         private Tile justDraw;
         private MessageBase[] messages;
         private bool[] responds;
@@ -30,6 +30,9 @@ namespace Multi.GameState
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
+            gameSettings = CurrentRoundStatus.GameSettings;
+            yakuSettings = CurrentRoundStatus.YakuSettings;
+            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
@@ -37,9 +40,9 @@ namespace Multi.GameState
             Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}.");
             CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             CurrentRoundStatus.LastDraw = justDraw;
-            messages = new MessageBase[Players.Count];
-            responds = new bool[Players.Count];
-            for (int i = 0; i < Players.Count; i++)
+            messages = new MessageBase[players.Count];
+            responds = new bool[players.Count];
+            for (int i = 0; i < players.Count; i++)
             {
                 if (i == CurrentPlayerIndex) continue;
                 messages[i] = new ServerOtherDrawTileMessage
@@ -48,20 +51,20 @@ namespace Multi.GameState
                     CurrentTurnPlayerIndex = CurrentPlayerIndex,
                     MahjongSetData = MahjongSet.Data
                 };
-                Players[i].connectionToClient.Send(MessageIds.ServerOtherDrawTileMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerOtherDrawTileMessage, messages[i]);
             }
             messages[CurrentPlayerIndex] = new ServerDrawTileMessage
             {
                 PlayerIndex = CurrentPlayerIndex,
                 Tile = justDraw,
-                BonusTurnTime = Players[CurrentPlayerIndex].BonusTurnTime,
+                BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
                 Operations = GetOperations(CurrentPlayerIndex),
                 MahjongSetData = MahjongSet.Data
             };
-            Players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerDrawTileMessage, messages[CurrentPlayerIndex]);
+            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerDrawTileMessage, messages[CurrentPlayerIndex]);
             firstSendTime = Time.time;
             lastSendTime = Time.time;
-            serverTimeOut = GameSettings.BaseTurnTime + Players[CurrentPlayerIndex].BonusTurnTime + ServerConstants.ServerTimeBuffer;
+            serverTimeOut = gameSettings.BaseTurnTime + players[CurrentPlayerIndex].BonusTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
         // todo -- complete this
@@ -70,7 +73,7 @@ namespace Multi.GameState
             var operations = new List<InTurnOperation> { new InTurnOperation { Type = InTurnOperationType.Discard } };
             var point = GetTsumoInfo(playerIndex, justDraw);
             // test if enough
-            if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
+            if (gameSettings.CheckConstraint(point))
             {
                 operations.Add(new InTurnOperation
                 {
@@ -140,8 +143,8 @@ namespace Multi.GameState
         {
             int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
             var point = GetTsumoInfo(playerIndex, operation.Tile);
-            if (point.FanWithoutDora < GameSettings.MinimumFanConstraint)
-                Debug.LogError($"Tsumo requires minimum fan of {GameSettings.MinimumFanConstraint}, but the point only contains {point.FanWithoutDora} fans");
+            if (gameSettings.CheckConstraint(point))
+                Debug.LogError($"Tsumo requires minimum fan of {gameSettings.MinimumFanConstraintType}, but the point only contains {point.FanWithoutDora}");
             ServerBehaviour.Instance.HandleTsumo(playerIndex, operation.Tile, point);
         }
 
@@ -149,7 +152,7 @@ namespace Multi.GameState
         {
             var baseHandStatus = HandStatus.Tsumo;
             // test haidi
-            if (MahjongSet.TilesRemain == GameSettings.MountainReservedTiles)
+            if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
                 baseHandStatus |= HandStatus.Haidi;
             // test lingshang -- todo
             var allTiles = MahjongSet.AllTiles;
@@ -159,7 +162,7 @@ namespace Multi.GameState
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
             var point = ServerMahjongLogic.GetPointInfo(
                 playerIndex, CurrentRoundStatus, tile, baseHandStatus,
-                doraTiles, uraDoraTiles, YakuSettings);
+                doraTiles, uraDoraTiles, yakuSettings);
             return point;
         }
 
@@ -170,10 +173,10 @@ namespace Multi.GameState
             if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
             {
                 // resend message
-                for (int i = 0; i < Players.Count; i++)
+                for (int i = 0; i < players.Count; i++)
                 {
                     if (responds[i]) continue;
-                    Players[i].connectionToClient.Send(
+                    players[i].connectionToClient.Send(
                         i == CurrentPlayerIndex ? MessageIds.ServerDrawTileMessage : MessageIds.ServerOtherDrawTileMessage,
                         messages[i]);
                 }

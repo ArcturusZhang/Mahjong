@@ -12,19 +12,21 @@ namespace Multi.GameState
 {
     public class PlayerTsumoState : IState
     {
-        public GameSettings GameSettings;
         public int TsumoPlayerIndex;
-        public Tile WinningTile;
-        public List<Player> Players;
         public ServerRoundStatus CurrentRoundStatus;
+        public Tile WinningTile;
         public MahjongSet MahjongSet;
         public PointInfo TsumoPointInfo;
+        private GameSettings gameSettings;
+        private IList<Player> players;
 
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
+            gameSettings = CurrentRoundStatus.GameSettings;
+            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientNextRoundMessage, OnNextRoundMessageReceived);
-            int multiplier = GameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(TsumoPlayerIndex), Players.Count);
+            int multiplier = gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(TsumoPlayerIndex), players.Count);
             var netInfo = new NetworkPointInfo {
                 Fu = TsumoPointInfo.Fu,
                 YakuValues = TsumoPointInfo.YakuList.ToArray(),
@@ -36,7 +38,7 @@ namespace Multi.GameState
             var tsumoMessage = new ServerPlayerTsumoMessage
             {
                 TsumoPlayerIndex = TsumoPlayerIndex,
-                TsumoPlayerName = Players[TsumoPlayerIndex].PlayerName,
+                TsumoPlayerName = players[TsumoPlayerIndex].PlayerName,
                 TsumoHandData = CurrentRoundStatus.HandData(TsumoPlayerIndex),
                 WinningTile = WinningTile,
                 DoraIndicators = MahjongSet.DoraIndicators,
@@ -45,9 +47,9 @@ namespace Multi.GameState
                 TsumoPointInfo = netInfo,
                 Multiplier = multiplier
             };
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                Players[i].connectionToClient.Send(MessageIds.ServerTsumoMessage, tsumoMessage);
+                players[i].connectionToClient.Send(MessageIds.ServerTsumoMessage, tsumoMessage);
             }
         }
 

@@ -9,6 +9,7 @@ using System;
 using Single;
 using System.Linq;
 using Single.UI;
+using System.IO;
 
 namespace Console
 {
@@ -64,7 +65,7 @@ namespace Console
         }
 
         [ConsoleMethod("point", "Point for the given tiles")]
-        public static PointInfo GetPointInfo(string handString, string winningString, bool richi, bool tsumo)
+        public static PointInfo GetPointInfo(string handString, string winningString, bool richi, bool tsumo, bool isQTJ)
         {
             var handStatus = HandStatus.Menqing;
             if (richi) handStatus |= HandStatus.Richi;
@@ -74,12 +75,12 @@ namespace Console
             var winningTiles = ParseTiles(winningString);
             var yakuSettings = LobbyManager.Instance.YakuSettings;
             var point = MahjongLogic.GetPointInfo(tiles.ToArray(), new Meld[0], winningTiles[0],
-                handStatus, roundStatus, yakuSettings);
+                handStatus, roundStatus, yakuSettings, isQTJ);
             return point;
         }
 
         [ConsoleMethod("summary", "Show summary panel")]
-        public static void ShowSummary(string handString, string winningString, bool richi, bool tsumo, bool oya)
+        public static void ShowSummary(string handString, string winningString, bool richi, bool tsumo, bool oya, bool isQTJ)
         {
             var handTiles = ParseTiles(handString);
             var winningTile = ParseTiles(winningString)[0];
@@ -92,7 +93,7 @@ namespace Console
                 UraDoraIndicators = null,
                 IsTsumo = tsumo
             };
-            var pointInfo = GetPointInfo(handString, winningString, richi, tsumo);
+            var pointInfo = GetPointInfo(handString, winningString, richi, tsumo, isQTJ);
             var pointSummaryPanelManager = GameObject.FindObjectOfType<PointSummaryPanelManager>();
             var data = new SummaryPanelData
             {
@@ -102,6 +103,27 @@ namespace Console
                 PlayerName = "Console"
             };
             pointSummaryPanelManager.ShowPanel(data, () => Debug.Log("Time is up!"));
+        }
+
+        [ConsoleMethod("json", "save game settings to json")]
+        public static void JsonTest()
+        {
+            var settings = LobbyManager.Instance.GameSettings;
+            var json = JsonUtility.ToJson(settings, true);
+            var filepath = Application.persistentDataPath + "/GameSettings.json";
+            var writer = new StreamWriter(filepath);
+            writer.WriteLine(json);
+            writer.Close();
+        }
+
+        [ConsoleMethod("fromjson", "read game settings from json")]
+        public static void FromJson()
+        {
+            var settings = LobbyManager.Instance.GameSettings;
+            var filepath = Application.persistentDataPath + "/GameSettings.json";
+            var reader = new StreamReader(filepath);
+            var json = reader.ReadToEnd();
+            JsonUtility.FromJsonOverwrite(json, settings);
         }
 
         private static void CloseLobbyCanvas()

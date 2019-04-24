@@ -18,15 +18,15 @@ namespace Multi.GameState
     /// </summary>
     public class TurnEndState : IState
     {
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
         public int CurrentPlayerIndex;
-        public List<Player> Players;
+        public ServerRoundStatus CurrentRoundStatus;
         public Tile DiscardingTile;
         public bool IsRichiing;
         public OutTurnOperation[] Operations;
-        public ServerRoundStatus CurrentRoundStatus;
         public MahjongSet MahjongSet;
+        private GameSettings gameSettings;
+        private YakuSettings yakuSettings;
+        private IList<Player> players;
         private ServerTurnEndMessage[] messages;
         private OutTurnOperationType operationChosen;
         private float serverTurnEndTimeOut = ServerConstants.ServerTurnEndTimeOut;
@@ -35,18 +35,21 @@ namespace Multi.GameState
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
+            gameSettings = CurrentRoundStatus.GameSettings;
+            yakuSettings = CurrentRoundStatus.YakuSettings;
+            players = CurrentRoundStatus.Players;
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
             {
                 Debug.LogError("CurrentPlayerIndex does not match, this should not happen");
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
-            messages = new ServerTurnEndMessage[Players.Count];
+            messages = new ServerTurnEndMessage[players.Count];
             firstTime = Time.time;
             // determines the operation to take when turn ends
             ChooseOperations();
             Debug.Log($"The operation chosen by this round is {operationChosen}");
             // Send messages to clients
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
                 messages[i] = new ServerTurnEndMessage
                 {
@@ -54,7 +57,7 @@ namespace Multi.GameState
                     ChosenOperationType = operationChosen,
                     Operations = Operations
                 };
-                Players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, messages[i]);
             }
         }
 
@@ -74,7 +77,7 @@ namespace Multi.GameState
                 return;
             }
             // check if round draws
-            if (MahjongSet.TilesRemain == GameSettings.MountainReservedTiles)
+            if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
             {
                 // no more tiles to draw and no one choose a rong operation.
                 Debug.Log("No more tiles to draw and nobody claims a rong, the round has drawn.");
@@ -152,7 +155,7 @@ namespace Multi.GameState
                     break;
                 case OutTurnOperationType.Skip:
                     int nextPlayer = CurrentPlayerIndex + 1;
-                    if (nextPlayer >= Players.Count) nextPlayer -= Players.Count;
+                    if (nextPlayer >= players.Count) nextPlayer -= players.Count;
                     Debug.Log($"[Server] Next turn player index: {nextPlayer}");
                     ServerBehaviour.Instance.DrawTile(nextPlayer);
                     break;
@@ -185,7 +188,7 @@ namespace Multi.GameState
         {
             var baseHandStatus = HandStatus.Nothing;
             // test haidi
-            if (MahjongSet.TilesRemain == GameSettings.MountainReservedTiles)
+            if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
                 baseHandStatus |= HandStatus.Haidi;
             // test lingshang -- not gonna happen
             var allTiles = MahjongSet.AllTiles;
@@ -195,7 +198,7 @@ namespace Multi.GameState
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
             var point = ServerMahjongLogic.GetPointInfo(
                 playerIndex, CurrentRoundStatus, discard, baseHandStatus,
-                doraTiles, uraDoraTiles, YakuSettings);
+                doraTiles, uraDoraTiles, yakuSettings);
             Debug.Log($"TurnEndState: pointInfo: {point}");
             return point;
         }

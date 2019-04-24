@@ -122,7 +122,7 @@ namespace Single
         public static YakuValue 断幺九(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
             RoundStatus roundStatus, YakuSettings settings)
         {
-            if (!settings.允许食断 && !handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
+            if (!settings.OpenDuanYao && !handStatus.HasFlag(HandStatus.Menqing)) return new YakuValue();
             foreach (var meld in decompose)
             {
                 if (meld.HasYaojiu) return new YakuValue();

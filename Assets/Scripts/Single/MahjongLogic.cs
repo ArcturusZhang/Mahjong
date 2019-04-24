@@ -91,7 +91,7 @@ namespace Single
         }
 
         private static IList<YakuValue> CountYaku(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
-            RoundStatus roundStatus, YakuSettings yakuSettings)
+            RoundStatus roundStatus, YakuSettings yakuSettings, bool isQTJ)
         {
             var result = new List<YakuValue>();
             if (decompose == null || decompose.Count == 0) return result;
@@ -105,14 +105,14 @@ namespace Single
                 }
             }
 
-            if (yakuSettings.青天井) return result;
+            if (isQTJ) return result;
             var hasYakuman = result.Any(yakuValue => yakuValue.Type == YakuType.Yakuman);
             return hasYakuman ? result.Where(yakuValue => yakuValue.Type == YakuType.Yakuman).ToList() : result;
         }
 
         public static PointInfo GetPointInfo(Tile[] handTiles, Meld[] openMelds, Tile winningTile,
-            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, Tile[] doraTiles = null,
-            Tile[] uraDoraTiles = null)
+            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, bool isQTJ,
+            Tile[] doraTiles = null,            Tile[] uraDoraTiles = null)
         {
             var decomposes = Decompose(handTiles, openMelds, winningTile);
             if (decomposes.Count == 0) return new PointInfo();
@@ -125,7 +125,7 @@ namespace Single
             }
 
             int redDora = CountRed(handTiles, openMelds, winningTile);
-            return GetPointInfo(decomposes, winningTile, handStatus, roundStatus, yakuSettings, dora, uraDora, redDora);
+            return GetPointInfo(decomposes, winningTile, handStatus, roundStatus, yakuSettings, isQTJ, dora, uraDora, redDora);
         }
 
         private static int CountDora(Tile[] handTiles, Meld[] openMelds, Tile winningTile, Tile[] doraTiles)
@@ -170,7 +170,7 @@ namespace Single
         }
 
         private static PointInfo GetPointInfo(ISet<List<Meld>> decomposes, Tile winningTile, HandStatus handStatus,
-            RoundStatus roundStatus, YakuSettings yakuSettings, int dora = 0, int uraDora = 0, int redDora = 0)
+            RoundStatus roundStatus, YakuSettings yakuSettings, bool isQTJ, int dora = 0, int uraDora = 0, int redDora = 0)
         {
             Debug.Log($"GetPointInfo method, parameters: \ndecomposes: {DecompositionToString(decomposes)}, "
                       + $"winningTile: {winningTile}, handStatus: {handStatus}, roundStatus: {roundStatus}, "
@@ -178,10 +178,10 @@ namespace Single
             var infos = new List<PointInfo>();
             foreach (var decompose in decomposes)
             {
-                var yakus = CountYaku(decompose, winningTile, handStatus, roundStatus, yakuSettings);
+                var yakus = CountYaku(decompose, winningTile, handStatus, roundStatus, yakuSettings, isQTJ);
                 var fu = CountFu(decompose, winningTile, handStatus, roundStatus, yakus, yakuSettings);
                 if (yakus.Count == 0) continue;
-                var info = new PointInfo(fu, yakus, yakuSettings.青天井, dora, uraDora, redDora);
+                var info = new PointInfo(fu, yakus, isQTJ, dora, uraDora, redDora);
                 infos.Add(info);
                 Debug.Log($"Decompose: {string.Join(", ", decompose)}, PointInfo: {info}");
             }

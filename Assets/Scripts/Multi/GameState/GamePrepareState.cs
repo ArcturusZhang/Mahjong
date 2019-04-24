@@ -18,44 +18,45 @@ namespace Multi.GameState
     /// </summary>
     public class GamePrepareState : IState
     {
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
         public ServerRoundStatus CurrentRoundStatus;
-        public List<Player> Players;
         private ServerGamePrepareMessage[] messages;
         private bool[] responds;
         private float lastSendTime;
+        private IList<Player> players;
         public void OnStateEnter()
         {
             Debug.Log("Server enters GamePrepareState");
-            Debug.Log($"This game has total {Players.Count} players");
+            players = CurrentRoundStatus.Players;
+            Debug.Log($"This game has total {players.Count} players");
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
-            Players.Shuffle();
-            messages = new ServerGamePrepareMessage[Players.Count];
-            responds = new bool[Players.Count];
+            CurrentRoundStatus.ShufflePlayers();
+            messages = new ServerGamePrepareMessage[players.Count];
+            responds = new bool[players.Count];
             AssignInitialPoints();
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                Players[i].PlayerIndex = i;
-                Players[i].BonusTurnTime = GameSettings.BonusTurnTime;
+                players[i].PlayerIndex = i;
+                players[i].BonusTurnTime = CurrentRoundStatus.GameSettings.BonusTurnTime;
                 messages[i] = new ServerGamePrepareMessage
                 {
-                    TotalPlayers = Players.Count,
+                    TotalPlayers = players.Count,
                     PlayerIndex = i,
                     Points = CurrentRoundStatus.Points.ToArray(),
                     PlayerNames = CurrentRoundStatus.PlayerNames,
-                    GameSettings = GameSettings,
-                    YakuSettings = YakuSettings
+                    GameSettings = CurrentRoundStatus.GameSettings,
+                    YakuSettings = CurrentRoundStatus.YakuSettings
                 };
-                Players[i].connectionToClient.Send(MessageIds.ServerPrepareMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerPrepareMessage, messages[i]);
             }
             lastSendTime = Time.time;
             // todo -- Maybe other initialization work needs to be done.
         }
 
-        private void AssignInitialPoints() {
-            for (int i = 0; i < Players.Count; i++) {
-                CurrentRoundStatus.SetPoints(i, GameSettings.InitialPoints);
+        private void AssignInitialPoints()
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                CurrentRoundStatus.SetPoints(i, CurrentRoundStatus.GameSettings.InitialPoints);
             }
         }
 
@@ -70,10 +71,10 @@ namespace Multi.GameState
             if (Time.time - lastSendTime >= ServerConstants.MessageResendInterval)
             {
                 lastSendTime = Time.time;
-                for (int i = 0; i < Players.Count; i++)
+                for (int i = 0; i < players.Count; i++)
                 {
                     if (responds[i]) continue;
-                    Players[i].connectionToClient.Send(MessageIds.ServerPrepareMessage, messages[i]);
+                    players[i].connectionToClient.Send(MessageIds.ServerPrepareMessage, messages[i]);
                 }
             }
         }

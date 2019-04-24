@@ -39,8 +39,9 @@ namespace Multi.ServerData
                 FieldCount = CurrentRoundStatus.Field,
                 TotalPlayer = CurrentRoundStatus.TotalPlayers
             };
+            var isQTJ = CurrentRoundStatus.GameSettings.GameMode == GameMode.QTJ;
             return MahjongLogic.GetPointInfo(handData.HandTiles, handData.OpenMelds, winningTile,
-                handStatus, roundStatus, yakuSettings, doraTiles, uraDoraTiles);
+                handStatus, roundStatus, yakuSettings, isQTJ, doraTiles, uraDoraTiles);
         }
     }
 }

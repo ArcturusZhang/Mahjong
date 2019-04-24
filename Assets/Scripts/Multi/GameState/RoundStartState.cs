@@ -19,13 +19,12 @@ namespace Multi.GameState
     /// </summary>
     public class RoundStartState : IState
     {
-        public GameSettings GameSettings;
-        public IList<Player> Players;
-        public MahjongSet MahjongSet;
         public ServerRoundStatus CurrentRoundStatus;
+        public MahjongSet MahjongSet;
         public bool NextRound;
         public bool ExtraRound;
         public bool KeepSticks;
+        private IList<Player> players;
         private ServerRoundStartMessage[] messages;
         private bool[] responds;
         private float firstSendTime;
@@ -33,18 +32,19 @@ namespace Multi.GameState
         public void OnStateEnter()
         {
             Debug.Log("Server enters RoundStartState");
+            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             var doraIndicators = MahjongSet.Reset();
             // throwing dice
-            var dice = Random.Range(GameSettings.DiceMin, GameSettings.DiceMax + 1);
+            var dice = Random.Range(CurrentRoundStatus.GameSettings.DiceMin, CurrentRoundStatus.GameSettings.DiceMax + 1);
             CurrentRoundStatus.NextRound(dice, NextRound, ExtraRound, KeepSticks);
             // draw initial tiles
             DrawInitial();
             Debug.Log("[Server] Initial tiles distribution done");
             CurrentRoundStatus.SortHandTiles();
-            messages = new ServerRoundStartMessage[Players.Count];
-            responds = new bool[Players.Count];
-            for (int index = 0; index < Players.Count; index++)
+            messages = new ServerRoundStartMessage[players.Count];
+            responds = new bool[players.Count];
+            for (int index = 0; index < players.Count; index++)
             {
                 var tiles = CurrentRoundStatus.HandTiles(index);
                 Debug.Log($"[Server] Hand tiles of player {index}: {string.Join("", tiles)}");
@@ -60,7 +60,7 @@ namespace Multi.GameState
                     InitialHandTiles = tiles,
                     MahjongSetData = MahjongSet.Data
                 };
-                Players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[index]);
+                players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[index]);
             }
             firstSendTime = Time.time;
             lastSendTime = Time.time;
@@ -76,10 +76,10 @@ namespace Multi.GameState
             if (Time.time - lastSendTime >= ServerConstants.MessageResendInterval)
             {
                 lastSendTime = Time.time;
-                for (int i = 0; i < Players.Count; i++)
+                for (int i = 0; i < players.Count; i++)
                 {
                     if (responds[i]) continue;
-                    Players[i].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[i]);
+                    players[i].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[i]);
                 }
             }
         }
@@ -109,12 +109,12 @@ namespace Multi.GameState
 
         private void DrawInitial()
         {
-            for (int round = 0; round < GameSettings.InitialDrawRound; round++)
+            for (int round = 0; round < CurrentRoundStatus.GameSettings.InitialDrawRound; round++)
             {
                 // Draw 4 tiles for each player
-                for (int index = 0; index < Players.Count; index++)
+                for (int index = 0; index < players.Count; index++)
                 {
-                    for (int i = 0; i < GameSettings.TilesEveryRound; i++)
+                    for (int i = 0; i < CurrentRoundStatus.GameSettings.TilesEveryRound; i++)
                     {
                         var tile = MahjongSet.DrawTile();
                         CurrentRoundStatus.AddTile(index, tile);
@@ -122,9 +122,9 @@ namespace Multi.GameState
                 }
             }
             // Last round, 1 tile for each player
-            for (int index = 0; index < Players.Count; index++)
+            for (int index = 0; index < players.Count; index++)
             {
-                for (int i = 0; i < GameSettings.TilesLastRound; i++)
+                for (int i = 0; i < CurrentRoundStatus.GameSettings.TilesLastRound; i++)
                 {
                     var tile = MahjongSet.DrawTile();
                     CurrentRoundStatus.AddTile(index, tile);

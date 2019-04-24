@@ -11,16 +11,18 @@ namespace Multi.GameState
 {
     public class RoundDrawState : IState
     {
-        public GameSettings GameSettings;
-        public List<Player> Players;
         public ServerRoundStatus CurrentRoundStatus;
         private ServerRoundDrawMessage[] messages;
+        private GameSettings gameSettings;
+        private IList<Player> players;
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
+            gameSettings = CurrentRoundStatus.GameSettings;
+            players = CurrentRoundStatus.Players;
             // Get waiting tiles for each player
-            var waitingTiles = new WaitingData[Players.Count];
-            for (int i = 0; i < Players.Count; i++) {
+            var waitingTiles = new WaitingData[players.Count];
+            for (int i = 0; i < players.Count; i++) {
                 var hand = CurrentRoundStatus.HandTiles(i);
                 var open = CurrentRoundStatus.OpenMelds(i);
                 waitingTiles[i] = new WaitingData {
@@ -29,12 +31,12 @@ namespace Multi.GameState
                 };
             }
             // Get messages and send
-            messages = new ServerRoundDrawMessage[Players.Count];
-            for (int i = 0; i < Players.Count; i++) {
+            messages = new ServerRoundDrawMessage[players.Count];
+            for (int i = 0; i < players.Count; i++) {
                 messages[i] = new ServerRoundDrawMessage{
                     WaitingData = waitingTiles
                 };
-                Players[i].connectionToClient.Send(MessageIds.ServerRoundDrawMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerRoundDrawMessage, messages[i]);
             }
         }
 

@@ -12,20 +12,23 @@ namespace Multi.GameState
 {
     public class PlayerRongState : IState
     {
-        public GameSettings GameSettings;
-        public List<Player> Players;
+        public int CurrentPlayerIndex;
+        public ServerRoundStatus CurrentRoundStatus;
         public int[] RongPlayerIndices;
         public Tile WinningTile;
-        public ServerRoundStatus CurrentRoundStatus;
         public MahjongSet MahjongSet;
         public PointInfo[] RongPointInfos;
+        private GameSettings gameSettings;
+        private IList<Player> players;
 
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
+            gameSettings = CurrentRoundStatus.GameSettings;
+            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientNextRoundMessage, OnNextRoundMessageReceived);
             var playerNames = RongPlayerIndices.Select(
-                playerIndex => Players[playerIndex].PlayerName
+                playerIndex => players[playerIndex].PlayerName
             ).ToArray();
             var handData = RongPlayerIndices.Select(
                 playerIndex => CurrentRoundStatus.HandData(playerIndex)
@@ -34,7 +37,7 @@ namespace Multi.GameState
                 playerIndex => CurrentRoundStatus.RichiStatus[playerIndex]
             ).ToArray();
             var multipliers = RongPlayerIndices.Select(
-                playerIndex => GameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(playerIndex), Players.Count)
+                playerIndex => gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(playerIndex), players.Count)
             ).ToArray();
             var netInfos = RongPointInfos.Select(info => new NetworkPointInfo
             {
@@ -59,9 +62,9 @@ namespace Multi.GameState
                 RongPointInfos = netInfos,
                 Multipliers = multipliers
             };
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                Players[i].connectionToClient.Send(MessageIds.ServerRongMessage, rongMessage);
+                players[i].connectionToClient.Send(MessageIds.ServerRongMessage, rongMessage);
             }
         }
 

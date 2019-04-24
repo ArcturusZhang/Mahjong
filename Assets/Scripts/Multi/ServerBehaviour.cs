@@ -61,14 +61,11 @@ namespace Multi
 
         public void GamePrepare()
         {
-            CurrentRoundStatus = new ServerRoundStatus(LobbyManager.Instance.Players);
-            mahjongSet = new MahjongSet(GameSettings, GameSettings.GetAllTiles(LobbyManager.Instance.Players.Count));
+            CurrentRoundStatus = new ServerRoundStatus(GameSettings, YakuSettings, LobbyManager.Instance.Players);
+            mahjongSet = new MahjongSet(GameSettings, GameSettings.GetAllTiles(CurrentRoundStatus.TotalPlayers));
             var prepareState = new GamePrepareState
             {
-                GameSettings = GameSettings,
-                YakuSettings = YakuSettings,
                 CurrentRoundStatus = CurrentRoundStatus,
-                Players = LobbyManager.Instance.Players
             };
             StateMachine.ChangeState(prepareState);
         }
@@ -83,10 +80,8 @@ namespace Multi
         {
             var startState = new RoundStartState
             {
-                GameSettings = GameSettings,
-                Players = LobbyManager.Instance.Players,
-                MahjongSet = mahjongSet,
                 CurrentRoundStatus = CurrentRoundStatus,
+                MahjongSet = mahjongSet,
                 NextRound = next,
                 ExtraRound = extra,
                 KeepSticks = keepSticks
@@ -98,10 +93,7 @@ namespace Multi
         {
             var drawState = new PlayerDrawTileState
             {
-                GameSettings = GameSettings,
-                YakuSettings = YakuSettings,
                 CurrentPlayerIndex = playerIndex,
-                Players = LobbyManager.Instance.Players,
                 MahjongSet = mahjongSet,
                 CurrentRoundStatus = CurrentRoundStatus
             };
@@ -131,10 +123,7 @@ namespace Multi
             CurrentRoundStatus.SortHandTiles();
             var discardState = new PlayerDiscardTileState
             {
-                GameSettings = GameSettings,
-                YakuSettings = YakuSettings,
                 CurrentPlayerIndex = playerIndex,
-                Players = LobbyManager.Instance.Players,
                 DiscardTile = tile,
                 IsRichiing = isRichiing,
                 DiscardLastDraw = discardLastDraw,
@@ -149,14 +138,11 @@ namespace Multi
         {
             var turnEndState = new TurnEndState
             {
-                GameSettings = GameSettings,
-                YakuSettings = YakuSettings,
                 CurrentPlayerIndex = playerIndex,
-                Players = LobbyManager.Instance.Players,
+                CurrentRoundStatus = CurrentRoundStatus,
                 DiscardingTile = discardingTile,
                 IsRichiing = isRichiing,
                 Operations = operations,
-                CurrentRoundStatus = CurrentRoundStatus,
                 MahjongSet = mahjongSet
             };
             StateMachine.ChangeState(turnEndState);
@@ -175,11 +161,9 @@ namespace Multi
         {
             var tsumoState = new PlayerTsumoState
             {
-                GameSettings = GameSettings,
-                Players = LobbyManager.Instance.Players,
                 TsumoPlayerIndex = currentPlayerIndex,
-                WinningTile = winningTile,
                 CurrentRoundStatus = CurrentRoundStatus,
+                WinningTile = winningTile,
                 MahjongSet = mahjongSet,
                 TsumoPointInfo = pointInfo
             };
@@ -189,11 +173,10 @@ namespace Multi
         public void HandleRong(int currentPlayerIndex, Tile winningTile, int[] rongPlayerIndices, PointInfo[] rongPointInfos)
         {
             var rongState = new PlayerRongState {
-                GameSettings = GameSettings,
-                Players = LobbyManager.Instance.Players,
+                CurrentPlayerIndex = currentPlayerIndex,
+                CurrentRoundStatus = CurrentRoundStatus,
                 RongPlayerIndices = rongPlayerIndices,
                 WinningTile = winningTile,
-                CurrentRoundStatus = CurrentRoundStatus,
                 MahjongSet = mahjongSet,
                 RongPointInfos = rongPointInfos
             };
@@ -204,8 +187,6 @@ namespace Multi
         {
             var drawState = new RoundDrawState
             {
-                GameSettings = GameSettings,
-                Players = LobbyManager.Instance.Players,
                 CurrentRoundStatus = CurrentRoundStatus
             };
             StateMachine.ChangeState(drawState);

@@ -4,7 +4,7 @@ using System.Linq;
 using Single.Exceptions;
 using Single.MahjongDataType;
 using UnityEngine;
-
+using Utils;
 
 namespace Multi.ServerData
 {
@@ -27,11 +27,16 @@ namespace Multi.ServerData
         private bool[] oneShotStatus;
         private List<RiverTile>[] rivers;
 
-        public ServerRoundStatus(List<Player> players)
+        public ServerRoundStatus(GameSettings gameSettings, YakuSettings yakuSettings, List<Player> players)
         {
+            GameSettings = gameSettings;
+            YakuSettings = yakuSettings;
             this.players = players;
             points = new int[players.Count];
         }
+
+        public GameSettings GameSettings { get; }
+        public YakuSettings YakuSettings { get; }
 
         public int CurrentPlayerIndex
         {
@@ -63,9 +68,21 @@ namespace Multi.ServerData
         public int TotalPlayers => players.Count;
         public string[] PlayerNames => players.Select(player => player.PlayerName).ToArray();
 
+        private IList<Player> readOnlyPlayers = null;
+
         public IList<Player> Players
         {
-            get { return players.AsReadOnly(); }
+            get
+            {
+                if (readOnlyPlayers == null) readOnlyPlayers = players.AsReadOnly();
+                return readOnlyPlayers;
+            }
+        }
+
+        public void ShufflePlayers()
+        {
+            players.Shuffle();
+            readOnlyPlayers = null;
         }
 
         public Tile[] HandTiles(int index)
@@ -80,9 +97,11 @@ namespace Multi.ServerData
             return openMelds[index].ToArray();
         }
 
-        public PlayerHandData HandData(int index) {
+        public PlayerHandData HandData(int index)
+        {
             CheckRange(index);
-            return new PlayerHandData {
+            return new PlayerHandData
+            {
                 HandTiles = HandTiles(index),
                 OpenMelds = OpenMelds(index)
             };
@@ -206,7 +225,8 @@ namespace Multi.ServerData
             }
         }
 
-        public bool IsDealer(int index) {
+        public bool IsDealer(int index)
+        {
             return index == OyaPlayerIndex;
         }
 

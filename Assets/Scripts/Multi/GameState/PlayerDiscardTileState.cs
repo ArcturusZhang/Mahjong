@@ -13,16 +13,15 @@ namespace Multi.GameState
 {
     public class PlayerDiscardTileState : IState
     {
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
         public int CurrentPlayerIndex;
-        public IList<Player> Players;
         public Tile DiscardTile;
         public bool IsRichiing;
         public bool DiscardLastDraw;
         public ServerRoundStatus CurrentRoundStatus;
         public MahjongSetData MahjongSetData;
-        private Player currentPlayer;
+        private GameSettings gameSettings;
+        private YakuSettings yakuSettings;
+        private IList<Player> players;
         private MessageBase[] messages;
         private bool[] responds;
         private float lastSendTime;
@@ -34,6 +33,9 @@ namespace Multi.GameState
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
+            gameSettings = CurrentRoundStatus.GameSettings;
+            yakuSettings = CurrentRoundStatus.YakuSettings;
+            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOperationMessageReceived);
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
@@ -42,10 +44,10 @@ namespace Multi.GameState
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
             // UpdateCurrentPlayerData();
-            messages = new MessageBase[Players.Count];
-            responds = new bool[Players.Count];
-            operationResponds = new bool[Players.Count];
-            outTurnOperations = new OutTurnOperation[Players.Count];
+            messages = new MessageBase[players.Count];
+            responds = new bool[players.Count];
+            operationResponds = new bool[players.Count];
+            outTurnOperations = new OutTurnOperation[players.Count];
             var rivers = CurrentRoundStatus.Rivers;
             // Get messages
             for (int i = 0; i < messages.Length; i++)
@@ -57,7 +59,7 @@ namespace Multi.GameState
                     IsRichiing = IsRichiing,
                     DiscardingLastDraw = DiscardLastDraw,
                     Tile = DiscardTile,
-                    BonusTurnTime = Players[i].BonusTurnTime,
+                    BonusTurnTime = players[i].BonusTurnTime,
                     Operations = GetOperations(i),
                     HandTiles = CurrentRoundStatus.HandTiles(i),
                     Rivers = rivers
@@ -67,16 +69,16 @@ namespace Multi.GameState
             SendMessages();
             lastSendTime = Time.time;
             firstSendTime = Time.time;
-            serverTimeOut = Players.Max(p => p.BonusTurnTime) + GameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
+            serverTimeOut = players.Max(p => p.BonusTurnTime) + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
         private void SendMessages()
         {
             // Send message to the current turn player
-            for (int i = 0; i < Players.Count; i++)
+            for (int i = 0; i < players.Count; i++)
             {
                 if (responds[i]) continue;
-                Players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, messages[i]);
             }
         }
 
@@ -93,7 +95,7 @@ namespace Multi.GameState
             var point = GetRongInfo(playerIndex, DiscardTile);
             Debug.Log($"PointInfo: {point}");
             // test if enough
-            if (point.FanWithoutDora >= GameSettings.MinimumFanConstraint)
+            if (gameSettings.CheckConstraint(point))
             {
                 operations.Add(new OutTurnOperation
                 {
@@ -111,13 +113,13 @@ namespace Multi.GameState
         {
             var baseHandStatus = HandStatus.Nothing;
             // test haidi
-            if (MahjongSetData.TilesRemain == GameSettings.MountainReservedTiles)
+            if (MahjongSetData.TilesRemain == gameSettings.MountainReservedTiles)
                 baseHandStatus |= HandStatus.Haidi;
             // test lingshang -- not gonna happen
             // just test if this player can claim rong, no need for dora
             var point = ServerMahjongLogic.GetPointInfo(
                 playerIndex, CurrentRoundStatus, discard, baseHandStatus,
-                null, null, YakuSettings);
+                null, null, yakuSettings);
             return point;
         }
 
@@ -132,7 +134,7 @@ namespace Multi.GameState
                 {
                     if (!operationResponds[i])
                     {
-                        Players[i].BonusTurnTime = 0;
+                        players[i].BonusTurnTime = 0;
                         outTurnOperations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                     }
                 }
@@ -170,7 +172,7 @@ namespace Multi.GameState
             Debug.Log($"[Server] Received ClientOperationMessage: {content}");
             operationResponds[content.PlayerIndex] = true;
             outTurnOperations[content.PlayerIndex] = content.Operation;
-            Players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;
+            players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;
         }
 
         public void OnStateExit()
