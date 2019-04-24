@@ -1,0 +1,43 @@
+{
+    "GameMode": 0,
+    "GamePlayers": 2,
+    "MinimumFanConstraintType": 0,
+    "PointsToGameEnd": 0,
+    "AllowDiscardSameAfterOpen": false,
+    "AllowRichiWhenNotReady": false,
+    "AllowChows": true,
+    "AllowPongs": true,
+    "InitialPoints": 25000,
+    "FirstPlacePoints": 30000,
+    "RichiMortgagePoints": 1000,
+    "ExtraRoundBonusPerPlayer": 100,
+    "NotReadyPunishPerPlayer": 1000,
+    "BaseTurnTime": 5,
+    "BonusTurnTime": 20,
+    "InitialDrawRound": 3,
+    "TilesEveryRound": 4,
+    "TilesLastRound": 1,
+    "DiceMin": 2,
+    "DiceMax": 12,
+    "MountainReservedTiles": 14,
+    "LingshangTilesCount": 4,
+    "InitialDora": 1,
+    "MaxDora": 5,
+    "redTiles": [
+        {
+            "Suit": 0,
+            "Rank": 5,
+            "IsRed": true
+        },
+        {
+            "Suit": 1,
+            "Rank": 5,
+            "IsRed": true
+        },
+        {
+            "Suit": 2,
+            "Rank": 5,
+            "IsRed": true
+        }
+    ]
+}

@@ -8,7 +8,7 @@ namespace UI.DataBinding
     public class UIBinder : MonoBehaviour
     {
         [SerializeField] private ScriptableObject target;
-        private readonly IList<IBindData> cache = new List<IBindData>();
+        private readonly List<IBindData> cache = new List<IBindData>();
 
         private void OnEnable()
         {
@@ -26,18 +26,29 @@ namespace UI.DataBinding
                     {
                         cache.Add(bindingInstance);
                         bindingInstance.Target = target;
-                        bindingInstance.Apply();
                     }
                 }
             }
         }
 
+        private void Start()
+        {
+            ApplyBinds();
+        }
+
         private void Update()
         {
-            foreach (var data in cache)
-            {
-                data.UpdateBind();
-            }
+            UpdateBinds();
+        }
+
+        public virtual void ApplyBinds()
+        {
+            cache.ForEach(binder => binder.Apply());
+        }
+
+        public virtual void UpdateBinds()
+        {
+            cache.ForEach(binder => binder.UpdateBind());
         }
     }
 }

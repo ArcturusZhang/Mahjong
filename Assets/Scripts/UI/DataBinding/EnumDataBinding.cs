@@ -27,7 +27,7 @@ namespace UI.DataBinding
         {
             if (!CheckNull()) return;
             int index = (int)fieldInfo.GetValue(Target);
-            Debug.Log($"{name}: {index}");
+            Debug.Log($"{name} applied as {fieldInfo.GetValue(Target)}");
             toggles[index].isOn = true;
         }
 

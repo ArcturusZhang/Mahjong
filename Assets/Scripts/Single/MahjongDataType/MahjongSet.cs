@@ -6,7 +6,7 @@ using UnityEngine;
 using Utils;
 
 
-namespace Single
+namespace Single.MahjongDataType
 {
     [Serializable]
     public class MahjongSet
@@ -132,6 +132,24 @@ namespace Single
                     uraDoraTiles[i] = allTiles[allTiles.Count - 1 - currentUraDora];
                 }
                 return uraDoraTiles;
+            }
+        }
+
+        private void SetTiles(IList<Tile> tiles)
+        {
+            Debug.Log("Cheating...");
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                allTiles[tilesDrawn + i] = tiles[i];
+            }
+        }
+
+        private void SetTilesReverse(IList<Tile> tiles)
+        {
+            Debug.Log("Cheating...");
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                allTiles[allTiles.Count - lingShangDrawn - 1 - i] = tiles[i];
             }
         }
 

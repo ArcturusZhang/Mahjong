@@ -45,20 +45,24 @@ namespace UI.DataBinding
         {
             if (Target == null)
             {
-                Debug.LogError("Binding target cannot be null");
+                Debug.LogError($"Binding target cannot be null ({name})");
                 return false;
             }
             if (inputField == null)
             {
-                Debug.LogError("No input field found");
-                return false;
+                inputField = GetComponentInChildren<InputField>();
+                if (inputField == null)
+                {
+                    Debug.LogError($"No input field found ({name})");
+                    return false;
+                }
             }
             if (fieldInfo == null)
             {
                 fieldInfo = Target.GetType().GetField(fieldName, BindingFlags.Public | BindingFlags.Instance);
                 if (fieldInfo == null)
                 {
-                    Debug.LogError($"Unknown field name: {fieldName}");
+                    Debug.LogError($"Unknown field name: {fieldName} on ({name})");
                     return false;
                 }
             }

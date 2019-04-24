@@ -10,6 +10,8 @@ using Single;
 using System.Linq;
 using Single.UI;
 using System.IO;
+using Multi;
+using System.Reflection;
 
 namespace Console
 {
@@ -105,25 +107,99 @@ namespace Console
             pointSummaryPanelManager.ShowPanel(data, () => Debug.Log("Time is up!"));
         }
 
-        [ConsoleMethod("json", "save game settings to json")]
-        public static void JsonTest()
+        [ConsoleMethod("save_settings", "Save game settings to file")]
+        public static void SaveSettings(string which)
         {
-            var settings = LobbyManager.Instance.GameSettings;
+            ScriptableObject settings;
+            string filepath;
+            Debug.Log($"Saving settings {which}");
+            switch (which)
+            {
+                case "game":
+                    settings = LobbyManager.Instance.GameSettings;
+                    filepath = Application.persistentDataPath + "/GameSettings.json";
+                    break;
+                case "yaku":
+                    settings = LobbyManager.Instance.YakuSettings;
+                    filepath = Application.persistentDataPath + "/YakuSettings.json";
+                    break;
+                default:
+                    Debug.LogError($"Unknown setting key: {which}");
+                    return;
+            }
             var json = JsonUtility.ToJson(settings, true);
-            var filepath = Application.persistentDataPath + "/GameSettings.json";
             var writer = new StreamWriter(filepath);
             writer.WriteLine(json);
             writer.Close();
         }
 
-        [ConsoleMethod("fromjson", "read game settings from json")]
-        public static void FromJson()
+        [ConsoleMethod("load_settings", "Read game settings from json")]
+        public static void LoadSettings(string which)
         {
-            var settings = LobbyManager.Instance.GameSettings;
-            var filepath = Application.persistentDataPath + "/GameSettings.json";
+            ScriptableObject settings;
+            string filepath;
+            Debug.Log($"Loading settings {which}");
+            switch (which)
+            {
+                case "game":
+                    settings = LobbyManager.Instance.GameSettings;
+                    filepath = Application.persistentDataPath + "/GameSettings.json";
+                    break;
+                case "yaku":
+                    settings = LobbyManager.Instance.YakuSettings;
+                    filepath = Application.persistentDataPath + "/YakuSettings.json";
+                    break;
+                default:
+                    Debug.LogError($"Unknown setting key: {which}");
+                    return;
+            }
             var reader = new StreamReader(filepath);
             var json = reader.ReadToEnd();
             JsonUtility.FromJsonOverwrite(json, settings);
+        }
+
+        [ConsoleMethod("set_tiles", "Set the upcoming tiles in current mahjong set. If game is not started, this command has no effect")]
+        public static bool SetTiles(string tileString)
+        {
+            var tiles = ParseTiles(tileString);
+            var fieldInfo = typeof(ServerBehaviour).GetField("mahjongSet", BindingFlags.NonPublic | BindingFlags.Instance);
+            var server = ServerBehaviour.Instance;
+            if (server == null)
+            {
+                Debug.LogError("Game is not started, or you are not host.");
+                return false;
+            }
+            var set = fieldInfo.GetValue(server) as MahjongSet;
+            if (set == null)
+            {
+                Debug.LogError("MahjongSet is null");
+                return false;
+            }
+            var methodInfo = typeof(MahjongSet).GetMethod("SetTiles", BindingFlags.NonPublic | BindingFlags.Instance);
+            methodInfo.Invoke(set, new[] { tiles });
+            return true;
+        }
+
+        [ConsoleMethod("set_tiles_reverse", "Set the upcoming lingshang tiles in current mahjong set. If game is not started, this command has no effect")]
+        public static bool ReplaceLingShang(string tileString)
+        {
+            var tiles = ParseTiles(tileString);
+            var fieldInfo = typeof(ServerBehaviour).GetField("mahjongSet", BindingFlags.NonPublic | BindingFlags.Instance);
+            var server = ServerBehaviour.Instance;
+            if (server == null)
+            {
+                Debug.LogError("Game is not started, or you are not host.");
+                return false;
+            }
+            var set = fieldInfo.GetValue(server) as MahjongSet;
+            if (set == null)
+            {
+                Debug.LogError("MahjongSet is null");
+                return false;
+            }
+            var methodInfo = typeof(MahjongSet).GetMethod("SetTilesReverse", BindingFlags.NonPublic | BindingFlags.Instance);
+            methodInfo.Invoke(set, new[] { tiles });
+            return true;
         }
 
         private static void CloseLobbyCanvas()
@@ -131,17 +207,6 @@ namespace Console
             var lobby = LobbyManager.Instance;
             var canvas = lobby?.GetComponent<Canvas>();
             if (canvas != null) canvas.enabled = false;
-        }
-
-        private static IDictionary<string, T> GetEnums<T>() where T : Enum
-        {
-            var dict = new Dictionary<string, T>();
-            foreach (string name in Enum.GetNames(typeof(T)))
-            {
-                if (dict.ContainsKey(name)) continue;
-                dict.Add(name, (T)Enum.Parse(typeof(T), name));
-            }
-            return dict;
         }
     }
 }
