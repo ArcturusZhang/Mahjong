@@ -6,17 +6,11 @@ Some resources are fetched from On-line web game [Majsoul](http://www.majsoul.co
 
 ## TODO List
 
-### 2018/10/29
+### 2019/04/24
 
-1. Richi cannot be performed when a player's point is low (DONE)
+1. Richi cannot be performed when a player's point is low
 
-1. Player cannot discard same tile or strongly related tiles after claimed an open (DONE)
-
-1. Add item to RoundStatus how many richi stick are placed on the board (Done)
-
-1. Rework RoundStatus, assign this information to a new Networked Object (Done)
-
-1. Logic for rong and tsumo
+1. Player cannot discard same tile or related tiles after claimed an open
 
 1. Detailed data struct describing points transfer
 
@@ -24,12 +18,6 @@ Some resources are fetched from On-line web game [Majsoul](http://www.majsoul.co
 
 1. Setting item whether allows false richi (claim richi when hand are not ready)
 
-1. Add setting items to end game when all point are lost or not
-
-1. UI completion
-
-1. Assign hooks to players' properties (such as PlayerIndex), to assiociate them with correct position, etc.
+1. Selection panel when there are multiple opening options
 
 1. Early abort game conditions
-
-1. Graduately obsolete ResoureManager
