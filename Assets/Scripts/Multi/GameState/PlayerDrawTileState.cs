@@ -143,8 +143,9 @@ namespace Multi.GameState
         {
             int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
             var point = GetTsumoInfo(playerIndex, operation.Tile);
-            if (gameSettings.CheckConstraint(point))
-                Debug.LogError($"Tsumo requires minimum fan of {gameSettings.MinimumFanConstraintType}, but the point only contains {point.FanWithoutDora}");
+            if (!gameSettings.CheckConstraint(point))
+                Debug.LogError(
+                    $"Tsumo requires minimum fan of {gameSettings.MinimumFanConstraintType}, but the point only contains {point.FanWithoutDora}");
             ServerBehaviour.Instance.HandleTsumo(playerIndex, operation.Tile, point);
         }
 

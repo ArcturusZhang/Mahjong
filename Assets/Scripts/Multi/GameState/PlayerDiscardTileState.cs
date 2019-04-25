@@ -100,7 +100,8 @@ namespace Multi.GameState
                 operations.Add(new OutTurnOperation
                 {
                     Type = OutTurnOperationType.Rong,
-                    Tile = DiscardTile
+                    Tile = DiscardTile,
+                    HandData = CurrentRoundStatus.HandData(playerIndex)
                 });
             }
             // test kong -- todo

@@ -42,7 +42,13 @@ namespace Single.UI
             ConfirmCountDownController.StartCountDown(MahjongConstants.SummaryPanelWaitingTime, callback);
         }
 
-        public void Close() {
+        public int StopCountDown()
+        {
+            return ConfirmCountDownController.StopCountDown();
+        }
+
+        public void Close()
+        {
             gameObject.SetActive(false);
         }
     }

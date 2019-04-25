@@ -24,6 +24,7 @@ namespace Single
         public PlayerInfoManager PlayerInfoManager;
         public HandPanelManager HandPanelManager;
         public TimerController TurnTimeController;
+        public PlayerEffectManager PlayerEffectManager;
         public InTurnPanelManager InTurnPanelManager;
         public OutTurnPanelManager OutTurnPanelManager;
         public RoundDrawPanelManager[] DrawPanelManagers;
@@ -276,14 +277,53 @@ namespace Single
 
         public void PlayerTurnEnd(ServerTurnEndMessage message)
         {
-            // show operation related animation, etc.
+            // show operation related animation
             Debug.Log($"Turn ends, operation {message.Operations} is taking.");
+            var operations = message.Operations;
+            if (operations.All(op => op.Type == OutTurnOperationType.Skip)) return;
+            for (int playerIndex = 0; playerIndex < operations.Length; playerIndex++)
+            {
+                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
+                var operation = operations[playerIndex];
+                var type = operation.Type;
+                switch (type)
+                {
+                    case OutTurnOperationType.Skip:
+                        continue;
+                    case OutTurnOperationType.Chow:
+                    case OutTurnOperationType.Pong:
+                    case OutTurnOperationType.Kong:
+                        Debug.LogError("This part is todo");
+                        break;
+                    case OutTurnOperationType.Rong:
+                        StartCoroutine(PlayerEffectManager.ShowEffect(placeIndex, PlayerEffectManager.GetAnimationType(type)));
+                        StartCoroutine(RevealHandTiles(placeIndex, operation.HandData));
+                        break;
+                    case OutTurnOperationType.RoundDraw:
+                        // todo
+                        Debug.Log("Round is draw");
+                        break;
+                }
+            }
             // todo -- do some cleaning, etc
         }
 
-        public void PlayerTsumo(ServerPlayerTsumoMessage message)
+        private IEnumerator RevealHandTiles(int placeIndex, PlayerHandData handData)
         {
-            // show tsumo animation -- todo
+            yield return new WaitForSeconds(MahjongConstants.HandTilesRevealDelay);
+            var manager = HandManagers[placeIndex];
+            manager.Reveal();
+            manager.Tiles = new List<Tile>(handData.HandTiles);
+        }
+
+        public IEnumerator PlayerTsumo(ServerPlayerTsumoMessage message)
+        {
+            // show tsumo animation
+            int playerIndex = message.TsumoPlayerIndex;
+            int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
+            // reveal hand tiles
+            StartCoroutine(RevealHandTiles(placeIndex, message.TsumoHandData));
+            yield return PlayerEffectManager.ShowEffect(placeIndex, AnimationType.Tsumo);
             // show summary panel
             var data = new SummaryPanelData
             {
@@ -309,9 +349,6 @@ namespace Single
 
         public void PlayerRong(ServerPlayerRongMessage message)
         {
-            // show rong animation -- todo
-            // show summary panel
-            // get indices of all array
             var indices = message.RongPlayerIndices.Select((playerIndex, index) => index).ToArray();
             var dataArray = indices.Select(index => new SummaryPanelData
             {
@@ -345,6 +382,7 @@ namespace Single
             {
                 // no more data to show
                 Debug.Log("Sending request for a new round.");
+                PointSummaryPanelManager.StopCountDown();
                 LocalPlayer.RequestNewRound();
             }
         }

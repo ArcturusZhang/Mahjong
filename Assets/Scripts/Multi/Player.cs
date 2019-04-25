@@ -98,8 +98,10 @@ namespace Multi
             connectionToServer.Send(MessageIds.ClientOutTurnOperationMessage, message);
         }
 
-        public void RequestNewRound() {
-            var message = new ClientNextRoundMessage {
+        public void RequestNewRound()
+        {
+            var message = new ClientNextRoundMessage
+            {
                 PlayerIndex = PlayerIndex
             };
             connectionToServer.Send(MessageIds.ClientNextRoundMessage, message);
@@ -223,10 +225,11 @@ namespace Multi
             Debug.Log($"ServerPlayerTsumoMessage received: {content}");
             // this message do not require confirm
             // invoke client method for tsumo operation
-            ClientBehaviour.Instance.PlayerTsumo(content);
+            StartCoroutine(ClientBehaviour.Instance.PlayerTsumo(content));
         }
 
-        private void OnPlayerRongMessageReceived(NetworkMessage message) {
+        private void OnPlayerRongMessageReceived(NetworkMessage message)
+        {
             var content = message.ReadMessage<ServerPlayerRongMessage>();
             Debug.Log($"ServerPlayerRongMessage received: {content}");
             // this message do not require confirm

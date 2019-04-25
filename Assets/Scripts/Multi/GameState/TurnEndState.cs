@@ -29,7 +29,7 @@ namespace Multi.GameState
         private IList<Player> players;
         private ServerTurnEndMessage[] messages;
         private OutTurnOperationType operationChosen;
-        private float serverTurnEndTimeOut = ServerConstants.ServerTurnEndTimeOut;
+        private float serverTurnEndTimeOut;
         private float firstTime;
 
         public void OnStateEnter()
@@ -59,6 +59,8 @@ namespace Multi.GameState
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, messages[i]);
             }
+            serverTurnEndTimeOut = operationChosen == OutTurnOperationType.Skip ?
+                ServerConstants.ServerTurnEndTimeOut : ServerConstants.ServerTurnEndTimeOutExtra;
         }
 
         private void ChooseOperations()
@@ -175,9 +177,10 @@ namespace Multi.GameState
             }
             var rongPlayerIndices = rongPlayerIndexList.ToArray();
             var rongPointInfos = new PointInfo[rongPlayerIndices.Length];
-            for (int playerIndex = 0; playerIndex < rongPlayerIndices.Length; playerIndex++)
+            for (int i = 0; i < rongPlayerIndices.Length; i++)
             {
-                rongPointInfos[playerIndex] = GetRongInfo(playerIndex, DiscardingTile);
+                int playerIndex = rongPlayerIndices[i];
+                rongPointInfos[i] = GetRongInfo(playerIndex, DiscardingTile);
             }
             Debug.Log($"[Server] Players who claimed rong: {string.Join(", ", rongPlayerIndices)}, "
                 + $"corresponding pointInfos: {string.Join(";", rongPointInfos)}");

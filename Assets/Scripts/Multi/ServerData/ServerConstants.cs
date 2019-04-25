@@ -5,6 +5,7 @@ namespace Multi.ServerData
         public const int ServerTimeOut = 3;
         public const int ServerTimeBuffer = 2;
         public const float ServerTurnEndTimeOut = 0.2f;
+        public const float ServerTurnEndTimeOutExtra = 3f;
         public const float ServerWaitForLoadingTimeOut = 30f;
     }
 }

@@ -30,6 +30,8 @@ namespace Single
         public const float ReadyPanelDelay = 0.5f;
         public const float SummaryPanelDelayTime = 0.5f;
         public const int SummaryPanelWaitingTime = 3;
+        public const float HandTilesRevealDelay = 0.5f;
+        public const float AnimationDelay = 1f;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
         public static readonly Quaternion FaceUp = Quaternion.Euler(-90, 0, -90);
         public static readonly Quaternion FaceDownOnWall = Quaternion.Euler(180, 180, -90);
@@ -121,17 +123,17 @@ namespace Single
 
         public static List<Tile> TwoPlayerTiles = new List<Tile> {
             new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1),
-            new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 2),
-            new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 3),
-            new Tile(Suit.M, 4), new Tile(Suit.M, 4), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
-            new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5),
-            new Tile(Suit.M, 6), new Tile(Suit.M, 6), new Tile(Suit.M, 6), new Tile(Suit.M, 6),
-            new Tile(Suit.M, 7), new Tile(Suit.M, 7), new Tile(Suit.M, 7), new Tile(Suit.M, 7),
-            new Tile(Suit.M, 8), new Tile(Suit.M, 8), new Tile(Suit.M, 8), new Tile(Suit.M, 8),
             new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9), new Tile(Suit.M, 9),
             new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1), new Tile(Suit.P, 1),
             new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9), new Tile(Suit.P, 9),
             new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1), new Tile(Suit.S, 1),
+            new Tile(Suit.S, 2), new Tile(Suit.S, 2), new Tile(Suit.S, 2), new Tile(Suit.S, 2),
+            new Tile(Suit.S, 3), new Tile(Suit.S, 3), new Tile(Suit.S, 3), new Tile(Suit.S, 3),
+            new Tile(Suit.S, 4), new Tile(Suit.S, 4), new Tile(Suit.S, 4), new Tile(Suit.S, 4),
+            new Tile(Suit.S, 5), new Tile(Suit.S, 5), new Tile(Suit.S, 5), new Tile(Suit.S, 5),
+            new Tile(Suit.S, 6), new Tile(Suit.S, 6), new Tile(Suit.S, 6), new Tile(Suit.S, 6),
+            new Tile(Suit.S, 7), new Tile(Suit.S, 7), new Tile(Suit.S, 7), new Tile(Suit.S, 7),
+            new Tile(Suit.S, 8), new Tile(Suit.S, 8), new Tile(Suit.S, 8), new Tile(Suit.S, 8),
             new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9), new Tile(Suit.S, 9),
             new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1),
             new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2), new Tile(Suit.Z, 2),

@@ -48,6 +48,7 @@ namespace Single
         public OutTurnOperationType Type;
         public Tile Tile;
         public Meld Meld;
+        public PlayerHandData HandData;
 
         public override string ToString()
         {
