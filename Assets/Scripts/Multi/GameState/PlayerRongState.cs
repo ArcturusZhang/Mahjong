@@ -58,7 +58,7 @@ namespace Multi.GameState
                 WinningTile = WinningTile,
                 DoraIndicators = MahjongSet.DoraIndicators,
                 UraDoraIndicators = MahjongSet.UraDoraIndicators,
-                RichiStatus = CurrentRoundStatus.RichiStatusArray,
+                RongPlayerRichiStatus = richiStatus,
                 RongPointInfos = netInfos,
                 Multipliers = multipliers
             };

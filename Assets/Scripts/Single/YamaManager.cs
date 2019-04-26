@@ -16,7 +16,8 @@ namespace Single
         [HideInInspector] public int OyaPlayerIndex;
         [HideInInspector] public int Dice;
         [HideInInspector] public MahjongSetData MahjongSetData;
-        [HideInInspector] public GameSettings GameSettings;
+        // [HideInInspector] public GameSettings GameSettings;
+        [HideInInspector] public int LingshangTilesCount;
 
         private void Update()
         {
@@ -60,15 +61,10 @@ namespace Single
                 // UnityEngine.Debug.Log($"Tile object name: {t.name} on yama with name {t.parent.name}");
                 DrawTile(t);
             }
-            if (GameSettings == null)
-            {
-                UnityEngine.Debug.LogError("GameSettings is null, this should not happen!");
-                return;
-            }
             // dora tiles
             for (int i = 0; i < MahjongSetData.DoraIndicators.Length; i++)
             {
-                var s = Dice - GameSettings.LingshangTilesCount / 2 - i;
+                var s = Dice - LingshangTilesCount / 2 - i;
                 var t = GetTileAt(openYamaIndex, (s - 1) * 2);
                 // UnityEngine.Debug.Log($"Dora object name: {t.name} on yama with name {t.parent.name}");
                 TurnTileFaceUp(t, MahjongSetData.DoraIndicators[i]);

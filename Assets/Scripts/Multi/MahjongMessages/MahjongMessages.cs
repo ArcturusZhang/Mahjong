@@ -14,8 +14,7 @@ namespace Multi.MahjongMessages
         public int PlayerIndex;
         public int[] Points;
         public string[] PlayerNames;
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
+        public NetworkSettings Settings;
 
         public override string ToString()
         {
@@ -173,7 +172,7 @@ namespace Multi.MahjongMessages
         public Tile WinningTile;
         public Tile[] DoraIndicators;
         public Tile[] UraDoraIndicators;
-        public bool[] RichiStatus;
+        public bool[] RongPlayerRichiStatus;
         public NetworkPointInfo[] RongPointInfos;
         public int[] Multipliers;
 
@@ -185,7 +184,7 @@ namespace Multi.MahjongMessages
                 + $"WinningTile: {WinningTile}\n"
                 + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
                 + $"UraDoraIndicators: {string.Join("", UraDoraIndicators)}\n"
-                + $"RichiStatus: {string.Join(",", RichiStatus)}\n"
+                + $"RichiStatus: {string.Join(",", RongPlayerRichiStatus)}\n"
                 + $"Multipliers: {string.Join(",", Multipliers)}\n"
                 + $"PointSummaries: {string.Join(";", RongPointInfos)}";
         }

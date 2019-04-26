@@ -30,10 +30,6 @@ namespace Single
         public RoundDrawPanelManager[] DrawPanelManagers;
         public PointSummaryPanelManager PointSummaryPanelManager;
 
-        [Header("Settings")]
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
-
         [Header("Data")]
         public int TotalPlayers;
         public int[] Places = new int[4];
@@ -54,6 +50,7 @@ namespace Single
         public int RichiSticks;
         public MahjongSetData MahjongSetData;
         private WaitForSeconds waitAutoDiscardAfterRichi = new WaitForSeconds(MahjongConstants.AutoDiscardDelayAfterRichi);
+        private NetworkSettings settings;
 
         private void OnEnable()
         {
@@ -83,7 +80,7 @@ namespace Single
             YamaManager.OyaPlayerIndex = OyaPlayerIndex;
             YamaManager.Dice = Dice;
             YamaManager.MahjongSetData = MahjongSetData;
-            YamaManager.GameSettings = GameSettings;
+            YamaManager.LingshangTilesCount = settings.LingShangTilesCount;
         }
 
         private void UpdateHandManager()
@@ -140,8 +137,7 @@ namespace Single
         {
             TotalPlayers = message.TotalPlayers;
             Places[0] = message.PlayerIndex;
-            GameSettings = message.GameSettings;
-            YakuSettings = message.YakuSettings;
+            settings = message.Settings;
             LocalPlayerHandTiles = null;
             MahjongSetData = default(MahjongSetData);
             for (int i = 1; i < Places.Length; i++)
@@ -216,7 +212,7 @@ namespace Single
                 return;
             }
             // not richied, show timer and panels
-            TurnTimeController.StartCountDown(GameSettings.BaseTurnTime, BonusTurnTime, () =>
+            TurnTimeController.StartCountDown(settings.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
                 LocalPlayer.DiscardTile(tile, false, true, 0);
@@ -270,7 +266,7 @@ namespace Single
             }
             OutTurnPanelManager.SetOperations(message.Operations);
             // if there are valid operations, assign operations
-            TurnTimeController.StartCountDown(GameSettings.BaseTurnTime, message.BonusTurnTime, () =>
+            TurnTimeController.StartCountDown(settings.BaseTurnTime, message.BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically skip this turn");
                 LocalPlayer.SkipOutTurnOperation(0);
@@ -385,7 +381,7 @@ namespace Single
                     WinningTile = message.WinningTile,
                     DoraIndicators = message.DoraIndicators,
                     UraDoraIndicators = message.UraDoraIndicators,
-                    IsRichi = message.RichiStatus[index],
+                    IsRichi = message.RongPlayerRichiStatus[index],
                     IsTsumo = false
                 },
                 PointInfo = new PointInfo(message.RongPointInfos[index]),

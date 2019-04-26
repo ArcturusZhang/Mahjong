@@ -43,8 +43,11 @@ namespace Multi.GameState
                     PlayerIndex = i,
                     Points = CurrentRoundStatus.Points.ToArray(),
                     PlayerNames = CurrentRoundStatus.PlayerNames,
-                    GameSettings = CurrentRoundStatus.GameSettings,
-                    YakuSettings = CurrentRoundStatus.YakuSettings
+                    Settings = new NetworkSettings
+                    {
+                        BaseTurnTime = CurrentRoundStatus.GameSettings.BaseTurnTime,
+                        LingShangTilesCount = CurrentRoundStatus.GameSettings.LingshangTilesCount
+                    }
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerPrepareMessage, messages[i]);
             }
