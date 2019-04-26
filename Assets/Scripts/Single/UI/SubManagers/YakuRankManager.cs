@@ -39,7 +39,7 @@ namespace Single.UI.SubManagers
         public void SetYakuRank(PointInfo pointInfo)
         {
             if (pointInfo.TotalFan == 0) return;
-            if (pointInfo.Is青天井) return;
+            if (pointInfo.IsQTJ) return;
             if (pointInfo.IsYakuman)
             {
                 var value = pointInfo.TotalFan;

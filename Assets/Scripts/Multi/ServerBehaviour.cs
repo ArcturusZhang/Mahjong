@@ -157,7 +157,7 @@ namespace Multi
             StateMachine.ChangeState(operationPerformState);
         }
 
-        public void HandleTsumo(int currentPlayerIndex, Tile winningTile, PointInfo pointInfo)
+        public void Tsumo(int currentPlayerIndex, Tile winningTile, PointInfo pointInfo)
         {
             var tsumoState = new PlayerTsumoState
             {
@@ -170,7 +170,7 @@ namespace Multi
             StateMachine.ChangeState(tsumoState);
         }
 
-        public void HandleRong(int currentPlayerIndex, Tile winningTile, int[] rongPlayerIndices, PointInfo[] rongPointInfos)
+        public void Rong(int currentPlayerIndex, Tile winningTile, int[] rongPlayerIndices, PointInfo[] rongPointInfos)
         {
             var rongState = new PlayerRongState {
                 CurrentPlayerIndex = currentPlayerIndex,

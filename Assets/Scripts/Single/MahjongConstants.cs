@@ -26,7 +26,7 @@ namespace Single
         public const float HandTileWidth = 0.028f;
         public const float LastDrawGap = HandTileWidth / 2;
         public const float PlayerHandTilesSortDelay = 0.75f;
-        public const float AutoDiscardDelayAfterRichi = 0.5f;
+        public const float AutoDiscardDelayAfterRichi = 1f;
         public const float ReadyPanelDelay = 0.5f;
         public const float SummaryPanelDelayTime = 0.5f;
         public const int SummaryPanelWaitingTime = 3;

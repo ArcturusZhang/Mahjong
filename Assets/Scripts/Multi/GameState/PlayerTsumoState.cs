@@ -27,13 +27,14 @@ namespace Multi.GameState
             players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientNextRoundMessage, OnNextRoundMessageReceived);
             int multiplier = gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(TsumoPlayerIndex), players.Count);
-            var netInfo = new NetworkPointInfo {
+            var netInfo = new NetworkPointInfo
+            {
                 Fu = TsumoPointInfo.Fu,
                 YakuValues = TsumoPointInfo.YakuList.ToArray(),
                 Dora = TsumoPointInfo.Dora,
                 UraDora = TsumoPointInfo.UraDora,
                 RedDora = TsumoPointInfo.RedDora,
-                IsQTJ = TsumoPointInfo.Is青天井
+                IsQTJ = TsumoPointInfo.IsQTJ
             };
             var tsumoMessage = new ServerPlayerTsumoMessage
             {
@@ -42,8 +43,8 @@ namespace Multi.GameState
                 TsumoHandData = CurrentRoundStatus.HandData(TsumoPlayerIndex),
                 WinningTile = WinningTile,
                 DoraIndicators = MahjongSet.DoraIndicators,
-                IsRichi = CurrentRoundStatus.RichiStatus[TsumoPlayerIndex],
                 UraDoraIndicators = MahjongSet.UraDoraIndicators,
+                IsRichi = CurrentRoundStatus.RichiStatus(TsumoPlayerIndex),
                 TsumoPointInfo = netInfo,
                 Multiplier = multiplier
             };

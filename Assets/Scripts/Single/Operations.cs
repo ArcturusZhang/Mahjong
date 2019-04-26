@@ -15,7 +15,7 @@ namespace Single
         public InTurnOperationType Type;
         public Tile Tile;
         public Meld Meld;
-        public Tile[] RichiLockTiles;
+        public Tile[] RichiAvailableTiles;
 
         public override string ToString()
         {
@@ -25,7 +25,7 @@ namespace Single
                 case InTurnOperationType.Tsumo:
                     return $"Type: {Type}, Tile: {Tile}";
                 case InTurnOperationType.Richi:
-                    return $"Type: {Type}, Tile: {Tile}, RichiLockTiles: {string.Join("", RichiLockTiles)}";
+                    return $"Type: {Type}, Tile: {Tile}, RichiAvailableTiles: {string.Join("", RichiAvailableTiles)}";
                 case InTurnOperationType.Bei:
                     return $"Type: {Type}";
                 case InTurnOperationType.Kong:

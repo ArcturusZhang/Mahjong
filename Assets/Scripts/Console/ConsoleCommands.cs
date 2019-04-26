@@ -202,6 +202,17 @@ namespace Console
             return true;
         }
 
+        [ConsoleMethod("test_richi", "Given a hand of tiles, test if it can claim richi")]
+        public static bool TestRichi(string tileString, string lastDraw)
+        {
+            var tiles = ParseTiles(tileString);
+            var tile = ParseTiles(lastDraw)[0];
+            IList<Tile> availables;
+            var result = MahjongLogic.TestRichi(tiles, new List<Meld>(), tile, false, out availables);
+            Debug.Log($"Candidates: {string.Join(",", availables)}");
+            return result;
+        }
+
         private static void CloseLobbyCanvas()
         {
             var lobby = LobbyManager.Instance;

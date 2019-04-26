@@ -34,7 +34,7 @@ namespace Multi.GameState
                 playerIndex => CurrentRoundStatus.HandData(playerIndex)
             ).ToArray();
             var richiStatus = RongPlayerIndices.Select(
-                playerIndex => CurrentRoundStatus.RichiStatus[playerIndex]
+                playerIndex => CurrentRoundStatus.RichiStatus(playerIndex)
             ).ToArray();
             var multipliers = RongPlayerIndices.Select(
                 playerIndex => gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(playerIndex), players.Count)
@@ -46,7 +46,7 @@ namespace Multi.GameState
                 Dora = info.Dora,
                 UraDora = info.UraDora,
                 RedDora = info.RedDora,
-                IsQTJ = info.Is青天井
+                IsQTJ = info.IsQTJ
             }).ToArray();
             Debug.Log($"The following players are claiming rong: {string.Join(",", RongPlayerIndices)}, "
                 + $"PlayerNames: {string.Join(",", playerNames)}");
@@ -58,7 +58,7 @@ namespace Multi.GameState
                 WinningTile = WinningTile,
                 DoraIndicators = MahjongSet.DoraIndicators,
                 UraDoraIndicators = MahjongSet.UraDoraIndicators,
-                IsRichi = richiStatus,
+                RichiStatus = CurrentRoundStatus.RichiStatusArray,
                 RongPointInfos = netInfos,
                 Multipliers = multipliers
             };

@@ -37,9 +37,10 @@ namespace Multi.GameState
             NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
             justDraw = MahjongSet.DrawTile();
-            Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}.");
             CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             CurrentRoundStatus.LastDraw = justDraw;
+            CurrentRoundStatus.CheckFirstTurn(CurrentPlayerIndex);
+            Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}, first turn: {CurrentRoundStatus.FirstTurn}.");
             messages = new MessageBase[players.Count];
             responds = new bool[players.Count];
             for (int i = 0; i < players.Count; i++)
@@ -58,6 +59,7 @@ namespace Multi.GameState
                 PlayerIndex = CurrentPlayerIndex,
                 Tile = justDraw,
                 BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
+                Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
                 Operations = GetOperations(CurrentPlayerIndex),
                 MahjongSetData = MahjongSet.Data
             };
@@ -81,7 +83,19 @@ namespace Multi.GameState
                     Tile = justDraw
                 });
             }
-            // test richi -- todo
+            // test richi
+            var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
+            var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
+            var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
+            IList<Tile> availableTiles;
+            if (!alreadyRichied && MahjongLogic.TestRichi(handTiles, openMelds, justDraw, gameSettings.AllowRichiWhenNotReady, out availableTiles))
+            {
+                operations.Add(new InTurnOperation
+                {
+                    Type = InTurnOperationType.Richi,
+                    RichiAvailableTiles = availableTiles.ToArray()
+                });
+            }
             // test kong -- todo
             // test bei -- todo
             return operations.ToArray();
@@ -110,7 +124,9 @@ namespace Multi.GameState
             // handle message
             Debug.Log($"[Server] Received ClientDiscardRequestMessage {content}");
             // Change to discardTileState
-            ServerBehaviour.Instance.DiscardTile(content.PlayerIndex, content.Tile, content.IsRichiing, content.DiscardingLastDraw, content.BonusTurnTime);
+            ServerBehaviour.Instance.DiscardTile(
+                content.PlayerIndex, content.Tile, content.IsRichiing, 
+                content.DiscardingLastDraw, content.BonusTurnTime);
         }
 
         private void OnInTurnOperationReceived(NetworkMessage message)
@@ -146,7 +162,7 @@ namespace Multi.GameState
             if (!gameSettings.CheckConstraint(point))
                 Debug.LogError(
                     $"Tsumo requires minimum fan of {gameSettings.MinimumFanConstraintType}, but the point only contains {point.FanWithoutDora}");
-            ServerBehaviour.Instance.HandleTsumo(playerIndex, operation.Tile, point);
+            ServerBehaviour.Instance.Tsumo(playerIndex, operation.Tile, point);
         }
 
         private PointInfo GetTsumoInfo(int playerIndex, Tile tile)
@@ -195,6 +211,7 @@ namespace Multi.GameState
             Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
             NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
+            CurrentRoundStatus.CheckOneShot(CurrentPlayerIndex);
         }
     }
 }

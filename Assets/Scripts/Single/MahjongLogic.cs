@@ -112,7 +112,7 @@ namespace Single
 
         public static PointInfo GetPointInfo(Tile[] handTiles, Meld[] openMelds, Tile winningTile,
             HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, bool isQTJ,
-            Tile[] doraTiles = null,            Tile[] uraDoraTiles = null)
+            Tile[] doraTiles = null, Tile[] uraDoraTiles = null)
         {
             var decomposes = Decompose(handTiles, openMelds, winningTile);
             if (decomposes.Count == 0) return new PointInfo();
@@ -207,9 +207,7 @@ namespace Single
             if (count % 3 != 1) return decompose;
             var allTiles = new List<Tile>(handTiles) { tile };
             var hand = CountTiles(allTiles);
-            AnalyzeNormal(hand, decompose);
-            Analyze7Pairs(hand, decompose);
-            Analyze13Orphans(hand, decompose);
+            AnalyzeHand(hand, decompose);
             if (decompose.Count == 0) return decompose;
             var result = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             foreach (var sub in decompose)
@@ -240,9 +238,16 @@ namespace Single
             return list;
         }
 
-        public static bool IsReady(List<Tile> handTiles, List<Meld> openMelds)
+        public static bool IsReady(IList<Tile> handTiles, IList<Meld> openMelds)
         {
             return WinningTiles(handTiles, openMelds).Count > 0;
+        }
+
+        private static void AnalyzeHand(int[] hand, HashSet<List<Meld>> decompose)
+        {
+            AnalyzeNormal(hand, decompose);
+            Analyze7Pairs(hand, decompose);
+            Analyze13Orphans(hand, decompose);
         }
 
         private static void AnalyzeNormal(int[] hand, HashSet<List<Meld>> result)
@@ -392,7 +397,7 @@ namespace Single
             }
         }
 
-        public static int[] CountTiles(List<Meld> meldList)
+        public static int[] CountTiles(IList<Meld> meldList)
         {
             var result = new int[MahjongConstants.TileKinds];
             foreach (var meld in meldList)
@@ -406,7 +411,7 @@ namespace Single
             return result;
         }
 
-        private static int[] CountTiles(List<Tile> tiles)
+        private static int[] CountTiles(IList<Tile> tiles)
         {
             var array = new int[MahjongConstants.TileKinds];
             foreach (var tile in tiles)
@@ -420,6 +425,34 @@ namespace Single
         public static bool TestMenqing(IList<Meld> openMelds)
         {
             return openMelds.Count == 0 || openMelds.All(m => m.IsKong && !m.Revealed);
+        }
+
+        public static bool TestRichi(IList<Tile> handTiles, IList<Meld> openMelds, Tile lastDraw,
+            bool allowNotReady, out IList<Tile> availableTiles)
+        {
+            // test if menqing
+            if (!TestMenqing(openMelds))
+            {
+                availableTiles = new List<Tile>();
+                return false;
+            }
+            if (allowNotReady)
+            {
+                // return every hand tile as candidates
+                availableTiles = new List<Tile>(handTiles);
+                availableTiles.Add(lastDraw);
+                return true;
+            }
+            var tiles = new List<Tile>(handTiles) { lastDraw };
+            availableTiles = new List<Tile>();
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                var tile = tiles[0];
+                tiles.RemoveAt(0);
+                if (IsReady(tiles, openMelds)) availableTiles.Add(tile);
+                tiles.Add(tile);
+            }
+            return availableTiles.Count > 0;
         }
 
         [System.Obsolete]

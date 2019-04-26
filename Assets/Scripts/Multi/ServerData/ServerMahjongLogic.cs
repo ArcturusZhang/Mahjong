@@ -21,15 +21,19 @@ namespace Multi.ServerData
             if (MahjongLogic.TestMenqing(handData.OpenMelds))
                 handStatus |= HandStatus.Menqing;
             // test richi
-            if (CurrentRoundStatus.RichiStatus[playerIndex])
+            if (CurrentRoundStatus.RichiStatus(playerIndex))
             {
                 handStatus |= HandStatus.Richi;
                 // test one-shot
-                if (CurrentRoundStatus.OneShotStatus[playerIndex])
+                if (yakuSettings.HasOneShot && CurrentRoundStatus.OneShotStatus(playerIndex))
                     handStatus |= HandStatus.OneShot;
-                // test WRichi -- todo
+                // test WRichi
+                if (CurrentRoundStatus.FirstTurn)
+                    handStatus |= HandStatus.WRichi;
             }
-            // test first turn -- todo
+            // test first turn
+            if (CurrentRoundStatus.FirstTurn)
+                handStatus |= HandStatus.FirstTurn;
             var roundStatus = new RoundStatus
             {
                 PlayerIndex = playerIndex,

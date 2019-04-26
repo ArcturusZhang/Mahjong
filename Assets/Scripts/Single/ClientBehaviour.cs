@@ -53,6 +53,7 @@ namespace Single
         public int Extra;
         public int RichiSticks;
         public MahjongSetData MahjongSetData;
+        private WaitForSeconds waitAutoDiscardAfterRichi = new WaitForSeconds(MahjongConstants.AutoDiscardDelayAfterRichi);
 
         private void OnEnable()
         {
@@ -197,6 +198,7 @@ namespace Single
 
         public void PlayerDrawTurn(ServerDrawTileMessage message)
         {
+            HandPanelManager.UnlockTiles();
             var index = message.PlayerIndex;
             var tile = message.Tile;
             for (int i = 0; i < LastDraws.Length; i++)
@@ -206,7 +208,14 @@ namespace Single
             LastDraws[0] = tile;
             BonusTurnTime = message.BonusTurnTime;
             MahjongSetData = message.MahjongSetData;
-            // todo -- UI events
+            // auto discard when richied
+            if (message.Richied && message.Operations.All(op => op.Type == InTurnOperationType.Discard))
+            {
+                HandPanelManager.LockTiles();
+                StartCoroutine(AutoDiscard(message.Tile, message.BonusTurnTime));
+                return;
+            }
+            // not richied, show timer and panels
             TurnTimeController.StartCountDown(GameSettings.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
@@ -227,13 +236,21 @@ namespace Single
             MahjongSetData = message.MahjongSetData;
         }
 
-        // todo -- if player is richiing, show richi related animation.
+        private IEnumerator AutoDiscard(Tile tile, int bonusTimeLeft)
+        {
+            yield return waitAutoDiscardAfterRichi;
+            LocalPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
+        }
+
         public void PlayerOutTurnOperation(ServerDiscardOperationMessage message)
         {
             Debug.Log($"Player {message.PlayerIndex} just discarded {message.Tile}, valid operation: {string.Join(", ", message.Operations)}");
+            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(message.CurrentTurnPlayerIndex);
             // update hand tiles
             LocalPlayerHandTiles = new List<Tile>(message.HandTiles);
-            StartCoroutine(UpdateHandData(message.CurrentTurnPlayerIndex, message.DiscardingLastDraw, message.Tile, message.Rivers));
+            StartCoroutine(UpdateHandData(currentPlaceIndex, message.DiscardingLastDraw, message.Tile, message.Rivers));
+            if (message.IsRichiing)
+                StartCoroutine(PlayerEffectManager.ShowEffect(currentPlaceIndex, AnimationType.Richi));
             BonusTurnTime = message.BonusTurnTime;
             // check if message contains a valid operation
             if (message.Operations == null || message.Operations.Length == 0)
@@ -261,12 +278,12 @@ namespace Single
             });
         }
 
-        private IEnumerator UpdateHandData(int currentIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers)
+        private IEnumerator UpdateHandData(int currentPlaceIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers)
         {
             for (int i = 0; i < LastDraws.Length; i++) LastDraws[i] = null;
-            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(currentIndex);
+            // int currentPlaceIndex = GetPlaceIndexByPlayerIndex(currentIndex);
             HandManagers[currentPlaceIndex].DiscardTile(discardingLastDraw);
-            Debug.Log($"Playing player {currentIndex} (place: {currentPlaceIndex}) discarding animation");
+            Debug.Log($"Playing player (place: {currentPlaceIndex}) discarding animation");
             yield return new WaitForEndOfFrame();
             for (int playerIndex = 0; playerIndex < rivers.Length; playerIndex++)
             {
@@ -279,6 +296,14 @@ namespace Single
         {
             // show operation related animation
             Debug.Log($"Turn ends, operation {message.Operations} is taking.");
+            // update richi status
+            for (int playerIndex = 0; playerIndex < message.RichiStatus.Length; playerIndex++)
+            {
+                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
+                RichiStatus[placeIndex] = message.RichiStatus[playerIndex];
+            }
+            RichiSticks = message.RichiSticks;
+            // perform operation effect
             var operations = message.Operations;
             if (operations.All(op => op.Type == OutTurnOperationType.Skip)) return;
             for (int playerIndex = 0; playerIndex < operations.Length; playerIndex++)
@@ -293,7 +318,7 @@ namespace Single
                     case OutTurnOperationType.Chow:
                     case OutTurnOperationType.Pong:
                     case OutTurnOperationType.Kong:
-                        Debug.LogError("This part is todo");
+                        Debug.LogError("This part is under construction");
                         break;
                     case OutTurnOperationType.Rong:
                         StartCoroutine(PlayerEffectManager.ShowEffect(placeIndex, PlayerEffectManager.GetAnimationType(type)));
@@ -334,6 +359,7 @@ namespace Single
                     WinningTile = message.WinningTile,
                     DoraIndicators = message.DoraIndicators,
                     UraDoraIndicators = message.UraDoraIndicators,
+                    IsRichi = message.IsRichi,
                     IsTsumo = true
                 },
                 PointInfo = new PointInfo(message.TsumoPointInfo),
@@ -359,6 +385,7 @@ namespace Single
                     WinningTile = message.WinningTile,
                     DoraIndicators = message.DoraIndicators,
                     UraDoraIndicators = message.UraDoraIndicators,
+                    IsRichi = message.RichiStatus[index],
                     IsTsumo = false
                 },
                 PointInfo = new PointInfo(message.RongPointInfos[index]),
@@ -425,6 +452,9 @@ namespace Single
             Debug.Log($"Sending request of discarding tile {tile}");
             int bonusTimeLeft = TurnTimeController.StopCountDown();
             LocalPlayer.DiscardTile(tile, IsRichiing, isLastDraw, bonusTimeLeft);
+            InTurnPanelManager.Disable();
+            IsRichiing = false;
+            HandPanelManager.RemoveCandidates();
         }
 
         public void OnInTurnSkipButtonClicked()
@@ -446,19 +476,27 @@ namespace Single
             InTurnPanelManager.Disable();
         }
 
-        public void OnRichiButtonClicked(InTurnOperation operation, InTurnOperation[] originalOperations)
+        public void OnRichiButtonClicked(InTurnOperation operation)
         {
             if (operation.Type != InTurnOperationType.Richi)
             {
                 Debug.LogError($"Cannot send a operation with type {operation.Type} within OnRichiButtonClicked method");
                 return;
             }
-            // show richi selection panel -- todo
-            Debug.Log("Showing richi selection panel");
-            // todo
+            // show richi selection panel
+            Debug.Log($"Showing richi selection panel, candidates: {string.Join(",", operation.RichiAvailableTiles)}");
+            IsRichiing = true;
+            HandPanelManager.SetCandidates(operation.RichiAvailableTiles);
         }
 
-        public void OnInTurnKongButtonClicked(InTurnOperation[] operationOptions, InTurnOperation[] originalOperations)
+        public void OnInTurnBackButtonClicked(InTurnOperation[] operations)
+        {
+            InTurnPanelManager.SetOperations(operations);
+            HandPanelManager.RemoveCandidates();
+            IsRichiing = false;
+        }
+
+        public void OnInTurnKongButtonClicked(InTurnOperation[] operationOptions)
         {
             if (operationOptions == null || operationOptions.Length == 0)
             {

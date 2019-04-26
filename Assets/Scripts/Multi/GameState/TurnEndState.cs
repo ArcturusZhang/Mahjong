@@ -48,6 +48,9 @@ namespace Multi.GameState
             // determines the operation to take when turn ends
             ChooseOperations();
             Debug.Log($"The operation chosen by this round is {operationChosen}");
+            // if operation is not rong or round-draw, perform richi
+            if (operationChosen != OutTurnOperationType.Rong && operationChosen != OutTurnOperationType.RoundDraw) 
+                CurrentRoundStatus.Richi(CurrentPlayerIndex, IsRichiing);
             // Send messages to clients
             for (int i = 0; i < players.Count; i++)
             {
@@ -55,12 +58,18 @@ namespace Multi.GameState
                 {
                     PlayerIndex = i,
                     ChosenOperationType = operationChosen,
-                    Operations = Operations
+                    Operations = Operations,
+                    RichiStatus = CurrentRoundStatus.RichiStatusArray,
+                    RichiSticks = CurrentRoundStatus.RichiSticks
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, messages[i]);
             }
             serverTurnEndTimeOut = operationChosen == OutTurnOperationType.Skip ?
                 ServerConstants.ServerTurnEndTimeOut : ServerConstants.ServerTurnEndTimeOutExtra;
+            if (operationChosen == OutTurnOperationType.Chow
+                || operationChosen == OutTurnOperationType.Pong
+                || operationChosen == OutTurnOperationType.Kong)
+                CurrentRoundStatus.BreakOneShotsAndFirstTurn();
         }
 
         private void ChooseOperations()
@@ -184,7 +193,7 @@ namespace Multi.GameState
             }
             Debug.Log($"[Server] Players who claimed rong: {string.Join(", ", rongPlayerIndices)}, "
                 + $"corresponding pointInfos: {string.Join(";", rongPointInfos)}");
-            ServerBehaviour.Instance.HandleRong(CurrentPlayerIndex, DiscardingTile, rongPlayerIndices, rongPointInfos);
+            ServerBehaviour.Instance.Rong(CurrentPlayerIndex, DiscardingTile, rongPlayerIndices, rongPointInfos);
         }
 
         private PointInfo GetRongInfo(int playerIndex, Tile discard)

@@ -7,6 +7,7 @@ namespace Single.MahjongDataType
     {
         [Header("Yaku settings")] public const int YakumanBaseFan = 13;
         public bool OpenDuanYao = true;
+        public bool HasOneShot = true;
         public bool 连风对子额外加符 = true;
         public YakumanLevel SiAnKe = YakumanLevel.Two;
         public YakumanLevel GuoShi = YakumanLevel.Two;

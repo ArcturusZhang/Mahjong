@@ -32,6 +32,7 @@ namespace Single.UI.SubManagers
         public IEnumerator SetPointInfo(PointInfo pointInfo, int multiplier)
         {
             gameObject.SetActive(true);
+            yield return waiting;
             yield return StartCoroutine(AddYakuEntries(pointInfo));
             ShowPointInfo(pointInfo);
             yield return waiting;
@@ -40,7 +41,7 @@ namespace Single.UI.SubManagers
 
         private void ShowPointInfo(PointInfo pointInfo)
         {
-            if (pointInfo.Is青天井 || !pointInfo.IsYakuman)
+            if (pointInfo.IsQTJ || !pointInfo.IsYakuman)
             {
                 FanAndFuManager.gameObject.SetActive(true);
                 YakuMan.gameObject.SetActive(false);
@@ -94,16 +95,16 @@ namespace Single.UI.SubManagers
                 entry.SetActive(false);
                 entries.Add(entry);
                 var yakuItem = entry.GetComponent<YakuItem>();
-                yakuItem.SetYakuItem(yakuValue, pointInfo.Is青天井);
+                yakuItem.SetYakuItem(yakuValue, pointInfo.IsQTJ);
             }
-            if (pointInfo.IsYakuman && !pointInfo.Is青天井) return entries;
+            if (pointInfo.IsYakuman && !pointInfo.IsQTJ) return entries;
             if (pointInfo.Dora > 0)
             {
                 var entry = Instantiate(YakuItemPrefab, holder);
                 entry.SetActive(false);
                 entries.Add(entry);
                 var yakuItem = entry.GetComponent<YakuItem>();
-                yakuItem.SetYakuItem(new YakuValue { Name = "宝牌", Value = pointInfo.Dora }, pointInfo.Is青天井);
+                yakuItem.SetYakuItem(new YakuValue { Name = "宝牌", Value = pointInfo.Dora }, pointInfo.IsQTJ);
             }
             if (pointInfo.RedDora > 0)
             {
@@ -111,7 +112,7 @@ namespace Single.UI.SubManagers
                 entry.SetActive(false);
                 entries.Add(entry);
                 var yakuItem = entry.GetComponent<YakuItem>();
-                yakuItem.SetYakuItem(new YakuValue { Name = "红宝牌", Value = pointInfo.RedDora }, pointInfo.Is青天井);
+                yakuItem.SetYakuItem(new YakuValue { Name = "红宝牌", Value = pointInfo.RedDora }, pointInfo.IsQTJ);
             }
             if (pointInfo.UraDora > 0)
             {
@@ -119,7 +120,7 @@ namespace Single.UI.SubManagers
                 entry.SetActive(false);
                 entries.Add(entry);
                 var yakuItem = entry.GetComponent<YakuItem>();
-                yakuItem.SetYakuItem(new YakuValue { Name = "里宝牌", Value = pointInfo.UraDora }, pointInfo.Is青天井);
+                yakuItem.SetYakuItem(new YakuValue { Name = "里宝牌", Value = pointInfo.UraDora }, pointInfo.IsQTJ);
             }
             return entries;
         }

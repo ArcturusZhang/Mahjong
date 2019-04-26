@@ -29,7 +29,8 @@ namespace Single.UI
             PlayerNameText.text = data.PlayerName;
             HandTileManager.SetHandTiles(data.HandInfo.HandTiles, data.HandInfo.OpenMelds, data.HandInfo.WinningTile);
             WinTypeManager.SetType(data.HandInfo.IsTsumo);
-            DoraPanelManager.SetDoraIndicators(data.HandInfo.DoraIndicators, data.HandInfo.UraDoraIndicators);
+            var uraDora = data.HandInfo.IsRichi ? data.HandInfo.UraDoraIndicators : null;
+            DoraPanelManager.SetDoraIndicators(data.HandInfo.DoraIndicators, uraDora);
             // yaku list, total point and yaku rank
             StartCoroutine(YakuListCoroutine(data.PointInfo, data.Multiplier, callback));
         }
@@ -61,6 +62,7 @@ namespace Single.UI
         public IList<Tile> DoraIndicators;
         public IList<Tile> UraDoraIndicators;
         public bool IsTsumo;
+        public bool IsRichi;
     }
 
     public struct SummaryPanelData

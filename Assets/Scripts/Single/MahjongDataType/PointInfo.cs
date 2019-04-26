@@ -12,7 +12,7 @@ namespace Single.MahjongDataType
         private int Fan;
         private YakuValue[] Yakus;
         public bool IsYakuman { get; }
-        public bool Is青天井 { get; }
+        public bool IsQTJ { get; }
         public int Dora { get; }
         public int UraDora { get; }
         public int RedDora { get; }
@@ -22,7 +22,7 @@ namespace Single.MahjongDataType
             Fu = fu;
             Yakus = yakuValues.ToArray();
             Fan = 0;
-            Is青天井 = 青天井;
+            IsQTJ = 青天井;
             Dora = dora;
             UraDora = uraDora;
             RedDora = redDora;

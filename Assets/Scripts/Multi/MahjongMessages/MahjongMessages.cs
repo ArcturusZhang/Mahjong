@@ -57,6 +57,7 @@ namespace Multi.MahjongMessages
         public int PlayerIndex;
         public Tile Tile;
         public int BonusTurnTime;
+        public bool Richied;
         public InTurnOperation[] Operations;
         public MahjongSetData MahjongSetData;
 
@@ -65,6 +66,7 @@ namespace Multi.MahjongMessages
             return $"PlayerIndex: {PlayerIndex}\n"
                 + $"Tile: {Tile}\n"
                 + $"BonusTurnTime: {BonusTurnTime}\n"
+                + $"Richied: {Richied}\n"
                 + $"Operations: {string.Join(",", Operations)}\n"
                 + $"MahjongSetData: {MahjongSetData}";
         }
@@ -114,12 +116,16 @@ namespace Multi.MahjongMessages
         public int PlayerIndex;
         public OutTurnOperationType ChosenOperationType;
         public OutTurnOperation[] Operations;
+        public bool[] RichiStatus;
+        public int RichiSticks;
 
         public override string ToString()
         {
             return $"PlayerIndex: {PlayerIndex}\n"
                 + $"ChosenOperationType: {ChosenOperationType}\n"
-                + $"Operations for each player: {string.Join(", ", Operations)}";
+                + $"Operations for each player: {string.Join(", ", Operations)}\n"
+                + $"RichiStatus: {string.Join(",", RichiStatus)}\n"
+                + $"RichiSticks: {RichiSticks}";
         }
     }
 
@@ -167,7 +173,7 @@ namespace Multi.MahjongMessages
         public Tile WinningTile;
         public Tile[] DoraIndicators;
         public Tile[] UraDoraIndicators;
-        public bool[] IsRichi;
+        public bool[] RichiStatus;
         public NetworkPointInfo[] RongPointInfos;
         public int[] Multipliers;
 
@@ -179,7 +185,7 @@ namespace Multi.MahjongMessages
                 + $"WinningTile: {WinningTile}\n"
                 + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
                 + $"UraDoraIndicators: {string.Join("", UraDoraIndicators)}\n"
-                + $"IsRichi: {string.Join(",", IsRichi)}\n"
+                + $"RichiStatus: {string.Join(",", RichiStatus)}\n"
                 + $"Multipliers: {string.Join(",", Multipliers)}\n"
                 + $"PointSummaries: {string.Join(";", RongPointInfos)}";
         }

@@ -25,6 +25,8 @@ namespace Multi.ServerData
         private Tile? lastDraw = null;
         private bool[] richiStatus;
         private bool[] oneShotStatus;
+        private bool firstTurn;
+        private int turnCount;
         private List<RiverTile>[] rivers;
 
         public ServerRoundStatus(GameSettings gameSettings, YakuSettings yakuSettings, List<Player> players)
@@ -63,8 +65,27 @@ namespace Multi.ServerData
                 else lastDraw = value;
             }
         }
-        public bool[] RichiStatus => richiStatus;
-        public bool[] OneShotStatus => oneShotStatus;
+        public bool RichiStatus(int playerIndex)
+        {
+            return richiStatus[playerIndex];
+        }
+        public bool[] RichiStatusArray
+        {
+            get
+            {
+                var array = new bool[players.Count];
+                for (int i = 0; i < array.Length; i++)
+                {
+                    array[i] = richiStatus[i];
+                }
+                return array;
+            }
+        }
+        public bool OneShotStatus(int playerIndex)
+        {
+            return oneShotStatus[playerIndex];
+        }
+        public bool FirstTurn => firstTurn;
         public int TotalPlayers => players.Count;
         public string[] PlayerNames => players.Select(player => player.PlayerName).ToArray();
 
@@ -200,15 +221,45 @@ namespace Multi.ServerData
             openMelds[index].Add(meld);
         }
 
-        public void Richi(int index)
+        public void Richi(int index, bool isRichiing)
         {
             CheckRange(index);
-            if (RichiStatus[index])
+            if (!isRichiing) return;
+            if (richiStatus[index])
             {
                 Debug.LogError($"Player {index} has already richied, therefore he cannot richi again.");
                 return;
             }
-            RichiStatus[index] = true;
+            richiStatus[index] = true;
+            oneShotStatus[index] = true;
+            richiSticks++;
+        }
+
+        public void CheckOneShot(int index)
+        {
+            if (oneShotStatus[index]) oneShotStatus[index] = false;
+        }
+
+        public void BreakOneShotsAndFirstTurn()
+        {
+            for (int i = 0; i < oneShotStatus.Length; i++)
+            {
+                oneShotStatus[i] = false;
+                firstTurn = false;
+            }
+        }
+
+        public void CheckFirstTurn(int playerIndex)
+        {
+            if (playerIndex == OyaPlayerIndex)
+            {
+                if (turnCount > 0)
+                {
+                    firstTurn = false;
+                    return;
+                }
+                turnCount++;
+            }
         }
 
         public void SortHandTiles(int index)
@@ -249,14 +300,16 @@ namespace Multi.ServerData
             handTiles = new List<Tile>[players.Count];
             openMelds = new List<Meld>[players.Count];
             rivers = new List<RiverTile>[players.Count];
+            richiStatus = new bool[players.Count];
+            oneShotStatus = new bool[players.Count];
+            firstTurn = true;
+            turnCount = 0;
             for (int i = 0; i < players.Count; i++)
             {
                 handTiles[i] = new List<Tile>();
                 openMelds[i] = new List<Meld>();
                 rivers[i] = new List<RiverTile>();
             }
-            richiStatus = new bool[players.Count];
-            oneShotStatus = new bool[players.Count];
         }
 
         private void CheckRange(int index)
