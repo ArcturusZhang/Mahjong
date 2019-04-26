@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Single.UI
 {
-    public class RoundDrawPanelManager : MonoBehaviour
+    public class WaitingPanelManager : MonoBehaviour
     {
         public Transform ReadySign;
         public Transform NotReadySign;

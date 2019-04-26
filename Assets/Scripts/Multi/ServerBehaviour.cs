@@ -183,11 +183,12 @@ namespace Multi
             StateMachine.ChangeState(rongState);
         }
 
-        public void RoundDraw()
+        public void RoundDraw(RoundDrawType type)
         {
             var drawState = new RoundDrawState
             {
-                CurrentRoundStatus = CurrentRoundStatus
+                CurrentRoundStatus = CurrentRoundStatus,
+                RoundDrawType = type
             };
             StateMachine.ChangeState(drawState);
         }

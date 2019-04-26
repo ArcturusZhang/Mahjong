@@ -130,10 +130,12 @@ namespace Multi.MahjongMessages
 
     public class ServerRoundDrawMessage : MessageBase
     {
+        public RoundDrawType RoundDrawType;
         public WaitingData[] WaitingData;
 
         public override string ToString()
         {
+            if (WaitingData == null) return $"RoundDrawType: {RoundDrawType}";
             var list = WaitingData.Select((t, i) =>
                 $"Player {i}: \nHandTiles: {string.Join("", t.HandTiles)}, Waiting: {string.Join("", t.WaitingTiles)}");
             return string.Join("\n", list);
@@ -256,6 +258,17 @@ namespace Multi.MahjongMessages
         public override string ToString()
         {
             return $"PlayerIndex: {PlayerIndex}";
+        }
+    }
+
+    public class ClientRoundDrawMessage : MessageBase
+    {
+        public int PlayerIndex;
+        public RoundDrawType Type;
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}, Type: {Type}";
         }
     }
 }

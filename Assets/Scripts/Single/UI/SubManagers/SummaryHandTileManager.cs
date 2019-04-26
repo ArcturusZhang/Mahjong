@@ -10,7 +10,7 @@ namespace Single.UI.SubManagers
     public class SummaryHandTileManager : MonoBehaviour
     {
         private const float TileWidth = 62f;
-        private const float Gap = 10f;
+        private const float Gap = 20f;
         private const string back = "back";
         private Image[] tileImages;
         private ResourceManager manager;

@@ -19,5 +19,6 @@ namespace Multi.MahjongMessages
         public const short ClientInTurnOperationMessage = 202;
         public const short ClientOutTurnOperationMessage = 203;
         public const short ClientNextRoundMessage = 300;
+        public const short ClientNineOrphansMessage = 301;
     }
 }

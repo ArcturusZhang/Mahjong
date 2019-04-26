@@ -107,6 +107,16 @@ namespace Multi
             connectionToServer.Send(MessageIds.ClientNextRoundMessage, message);
         }
 
+        public void NineKindsOfOrphans()
+        {
+            var message = new ClientRoundDrawMessage
+            {
+                PlayerIndex = PlayerIndex,
+                Type = RoundDrawType.NineOrphans
+            };
+            connectionToServer.Send(MessageIds.ClientNineOrphansMessage, message);
+        }
+
         private void RegisterHandlers()
         {
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPrepareMessage, OnGamePrepareMessageReceived);
@@ -210,15 +220,6 @@ namespace Multi
             ClientBehaviour.Instance.PlayerTurnEnd(content);
         }
 
-        private void OnRoundDrawMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ServerRoundDrawMessage>();
-            Debug.Log($"ServerRoundDrawMessage received: {content}");
-            // this message do not require confirm
-            // invoke client method for round draw operations
-            ClientBehaviour.Instance.RoundDraw(content);
-        }
-
         private void OnPlayerTsumoMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ServerPlayerTsumoMessage>();
@@ -235,6 +236,15 @@ namespace Multi
             // this message do not require confirm
             // invoke client method for rong operations
             ClientBehaviour.Instance.PlayerRong(content);
+        }
+
+        private void OnRoundDrawMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ServerRoundDrawMessage>();
+            Debug.Log($"ServerRoundDrawMessage received: {content}");
+            // this message do not require confirm
+            // invoke client method for round draw operations
+            ClientBehaviour.Instance.RoundDraw(content);
         }
     }
 }

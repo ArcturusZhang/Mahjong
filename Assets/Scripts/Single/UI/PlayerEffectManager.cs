@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Multi;
 using Single.UI.SubManagers;
 using UnityEngine;
 
@@ -10,31 +11,31 @@ namespace Single.UI
         public EffectManager[] EffectManagers;
         private WaitForSeconds wait = new WaitForSeconds(MahjongConstants.AnimationDelay);
 
-        public IEnumerator ShowEffect(int placeIndex, AnimationType type)
+        public IEnumerator ShowEffect(int placeIndex, Type type)
         {
             yield return EffectManagers[placeIndex].StartAnimation(type);
         }
 
-        public static AnimationType GetAnimationType(OutTurnOperationType operation)
+        public static Type GetAnimationType(OutTurnOperationType operation)
         {
             switch (operation)
             {
                 case OutTurnOperationType.Chow:
-                    return AnimationType.Chow;
+                    return Type.Chow;
                 case OutTurnOperationType.Pong:
-                    return AnimationType.Pong;
+                    return Type.Pong;
                 case OutTurnOperationType.Kong:
-                    return AnimationType.Kong;
+                    return Type.Kong;
                 case OutTurnOperationType.Rong:
-                    return AnimationType.Rong;
+                    return Type.Rong;
                 default:
                     throw new NotSupportedException($"This kind of operation {operation} does not have an animation");
             }
         }
-    }
 
-    public enum AnimationType
-    {
-        Richi, Chow, Pong, Kong, Tsumo, Rong
+        public enum Type
+        {
+            Richi, Chow, Pong, Kong, Tsumo, Rong
+        }
     }
 }

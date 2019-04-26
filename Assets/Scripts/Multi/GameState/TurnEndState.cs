@@ -155,7 +155,7 @@ namespace Multi.GameState
                     HandleRong();
                     break;
                 case OutTurnOperationType.RoundDraw:
-                    ServerBehaviour.Instance.RoundDraw();
+                    ServerBehaviour.Instance.RoundDraw(RoundDrawType.RoundDraw);
                     break;
                 case OutTurnOperationType.Kong:
                 case OutTurnOperationType.Pong:

@@ -2,11 +2,11 @@ using System;
 using Single.MahjongDataType;
 using UnityEngine;
 
-namespace Single
+namespace Multi
 {
     public enum InTurnOperationType
     {
-        Discard, Richi, Tsumo, Bei, Kong,
+        Discard, Richi, Tsumo, Bei, Kong, RoundDraw
     }
 
     [Serializable]
@@ -26,6 +26,7 @@ namespace Single
                     return $"Type: {Type}, Tile: {Tile}";
                 case InTurnOperationType.Richi:
                     return $"Type: {Type}, Tile: {Tile}, RichiAvailableTiles: {string.Join("", RichiAvailableTiles)}";
+                case InTurnOperationType.RoundDraw:
                 case InTurnOperationType.Bei:
                     return $"Type: {Type}";
                 case InTurnOperationType.Kong:

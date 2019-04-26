@@ -14,12 +14,12 @@ namespace Single.UI.SubManagers
         public Animator TsumoAnimator;
         public Animator RongAnimator;
 
-        private readonly IDictionary<AnimationType, Animator> dict = new Dictionary<AnimationType, Animator>();
+        private readonly IDictionary<PlayerEffectManager.Type, Animator> dict = new Dictionary<PlayerEffectManager.Type, Animator>();
 
         private void OnEnable()
         {
             dict.Clear();
-            foreach (AnimationType e in Enum.GetValues(typeof(AnimationType)))
+            foreach (PlayerEffectManager.Type e in Enum.GetValues(typeof(PlayerEffectManager.Type)))
             {
                 var fieldInfo = GetType().GetField($"{e}Animator");
                 var animator = (Animator)fieldInfo.GetValue(this);
@@ -27,12 +27,12 @@ namespace Single.UI.SubManagers
             }
         }
 
-        public void ShowAnimation(AnimationType type)
+        public void ShowAnimation(PlayerEffectManager.Type type)
         {
             dict[type].gameObject.SetActive(true);
         }
 
-        public IEnumerator StartAnimation(AnimationType type)
+        public IEnumerator StartAnimation(PlayerEffectManager.Type type)
         {
             ShowAnimation(type);
             yield return new WaitForSeconds(MahjongConstants.AnimationDelay);
@@ -41,12 +41,12 @@ namespace Single.UI.SubManagers
             Close(type);
         }
 
-        public void Fade(AnimationType type)
+        public void Fade(PlayerEffectManager.Type type)
         {
             dict[type].SetTrigger("Fade");
         }
 
-        public void Close(AnimationType type)
+        public void Close(PlayerEffectManager.Type type)
         {
             dict[type].gameObject.SetActive(false);
         }

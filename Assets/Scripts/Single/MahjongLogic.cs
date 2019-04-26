@@ -243,6 +243,13 @@ namespace Single
             return WinningTiles(handTiles, openMelds).Count > 0;
         }
 
+        public static bool Test9KindsOfOrphans(IList<Tile> handTile, Tile lastDraw) {
+            var set = new HashSet<Tile>(handTile, Tile.TileIgnoreColorEqualityComparer);
+            set.Add(lastDraw);
+            int count = set.Count(tile => tile.IsYaojiu);
+            return count >= 9;
+        }
+
         private static void AnalyzeHand(int[] hand, HashSet<List<Meld>> decompose)
         {
             AnalyzeNormal(hand, decompose);

@@ -27,7 +27,8 @@ namespace Single
         public PlayerEffectManager PlayerEffectManager;
         public InTurnPanelManager InTurnPanelManager;
         public OutTurnPanelManager OutTurnPanelManager;
-        public RoundDrawPanelManager[] DrawPanelManagers;
+        public WaitingPanelManager[] DrawPanelManagers;
+        public RoundDrawManager RoundDrawManager;
         public PointSummaryPanelManager PointSummaryPanelManager;
 
         [Header("Data")]
@@ -246,7 +247,7 @@ namespace Single
             LocalPlayerHandTiles = new List<Tile>(message.HandTiles);
             StartCoroutine(UpdateHandData(currentPlaceIndex, message.DiscardingLastDraw, message.Tile, message.Rivers));
             if (message.IsRichiing)
-                StartCoroutine(PlayerEffectManager.ShowEffect(currentPlaceIndex, AnimationType.Richi));
+                StartCoroutine(PlayerEffectManager.ShowEffect(currentPlaceIndex, PlayerEffectManager.Type.Richi));
             BonusTurnTime = message.BonusTurnTime;
             // check if message contains a valid operation
             if (message.Operations == null || message.Operations.Length == 0)
@@ -321,8 +322,8 @@ namespace Single
                         StartCoroutine(RevealHandTiles(placeIndex, operation.HandData));
                         break;
                     case OutTurnOperationType.RoundDraw:
-                        // todo
                         Debug.Log("Round is draw");
+                        // RoundDrawManager.SetDrawType(RoundDrawType.RoundDraw);
                         break;
                 }
             }
@@ -344,7 +345,7 @@ namespace Single
             int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
             // reveal hand tiles
             StartCoroutine(RevealHandTiles(placeIndex, message.TsumoHandData));
-            yield return PlayerEffectManager.ShowEffect(placeIndex, AnimationType.Tsumo);
+            yield return PlayerEffectManager.ShowEffect(placeIndex, PlayerEffectManager.Type.Tsumo);
             // show summary panel
             var data = new SummaryPanelData
             {
@@ -415,13 +416,21 @@ namespace Single
             // checking
             if (!LastDraws.All(l => l == null))
                 Debug.LogError("Someone still holding a lastDraw, this should not happen!");
-            // reveal hand tiles on table
-            Debug.Log("Revealing hand tiles");
-            var waitingDataArray = message.WaitingData;
-            for (int playerIndex = 0; playerIndex < waitingDataArray.Length; playerIndex++)
+            RoundDrawManager.SetDrawType(message.RoundDrawType);
+            if (message.RoundDrawType == RoundDrawType.RoundDraw)
+            {
+                Debug.Log("Revealing hand tiles");
+                HandleRoundDraw(message.WaitingData);
+            }
+        }
+
+        private void HandleRoundDraw(WaitingData[] data)
+        {
+            // var waitingDataArray = message.WaitingData;
+            for (int playerIndex = 0; playerIndex < data.Length; playerIndex++)
             {
                 int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
-                CheckReadyOrNot(placeIndex, waitingDataArray[playerIndex]);
+                CheckReadyOrNot(placeIndex, data[playerIndex]);
             }
         }
 
@@ -485,13 +494,6 @@ namespace Single
             HandPanelManager.SetCandidates(operation.RichiAvailableTiles);
         }
 
-        public void OnInTurnBackButtonClicked(InTurnOperation[] operations)
-        {
-            InTurnPanelManager.SetOperations(operations);
-            HandPanelManager.RemoveCandidates();
-            IsRichiing = false;
-        }
-
         public void OnInTurnKongButtonClicked(InTurnOperation[] operationOptions)
         {
             if (operationOptions == null || operationOptions.Length == 0)
@@ -513,6 +515,20 @@ namespace Single
                 return;
             }
             // todo -- show kong selection panel here
+        }
+
+        public void OnInTurnBackButtonClicked(InTurnOperation[] operations)
+        {
+            InTurnPanelManager.SetOperations(operations);
+            HandPanelManager.RemoveCandidates();
+            IsRichiing = false;
+        }
+
+        public void OnInTurnDrawButtonClicked()
+        {
+            Debug.Log($"Requesting round draw due to 9 kinds of orphans");
+            InTurnPanelManager.Disable();
+            LocalPlayer.NineKindsOfOrphans();
         }
 
         public void OnOutTurnButtonClicked(OutTurnOperation operation)

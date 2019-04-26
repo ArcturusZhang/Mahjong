@@ -10,6 +10,7 @@ namespace Single.UI
     public class InTurnPanelManager : MonoBehaviour
     {
         public Button TsumoButton;
+        public Button DrawButton;
         public Button RichiButton;
         public Button KongButton;
         public Button SkipButton;
@@ -54,6 +55,11 @@ namespace Single.UI
                 KongButton.gameObject.SetActive(true);
                 var kongOperations = System.Array.FindAll(operations, op => op.Type == InTurnOperationType.Kong);
                 KongButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnKongButtonClicked(kongOperations));
+            }
+            if (operations.Any(op => op.Type == InTurnOperationType.RoundDraw)) {
+                DrawButton.onClick.RemoveAllListeners();
+                DrawButton.gameObject.SetActive(true);
+                DrawButton.onClick.AddListener(ClientBehaviour.Instance.OnInTurnDrawButtonClicked);
             }
             // todo -- bei button
         }

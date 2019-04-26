@@ -12,6 +12,7 @@ namespace Multi.GameState
     public class RoundDrawState : IState
     {
         public ServerRoundStatus CurrentRoundStatus;
+        public RoundDrawType RoundDrawType;
         private ServerRoundDrawMessage[] messages;
         private GameSettings gameSettings;
         private IList<Player> players;
@@ -20,23 +21,52 @@ namespace Multi.GameState
             Debug.Log($"Server enters {GetType().Name}");
             gameSettings = CurrentRoundStatus.GameSettings;
             players = CurrentRoundStatus.Players;
+            messages = new ServerRoundDrawMessage[players.Count];
+            switch (RoundDrawType)
+            {
+                case RoundDrawType.RoundDraw:
+                    HandleRoundDraw();
+                    break;
+                case RoundDrawType.NineOrphans:
+                    HandleNineOrphans();
+                    break;
+                default:
+                    throw new System.Exception($"Type {RoundDrawType} not implemented");
+            }
+            for (int i = 0; i < players.Count; i++)
+                players[i].connectionToClient.Send(MessageIds.ServerRoundDrawMessage, messages[i]);
+        }
+
+        private void HandleNineOrphans() {
+            for (int i = 0; i < players.Count;i++) {
+                messages[i] = new ServerRoundDrawMessage {
+                    RoundDrawType = RoundDrawType.NineOrphans
+                };
+            }
+        }
+
+        private void HandleRoundDraw()
+        {
             // Get waiting tiles for each player
             var waitingTiles = new WaitingData[players.Count];
-            for (int i = 0; i < players.Count; i++) {
+            for (int i = 0; i < players.Count; i++)
+            {
                 var hand = CurrentRoundStatus.HandTiles(i);
                 var open = CurrentRoundStatus.OpenMelds(i);
-                waitingTiles[i] = new WaitingData {
+                waitingTiles[i] = new WaitingData
+                {
                     HandTiles = hand,
                     WaitingTiles = MahjongLogic.WinningTiles(hand, open).ToArray()
                 };
             }
             // Get messages and send
-            messages = new ServerRoundDrawMessage[players.Count];
-            for (int i = 0; i < players.Count; i++) {
-                messages[i] = new ServerRoundDrawMessage{
+            for (int i = 0; i < players.Count; i++)
+            {
+                messages[i] = new ServerRoundDrawMessage
+                {
+                    RoundDrawType = RoundDrawType,
                     WaitingData = waitingTiles
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerRoundDrawMessage, messages[i]);
             }
         }
 

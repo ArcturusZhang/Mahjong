@@ -36,11 +36,13 @@ namespace Multi.GameState
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
+            NetworkServer.RegisterHandler(MessageIds.ClientNineOrphansMessage, OnClientRoundDrawMessageReceived);
             justDraw = MahjongSet.DrawTile();
             CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             CurrentRoundStatus.LastDraw = justDraw;
             CurrentRoundStatus.CheckFirstTurn(CurrentPlayerIndex);
-            Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}, first turn: {CurrentRoundStatus.FirstTurn}.");
+            Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}, "
+                + $"first turn: {CurrentRoundStatus.FirstTurn}.");
             messages = new MessageBase[players.Count];
             responds = new bool[players.Count];
             for (int i = 0; i < players.Count; i++)
@@ -83,10 +85,18 @@ namespace Multi.GameState
                     Tile = justDraw
                 });
             }
-            // test richi
-            var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
             var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
             var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
+            // test round draw
+            if (CurrentRoundStatus.FirstTurn && MahjongLogic.Test9KindsOfOrphans(handTiles, justDraw))
+            {
+                operations.Add(new InTurnOperation
+                {
+                    Type = InTurnOperationType.RoundDraw
+                });
+            }
+            // test richi
+            var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
             IList<Tile> availableTiles;
             if (!alreadyRichied && MahjongLogic.TestRichi(handTiles, openMelds, justDraw, gameSettings.AllowRichiWhenNotReady, out availableTiles))
             {
@@ -125,7 +135,7 @@ namespace Multi.GameState
             Debug.Log($"[Server] Received ClientDiscardRequestMessage {content}");
             // Change to discardTileState
             ServerBehaviour.Instance.DiscardTile(
-                content.PlayerIndex, content.Tile, content.IsRichiing, 
+                content.PlayerIndex, content.Tile, content.IsRichiing,
                 content.DiscardingLastDraw, content.BonusTurnTime);
         }
 
@@ -153,6 +163,13 @@ namespace Multi.GameState
                     Debug.LogError($"[Server] This type of in turn operation should not be sent to server.");
                     break;
             }
+        }
+
+        private void OnClientRoundDrawMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ClientRoundDrawMessage>();
+            Debug.Log($"[Server] Received ClientNineOrphansMessage {content}");
+            ServerBehaviour.Instance.RoundDraw(content.Type);
         }
 
         private void HandleTsumo(InTurnOperation operation)
@@ -210,7 +227,9 @@ namespace Multi.GameState
         {
             Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
+            NetworkServer.UnregisterHandler(MessageIds.ClientInTurnOperationMessage);
             NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
+            NetworkServer.UnregisterHandler(MessageIds.ClientNineOrphansMessage);
             CurrentRoundStatus.CheckOneShot(CurrentPlayerIndex);
         }
     }
