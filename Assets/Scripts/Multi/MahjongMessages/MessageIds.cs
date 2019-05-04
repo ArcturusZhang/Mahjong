@@ -12,6 +12,7 @@ namespace Multi.MahjongMessages
         public const short ServerTsumoMessage = 106;
         public const short ServerRongMessage = 107;
         public const short ServerRoundDrawMessage = 108;
+        public const short ServerPointTransferMessage = 109;
 
         // Client to server messages
         public const short ClientReadinessMessage = 200;

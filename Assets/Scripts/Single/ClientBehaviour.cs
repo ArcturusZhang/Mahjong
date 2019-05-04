@@ -4,6 +4,7 @@ using System.Linq;
 using Lobby;
 using Multi;
 using Multi.MahjongMessages;
+using Multi.ServerData;
 using Single.MahjongDataType;
 using Single.UI;
 using Single.UI.Controller;
@@ -30,6 +31,7 @@ namespace Single
         public WaitingPanelManager[] DrawPanelManagers;
         public RoundDrawManager RoundDrawManager;
         public PointSummaryPanelManager PointSummaryPanelManager;
+        public PointTransferManager PointTransferManager;
 
         [Header("Data")]
         public int TotalPlayers;
@@ -73,6 +75,7 @@ namespace Single
             UpdatePlayerInfoManager();
             UpdateBoardInfoManager();
             UpdateHandPanelManager();
+            UpdatePointTransferManager();
         }
 
         private void UpdateYamaManager()
@@ -126,6 +129,13 @@ namespace Single
         {
             HandPanelManager.Tiles = LocalPlayerHandTiles;
             HandPanelManager.LastDraw = LastDraws[0];
+        }
+
+        private void UpdatePointTransferManager()
+        {
+            PointTransferManager.TotalPlayers = TotalPlayers;
+            PointTransferManager.Places = Places;
+            PointTransferManager.PlayerNames = PlayerNames;
         }
 
         /// <summary>
@@ -299,6 +309,7 @@ namespace Single
                 int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
                 RichiStatus[placeIndex] = message.RichiStatus[playerIndex];
             }
+            UpdatePoints(message.Points);
             RichiSticks = message.RichiSticks;
             // perform operation effect
             var operations = message.Operations;
@@ -334,7 +345,7 @@ namespace Single
         {
             yield return new WaitForSeconds(MahjongConstants.HandTilesRevealDelay);
             var manager = HandManagers[placeIndex];
-            manager.Reveal();
+            manager.OpenUp();
             manager.Tiles = new List<Tile>(handData.HandTiles);
         }
 
@@ -360,13 +371,13 @@ namespace Single
                     IsTsumo = true
                 },
                 PointInfo = new PointInfo(message.TsumoPointInfo),
-                Multiplier = message.Multiplier,
+                TotalPoints = message.TotalPoints,
                 PlayerName = message.TsumoPlayerName
             };
             PointSummaryPanelManager.ShowPanel(data, () =>
             {
-                Debug.Log("Sending request for a new round");
-                LocalPlayer.RequestNewRound();
+                Debug.Log("Sending readiness message");
+                LocalPlayer.ClientReady(MessageIds.ServerPointTransferMessage);
             });
         }
 
@@ -386,7 +397,7 @@ namespace Single
                     IsTsumo = false
                 },
                 PointInfo = new PointInfo(message.RongPointInfos[index]),
-                Multiplier = message.Multipliers[index],
+                TotalPoints = message.TotalPoints[index],
                 PlayerName = message.RongPlayerNames[index]
             });
             var dataQueue = new Queue<SummaryPanelData>(dataArray);
@@ -405,17 +416,14 @@ namespace Single
             else
             {
                 // no more data to show
-                Debug.Log("Sending request for a new round.");
+                Debug.Log("Sending readiness message");
                 PointSummaryPanelManager.StopCountDown();
-                LocalPlayer.RequestNewRound();
+                LocalPlayer.ClientReady(MessageIds.ServerPointTransferMessage);
             }
         }
 
         public void RoundDraw(ServerRoundDrawMessage message)
         {
-            // checking
-            if (!LastDraws.All(l => l == null))
-                Debug.LogError("Someone still holding a lastDraw, this should not happen!");
             RoundDrawManager.SetDrawType(message.RoundDrawType);
             if (message.RoundDrawType == RoundDrawType.RoundDraw)
             {
@@ -446,10 +454,19 @@ namespace Single
             else
             {
                 // ting
-                HandManagers[placeIndex].Reveal();
+                HandManagers[placeIndex].OpenUp();
                 HandManagers[placeIndex].Tiles = data.HandTiles.ToList();
                 DrawPanelManagers[placeIndex].Ready(data.WaitingTiles);
             }
+        }
+
+        public void PointTransfer(ServerPointTransferMessage message)
+        {
+            PointSummaryPanelManager.Close();
+            var transfers = message.PointTransfers;
+            PointTransferManager.SetTransfer(Points, transfers, () => {
+                LocalPlayer.PointTransferDone();
+            });
         }
 
         public void OnDiscardTile(Tile tile, bool isLastDraw)

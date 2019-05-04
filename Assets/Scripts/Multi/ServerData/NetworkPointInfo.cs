@@ -1,7 +1,7 @@
 using System;
 using Single;
 
-namespace Multi.MahjongMessages
+namespace Multi.ServerData
 {
     [Serializable]
     public struct NetworkPointInfo

@@ -49,8 +49,8 @@ namespace Multi.GameState
             ChooseOperations();
             Debug.Log($"The operation chosen by this round is {operationChosen}");
             // if operation is not rong or round-draw, perform richi
-            if (operationChosen != OutTurnOperationType.Rong && operationChosen != OutTurnOperationType.RoundDraw) 
-                CurrentRoundStatus.Richi(CurrentPlayerIndex, IsRichiing);
+            if (operationChosen != OutTurnOperationType.Rong && operationChosen != OutTurnOperationType.RoundDraw)
+                CurrentRoundStatus.TryRichi(CurrentPlayerIndex, IsRichiing);
             // Send messages to clients
             for (int i = 0; i < players.Count; i++)
             {
@@ -59,6 +59,7 @@ namespace Multi.GameState
                     PlayerIndex = i,
                     ChosenOperationType = operationChosen,
                     Operations = Operations,
+                    Points = CurrentRoundStatus.Points.ToArray(),
                     RichiStatus = CurrentRoundStatus.RichiStatusArray,
                     RichiSticks = CurrentRoundStatus.RichiSticks
                 };
@@ -184,6 +185,8 @@ namespace Multi.GameState
                 if (Operations[i].Type == OutTurnOperationType.Rong)
                     rongPlayerIndexList.Add(i);
             }
+            // sort this array
+            rongPlayerIndexList.Sort(new RongPlayerIndexComparer(CurrentPlayerIndex, players.Count));
             var rongPlayerIndices = rongPlayerIndexList.ToArray();
             var rongPointInfos = new PointInfo[rongPlayerIndices.Length];
             for (int i = 0; i < rongPlayerIndices.Length; i++)
@@ -218,6 +221,26 @@ namespace Multi.GameState
         public void OnStateExit()
         {
             Debug.Log($"Server exits {GetType().Name}");
+        }
+
+        private struct RongPlayerIndexComparer : IComparer<int>
+        {
+            private int current;
+            private int total;
+
+            public RongPlayerIndexComparer(int current, int total)
+            {
+                this.current = current;
+                this.total = total;
+            }
+            public int Compare(int x, int y)
+            {
+                int dx = x - current;
+                int dy = y - current;
+                if (dx < 0) dx += total;
+                if (dy < 0) dy += total;
+                return dx - dy;
+            }
         }
     }
 }

@@ -98,13 +98,14 @@ namespace Multi
             connectionToServer.Send(MessageIds.ClientOutTurnOperationMessage, message);
         }
 
-        public void RequestNewRound()
+        public void ClientReady(int code)
         {
-            var message = new ClientNextRoundMessage
+            var message = new ClientReadinessMessage
             {
-                PlayerIndex = PlayerIndex
+                PlayerIndex = PlayerIndex,
+                Content = code
             };
-            connectionToServer.Send(MessageIds.ClientNextRoundMessage, message);
+            connectionToServer.Send(MessageIds.ClientReadinessMessage, message);
         }
 
         public void NineKindsOfOrphans()
@@ -115,6 +116,20 @@ namespace Multi
                 Type = RoundDrawType.NineOrphans
             };
             connectionToServer.Send(MessageIds.ClientNineOrphansMessage, message);
+        }
+
+        public void PointTransferDone()
+        {
+            // todo
+        }
+
+        public void RequestNewRound()
+        {
+            var message = new ClientNextRoundMessage
+            {
+                PlayerIndex = PlayerIndex
+            };
+            connectionToServer.Send(MessageIds.ClientNextRoundMessage, message);
         }
 
         private void RegisterHandlers()
@@ -128,6 +143,7 @@ namespace Multi
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTsumoMessage, OnPlayerTsumoMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRongMessage, OnPlayerRongMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPointTransferMessage, OnPointTransferMessageReceived);
         }
 
         private void OnGamePrepareMessageReceived(NetworkMessage message)
@@ -245,6 +261,15 @@ namespace Multi
             // this message do not require confirm
             // invoke client method for round draw operations
             ClientBehaviour.Instance.RoundDraw(content);
+        }
+
+        private void OnPointTransferMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ServerPointTransferMessage>();
+            Debug.Log($"ServerPointTransferMessage received: {content}");
+            // this message do not require confirm
+            // invoke client method for point transfer
+            ClientBehaviour.Instance.PointTransfer(content);
         }
     }
 }

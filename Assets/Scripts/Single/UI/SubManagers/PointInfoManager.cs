@@ -29,14 +29,14 @@ namespace Single.UI.SubManagers
             gameObject.SetActive(false);
         }
 
-        public IEnumerator SetPointInfo(PointInfo pointInfo, int multiplier)
+        public IEnumerator SetPointInfo(PointInfo pointInfo, int totalPoints)
         {
             gameObject.SetActive(true);
             yield return waiting;
             yield return StartCoroutine(AddYakuEntries(pointInfo));
             ShowPointInfo(pointInfo);
             yield return waiting;
-			PointManager.SetNumber(pointInfo.BasePoint * multiplier);
+			PointManager.SetNumber(totalPoints);
         }
 
         private void ShowPointInfo(PointInfo pointInfo)

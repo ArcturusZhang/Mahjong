@@ -55,7 +55,9 @@ namespace Multi.ServerData
         public int Field => field;
         public int Dice => dice;
         public int Extra => extra;
+        public int ExtraPoints => Extra * GameSettings.ExtraRoundBonusPerPlayer;
         public int RichiSticks => richiSticks;
+        public int RichiSticksPoints => RichiSticks * GameSettings.RichiMortgagePoints;
         public Tile? LastDraw
         {
             get { return lastDraw; }
@@ -221,7 +223,7 @@ namespace Multi.ServerData
             openMelds[index].Add(meld);
         }
 
-        public void Richi(int index, bool isRichiing)
+        public void TryRichi(int index, bool isRichiing)
         {
             CheckRange(index);
             if (!isRichiing) return;
@@ -233,6 +235,7 @@ namespace Multi.ServerData
             richiStatus[index] = true;
             oneShotStatus[index] = true;
             richiSticks++;
+            points[index] -= GameSettings.RichiMortgagePoints;
         }
 
         public void CheckOneShot(int index)

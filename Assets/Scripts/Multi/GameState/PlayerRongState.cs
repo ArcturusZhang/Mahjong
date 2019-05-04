@@ -20,13 +20,17 @@ namespace Multi.GameState
         public PointInfo[] RongPointInfos;
         private GameSettings gameSettings;
         private IList<Player> players;
+        private IList<PointTransfer> transfers;
+        private bool[] responds;
+        private float serverTimeOut;
+        private float firstTime;
 
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
             gameSettings = CurrentRoundStatus.GameSettings;
             players = CurrentRoundStatus.Players;
-            NetworkServer.RegisterHandler(MessageIds.ClientNextRoundMessage, OnNextRoundMessageReceived);
+            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             var playerNames = RongPlayerIndices.Select(
                 playerIndex => players[playerIndex].PlayerName
             ).ToArray();
@@ -39,6 +43,7 @@ namespace Multi.GameState
             var multipliers = RongPlayerIndices.Select(
                 playerIndex => gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(playerIndex), players.Count)
             ).ToArray();
+            var totalPoints = RongPointInfos.Select((info, i) => info.BasePoint * multipliers[i]).ToArray();
             var netInfos = RongPointInfos.Select(info => new NetworkPointInfo
             {
                 Fu = info.Fu,
@@ -60,27 +65,72 @@ namespace Multi.GameState
                 UraDoraIndicators = MahjongSet.UraDoraIndicators,
                 RongPlayerRichiStatus = richiStatus,
                 RongPointInfos = netInfos,
-                Multipliers = multipliers
+                TotalPoints = totalPoints
             };
             for (int i = 0; i < players.Count; i++)
             {
                 players[i].connectionToClient.Send(MessageIds.ServerRongMessage, rongMessage);
             }
+            // get point transfers
+            transfers = new List<PointTransfer>();
+            for (int i = 0; i < RongPlayerIndices.Length; i++)
+            {
+                var rongPlayerIndex = RongPlayerIndices[i];
+                var point = RongPointInfos[i];
+                var multiplier = multipliers[i];
+                int pointValue = point.BasePoint * multiplier;
+                int extraPoints = i == 0 ? CurrentRoundStatus.ExtraPoints * (players.Count - 1) : 0;
+                transfers.Add(new PointTransfer
+                {
+                    From = CurrentPlayerIndex,
+                    To = rongPlayerIndex,
+                    Amount = pointValue + extraPoints
+                });
+            }
+            // richi-sticks-points
+            transfers.Add(new PointTransfer {
+                From = -1,
+                To = RongPlayerIndices[0],
+                Amount = CurrentRoundStatus.RichiSticksPoints
+            });
+            responds = new bool[players.Count];
+            // determine server time out
+            serverTimeOut = MahjongConstants.SummaryPanelDelayTime * RongPointInfos.Sum(point => point.YakuList.Count)
+                + MahjongConstants.SummaryPanelWaitingTime * RongPointInfos.Length
+                + ServerConstants.ServerTimeBuffer;
+            firstTime = Time.time;
         }
 
-        private void OnNextRoundMessageReceived(NetworkMessage message)
+        private void OnReadinessMessageReceived(NetworkMessage message)
         {
-            var content = message.ReadMessage<ClientNextRoundMessage>();
-            Debug.Log($"[Server] Received ClientNextRoundMessage: {content}");
+            var content = message.ReadMessage<ClientReadinessMessage>();
+            Debug.Log($"[Server] Received ClientReadinessMessage: {content}");
+            if (content.Content != MessageIds.ServerPointTransferMessage)
+            {
+                Debug.LogError("The message contains invalid content.");
+                return;
+            }
+            responds[content.PlayerIndex] = true;
         }
 
         public void OnStateExit()
         {
             Debug.Log($"Server exits {GetType().Name}");
+            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
 
         public void OnStateUpdate()
         {
+            if (responds.All(r => r))
+            {
+                ServerBehaviour.Instance.PointTransfer(transfers);
+                return;
+            }
+            if (Time.time - firstTime > serverTimeOut)
+            {
+                ServerBehaviour.Instance.PointTransfer(transfers);
+                return;
+            }
         }
     }
 }

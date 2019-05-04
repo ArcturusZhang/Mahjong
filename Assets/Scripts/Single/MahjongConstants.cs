@@ -29,7 +29,7 @@ namespace Single
         public const float AutoDiscardDelayAfterRichi = 1f;
         public const float ReadyPanelDelay = 0.5f;
         public const float SummaryPanelDelayTime = 0.5f;
-        public const int SummaryPanelWaitingTime = 3;
+        public const int SummaryPanelWaitingTime = 5;
         public const float HandTilesRevealDelay = 0.5f;
         public const float AnimationDelay = 1f;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);

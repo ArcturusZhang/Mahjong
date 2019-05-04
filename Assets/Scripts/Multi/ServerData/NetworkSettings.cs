@@ -1,6 +1,6 @@
 using System;
 
-namespace Multi.MahjongMessages
+namespace Multi.ServerData
 {
     [Serializable]
     public struct NetworkSettings

@@ -32,12 +32,12 @@ namespace Single.UI
             var uraDora = data.HandInfo.IsRichi ? data.HandInfo.UraDoraIndicators : null;
             DoraPanelManager.SetDoraIndicators(data.HandInfo.DoraIndicators, uraDora);
             // yaku list, total point and yaku rank
-            StartCoroutine(YakuListCoroutine(data.PointInfo, data.Multiplier, callback));
+            StartCoroutine(YakuListCoroutine(data.PointInfo, data.TotalPoints, callback));
         }
 
-        private IEnumerator YakuListCoroutine(PointInfo point, int multiplier, UnityAction callback)
+        private IEnumerator YakuListCoroutine(PointInfo point, int totalPoints, UnityAction callback)
         {
-            yield return PointInfoManager.SetPointInfo(point, multiplier);
+            yield return PointInfoManager.SetPointInfo(point, totalPoints);
             yield return waiting;
             YakuRankManager.SetYakuRank(point);
             ConfirmCountDownController.StartCountDown(MahjongConstants.SummaryPanelWaitingTime, callback);
@@ -69,7 +69,7 @@ namespace Single.UI
     {
         public PlayerHandInfo HandInfo;
         public PointInfo PointInfo;
-        public int Multiplier;
+        public int TotalPoints;
         public string PlayerName;
     }
 }

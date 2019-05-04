@@ -115,6 +115,7 @@ namespace Multi.MahjongMessages
         public int PlayerIndex;
         public OutTurnOperationType ChosenOperationType;
         public OutTurnOperation[] Operations;
+        public int[] Points;
         public bool[] RichiStatus;
         public int RichiSticks;
 
@@ -123,6 +124,7 @@ namespace Multi.MahjongMessages
             return $"PlayerIndex: {PlayerIndex}\n"
                 + $"ChosenOperationType: {ChosenOperationType}\n"
                 + $"Operations for each player: {string.Join(", ", Operations)}\n"
+                + $"Points: {string.Join(",", Points)}\n"
                 + $"RichiStatus: {string.Join(",", RichiStatus)}\n"
                 + $"RichiSticks: {RichiSticks}";
         }
@@ -151,7 +153,7 @@ namespace Multi.MahjongMessages
         public Tile[] UraDoraIndicators;
         public bool IsRichi;
         public NetworkPointInfo TsumoPointInfo;
-        public int Multiplier;
+        public int TotalPoints;
 
         public override string ToString()
         {
@@ -161,8 +163,8 @@ namespace Multi.MahjongMessages
                 + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
                 + $"UraDoraIndicators: {string.Join("", UraDoraIndicators)}\n"
                 + $"IsRichi: {IsRichi}\n"
-                + $"PointMultiplier: {Multiplier}\n"
-                + $"TsumoPointSummary: {TsumoPointInfo}";
+                + $"TsumoPointSummary: {TsumoPointInfo}\n"
+                + $"TotalPoints: {TotalPoints}\n";
         }
     }
 
@@ -176,7 +178,7 @@ namespace Multi.MahjongMessages
         public Tile[] UraDoraIndicators;
         public bool[] RongPlayerRichiStatus;
         public NetworkPointInfo[] RongPointInfos;
-        public int[] Multipliers;
+        public int[] TotalPoints;
 
         public override string ToString()
         {
@@ -187,8 +189,20 @@ namespace Multi.MahjongMessages
                 + $"DoraIndicators: {string.Join("", DoraIndicators)}\n"
                 + $"UraDoraIndicators: {string.Join("", UraDoraIndicators)}\n"
                 + $"RichiStatus: {string.Join(",", RongPlayerRichiStatus)}\n"
-                + $"Multipliers: {string.Join(",", Multipliers)}\n"
-                + $"PointSummaries: {string.Join(";", RongPointInfos)}";
+                + $"PointSummaries: {string.Join(";", RongPointInfos)}\n"
+                + $"TotalPoints: {string.Join(",", TotalPoints)}";
+        }
+    }
+
+    public class ServerPointTransferMessage : MessageBase
+    {
+        public PointTransfer[] PointTransfers;
+        public string[] PlayerNames;
+
+        public override string ToString()
+        {
+            return $"PlayerNames: {string.Join(",", PlayerNames)}\n"
+                + $"Transfers: {string.Join("|", PointTransfers)}";
         }
     }
 

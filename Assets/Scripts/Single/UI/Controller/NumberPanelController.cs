@@ -13,13 +13,28 @@ namespace Single.UI.Controller
         public Transform NumberParent;
         public GameObject DigitPrefab;
         public SpriteBundle NumberSprites;
+        public Sprite MinusSign;
 
         public void SetNumber(int number)
         {
-            Assert.IsTrue(number >= 0, "Point cannot be negative");
             NumberParent.DestroyAllChild();
+            if (number < 0)
+            {
+                if (MinusSign != null)
+                {
+                    var obj = Instantiate(DigitPrefab, NumberParent);
+                    obj.name = "minus";
+                    var image = obj.GetComponent<Image>();
+                    image.sprite = MinusSign;
+                }
+                else
+                {
+                    Debug.LogError($"Minus sign not assigned on GameObject {name}");
+                }
+                number = -number;
+            }
             var digits = ClientUtil.GetDigits(number);
-            
+
             for (int i = 0; i < digits.Count; i++)
             {
                 var obj = Instantiate(DigitPrefab, NumberParent);

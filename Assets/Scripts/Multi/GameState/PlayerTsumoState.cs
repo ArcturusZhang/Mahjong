@@ -19,13 +19,17 @@ namespace Multi.GameState
         public PointInfo TsumoPointInfo;
         private GameSettings gameSettings;
         private IList<Player> players;
+        private IList<PointTransfer> transfers;
+        private bool[] responds;
+        private float serverTimeOut;
+        private float firstTime;
 
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
             gameSettings = CurrentRoundStatus.GameSettings;
             players = CurrentRoundStatus.Players;
-            NetworkServer.RegisterHandler(MessageIds.ClientNextRoundMessage, OnNextRoundMessageReceived);
+            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             int multiplier = gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(TsumoPlayerIndex), players.Count);
             var netInfo = new NetworkPointInfo
             {
@@ -46,28 +50,72 @@ namespace Multi.GameState
                 UraDoraIndicators = MahjongSet.UraDoraIndicators,
                 IsRichi = CurrentRoundStatus.RichiStatus(TsumoPlayerIndex),
                 TsumoPointInfo = netInfo,
-                Multiplier = multiplier
+                TotalPoints = TsumoPointInfo.BasePoint * multiplier
             };
             for (int i = 0; i < players.Count; i++)
             {
                 players[i].connectionToClient.Send(MessageIds.ServerTsumoMessage, tsumoMessage);
             }
+            // get point transfers
+            // todo -- tsumo loss related, now there is tsumo loss by default
+            transfers = new List<PointTransfer>();
+            for (int playerIndex = 0; playerIndex < players.Count; playerIndex++)
+            {
+                if (playerIndex == TsumoPlayerIndex) continue;
+                int amount = TsumoPointInfo.BasePoint;
+                if (CurrentRoundStatus.IsDealer(playerIndex)) amount *= 2;
+                int extraPoints = CurrentRoundStatus.ExtraPoints;
+                transfers.Add(new PointTransfer
+                {
+                    From = playerIndex,
+                    To = TsumoPlayerIndex,
+                    Amount = amount + extraPoints
+                });
+            }
+            // richi-sticks-points
+            transfers.Add(new PointTransfer {
+                From = -1,
+                To = TsumoPlayerIndex,
+                Amount = CurrentRoundStatus.RichiSticksPoints
+            });
+            responds = new bool[players.Count];
+            // determine server time out
+            serverTimeOut = MahjongConstants.SummaryPanelDelayTime * TsumoPointInfo.YakuList.Count
+                + MahjongConstants.SummaryPanelWaitingTime
+                + ServerConstants.ServerTimeBuffer;
+            firstTime = Time.time;
         }
 
-        private void OnNextRoundMessageReceived(NetworkMessage message)
+        private void OnReadinessMessageReceived(NetworkMessage message)
         {
-            var content = message.ReadMessage<ClientNextRoundMessage>();
-            Debug.Log($"[Server] Received ClientNextRoundMessage: {content}");
+            var content = message.ReadMessage<ClientReadinessMessage>();
+            Debug.Log($"[Server] Received ClientReadinessMessage: {content}");
+            if (content.Content != MessageIds.ServerPointTransferMessage)
+            {
+                Debug.LogError("The message contains invalid content.");
+                return;
+            }
+            responds[content.PlayerIndex] = true;
         }
 
         public void OnStateExit()
         {
             Debug.Log($"Server exits {GetType().Name}");
-            NetworkServer.UnregisterHandler(MessageIds.ClientNextRoundMessage);
+            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
 
         public void OnStateUpdate()
         {
+            if (responds.All(r => r))
+            {
+                ServerBehaviour.Instance.PointTransfer(transfers);
+                return;
+            }
+            if (Time.time - firstTime > serverTimeOut)
+            {
+                ServerBehaviour.Instance.PointTransfer(transfers);
+                return;
+            }
         }
     }
 }

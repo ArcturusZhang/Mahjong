@@ -92,7 +92,7 @@ namespace Single
             Debug.Log("Animation done");
         }
 
-        public void Reveal()
+        public void OpenUp()
         {
             // Reveal hand tiles
             handHolder.localRotation = Quaternion.Euler(90, 0, 0);

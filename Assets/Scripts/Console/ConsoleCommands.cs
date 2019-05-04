@@ -101,7 +101,7 @@ namespace Console
             {
                 HandInfo = info,
                 PointInfo = pointInfo,
-                Multiplier = oya ? 6 : 4,
+                TotalPoints = (oya ? 6 : 4) * pointInfo.BasePoint,
                 PlayerName = "Console"
             };
             pointSummaryPanelManager.ShowPanel(data, () => Debug.Log("Time is up!"));

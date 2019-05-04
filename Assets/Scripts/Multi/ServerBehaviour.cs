@@ -172,7 +172,8 @@ namespace Multi
 
         public void Rong(int currentPlayerIndex, Tile winningTile, int[] rongPlayerIndices, PointInfo[] rongPointInfos)
         {
-            var rongState = new PlayerRongState {
+            var rongState = new PlayerRongState
+            {
                 CurrentPlayerIndex = currentPlayerIndex,
                 CurrentRoundStatus = CurrentRoundStatus,
                 RongPlayerIndices = rongPlayerIndices,
@@ -191,6 +192,16 @@ namespace Multi
                 RoundDrawType = type
             };
             StateMachine.ChangeState(drawState);
+        }
+
+        public void PointTransfer(IList<PointTransfer> transfers)
+        {
+            var transferState = new PointTransferState
+            {
+                CurrentRoundStatus = CurrentRoundStatus,
+                PointTransferList = transfers
+            };
+            StateMachine.ChangeState(transferState);
         }
 
         public void Idle()
