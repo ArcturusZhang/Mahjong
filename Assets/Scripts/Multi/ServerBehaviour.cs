@@ -76,7 +76,7 @@ namespace Multi
             StateMachine.ChangeState(new IdleState());
         }
 
-        public void RoundStart(bool next = true, bool extra = false, bool keepSticks = false)
+        public void RoundStart(bool next, bool extra, bool keepSticks)
         {
             var startState = new RoundStartState
             {
@@ -133,7 +133,6 @@ namespace Multi
             StateMachine.ChangeState(discardState);
         }
 
-        // todo -- this method needs more info to work (operations other players take, etc)
         public void TurnEnd(int playerIndex, Tile discardingTile, bool isRichiing, OutTurnOperation[] operations)
         {
             var turnEndState = new TurnEndState
@@ -194,11 +193,14 @@ namespace Multi
             StateMachine.ChangeState(drawState);
         }
 
-        public void PointTransfer(IList<PointTransfer> transfers)
+        public void PointTransfer(IList<PointTransfer> transfers, bool next, bool extra, bool keepSticks)
         {
             var transferState = new PointTransferState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
+                NextRound = next,
+                ExtraRound = extra,
+                KeepSticks = keepSticks,
                 PointTransferList = transfers
             };
             StateMachine.ChangeState(transferState);

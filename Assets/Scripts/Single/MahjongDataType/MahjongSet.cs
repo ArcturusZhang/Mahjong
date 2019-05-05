@@ -44,6 +44,7 @@ namespace Single.MahjongDataType
             allTiles.Shuffle();
             tilesDrawn = 0;
             lingShangDrawn = 0;
+            doraTurned = 0;
             var doraList = new List<Tile>();
             for (int i = 0; i < settings.InitialDora; i++)
             {

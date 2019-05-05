@@ -7,7 +7,7 @@ namespace StateMachine
     public class StateMachine : IStateMachine
     {
         private IState currentState;
-        // private IState previousState;
+        
         public virtual void ChangeState(IState newState)
         {
             if (newState == null) throw new ArgumentException("New state cannot be null!");
@@ -20,13 +20,6 @@ namespace StateMachine
         {
             currentState?.OnStateUpdate();
         }
-
-        // public virtual void RollbackToPreviousState()
-        // {
-        //     currentState.OnStateExit();
-        //     currentState = previousState;
-        //     currentState.OnStateEnter();
-        // }
 
         public Type CurrentStateType => currentState?.GetType();
     }

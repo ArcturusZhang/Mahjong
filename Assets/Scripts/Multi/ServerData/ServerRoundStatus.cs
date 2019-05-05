@@ -164,6 +164,11 @@ namespace Multi.ServerData
             points[index] = point;
         }
 
+        public void ChangePoints(int index, int amount)
+        {
+            points[index] += amount;
+        }
+
         public void AddTile(int index, Tile tile)
         {
             CheckRange(index);

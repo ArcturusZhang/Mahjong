@@ -24,6 +24,7 @@ namespace Multi.GameState
         private bool[] responds;
         private float serverTimeOut;
         private float firstTime;
+        private bool next;
 
         public void OnStateEnter()
         {
@@ -88,11 +89,13 @@ namespace Multi.GameState
                 });
             }
             // richi-sticks-points
-            transfers.Add(new PointTransfer {
+            transfers.Add(new PointTransfer
+            {
                 From = -1,
                 To = RongPlayerIndices[0],
                 Amount = CurrentRoundStatus.RichiSticksPoints
             });
+            next = !RongPlayerIndices.Contains(CurrentRoundStatus.OyaPlayerIndex);
             responds = new bool[players.Count];
             // determine server time out
             serverTimeOut = MahjongConstants.SummaryPanelDelayTime * RongPointInfos.Sum(point => point.YakuList.Count)
@@ -123,14 +126,19 @@ namespace Multi.GameState
         {
             if (responds.All(r => r))
             {
-                ServerBehaviour.Instance.PointTransfer(transfers);
+                PointTransfer();
                 return;
             }
             if (Time.time - firstTime > serverTimeOut)
             {
-                ServerBehaviour.Instance.PointTransfer(transfers);
+                PointTransfer();
                 return;
             }
+        }
+
+        private void PointTransfer()
+        {
+            ServerBehaviour.Instance.PointTransfer(transfers, next, !next, false);
         }
     }
 }

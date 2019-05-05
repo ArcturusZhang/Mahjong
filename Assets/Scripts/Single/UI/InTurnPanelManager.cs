@@ -44,7 +44,7 @@ namespace Single.UI
                 RichiButton.onClick.AddListener(() =>
                 {
                     ClientBehaviour.Instance.OnRichiButtonClicked(richiOperation);
-                    Disable();
+                    Close();
                     BackButton.gameObject.SetActive(true);
                     BackButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnBackButtonClicked(operations));
                 });
@@ -64,7 +64,7 @@ namespace Single.UI
             // todo -- bei button
         }
 
-        public void Disable()
+        public void Close()
         {
             TsumoButton.gameObject.SetActive(false);
             RichiButton.gameObject.SetActive(false);

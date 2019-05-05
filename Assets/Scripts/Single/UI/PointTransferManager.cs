@@ -63,12 +63,18 @@ namespace Single.UI
             }
             // count down
             ConfirmButton.onClick.RemoveAllListeners();
-            ConfirmButton.onClick.AddListener(() => {
+            ConfirmButton.onClick.AddListener(() =>
+            {
                 callback();
                 ConfirmCountDownController.StopCountDown();
             });
             ConfirmCountDownController.StartCountDown(MahjongConstants.SummaryPanelWaitingTime, callback);
             // todo -- places animation
+        }
+
+        public void Close()
+        {
+            gameObject.SetActive(false);
         }
 
         private static Type GetTransferType(int from, int to)

@@ -1,6 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using Multi;
+using Multi.ServerData;
 using Single.UI.Controller;
 using UnityEngine;
 

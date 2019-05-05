@@ -1,4 +1,4 @@
-namespace Multi
+namespace Multi.ServerData
 {
     public enum RoundDrawType
     {

@@ -1,5 +1,6 @@
 ﻿using Lobby;
 using Multi.MahjongMessages;
+using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
 using UnityEngine;
@@ -116,11 +117,6 @@ namespace Multi
                 Type = RoundDrawType.NineOrphans
             };
             connectionToServer.Send(MessageIds.ClientNineOrphansMessage, message);
-        }
-
-        public void PointTransferDone()
-        {
-            // todo
         }
 
         public void RequestNewRound()

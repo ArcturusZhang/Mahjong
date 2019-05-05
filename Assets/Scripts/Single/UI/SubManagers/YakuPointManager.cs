@@ -18,6 +18,7 @@ namespace Single.UI.SubManagers
 
         private void OnDisable()
         {
+            YakuPointController.Close();
             PointCharacter.SetActive(false);
         }
     }

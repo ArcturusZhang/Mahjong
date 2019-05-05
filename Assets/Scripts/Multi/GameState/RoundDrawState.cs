@@ -20,6 +20,8 @@ namespace Multi.GameState
         private IList<Player> players;
         private List<PointTransfer> transfers;
         private float firstTime;
+        private bool next;
+        private bool extra;
 
         public void OnStateEnter()
         {
@@ -54,6 +56,8 @@ namespace Multi.GameState
                     RoundDrawType = RoundDrawType.NineOrphans
                 };
             }
+            next = false;
+            extra = true;
         }
 
         private void HandleRoundDraw()
@@ -90,6 +94,8 @@ namespace Multi.GameState
                 else
                     notReadyIndices.Add(playerIndex);
             }
+            next = notReadyIndices.Contains(CurrentRoundStatus.OyaPlayerIndex);
+            extra = true;
             // no one is ready or every one is ready
             if (readyIndices.Count == 0 || notReadyIndices.Count == 0) return;
             // get transfers according to total count of players
@@ -211,7 +217,10 @@ namespace Multi.GameState
         public void OnStateUpdate()
         {
             if (Time.time - firstTime > ServerConstants.ServerRoundDrawTimeOut)
-                ServerBehaviour.Instance.PointTransfer(transfers);
+            {
+                ServerBehaviour.Instance.PointTransfer(transfers, next, extra, true);
+                return;
+            }
         }
     }
 }

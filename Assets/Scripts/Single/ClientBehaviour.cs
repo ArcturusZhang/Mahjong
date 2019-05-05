@@ -201,6 +201,7 @@ namespace Single
                 HandManagers[i].StandUp();
             }
             HandPanelManager.gameObject.SetActive(true);
+            PointTransferManager.Close();
         }
 
         public void PlayerDrawTurn(ServerDrawTileMessage message)
@@ -252,6 +253,7 @@ namespace Single
         public void PlayerOutTurnOperation(ServerDiscardOperationMessage message)
         {
             Debug.Log($"Player {message.PlayerIndex} just discarded {message.Tile}, valid operation: {string.Join(", ", message.Operations)}");
+            InTurnPanelManager.Close();
             int currentPlaceIndex = GetPlaceIndexByPlayerIndex(message.CurrentTurnPlayerIndex);
             // update hand tiles
             LocalPlayerHandTiles = new List<Tile>(message.HandTiles);
@@ -465,8 +467,9 @@ namespace Single
             PointSummaryPanelManager.Close();
             var transfers = message.PointTransfers;
             PointTransferManager.SetTransfer(Points, transfers, () => {
-                LocalPlayer.PointTransferDone();
+                LocalPlayer.RequestNewRound();
             });
+            UpdatePoints(message.Points);
         }
 
         public void OnDiscardTile(Tile tile, bool isLastDraw)
@@ -474,7 +477,7 @@ namespace Single
             Debug.Log($"Sending request of discarding tile {tile}");
             int bonusTimeLeft = TurnTimeController.StopCountDown();
             LocalPlayer.DiscardTile(tile, IsRichiing, isLastDraw, bonusTimeLeft);
-            InTurnPanelManager.Disable();
+            InTurnPanelManager.Close();
             IsRichiing = false;
             HandPanelManager.RemoveCandidates();
         }
@@ -482,7 +485,7 @@ namespace Single
         public void OnInTurnSkipButtonClicked()
         {
             Debug.Log("In turn skip button clicked, hide buttons");
-            InTurnPanelManager.Disable();
+            InTurnPanelManager.Close();
         }
 
         public void OnTsumoButtonClicked(InTurnOperation operation)
@@ -495,7 +498,7 @@ namespace Single
             int bonusTimeLeft = TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of tsumo operation with bonus turn time {bonusTimeLeft}");
             LocalPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
-            InTurnPanelManager.Disable();
+            InTurnPanelManager.Close();
         }
 
         public void OnRichiButtonClicked(InTurnOperation operation)
@@ -528,7 +531,7 @@ namespace Single
                 int bonusTimeLeft = TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
                 LocalPlayer.InTurnOperationTaken(operationOptions[0], bonusTimeLeft);
-                InTurnPanelManager.Disable();
+                InTurnPanelManager.Close();
                 return;
             }
             // todo -- show kong selection panel here
@@ -544,7 +547,7 @@ namespace Single
         public void OnInTurnDrawButtonClicked()
         {
             Debug.Log($"Requesting round draw due to 9 kinds of orphans");
-            InTurnPanelManager.Disable();
+            InTurnPanelManager.Close();
             LocalPlayer.NineKindsOfOrphans();
         }
 

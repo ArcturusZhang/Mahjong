@@ -196,12 +196,14 @@ namespace Multi.MahjongMessages
 
     public class ServerPointTransferMessage : MessageBase
     {
-        public PointTransfer[] PointTransfers;
         public string[] PlayerNames;
+        public int[] Points;
+        public PointTransfer[] PointTransfers;
 
         public override string ToString()
         {
             return $"PlayerNames: {string.Join(",", PlayerNames)}\n"
+                + $"Points: {string.Join(",", Points)}\n"
                 + $"Transfers: {string.Join("|", PointTransfers)}";
         }
     }
@@ -265,16 +267,6 @@ namespace Multi.MahjongMessages
         }
     }
 
-    public class ClientNextRoundMessage : MessageBase
-    {
-        public int PlayerIndex;
-
-        public override string ToString()
-        {
-            return $"PlayerIndex: {PlayerIndex}";
-        }
-    }
-
     public class ClientRoundDrawMessage : MessageBase
     {
         public int PlayerIndex;
@@ -283,6 +275,16 @@ namespace Multi.MahjongMessages
         public override string ToString()
         {
             return $"PlayerIndex: {PlayerIndex}, Type: {Type}";
+        }
+    }
+
+    public class ClientNextRoundMessage : MessageBase
+    {
+        public int PlayerIndex;
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}";
         }
     }
 }

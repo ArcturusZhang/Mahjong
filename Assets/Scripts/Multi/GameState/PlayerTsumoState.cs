@@ -73,7 +73,8 @@ namespace Multi.GameState
                 });
             }
             // richi-sticks-points
-            transfers.Add(new PointTransfer {
+            transfers.Add(new PointTransfer
+            {
                 From = -1,
                 To = TsumoPlayerIndex,
                 Amount = CurrentRoundStatus.RichiSticksPoints
@@ -108,14 +109,19 @@ namespace Multi.GameState
         {
             if (responds.All(r => r))
             {
-                ServerBehaviour.Instance.PointTransfer(transfers);
+                PointTransfer();
                 return;
             }
             if (Time.time - firstTime > serverTimeOut)
             {
-                ServerBehaviour.Instance.PointTransfer(transfers);
+                PointTransfer();
                 return;
             }
+        }
+
+        private void PointTransfer()
+        {
+            ServerBehaviour.Instance.PointTransfer(transfers, false, true, false);
         }
     }
 }

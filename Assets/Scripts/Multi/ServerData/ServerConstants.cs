@@ -8,5 +8,6 @@ namespace Multi.ServerData
         public const float ServerTurnEndTimeOutExtra = 3f;
         public const float ServerWaitForLoadingTimeOut = 30f;
         public const float ServerRoundDrawTimeOut = 3f;
+        public const float ServerPointTransferTimeOut = 7f;
     }
 }

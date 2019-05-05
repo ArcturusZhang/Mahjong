@@ -67,7 +67,7 @@ namespace Multi.GameState
         {
             if (responds.All(r => r))
             {
-                ServerBehaviour.Instance.RoundStart();
+                ServerBehaviour.Instance.RoundStart(true, false, false);
                 return;
             }
             // resend request messsage by some interval

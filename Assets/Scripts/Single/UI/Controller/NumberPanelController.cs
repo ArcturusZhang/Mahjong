@@ -43,5 +43,10 @@ namespace Single.UI.Controller
                 image.sprite = NumberSprites.Get(digits[i]);
             }
         }
+
+        public void Close()
+        {
+            NumberParent.DestroyAllChild();
+        }
     }
 }
