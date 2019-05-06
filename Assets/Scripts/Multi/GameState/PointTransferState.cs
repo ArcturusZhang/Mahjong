@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Multi.MahjongMessages;
 using Multi.ServerData;
+using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -16,7 +17,7 @@ namespace Multi.GameState
         public bool ExtraRound;
         public bool KeepSticks;
         private IList<Player> players;
-        private ServerPointTransferMessage[] messages;
+        private MessageBase[] messages;
         private bool[] responds;
         private float firstTime;
         private float serverTimeOut;
@@ -80,7 +81,37 @@ namespace Multi.GameState
 
         private void StartNewRound()
         {
-            ServerBehaviour.Instance.RoundStart(NextRound, ExtraRound, KeepSticks);
+            if (CheckIfGameEnds())
+                ServerBehaviour.Instance.GameEnd();
+            else
+                ServerBehaviour.Instance.RoundStart(NextRound, ExtraRound, KeepSticks);
+        }
+
+        private bool CheckIfGameEnds()
+        {
+            // check if allow zero or negative points
+            int lowestPoint = CurrentRoundStatus.Points.Min();
+            switch (CurrentRoundStatus.GameSettings.PointsToGameEnd)
+            {
+                case PointsToGameEnd.Zero:
+                    if (lowestPoint <= 0) return true;
+                    break;
+                case PointsToGameEnd.Negative:
+                    if (lowestPoint < 0) return true;
+                    break;
+            }
+            var isAllLast = CurrentRoundStatus.IsAllLast;
+            if (!isAllLast) return false;
+            // is all last
+            if (NextRound) return true;
+            // if not next
+            var maxPoint = CurrentRoundStatus.Points.Max();
+            int playerIndex = CurrentRoundStatus.Points.IndexOf(maxPoint);
+            if (playerIndex == CurrentRoundStatus.OyaPlayerIndex) // last oya is top
+            {
+                return CurrentRoundStatus.GameSettings.GameEndsWhenAllLastTop;
+            }
+            return false;
         }
 
         private void ChangePoints(PointTransfer transfer)

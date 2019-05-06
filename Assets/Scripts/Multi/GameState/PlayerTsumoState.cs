@@ -121,7 +121,8 @@ namespace Multi.GameState
 
         private void PointTransfer()
         {
-            ServerBehaviour.Instance.PointTransfer(transfers, false, true, false);
+            var next = CurrentRoundStatus.OyaPlayerIndex != TsumoPlayerIndex;
+            ServerBehaviour.Instance.PointTransfer(transfers, next, !next, false);
         }
     }
 }

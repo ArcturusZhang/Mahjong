@@ -8,11 +8,13 @@ namespace Single.UI
     public class RoundDrawManager : MonoBehaviour
     {
         public RoundDrawItemController[] Controllers;
-        private WaitForSeconds wait = new WaitForSeconds(5f);
+        private WaitForSeconds wait = new WaitForSeconds(2f);
 
         public void SetDrawType(RoundDrawType type)
         {
-            Controllers[(int)type].gameObject.SetActive(true);
+            var controller = Controllers[(int)type];
+            controller.gameObject.SetActive(true);
+            StartCoroutine(Disable(controller));
         }
 
         private IEnumerator Disable(RoundDrawItemController controller)

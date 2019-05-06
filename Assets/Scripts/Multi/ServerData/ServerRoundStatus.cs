@@ -270,6 +270,14 @@ namespace Multi.ServerData
             }
         }
 
+        public bool IsAllLast
+        {
+            get
+            {
+                return GameSettings.IsAllLast(OyaPlayerIndex, Field, TotalPlayers);
+            }
+        }
+
         public void SortHandTiles(int index)
         {
             CheckRange(index);

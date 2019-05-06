@@ -32,6 +32,7 @@ namespace Single
         public RoundDrawManager RoundDrawManager;
         public PointSummaryPanelManager PointSummaryPanelManager;
         public PointTransferManager PointTransferManager;
+        public GameEndPanelManager GameEndPanelManager;
 
         [Header("Data")]
         public int TotalPlayers;
@@ -466,10 +467,20 @@ namespace Single
         {
             PointSummaryPanelManager.Close();
             var transfers = message.PointTransfers;
-            PointTransferManager.SetTransfer(Points, transfers, () => {
+            PointTransferManager.SetTransfer(Points, transfers, () =>
+            {
                 LocalPlayer.RequestNewRound();
             });
             UpdatePoints(message.Points);
+        }
+
+        public void GameEnd(ServerGameEndMessage message)
+        {
+            GameEndPanelManager.SetPoints(message.PlayerNames, message.Points, message.Places, () =>
+            {
+                Debug.Log("Back to lobby");
+            });
+            // todo
         }
 
         public void OnDiscardTile(Tile tile, bool isLastDraw)
@@ -547,8 +558,9 @@ namespace Single
         public void OnInTurnDrawButtonClicked()
         {
             Debug.Log($"Requesting round draw due to 9 kinds of orphans");
-            InTurnPanelManager.Close();
+            TurnTimeController.StopCountDown();
             LocalPlayer.NineKindsOfOrphans();
+            InTurnPanelManager.Close();
         }
 
         public void OnOutTurnButtonClicked(OutTurnOperation operation)

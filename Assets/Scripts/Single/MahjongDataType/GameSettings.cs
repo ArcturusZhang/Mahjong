@@ -10,9 +10,12 @@ namespace Single.MahjongDataType
     {
         [Header("General settings")] public GameMode GameMode = GameMode.Normal;
         public GamePlayers GamePlayers = GamePlayers.Four;
+        public RoundCount RoundCount = RoundCount.ES;
         public MinimumFanConstraintType MinimumFanConstraintType = MinimumFanConstraintType.One;
         public PointsToGameEnd PointsToGameEnd = PointsToGameEnd.Negative;
+        public bool GameEndsWhenAllLastTop = true;
         public bool AllowDiscardSameAfterOpen = false;
+        public bool AllowRichiWhenPointsLow = false;
         public bool AllowRichiWhenNotReady = true;
         public bool AllowChows = true;
         public bool AllowPongs = true;
@@ -35,28 +38,39 @@ namespace Single.MahjongDataType
                     case GamePlayers.Four:
                         return 4;
                     default:
-                        throw new System.ArgumentException($"Unknown GamePlayers option: {GamePlayers}");
+                        Debug.LogError($"Unknown GamePlayers option: {GamePlayers}");
+                        return 4;
                 }
             }
         }
 
         public bool CheckConstraint(PointInfo point)
         {
-            int fan = point.FanWithoutDora;
+            int baseFan = point.FanWithoutDora;
+            int fan = point.TotalFan;
             int basePoint = point.BasePoint;
             switch (MinimumFanConstraintType)
             {
                 case MinimumFanConstraintType.One:
-                    return fan >= 1;
+                    return baseFan >= 1;
                 case MinimumFanConstraintType.Two:
-                    return fan >= 2;
+                    return baseFan >= 1 && fan >= 2;
                 case MinimumFanConstraintType.Three:
-                    return fan >= 3;
+                    return baseFan >= 1 && fan >= 3;
                 case MinimumFanConstraintType.Four:
-                    return fan >= 4;
-                    // todo -- others needs a refactor on PointInfo struct
+                    return baseFan >= 1 && fan >= 4;
+                case MinimumFanConstraintType.Mangan:
+                    return baseFan >= 1 && basePoint >= MahjongConstants.Mangan;
+                case MinimumFanConstraintType.Haneman:
+                    return baseFan >= 1 && basePoint >= MahjongConstants.Haneman;
+                case MinimumFanConstraintType.Baiman:
+                    return baseFan >= 1 && basePoint >= MahjongConstants.Baiman;
+                case MinimumFanConstraintType.Yakuman:
+                    return baseFan >= 1 && basePoint >= MahjongConstants.Yakuman;
+                default:
+                    Debug.LogError($"Unknown type {MinimumFanConstraintType}");
+                    return false;
             }
-            return true;
         }
 
         [Header("Time settings")] public int BaseTurnTime = 5;
@@ -103,6 +117,11 @@ namespace Single.MahjongDataType
             return isDealer ? 6 : 4; // this is for 4-player mahjong -- todo
         }
 
+        public bool IsAllLast(int oyaIndex, int field, int totalPlayers)
+        {
+            return oyaIndex == totalPlayers - 1 && field == FieldThreshold - 1;
+        }
+
         public string ToJson()
         {
             return JsonUtility.ToJson(this, true);
@@ -116,6 +135,25 @@ namespace Single.MahjongDataType
             writer.WriteLine(json);
             writer.Close();
         }
+
+        private int FieldThreshold
+        {
+            get
+            {
+                switch (RoundCount)
+                {
+                    case RoundCount.E:
+                        return 1;
+                    case RoundCount.ES:
+                        return 2;
+                    case RoundCount.FULL:
+                        return 4;
+                    default:
+                        Debug.LogError($"Unknown type {RoundCount}");
+                        return 2;
+                }
+            }
+        }
     }
 
     public enum GameMode
@@ -126,6 +164,11 @@ namespace Single.MahjongDataType
     public enum GamePlayers
     {
         Two, Three, Four
+    }
+
+    public enum RoundCount
+    {
+        E, ES, FULL
     }
 
     public enum MinimumFanConstraintType

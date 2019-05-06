@@ -25,7 +25,7 @@ namespace Multi.GameState
         public bool ExtraRound;
         public bool KeepSticks;
         private IList<Player> players;
-        private ServerRoundStartMessage[] messages;
+        private MessageBase[] messages;
         private bool[] responds;
         private float firstSendTime;
         private float lastSendTime;
@@ -61,6 +61,7 @@ namespace Multi.GameState
                     MahjongSetData = MahjongSet.Data
                 };
                 players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[index]);
+                players[index].BonusTurnTime = CurrentRoundStatus.GameSettings.BonusTurnTime;
             }
             firstSendTime = Time.time;
             lastSendTime = Time.time;

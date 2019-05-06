@@ -130,7 +130,7 @@ namespace Multi
 
         private void RegisterHandlers()
         {
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPrepareMessage, OnGamePrepareMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerGamePrepareMessage, OnGamePrepareMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRoundStartMessage, OnRoundStartMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerDrawTileMessage, OnPlayerDrawTileMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerOtherDrawTileMessage, OnOtherPlayerDrawTileMessageReceived);
@@ -140,6 +140,7 @@ namespace Multi
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTsumoMessage, OnPlayerTsumoMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRongMessage, OnPlayerRongMessageReceived);
             LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPointTransferMessage, OnPointTransferMessageReceived);
+            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerGameEndMessage, OnGameEndMessageReceived);
         }
 
         private void OnGamePrepareMessageReceived(NetworkMessage message)
@@ -266,6 +267,14 @@ namespace Multi
             // this message do not require confirm
             // invoke client method for point transfer
             ClientBehaviour.Instance.PointTransfer(content);
+        }
+
+        private void OnGameEndMessageReceived(NetworkMessage message) {
+            var content = message.ReadMessage<ServerGameEndMessage>();
+            Debug.Log($"ServerGameEndMessage received: {content}");
+            // this message do not require confirm
+            // invoke client method for game end summary
+            ClientBehaviour.Instance.GameEnd(content);
         }
     }
 }

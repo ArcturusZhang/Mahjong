@@ -208,6 +208,20 @@ namespace Multi.MahjongMessages
         }
     }
 
+    public class ServerGameEndMessage : MessageBase
+    {
+        public string[] PlayerNames;
+        public int[] Points;
+        public int[] Places;
+
+        public override string ToString()
+        {
+            return $"PlayerNames: {string.Join(",", PlayerNames)}\n"
+                + $"Points: {string.Join(",", Points)}\n"
+                + $"Places: {string.Join("|", Places)}";
+        }
+    }
+
     // Client to server messages
     public class ClientReadinessMessage : MessageBase
     {

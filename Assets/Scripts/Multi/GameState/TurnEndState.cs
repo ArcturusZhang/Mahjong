@@ -7,7 +7,7 @@ using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
@@ -27,7 +27,7 @@ namespace Multi.GameState
         private GameSettings gameSettings;
         private YakuSettings yakuSettings;
         private IList<Player> players;
-        private ServerTurnEndMessage[] messages;
+        private MessageBase[] messages;
         private OutTurnOperationType operationChosen;
         private float serverTurnEndTimeOut;
         private float firstTime;

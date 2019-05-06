@@ -3,7 +3,7 @@ namespace Multi.MahjongMessages
     public static class MessageIds
     {
         // Server to client messages
-        public const short ServerPrepareMessage = 100;
+        public const short ServerGamePrepareMessage = 100;
         public const short ServerRoundStartMessage = 101;
         public const short ServerDrawTileMessage = 102;
         public const short ServerOtherDrawTileMessage = 103;
@@ -13,6 +13,7 @@ namespace Multi.MahjongMessages
         public const short ServerRongMessage = 107;
         public const short ServerRoundDrawMessage = 108;
         public const short ServerPointTransferMessage = 109;
+        public const short ServerGameEndMessage = 110;
 
         // Client to server messages
         public const short ClientReadinessMessage = 200;

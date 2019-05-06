@@ -97,8 +97,10 @@ namespace Multi.GameState
             }
             // test richi
             var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
+            var availability = gameSettings.AllowRichiWhenPointsLow || CurrentRoundStatus.GetPoints(playerIndex) >= gameSettings.RichiMortgagePoints;
             IList<Tile> availableTiles;
-            if (!alreadyRichied && MahjongLogic.TestRichi(handTiles, openMelds, justDraw, gameSettings.AllowRichiWhenNotReady, out availableTiles))
+            if (!alreadyRichied && availability
+                && MahjongLogic.TestRichi(handTiles, openMelds, justDraw, gameSettings.AllowRichiWhenNotReady, out availableTiles))
             {
                 operations.Add(new InTurnOperation
                 {

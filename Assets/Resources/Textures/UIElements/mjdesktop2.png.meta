@@ -4,7 +4,7 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 21300000
-    second: mjdesktop2_0
+    second: game_end_points
   - first:
       213: 21300002
     second: mjdesktop2_1
@@ -194,7 +194,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: mjdesktop2_0
+      name: game_end_points
       rect:
         serializedVersion: 2
         x: 0

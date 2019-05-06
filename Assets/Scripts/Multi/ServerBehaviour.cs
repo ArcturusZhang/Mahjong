@@ -206,6 +206,15 @@ namespace Multi
             StateMachine.ChangeState(transferState);
         }
 
+        public void GameEnd()
+        {
+            var gameEndState = new GameEndState
+            {
+                CurrentRoundStatus = CurrentRoundStatus
+            };
+            StateMachine.ChangeState(gameEndState);
+        }
+
         public void Idle()
         {
             StateMachine.ChangeState(new IdleState());

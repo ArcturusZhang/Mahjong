@@ -19,7 +19,7 @@ namespace Multi.GameState
     public class GamePrepareState : IState
     {
         public ServerRoundStatus CurrentRoundStatus;
-        private ServerGamePrepareMessage[] messages;
+        private MessageBase[] messages;
         private bool[] responds;
         private float lastSendTime;
         private IList<Player> players;
@@ -49,7 +49,7 @@ namespace Multi.GameState
                         LingShangTilesCount = CurrentRoundStatus.GameSettings.LingshangTilesCount
                     }
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerPrepareMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerGamePrepareMessage, messages[i]);
             }
             lastSendTime = Time.time;
             // todo -- Maybe other initialization work needs to be done.
@@ -77,7 +77,7 @@ namespace Multi.GameState
                 for (int i = 0; i < players.Count; i++)
                 {
                     if (responds[i]) continue;
-                    players[i].connectionToClient.Send(MessageIds.ServerPrepareMessage, messages[i]);
+                    players[i].connectionToClient.Send(MessageIds.ServerGamePrepareMessage, messages[i]);
                 }
             }
         }

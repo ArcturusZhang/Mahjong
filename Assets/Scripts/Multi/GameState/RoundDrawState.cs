@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Multi.MahjongMessages;
@@ -8,6 +7,7 @@ using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
@@ -15,7 +15,7 @@ namespace Multi.GameState
     {
         public ServerRoundStatus CurrentRoundStatus;
         public RoundDrawType RoundDrawType;
-        private ServerRoundDrawMessage[] messages;
+        private MessageBase[] messages;
         private GameSettings gameSettings;
         private IList<Player> players;
         private List<PointTransfer> transfers;
