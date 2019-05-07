@@ -9895,13 +9895,6 @@ MonoBehaviour:
   Dice: 0
   Extra: 0
   RichiSticks: 0
-  MahjongSetData:
-    TilesDrawn: 0
-    DoraTurned: 0
-    LingShangDrawn: 0
-    TilesRemain: 0
-    DoraIndicators: []
-    TotalTiles: 0
 --- !u!1 &1721137886
 GameObject:
   m_ObjectHideFlags: 0
@@ -14432,6 +14425,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7570955426123262422, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3825609298825313114, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3825609298825313114, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3639760742018491107, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7576662770863191438, guid: 74a98902778dcf5499d6e4cc79127cf7, type: 3}

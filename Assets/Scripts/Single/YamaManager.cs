@@ -15,12 +15,12 @@ namespace Single
         [HideInInspector] public int[] Places;
         [HideInInspector] public int OyaPlayerIndex;
         [HideInInspector] public int Dice;
-        [HideInInspector] public MahjongSetData MahjongSetData;
-        // [HideInInspector] public GameSettings GameSettings;
         [HideInInspector] public int LingshangTilesCount;
+        private MahjongSetData MahjongSetData;
 
-        private void Update()
+        public void SetMahjongData(MahjongSetData data)
         {
+            MahjongSetData = data;
             if (Dice == 0 || OyaPlayerIndex < 0) return;
             UpdateTiles();
         }
@@ -28,7 +28,6 @@ namespace Single
         private void UpdateTiles()
         {
             var yamaIndex = GetYamaIndex(Dice, OyaPlayerIndex, Places);
-            // UnityEngine.Debug.Log($"[Yama] Open yama index: {yamaIndex}.");
             UpdateYama(yamaIndex);
         }
 
@@ -44,13 +43,10 @@ namespace Single
 
         private void UpdateYama(int openYamaIndex)
         {
-            // show all tiles
-            ResetAllTiles();
             // drawn tiles
             for (int i = 0; i < MahjongSetData.TilesDrawn; i++)
             {
                 var t = GetTileAt(openYamaIndex, Dice * 2 + i);
-                // UnityEngine.Debug.Log($"Tile object name: {t.name} on yama with name {t.parent.name}");
                 DrawTile(t);
             }
             // lingshang tiles
@@ -58,7 +54,6 @@ namespace Single
             {
                 var s = Dice - i / 2;
                 var t = GetTileAt(openYamaIndex, (s - 1) * 2 + i % 2);
-                // UnityEngine.Debug.Log($"Tile object name: {t.name} on yama with name {t.parent.name}");
                 DrawTile(t);
             }
             // dora tiles
@@ -66,7 +61,6 @@ namespace Single
             {
                 var s = Dice - LingshangTilesCount / 2 - i;
                 var t = GetTileAt(openYamaIndex, (s - 1) * 2);
-                // UnityEngine.Debug.Log($"Dora object name: {t.name} on yama with name {t.parent.name}");
                 TurnTileFaceUp(t, MahjongSetData.DoraIndicators[i]);
             }
         }
@@ -75,7 +69,8 @@ namespace Single
         {
             if (index < 0) index += MahjongSetData.TotalTiles;
             int yamaIndex = openYamaIndex;
-            while (index >= Walls[yamaIndex].childCount) {
+            while (index >= Walls[yamaIndex].childCount)
+            {
                 index -= Walls[yamaIndex].childCount;
                 yamaIndex++;
                 if (yamaIndex >= 4) yamaIndex -= 4;
@@ -83,7 +78,7 @@ namespace Single
             return Walls[yamaIndex].GetChild(index);
         }
 
-        private void ResetAllTiles()
+        public void ResetAllTiles()
         {
             foreach (var wall in Walls)
             {
@@ -95,7 +90,8 @@ namespace Single
             }
         }
 
-        private static void DrawTile(Transform t) {
+        private static void DrawTile(Transform t)
+        {
             t.gameObject.SetActive(false);
         }
 

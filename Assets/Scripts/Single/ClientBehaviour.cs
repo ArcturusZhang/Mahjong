@@ -54,9 +54,18 @@ namespace Single
         public int Dice;
         public int Extra;
         public int RichiSticks;
-        public MahjongSetData MahjongSetData;
         private WaitForSeconds waitAutoDiscardAfterRichi = new WaitForSeconds(MahjongConstants.AutoDiscardDelayAfterRichi);
         private NetworkSettings settings;
+        private MahjongSetData setData;
+        public MahjongSetData MahjongSetData
+        {
+            get => setData;
+            set
+            {
+                setData = value;
+                YamaManager.SetMahjongData(value);
+            }
+        }
 
         private void OnEnable()
         {
@@ -71,8 +80,7 @@ namespace Single
 
         private void AssignData()
         {
-            if (LocalPlayer == null) LocalPlayer = LobbyManager.Instance?.LocalPlayer;
-            UpdateYamaManager();
+            if (LocalPlayer == null) LocalPlayer = LobbyManager.Instance.LocalPlayer;
             UpdateHandManager();
             UpdateRiverManager();
             UpdatePlayerInfoManager();
@@ -86,7 +94,6 @@ namespace Single
             YamaManager.Places = Places;
             YamaManager.OyaPlayerIndex = OyaPlayerIndex;
             YamaManager.Dice = Dice;
-            YamaManager.MahjongSetData = MahjongSetData;
             YamaManager.LingshangTilesCount = settings.LingShangTilesCount;
         }
 
@@ -164,6 +171,7 @@ namespace Single
             UpdatePoints(message.Points);
             // Sync names for ui
             UpdateNames(message.PlayerNames);
+            YamaManager.ResetAllTiles();
         }
 
         /// <summary>
@@ -193,7 +201,7 @@ namespace Single
             Extra = message.Extra;
             RichiSticks = message.RichiSticks;
             MahjongSetData = message.MahjongSetData;
-            Debug.Log(message.MahjongSetData);
+            UpdateYamaManager();
             // Sync points for every player
             UpdatePoints(message.Points);
             // All player should not be in richi status
@@ -219,6 +227,7 @@ namespace Single
             LastDraws[0] = tile;
             BonusTurnTime = message.BonusTurnTime;
             MahjongSetData = message.MahjongSetData;
+            // UpdateYamas(MahjongSetData);
             // auto discard when richied
             if (message.Richied && message.Operations.All(op => op.Type == InTurnOperationType.Discard))
             {
@@ -245,6 +254,7 @@ namespace Single
             var place = GetPlaceIndexByPlayerIndex(index);
             LastDraws[place] = default(Tile);
             MahjongSetData = message.MahjongSetData;
+            // UpdateYamas(MahjongSetData);
         }
 
         private IEnumerator AutoDiscard(Tile tile, int bonusTimeLeft)
@@ -262,6 +272,7 @@ namespace Single
             LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
             // update mahjongSet
             MahjongSetData = message.MahjongSetData;
+            // UpdateYamas(MahjongSetData);
         }
 
         public void OtherPlayerKong(ServerKongMessage message)
@@ -273,6 +284,7 @@ namespace Single
             OpenManagers[currentPlaceIndex].SetMelds(message.HandData.OpenMelds);
             // update mahjongSet
             MahjongSetData = message.MahjongSetData;
+            // UpdateYamas(MahjongSetData);
             if (message.Operations.All(op => op.Type == OutTurnOperationType.Skip))
             {
                 Debug.Log("Only operation is skip, skipping turn");
@@ -341,7 +353,6 @@ namespace Single
             }
         }
 
-        // todo -- add MahjongSetData to turn end for sync
         public void PlayerTurnEnd(ServerTurnEndMessage message)
         {
             // show operation related animation
@@ -355,6 +366,7 @@ namespace Single
             UpdatePoints(message.Points);
             RichiSticks = message.RichiSticks;
             MahjongSetData = message.MahjongSetData;
+            // UpdateYamas(MahjongSetData);
             // perform operation effect
             var operations = message.Operations;
             if (operations.All(op => op.Type == OutTurnOperationType.Skip)) return;
