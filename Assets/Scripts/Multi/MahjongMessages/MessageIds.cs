@@ -8,12 +8,14 @@ namespace Multi.MahjongMessages
         public const short ServerDrawTileMessage = 102;
         public const short ServerOtherDrawTileMessage = 103;
         public const short ServerDiscardOperationMessage = 104;
-        public const short ServerTurnEndMessage = 105;
-        public const short ServerTsumoMessage = 106;
-        public const short ServerRongMessage = 107;
-        public const short ServerRoundDrawMessage = 108;
-        public const short ServerPointTransferMessage = 109;
-        public const short ServerGameEndMessage = 110;
+        public const short ServerKongMessage = 105;
+        // public const short ServerOtherKongMessage = 106;
+        public const short ServerTurnEndMessage = 110;
+        public const short ServerTsumoMessage = 111;
+        public const short ServerRongMessage = 112;
+        public const short ServerRoundDrawMessage = 113;
+        public const short ServerPointTransferMessage = 114;
+        public const short ServerGameEndMessage = 115;
 
         // Client to server messages
         public const short ClientReadinessMessage = 200;

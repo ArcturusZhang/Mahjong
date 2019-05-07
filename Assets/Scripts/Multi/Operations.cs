@@ -14,7 +14,7 @@ namespace Multi
     {
         public InTurnOperationType Type;
         public Tile Tile;
-        public Meld Meld;
+        public OpenMeld Meld;
         public Tile[] RichiAvailableTiles;
 
         public override string ToString()
@@ -30,7 +30,7 @@ namespace Multi
                 case InTurnOperationType.Bei:
                     return $"Type: {Type}";
                 case InTurnOperationType.Kong:
-                    return $"Type: {Type}, Tile: {Tile}, Meld: {Meld}";
+                    return $"Type: {Type}, Meld: {Meld}";
                 default:
                     Debug.LogWarning($"Unknown type: {Type}");
                     throw new Exception("This will never happen");

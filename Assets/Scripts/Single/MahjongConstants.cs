@@ -14,6 +14,7 @@ namespace Single
         public const int SuitCount = 4;
         public const int CompleteHandTilesCount = 13;
         public const int FullHandTilesCount = 14;
+        public const int MaxKongs = 4;
         public const float Gap = 0.0005f;
         public const int TilesPerRowInRiver = 6;
         public const int MaxRowInRiver = 3;
@@ -74,15 +75,15 @@ namespace Single
             return index + tile.Suit.ToString().ToLower();
         }
 
-        public static MeldInstanceType GetMeldDirection(int currentPlayerIndex, int discardPlayerIndex,
-            bool isKong = false)
-        {
-            if (RepeatIndex(currentPlayerIndex + 1, WallCount) == discardPlayerIndex)
-                return !isKong ? MeldInstanceType.Right : MeldInstanceType.RightKong;
-            if (RepeatIndex(currentPlayerIndex - 1, WallCount) == discardPlayerIndex)
-                return !isKong ? MeldInstanceType.Left : MeldInstanceType.LeftKong;
-            return !isKong ? MeldInstanceType.Opposite : MeldInstanceType.OppositeKong;
-        }
+        // public static MeldInstanceType GetMeldDirection(int currentPlayerIndex, int discardPlayerIndex,
+        //     bool isKong = false)
+        // {
+        //     if (RepeatIndex(currentPlayerIndex + 1, WallCount) == discardPlayerIndex)
+        //         return !isKong ? MeldInstanceType.Right : MeldInstanceType.RightKong;
+        //     if (RepeatIndex(currentPlayerIndex - 1, WallCount) == discardPlayerIndex)
+        //         return !isKong ? MeldInstanceType.Left : MeldInstanceType.LeftKong;
+        //     return !isKong ? MeldInstanceType.Opposite : MeldInstanceType.OppositeKong;
+        // }
 
         public static List<Tile> FullTiles = new List<Tile> {
             new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1),

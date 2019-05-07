@@ -57,7 +57,7 @@ namespace Single.UI
             }
         }
 
-        public void Disable()
+        public void Close()
         {
             RongButton.gameObject.SetActive(false);
             ChowButton.gameObject.SetActive(false);

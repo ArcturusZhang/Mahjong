@@ -21,6 +21,7 @@ namespace Single
         public BoardInfoManager BoardInfoManager;
         public YamaManager YamaManager;
         public PlayerHandManager[] HandManagers;
+        public OpenMeldManager[] OpenManagers;
         public PlayerRiverManager[] RiverManagers;
         public PlayerInfoManager PlayerInfoManager;
         public HandPanelManager HandPanelManager;
@@ -39,6 +40,7 @@ namespace Single
         public int[] Places = new int[4];
         public string[] PlayerNames = new string[4];
         public int[] TileCounts = new int[4];
+        public List<Meld>[] OpenMelds = new List<Meld>[4];
         public int[] Points = new int[4];
         public bool[] RichiStatus = new bool[4];
         public bool IsRichiing = false;
@@ -95,11 +97,11 @@ namespace Single
                 var hand = HandManagers[i];
                 // update hand tile count
                 hand.Count = TileCounts[i];
-                // update hand tiles if local
-                if (i == 0) hand.Tiles = LocalPlayerHandTiles;
                 // update last draw
                 hand.LastDraw = LastDraws[i];
             }
+            // update local hand tiles
+            HandManagers[0].HandTiles = LocalPlayerHandTiles;
         }
 
         private void UpdateRiverManager()
@@ -251,6 +253,43 @@ namespace Single
             LocalPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
         }
 
+        public void PlayerKong(ServerKongMessage message)
+        {
+            // change hand tiles and open melds
+            LocalPlayerHandTiles = new List<Tile>(message.HandData.HandTiles);
+            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(message.KongPlayerIndex);
+            OpenManagers[currentPlaceIndex].SetMelds(message.HandData.OpenMelds);
+            LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
+            // update mahjongSet
+            MahjongSetData = message.MahjongSetData;
+        }
+
+        public void OtherPlayerKong(ServerKongMessage message)
+        {
+            // change hand tiles count and open melds
+            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(message.KongPlayerIndex);
+            Debug.Log($"Hand tile count of player {message.KongPlayerIndex}: {message.HandData.HandTiles.Length}");
+            TileCounts[currentPlaceIndex] = message.HandData.HandTiles.Length;
+            OpenManagers[currentPlaceIndex].SetMelds(message.HandData.OpenMelds);
+            // update mahjongSet
+            MahjongSetData = message.MahjongSetData;
+            if (message.Operations.All(op => op.Type == OutTurnOperationType.Skip))
+            {
+                Debug.Log("Only operation is skip, skipping turn");
+                LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
+                OutTurnPanelManager.Close();
+                return;
+            }
+            // if there are valid operations, assign operations and start count down
+            OutTurnPanelManager.SetOperations(message.Operations);
+            TurnTimeController.StartCountDown(settings.BaseTurnTime, message.BonusTurnTime, () =>
+            {
+                Debug.Log("Time out! Automatically skip this turn");
+                LocalPlayer.SkipOutTurnOperation(0);
+                OutTurnPanelManager.Close();
+            });
+        }
+
         public void PlayerOutTurnOperation(ServerDiscardOperationMessage message)
         {
             Debug.Log($"Player {message.PlayerIndex} just discarded {message.Tile}, valid operation: {string.Join(", ", message.Operations)}");
@@ -267,7 +306,7 @@ namespace Single
             {
                 Debug.LogError("Received with no operations, this should not happen");
                 LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-                OutTurnPanelManager.Disable();
+                OutTurnPanelManager.Close();
                 return;
             }
             // if all the operations are skip, automatically skip this turn.
@@ -275,16 +314,16 @@ namespace Single
             {
                 Debug.Log("Only operation is skip, skipping turn.");
                 LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-                OutTurnPanelManager.Disable();
+                OutTurnPanelManager.Close();
                 return;
             }
+            // if there are valid operations, assign operations and start count down
             OutTurnPanelManager.SetOperations(message.Operations);
-            // if there are valid operations, assign operations
             TurnTimeController.StartCountDown(settings.BaseTurnTime, message.BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically skip this turn");
                 LocalPlayer.SkipOutTurnOperation(0);
-                OutTurnPanelManager.Disable();
+                OutTurnPanelManager.Close();
             });
         }
 
@@ -302,6 +341,7 @@ namespace Single
             }
         }
 
+        // todo -- add MahjongSetData to turn end for sync
         public void PlayerTurnEnd(ServerTurnEndMessage message)
         {
             // show operation related animation
@@ -314,6 +354,7 @@ namespace Single
             }
             UpdatePoints(message.Points);
             RichiSticks = message.RichiSticks;
+            MahjongSetData = message.MahjongSetData;
             // perform operation effect
             var operations = message.Operations;
             if (operations.All(op => op.Type == OutTurnOperationType.Skip)) return;
@@ -337,7 +378,6 @@ namespace Single
                         break;
                     case OutTurnOperationType.RoundDraw:
                         Debug.Log("Round is draw");
-                        // RoundDrawManager.SetDrawType(RoundDrawType.RoundDraw);
                         break;
                 }
             }
@@ -349,7 +389,7 @@ namespace Single
             yield return new WaitForSeconds(MahjongConstants.HandTilesRevealDelay);
             var manager = HandManagers[placeIndex];
             manager.OpenUp();
-            manager.Tiles = new List<Tile>(handData.HandTiles);
+            manager.HandTiles = new List<Tile>(handData.HandTiles);
         }
 
         public IEnumerator PlayerTsumo(ServerPlayerTsumoMessage message)
@@ -357,6 +397,7 @@ namespace Single
             // show tsumo animation
             int playerIndex = message.TsumoPlayerIndex;
             int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
+            LastDraws[placeIndex] = message.WinningTile;
             // reveal hand tiles
             StartCoroutine(RevealHandTiles(placeIndex, message.TsumoHandData));
             yield return PlayerEffectManager.ShowEffect(placeIndex, PlayerEffectManager.Type.Tsumo);
@@ -458,7 +499,7 @@ namespace Single
             {
                 // ting
                 HandManagers[placeIndex].OpenUp();
-                HandManagers[placeIndex].Tiles = data.HandTiles.ToList();
+                HandManagers[placeIndex].HandTiles = data.HandTiles.ToList();
                 DrawPanelManagers[placeIndex].Ready(data.WaitingTiles);
             }
         }
@@ -479,8 +520,8 @@ namespace Single
             GameEndPanelManager.SetPoints(message.PlayerNames, message.Points, message.Places, () =>
             {
                 Debug.Log("Back to lobby");
+                // todo
             });
-            // todo
         }
 
         public void OnDiscardTile(Tile tile, bool isLastDraw)
@@ -568,7 +609,7 @@ namespace Single
             int bonusTimeLeft = TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of operation {operation} with bonus turn time {bonusTimeLeft}");
             LocalPlayer.OutTurnOperationTaken(operation, bonusTimeLeft);
-            OutTurnPanelManager.Disable();
+            OutTurnPanelManager.Close();
         }
 
         public void OnChowButtonClicked(OutTurnOperation[] operationOptions, OutTurnOperation[] originalOperations)
@@ -588,7 +629,7 @@ namespace Single
                 int bonusTimeLeft = TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of chow operation with bonus turn time {bonusTimeLeft}");
                 LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
-                OutTurnPanelManager.Disable();
+                OutTurnPanelManager.Close();
                 return;
             }
             // todo -- chow selection logic here
@@ -611,7 +652,7 @@ namespace Single
                 int bonusTimeLeft = TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
                 LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
-                OutTurnPanelManager.Disable();
+                OutTurnPanelManager.Close();
                 return;
             }
             // todo -- pong selection logic here

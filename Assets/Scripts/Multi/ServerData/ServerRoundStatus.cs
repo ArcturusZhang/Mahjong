@@ -4,6 +4,7 @@ using System.Linq;
 using Single.Exceptions;
 using Single.MahjongDataType;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Utils;
 
 namespace Multi.ServerData
@@ -18,9 +19,10 @@ namespace Multi.ServerData
         private int dice;
         private int extra;
         private int richiSticks;
+        private int kongClaimed;
         private List<Player> players;
         private List<Tile>[] handTiles;
-        private List<Meld>[] openMelds;
+        private List<OpenMeld>[] openMelds;
         private int[] points;
         private Tile? lastDraw = null;
         private bool[] richiStatus;
@@ -90,6 +92,7 @@ namespace Multi.ServerData
         public bool FirstTurn => firstTurn;
         public int TotalPlayers => players.Count;
         public string[] PlayerNames => players.Select(player => player.PlayerName).ToArray();
+        public int KongClaimed => kongClaimed;
 
         private IList<Player> readOnlyPlayers = null;
 
@@ -100,6 +103,11 @@ namespace Multi.ServerData
                 if (readOnlyPlayers == null) readOnlyPlayers = players.AsReadOnly();
                 return readOnlyPlayers;
             }
+        }
+
+        public void ClaimKong()
+        {
+            kongClaimed++;
         }
 
         public void ShufflePlayers()
@@ -114,10 +122,16 @@ namespace Multi.ServerData
             return handTiles[index].ToArray();
         }
 
-        public Meld[] OpenMelds(int index)
+        public OpenMeld[] OpenMelds(int index)
         {
             CheckRange(index);
             return openMelds[index].ToArray();
+        }
+
+        public Meld[] Melds(int index)
+        {
+            CheckRange(index);
+            return openMelds[index].Select(open => open.Meld).ToArray();
         }
 
         public PlayerHandData HandData(int index)
@@ -179,11 +193,11 @@ namespace Multi.ServerData
         {
             CheckRange(index);
             var i = handTiles[index].FindIndex(t => t.EqualsConsiderColor(tile));
-            if (i < 0) throw new NoMoreTilesException($"The tile {tile} does not found in list");
+            if (i < 0) return;
             handTiles[index].RemoveAt(i);
         }
 
-        public void RemoveTile(int index, Meld meld)
+        public void RemoveTile(int index, OpenMeld meld)
         {
             CheckRange(index);
             var tiles = handTiles[index];
@@ -222,10 +236,21 @@ namespace Multi.ServerData
             };
         }
 
-        public void AddMeld(int index, Meld meld)
+        public void AddMeld(int index, OpenMeld meld)
         {
             CheckRange(index);
             openMelds[index].Add(meld);
+        }
+
+        public void AddKong(int index, OpenMeld kong)
+        {
+            int i = openMelds[index].FindIndex(meld => meld.Type == MeldType.Triplet && meld.First.EqualsIgnoreColor(kong.First));
+            if (i < 0)
+            {
+                Debug.LogError($"Pong of {kong} not found, this should not happen");
+                return;
+            }
+            openMelds[index][i] = kong;
         }
 
         public void TryRichi(int index, bool isRichiing)
@@ -313,8 +338,9 @@ namespace Multi.ServerData
             if (extra) this.extra++;
             if (!keepSticks) richiSticks = 0;
             Debug.Log($"Entering next round, total players: {players.Count}, current player index: {oya}, dice: {dice}, extra: {this.extra}");
+            kongClaimed = 0;
             handTiles = new List<Tile>[players.Count];
-            openMelds = new List<Meld>[players.Count];
+            openMelds = new List<OpenMeld>[players.Count];
             rivers = new List<RiverTile>[players.Count];
             richiStatus = new bool[players.Count];
             oneShotStatus = new bool[players.Count];
@@ -323,7 +349,7 @@ namespace Multi.ServerData
             for (int i = 0; i < players.Count; i++)
             {
                 handTiles[i] = new List<Tile>();
-                openMelds[i] = new List<Meld>();
+                openMelds[i] = new List<OpenMeld>();
                 rivers[i] = new List<RiverTile>();
             }
         }

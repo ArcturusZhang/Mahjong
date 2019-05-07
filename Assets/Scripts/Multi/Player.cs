@@ -130,17 +130,24 @@ namespace Multi
 
         private void RegisterHandlers()
         {
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerGamePrepareMessage, OnGamePrepareMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRoundStartMessage, OnRoundStartMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerDrawTileMessage, OnPlayerDrawTileMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerOtherDrawTileMessage, OnOtherPlayerDrawTileMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerTsumoMessage, OnPlayerTsumoMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerRongMessage, OnPlayerRongMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerPointTransferMessage, OnPointTransferMessageReceived);
-            LobbyManager.Instance.client.RegisterHandler(MessageIds.ServerGameEndMessage, OnGameEndMessageReceived);
+            RegisterHandler(MessageIds.ServerGamePrepareMessage, OnGamePrepareMessageReceived);
+            RegisterHandler(MessageIds.ServerRoundStartMessage, OnRoundStartMessageReceived);
+            RegisterHandler(MessageIds.ServerDrawTileMessage, OnPlayerDrawTileMessageReceived);
+            RegisterHandler(MessageIds.ServerOtherDrawTileMessage, OnOtherPlayerDrawTileMessageReceived);
+            RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
+            RegisterHandler(MessageIds.ServerKongMessage, OnKongMessageReceived);
+            // RegisterHandler(MessageIds.ServerOtherKongMessage, OnOtherKongMessageReceived);
+            RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
+            RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
+            RegisterHandler(MessageIds.ServerTsumoMessage, OnPlayerTsumoMessageReceived);
+            RegisterHandler(MessageIds.ServerRongMessage, OnPlayerRongMessageReceived);
+            RegisterHandler(MessageIds.ServerPointTransferMessage, OnPointTransferMessageReceived);
+            RegisterHandler(MessageIds.ServerGameEndMessage, OnGameEndMessageReceived);
+        }
+
+        private void RegisterHandler(short messageId, NetworkMessageDelegate handler)
+        {
+            LobbyManager.Instance.client.RegisterHandler(messageId, handler);
         }
 
         private void OnGamePrepareMessageReceived(NetworkMessage message)
@@ -224,6 +231,16 @@ namespace Multi
             ClientBehaviour.Instance.PlayerOutTurnOperation(content);
         }
 
+        private void OnKongMessageReceived(NetworkMessage message)
+        {
+            var content = message.ReadMessage<ServerKongMessage>();
+            Debug.Log($"ServerKongMessage: {content}");
+            if (content.KongPlayerIndex == PlayerIndex)
+                ClientBehaviour.Instance.PlayerKong(content);
+            else
+                ClientBehaviour.Instance.OtherPlayerKong(content);
+        }
+
         private void OnTurnEndMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ServerTurnEndMessage>();
@@ -269,7 +286,8 @@ namespace Multi
             ClientBehaviour.Instance.PointTransfer(content);
         }
 
-        private void OnGameEndMessageReceived(NetworkMessage message) {
+        private void OnGameEndMessageReceived(NetworkMessage message)
+        {
             var content = message.ReadMessage<ServerGameEndMessage>();
             Debug.Log($"ServerGameEndMessage received: {content}");
             // this message do not require confirm

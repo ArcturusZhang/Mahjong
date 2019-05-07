@@ -8,18 +8,21 @@ namespace Single.UI
 {
     public class HandPanelManager : MonoBehaviour
     {
+        private const float Width = 64;
+        private const float LastDrawPositionX = 425;
         public HandTileInstance[] HandTileInstances;
         public HandTileInstance LastDrawInstance;
+        public RectTransform LastDrawRect;
         [HideInInspector] public List<Tile> Tiles;
         [HideInInspector] public Tile? LastDraw;
 
         private void Update()
         {
-            ShowHandTiles();
-            ShowLastDraw();
+            var count = ShowHandTiles();
+            ShowLastDraw(count);
         }
 
-        private void ShowHandTiles()
+        private int ShowHandTiles()
         {
             int length = Tiles == null ? 0 : Tiles.Count;
             for (int i = 0; i < length; i++)
@@ -31,9 +34,10 @@ namespace Single.UI
             {
                 HandTileInstances[i].gameObject.SetActive(false);
             }
+            return length;
         }
 
-        private void ShowLastDraw()
+        private void ShowLastDraw(int count)
         {
             if (LastDraw == null)
                 LastDrawInstance.gameObject.SetActive(false);
@@ -42,6 +46,8 @@ namespace Single.UI
                 LastDrawInstance.SetTile((Tile)LastDraw);
                 LastDrawInstance.gameObject.SetActive(true);
             }
+            int diff = HandTileInstances.Length - count;
+            LastDrawRect.anchoredPosition = new Vector2(LastDrawPositionX - diff * Width, 0);
         }
 
         public void SetCandidates(IList<Tile> candidates)
@@ -73,14 +79,18 @@ namespace Single.UI
             instance.SetAvailable(true);
         }
 
-        public void LockTiles() {
-            for (int i = 0; i < HandTileInstances.Length; i++) {
+        public void LockTiles()
+        {
+            for (int i = 0; i < HandTileInstances.Length; i++)
+            {
                 HandTileInstances[i].Lock();
             }
         }
 
-        public void UnlockTiles() {
-            for (int i = 0; i < HandTileInstances.Length; i++) {
+        public void UnlockTiles()
+        {
+            for (int i = 0; i < HandTileInstances.Length; i++)
+            {
                 HandTileInstances[i].Unlock();
             }
         }

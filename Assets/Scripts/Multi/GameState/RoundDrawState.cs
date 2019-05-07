@@ -67,7 +67,7 @@ namespace Multi.GameState
             for (int playerIndex = 0; playerIndex < players.Count; playerIndex++)
             {
                 var hand = CurrentRoundStatus.HandTiles(playerIndex);
-                var open = CurrentRoundStatus.OpenMelds(playerIndex);
+                var open = CurrentRoundStatus.Melds(playerIndex);
                 waitingDataArray[playerIndex] = new WaitingData
                 {
                     HandTiles = hand,

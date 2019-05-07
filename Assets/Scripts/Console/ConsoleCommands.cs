@@ -89,7 +89,7 @@ namespace Console
             var info = new PlayerHandInfo
             {
                 HandTiles = handTiles,
-                OpenMelds = new List<Meld>(),
+                OpenMelds = new List<OpenMeld>(),
                 WinningTile = winningTile,
                 DoraIndicators = null,
                 UraDoraIndicators = null,

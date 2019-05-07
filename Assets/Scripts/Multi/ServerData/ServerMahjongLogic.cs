@@ -18,7 +18,7 @@ namespace Multi.ServerData
         {
             var handData = CurrentRoundStatus.HandData(playerIndex);
             var handStatus = baseHandStatus;
-            if (MahjongLogic.TestMenqing(handData.OpenMelds))
+            if (MahjongLogic.TestMenqing(handData.Melds))
                 handStatus |= HandStatus.Menqing;
             // test richi
             if (CurrentRoundStatus.RichiStatus(playerIndex))
@@ -44,7 +44,7 @@ namespace Multi.ServerData
                 TotalPlayer = CurrentRoundStatus.TotalPlayers
             };
             var isQTJ = CurrentRoundStatus.GameSettings.GameMode == GameMode.QTJ;
-            return MahjongLogic.GetPointInfo(handData.HandTiles, handData.OpenMelds, winningTile,
+            return MahjongLogic.GetPointInfo(handData.HandTiles, handData.Melds, winningTile,
                 handStatus, roundStatus, yakuSettings, isQTJ, doraTiles, uraDoraTiles);
         }
     }

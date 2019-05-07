@@ -85,6 +85,23 @@ namespace Multi.MahjongMessages
         }
     }
 
+    public class ServerKongMessage : MessageBase
+    {
+        public int PlayerIndex;
+        public int KongPlayerIndex;
+        public PlayerHandData HandData;
+        public int BonusTurnTime;
+        public OutTurnOperation[] Operations;
+        public MahjongSetData MahjongSetData;
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}, KongPlayerIndex: {KongPlayerIndex}\n"
+                + $"HandData: {HandData}, Operations: {string.Join("|", Operations)}\n"
+                + $"MahjongSetData: {MahjongSetData}";
+        }
+    }
+
     public class ServerDiscardOperationMessage : MessageBase
     {
         public int PlayerIndex;
@@ -118,6 +135,7 @@ namespace Multi.MahjongMessages
         public int[] Points;
         public bool[] RichiStatus;
         public int RichiSticks;
+        public MahjongSetData MahjongSetData;
 
         public override string ToString()
         {
@@ -126,7 +144,8 @@ namespace Multi.MahjongMessages
                 + $"Operations for each player: {string.Join(", ", Operations)}\n"
                 + $"Points: {string.Join(",", Points)}\n"
                 + $"RichiStatus: {string.Join(",", RichiStatus)}\n"
-                + $"RichiSticks: {RichiSticks}";
+                + $"RichiSticks: {RichiSticks}\n"
+                + $"MahjongSetData: {MahjongSetData}";
         }
     }
 

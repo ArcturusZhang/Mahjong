@@ -18,7 +18,8 @@ namespace Multi.GameState
         public bool IsRichiing;
         public bool DiscardLastDraw;
         public ServerRoundStatus CurrentRoundStatus;
-        public MahjongSetData MahjongSetData;
+        public MahjongSet MahjongSet;
+        public bool TurnDoraAfterDiscard;
         private GameSettings gameSettings;
         private YakuSettings yakuSettings;
         private IList<Player> players;
@@ -114,7 +115,7 @@ namespace Multi.GameState
         {
             var baseHandStatus = HandStatus.Nothing;
             // test haidi
-            if (MahjongSetData.TilesRemain == gameSettings.MountainReservedTiles)
+            if (MahjongSet.Data.TilesRemain == gameSettings.MountainReservedTiles)
                 baseHandStatus |= HandStatus.Haidi;
             // test lingshang -- not gonna happen
             // just test if this player can claim rong, no need for dora
@@ -126,20 +127,17 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            // Debug.Log($"Server is in {GetType().Name}");
             // Send messages again until get enough responds or time out
             if (Time.time - firstSendTime > serverTimeOut)
             {
                 // Time out, entering next state
                 for (int i = 0; i < operationResponds.Length; i++)
                 {
-                    if (!operationResponds[i])
-                    {
-                        players[i].BonusTurnTime = 0;
-                        outTurnOperations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
-                    }
+                    if (operationResponds[i]) continue;
+                    players[i].BonusTurnTime = 0;
+                    outTurnOperations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                 }
-                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, outTurnOperations);
+                TurnEnd();
                 return;
             }
             if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
@@ -151,8 +149,15 @@ namespace Multi.GameState
             if (operationResponds.All(r => r))
             {
                 Debug.Log("[Server] Server received all operation response, ending this turn.");
-                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, outTurnOperations);
+                TurnEnd();
             }
+        }
+
+        private void TurnEnd()
+        {
+            // if (TurnDoraAfterDiscard)
+            //     MahjongSet.TurnDora();
+            ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, outTurnOperations, TurnDoraAfterDiscard);
         }
 
         private void OnReadinessMessageReceived(NetworkMessage message)
@@ -170,7 +175,7 @@ namespace Multi.GameState
         private void OnOperationMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ClientOutTurnOperationMessage>();
-            Debug.Log($"[Server] Received ClientOperationMessage: {content}");
+            Debug.Log($"[Server] Received ClientOutTurnOperationMessage: {content}");
             operationResponds[content.PlayerIndex] = true;
             outTurnOperations[content.PlayerIndex] = content.Operation;
             players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;

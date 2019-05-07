@@ -243,7 +243,8 @@ namespace Single
             return WinningTiles(handTiles, openMelds).Count > 0;
         }
 
-        public static bool Test9KindsOfOrphans(IList<Tile> handTile, Tile lastDraw) {
+        public static bool Test9KindsOfOrphans(IList<Tile> handTile, Tile lastDraw)
+        {
             var set = new HashSet<Tile>(handTile, Tile.TileIgnoreColorEqualityComparer);
             set.Add(lastDraw);
             int count = set.Count(tile => tile.IsYaojiu);
@@ -460,6 +461,47 @@ namespace Single
                 tiles.Add(tile);
             }
             return availableTiles.Count > 0;
+        }
+
+        public static IEnumerable<OpenMeld> GetSelfKongs(IList<Tile> handTiles, Tile lastDraw)
+        {
+            var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
+            var testTiles = new List<Tile>(handTiles) { lastDraw };
+            var handCount = CountTiles(testTiles);
+            for (int i = 0; i < handCount.Length; i++)
+            {
+                Assert.IsTrue(handCount[i] <= 4);
+                if (handCount[i] == 4)
+                {
+                    var tiles = testTiles.FindAll(tile => Tile.GetIndex(tile) == i);
+                    result.Add(new Meld(false, tiles.ToArray()));
+                }
+            }
+            return result.Select(meld => new OpenMeld
+            {
+                Meld = meld,
+                Side = MeldSide.Self
+            });
+        }
+
+        public static IEnumerable<OpenMeld> GetAddKongs(PlayerHandData handData, Tile lastDraw)
+        {
+            // var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
+            // var testTiles = new List<Tile>(handTiles) { lastDraw };
+            // var pongs = openMelds.Where(meld => meld.Type == MeldType.Triplet && !meld.IsKong).ToList();
+            // foreach (var tile in testTiles)
+            // {
+            //     foreach (var pong in pongs)
+            //     {
+            //         if (pong.First.EqualsIgnoreColor(tile))
+            //         {
+            //             var list = new List<Tile>(pong.Tiles) { tile };
+            //             result.Add(new Meld(true, list.ToArray()));
+            //         }
+            //     }
+            // }
+            // return result;
+            return new List<OpenMeld>(); // todo
         }
 
         [System.Obsolete]

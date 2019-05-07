@@ -7,78 +7,69 @@ namespace Single
 {
     public class MeldInstance : MonoBehaviour
     {
-        public MeldInstanceType InstanceType;
-        public Meld Meld;
+        public OpenMeld OpenMeld;
+        private TileInstance[] instances;
 
-        public TileInstance[] TileInstances;
-
-        public void SetMeld(Meld meld, Tile discardTile, MeldInstanceType type)
+        private void OnEnable()
         {
-            Meld = meld;
-            InstanceType = type;
-            var index = Array.FindIndex(meld.Tiles, tile => tile.EqualsConsiderColor(discardTile));
+            instances = new TileInstance[transform.childCount];
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                var t = transform.GetChild(i);
+                instances[i] = t.GetComponent<TileInstance>();
+            }
+        }
+
+        public void SetMeld(OpenMeld meld)
+        {
+            OpenMeld = meld;
+            if (meld.Side == MeldSide.Self)
+                SelfKong();
+            else
+                OtherMeld();
+        }
+
+        private void SelfKong()
+        {
+            for (int i = 0; i < OpenMeld.Tiles.Length; i++)
+            {
+                instances[i].SetTile(OpenMeld.Tiles[i]);
+            }
+        }
+
+        private void OtherMeld()
+        {
+            var index = Array.FindIndex(OpenMeld.Tiles, tile => tile.EqualsConsiderColor(OpenMeld.DiscardTile));
             int tileCount = 1;
-            for (int i = 0; i < meld.TileCount; i++)
+            for (int i = 0; i < OpenMeld.Tiles.Length; i++)
             {
                 if (i == index) continue;
-                TileInstances[tileCount++].SetTile(meld.Tiles[i]);
+                instances[tileCount++].SetTile(OpenMeld.Tiles[i]);
             }
-
-            TileInstances[0].SetTile(discardTile);
+            instances[0].SetTile(OpenMeld.DiscardTile);
         }
 
-        public void SetMeld(Meld meld)
-        {
-            Meld = meld;
-            InstanceType = MeldInstanceType.SelfKong;
-            for (int i = 0; i < meld.TileCount; i++)
-            {
-                TileInstances[i].SetTile(meld.Tiles[i]);
-            }
-        }
-
-        public void AddToKong(Tile addedTile)
-        {
-            if (Meld.Type != MeldType.Triplet || Meld.IsKong) return;
-            if (!Meld.First.EqualsIgnoreColor(addedTile)) return;
-            var tiles = new List<Tile>(Meld.Tiles) {addedTile};
-            Meld = new Meld(true, tiles.ToArray());
-            // visually add a tile
-            var tileObject = Instantiate(TileInstances[0], transform);
-            tileObject.transform.localPosition += new Vector3(-MahjongConstants.TileWidth, 0, 0);
-        }
+        // public void AddToKong(Tile addedTile)
+        // {
+        //     if (OpenMeld.Type != MeldType.Triplet || OpenMeld.IsKong) return;
+        //     if (!OpenMeld.First.EqualsIgnoreColor(addedTile)) return;
+        //     var tiles = new List<Tile>(OpenMeld.Tiles) { addedTile };
+        //     Meld = new Meld(true, tiles.ToArray());
+        //     // visually add a tile
+        //     var tileObject = Instantiate(TileInstances[0], transform);
+        //     tileObject.transform.localPosition += new Vector3(-MahjongConstants.TileWidth, 0, 0);
+        // }
 
         public float MeldWidth
         {
             get
             {
-                switch (InstanceType)
-                {
-                    case MeldInstanceType.Left:
-                    case MeldInstanceType.Opposite:
-                    case MeldInstanceType.Right:
-                        return 2 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
-                    case MeldInstanceType.LeftKong:
-                    case MeldInstanceType.OppositeKong:
-                    case MeldInstanceType.RightKong:
-                        return 3 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
-                    case MeldInstanceType.SelfKong:
-                        return 4 * MahjongConstants.TileWidth;
-                    default:
-                        throw new ArgumentException("Will not happen");
-                }
+                if (OpenMeld.Side == MeldSide.Self)
+                    return 4 * MahjongConstants.TileWidth;
+                if (OpenMeld.IsKong)
+                    return 3 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
+                return 2 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
             }
         }
-    }
-
-    public enum MeldInstanceType
-    {
-        Left,
-        Opposite,
-        Right,
-        LeftKong,
-        OppositeKong,
-        RightKong,
-        SelfKong
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Single.MahjongDataType
 {
@@ -19,12 +21,15 @@ namespace Single.MahjongDataType
     public struct PlayerHandData
     {
         public Tile[] HandTiles;
-        public Meld[] OpenMelds;
+        public OpenMeld[] OpenMelds;
 
         public override string ToString()
         {
-            return $"HandTiles: {string.Join("", HandTiles)}, "
+            var hands = HandTiles == null ? "Confidential" : string.Join("", HandTiles);
+            return $"HandTiles: {hands}, "
                 + $"OpenMelds: {string.Join(",", OpenMelds)}";
         }
+
+        public Meld[] Melds => OpenMelds.Select(openMeld => openMeld.Meld).ToArray();
     }
 }

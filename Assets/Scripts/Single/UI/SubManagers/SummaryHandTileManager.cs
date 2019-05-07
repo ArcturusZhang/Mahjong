@@ -10,7 +10,7 @@ namespace Single.UI.SubManagers
     public class SummaryHandTileManager : MonoBehaviour
     {
         private const float TileWidth = 62f;
-        private const float Gap = 20f;
+        private const float Gap = 30f;
         private const string back = "back";
         private Image[] tileImages;
         private ResourceManager manager;
@@ -25,7 +25,7 @@ namespace Single.UI.SubManagers
             manager = ResourceManager.Instance;
         }
 
-        public void SetHandTiles(IList<Tile> handTiles, IList<Meld> openMelds, Tile winningTile)
+        public void SetHandTiles(IList<Tile> handTiles, IList<OpenMeld> openMelds, Tile winningTile)
         {
             if (manager == null) manager = ResourceManager.Instance;
             var offset = 0f;

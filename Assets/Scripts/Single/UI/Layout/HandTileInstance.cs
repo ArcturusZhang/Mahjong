@@ -19,8 +19,7 @@ namespace Single.UI.Layout
 
         public Tile Tile => tile;
 
-        private void Start()
-        {
+        private void OnEnable() {
             tileImage = GetComponent<Image>();
             tileButton = GetComponent<Button>();
         }
@@ -34,6 +33,8 @@ namespace Single.UI.Layout
                 Debug.LogWarning($"Sprite gets null when applied on tile {tile}");
             }
             this.tile = tile;
+            if (tileImage == null) tileImage = GetComponent<Image>();
+            if (tileButton == null) tileButton = GetComponent<Button>();
             tileImage.sprite = sprite;
             tileButton.interactable = available;
             tileImage.color = available ? NormalColor : TintColor;

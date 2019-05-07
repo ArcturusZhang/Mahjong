@@ -24,6 +24,7 @@ namespace Multi.GameState
         public bool IsRichiing;
         public OutTurnOperation[] Operations;
         public MahjongSet MahjongSet;
+        public bool TurnDoraAfterDiscard;
         private GameSettings gameSettings;
         private YakuSettings yakuSettings;
         private IList<Player> players;
@@ -61,7 +62,8 @@ namespace Multi.GameState
                     Operations = Operations,
                     Points = CurrentRoundStatus.Points.ToArray(),
                     RichiStatus = CurrentRoundStatus.RichiStatusArray,
-                    RichiSticks = CurrentRoundStatus.RichiSticks
+                    RichiSticks = CurrentRoundStatus.RichiSticks,
+                    MahjongSetData = MahjongSet.Data
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, messages[i]);
             }
@@ -139,7 +141,6 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            // Debug.Log($"Server is in {GetType().Name}");
             if (Time.time - firstTime > serverTurnEndTimeOut)
             {
                 TurnEndTimeOut();
@@ -221,6 +222,8 @@ namespace Multi.GameState
         public void OnStateExit()
         {
             Debug.Log($"Server exits {GetType().Name}");
+            if (operationChosen != OutTurnOperationType.Rong && TurnDoraAfterDiscard)
+                MahjongSet.TurnDora();
         }
 
         private struct RongPlayerIndexComparer : IComparer<int>

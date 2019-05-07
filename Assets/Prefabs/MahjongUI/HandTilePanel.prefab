@@ -110,6 +110,7 @@ MonoBehaviour:
   - {fileID: 5638905271134016620}
   - {fileID: 5167456070222293573}
   LastDrawInstance: {fileID: 4796778037182070453}
+  LastDrawRect: {fileID: 5837428677962629366}
   Tiles: []
 --- !u!1 &6466925356853869424
 GameObject:

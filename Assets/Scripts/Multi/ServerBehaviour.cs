@@ -89,18 +89,20 @@ namespace Multi
             StateMachine.ChangeState(startState);
         }
 
-        public void DrawTile(int playerIndex)
+        public void DrawTile(int playerIndex, bool isLingShang = false, bool turnDoraAfterDiscard = false)
         {
             var drawState = new PlayerDrawTileState
             {
                 CurrentPlayerIndex = playerIndex,
                 MahjongSet = mahjongSet,
-                CurrentRoundStatus = CurrentRoundStatus
+                CurrentRoundStatus = CurrentRoundStatus,
+                IsLingShang = isLingShang,
+                TurnDoraAfterDiscard = turnDoraAfterDiscard
             };
             StateMachine.ChangeState(drawState);
         }
 
-        public void DiscardTile(int playerIndex, Tile tile, bool isRichiing, bool discardLastDraw, int bonusTurnTime)
+        public void DiscardTile(int playerIndex, Tile tile, bool isRichiing, bool discardLastDraw, int bonusTurnTime, bool turnDoraAfterDiscard)
         {
             if (CurrentRoundStatus.CurrentPlayerIndex != playerIndex)
             {
@@ -128,12 +130,14 @@ namespace Multi
                 IsRichiing = isRichiing,
                 DiscardLastDraw = discardLastDraw,
                 CurrentRoundStatus = CurrentRoundStatus,
-                MahjongSetData = mahjongSet.Data
+                MahjongSet = mahjongSet,
+                TurnDoraAfterDiscard = turnDoraAfterDiscard
             };
             StateMachine.ChangeState(discardState);
         }
 
-        public void TurnEnd(int playerIndex, Tile discardingTile, bool isRichiing, OutTurnOperation[] operations)
+        public void TurnEnd(int playerIndex, Tile discardingTile, bool isRichiing, OutTurnOperation[] operations, 
+            bool turnDoraAfterDiscard = false)
         {
             var turnEndState = new TurnEndState
             {
@@ -142,7 +146,8 @@ namespace Multi
                 DiscardingTile = discardingTile,
                 IsRichiing = isRichiing,
                 Operations = operations,
-                MahjongSet = mahjongSet
+                MahjongSet = mahjongSet,
+                TurnDoraAfterDiscard = turnDoraAfterDiscard
             };
             StateMachine.ChangeState(turnEndState);
         }
@@ -181,6 +186,18 @@ namespace Multi
                 RongPointInfos = rongPointInfos
             };
             StateMachine.ChangeState(rongState);
+        }
+
+        public void Kong(int playerIndex, OpenMeld kong)
+        {
+            var kongState = new PlayerKongState
+            {
+                CurrentPlayerIndex = playerIndex,
+                MahjongSet = mahjongSet,
+                CurrentRoundStatus = CurrentRoundStatus,
+                Kong = kong
+            };
+            StateMachine.ChangeState(kongState);
         }
 
         public void RoundDraw(RoundDrawType type)

@@ -57,7 +57,7 @@ namespace Single.UI
     public struct PlayerHandInfo
     {
         public IList<Tile> HandTiles;
-        public IList<Meld> OpenMelds;
+        public IList<OpenMeld> OpenMelds;
         public Tile WinningTile;
         public IList<Tile> DoraIndicators;
         public IList<Tile> UraDoraIndicators;

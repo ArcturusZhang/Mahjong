@@ -11,7 +11,7 @@ namespace Single
         public Transform handHolder;
         public Transform drawnHolder;
         [HideInInspector] public int Count;
-        [HideInInspector] public List<Tile> Tiles = null;
+        [HideInInspector] public List<Tile> HandTiles = null;
         [HideInInspector] public Tile? LastDraw = null;
         private Transform[] handTileTransforms;
         private TileInstance[] handTileInstances;
@@ -52,10 +52,10 @@ namespace Single
             {
                 handTileTransforms[i].gameObject.SetActive(i < Count);
             }
-            if (Tiles == null) return;
-            for (int i = 0; i < Tiles.Count; i++)
+            if (HandTiles == null) return;
+            for (int i = 0; i < HandTiles.Count; i++)
             {
-                handTileInstances[i].SetTile(Tiles[i]);
+                handTileInstances[i].SetTile(HandTiles[i]);
             }
         }
 

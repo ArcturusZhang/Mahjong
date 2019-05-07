@@ -17,6 +17,8 @@ namespace Multi.GameState
         public int CurrentPlayerIndex;
         public MahjongSet MahjongSet;
         public ServerRoundStatus CurrentRoundStatus;
+        public bool IsLingShang;
+        public bool TurnDoraAfterDiscard;
         private GameSettings gameSettings;
         private YakuSettings yakuSettings;
         private IList<Player> players;
@@ -37,7 +39,10 @@ namespace Multi.GameState
             NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientNineOrphansMessage, OnClientRoundDrawMessageReceived);
-            justDraw = MahjongSet.DrawTile();
+            if (IsLingShang)
+                justDraw = MahjongSet.DrawLingShang();
+            else
+                justDraw = MahjongSet.DrawTile();
             CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             CurrentRoundStatus.LastDraw = justDraw;
             CurrentRoundStatus.CheckFirstTurn(CurrentPlayerIndex);
@@ -86,21 +91,37 @@ namespace Multi.GameState
                 });
             }
             var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
-            var openMelds = CurrentRoundStatus.OpenMelds(playerIndex);
+            var openMelds = CurrentRoundStatus.Melds(playerIndex);
             // test round draw
-            if (CurrentRoundStatus.FirstTurn && MahjongLogic.Test9KindsOfOrphans(handTiles, justDraw))
+            Test9Orphans(handTiles, operations);
+            // test richi
+            TestRichi(playerIndex, handTiles, openMelds, operations);
+            // test kongs
+            TestKongs(playerIndex, handTiles, operations);
+            // test bei -- todo
+            return operations.ToArray();
+        }
+
+        private void Test9Orphans(Tile[] handTiles, IList<InTurnOperation> operations)
+        {
+            if (!CurrentRoundStatus.FirstTurn) return;
+            if (MahjongLogic.Test9KindsOfOrphans(handTiles, justDraw))
             {
                 operations.Add(new InTurnOperation
                 {
                     Type = InTurnOperationType.RoundDraw
                 });
             }
-            // test richi
+        }
+
+        private void TestRichi(int playerIndex, Tile[] handTiles, Meld[] openMelds, IList<InTurnOperation> operations)
+        {
             var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
+            if (alreadyRichied) return;
             var availability = gameSettings.AllowRichiWhenPointsLow || CurrentRoundStatus.GetPoints(playerIndex) >= gameSettings.RichiMortgagePoints;
+            if (!availability) return;
             IList<Tile> availableTiles;
-            if (!alreadyRichied && availability
-                && MahjongLogic.TestRichi(handTiles, openMelds, justDraw, gameSettings.AllowRichiWhenNotReady, out availableTiles))
+            if (MahjongLogic.TestRichi(handTiles, openMelds, justDraw, gameSettings.AllowRichiWhenNotReady, out availableTiles))
             {
                 operations.Add(new InTurnOperation
                 {
@@ -108,9 +129,46 @@ namespace Multi.GameState
                     RichiAvailableTiles = availableTiles.ToArray()
                 });
             }
-            // test kong -- todo
-            // test bei -- todo
-            return operations.ToArray();
+        }
+
+        private void TestKongs(int playerIndex, Tile[] handTiles, IList<InTurnOperation> operations)
+        {
+            if (CurrentRoundStatus.KongClaimed == MahjongConstants.MaxKongs) return; // no more kong can be claimed after 4 kongs claimed
+            var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
+            // var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
+            if (alreadyRichied)
+            {
+                // test kongs in richied player hand -- todo
+            }
+            else
+            {
+                // 1. test self kongs, aka four same tiles in hand and lastdraw
+                var selfKongs = MahjongLogic.GetSelfKongs(handTiles, justDraw);
+                if (selfKongs.Any())
+                {
+                    foreach (var kong in selfKongs)
+                    {
+                        operations.Add(new InTurnOperation
+                        {
+                            Type = InTurnOperationType.Kong,
+                            Meld = kong
+                        });
+                    }
+                }
+                // 2. test add kongs, aka whether a single tile in hand and lastdraw is identical to a pong in open melds
+                var addKongs = MahjongLogic.GetAddKongs(CurrentRoundStatus.HandData(playerIndex), justDraw);
+                if (addKongs.Any())
+                {
+                    foreach (var kong in addKongs)
+                    {
+                        operations.Add(new InTurnOperation
+                        {
+                            Type = InTurnOperationType.Kong,
+                            Meld = kong
+                        });
+                    }
+                }
+            }
         }
 
         private void OnReadinessMessageReceived(NetworkMessage message)
@@ -138,7 +196,7 @@ namespace Multi.GameState
             // Change to discardTileState
             ServerBehaviour.Instance.DiscardTile(
                 content.PlayerIndex, content.Tile, content.IsRichiing,
-                content.DiscardingLastDraw, content.BonusTurnTime);
+                content.DiscardingLastDraw, content.BonusTurnTime, TurnDoraAfterDiscard);
         }
 
         private void OnInTurnOperationReceived(NetworkMessage message)
@@ -150,7 +208,7 @@ namespace Multi.GameState
                 return;
             }
             // handle message according to its type
-            Debug.Log($"[Server] Received ClientInTurnOperationMessage {content}");
+            Debug.Log($"[Server] Received ClientInTurnOperationMessage: {content}");
             var operation = content.Operation;
             switch (operation.Type)
             {
@@ -158,8 +216,9 @@ namespace Multi.GameState
                     HandleTsumo(operation);
                     break;
                 case InTurnOperationType.Bei:
+                // todo
                 case InTurnOperationType.Kong:
-                    // todo
+                    HandleKong(operation);
                     break;
                 default:
                     Debug.LogError($"[Server] This type of in turn operation should not be sent to server.");
@@ -184,13 +243,22 @@ namespace Multi.GameState
             ServerBehaviour.Instance.Tsumo(playerIndex, operation.Tile, point);
         }
 
+        private void HandleKong(InTurnOperation operation)
+        {
+            int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
+            var kong = operation.Meld;
+            Debug.Log($"Server is handling the operation of player {playerIndex} of claiming kong {kong}");
+            ServerBehaviour.Instance.Kong(playerIndex, kong);
+        }
+
         private PointInfo GetTsumoInfo(int playerIndex, Tile tile)
         {
             var baseHandStatus = HandStatus.Tsumo;
             // test haidi
             if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
                 baseHandStatus |= HandStatus.Haidi;
-            // test lingshang -- todo
+            // test lingshang
+            if (IsLingShang) baseHandStatus |= HandStatus.Lingshang;
             var allTiles = MahjongSet.AllTiles;
             var doraTiles = MahjongSet.DoraIndicators.Select(
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
@@ -221,7 +289,7 @@ namespace Multi.GameState
             if (Time.time - firstSendTime > serverTimeOut)
             {
                 // force auto discard
-                ServerBehaviour.Instance.DiscardTile(CurrentPlayerIndex, (Tile)CurrentRoundStatus.LastDraw, false, true, 0);
+                ServerBehaviour.Instance.DiscardTile(CurrentPlayerIndex, (Tile)CurrentRoundStatus.LastDraw, false, true, 0, TurnDoraAfterDiscard);
             }
         }
 
