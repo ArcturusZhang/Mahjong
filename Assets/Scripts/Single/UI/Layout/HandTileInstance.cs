@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Multi;
 using Single;
 using Single.MahjongDataType;
+using Single.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 

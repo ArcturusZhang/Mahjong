@@ -6,10 +6,9 @@ namespace Multi.MahjongMessages
         public const short ServerGamePrepareMessage = 100;
         public const short ServerRoundStartMessage = 101;
         public const short ServerDrawTileMessage = 102;
-        public const short ServerOtherDrawTileMessage = 103;
+        // public const short ServerOtherDrawTileMessage = 103;
         public const short ServerDiscardOperationMessage = 104;
         public const short ServerKongMessage = 105;
-        // public const short ServerOtherKongMessage = 106;
         public const short ServerTurnEndMessage = 110;
         public const short ServerTsumoMessage = 111;
         public const short ServerRongMessage = 112;
@@ -23,6 +22,5 @@ namespace Multi.MahjongMessages
         public const short ClientInTurnOperationMessage = 202;
         public const short ClientOutTurnOperationMessage = 203;
         public const short ClientNextRoundMessage = 300;
-        public const short ClientNineOrphansMessage = 301;
     }
 }

@@ -5,9 +5,12 @@ using Lobby;
 using Multi;
 using Multi.MahjongMessages;
 using Multi.ServerData;
+using Single.GameState;
 using Single.MahjongDataType;
+using Single.Managers;
 using Single.UI;
 using Single.UI.Controller;
+using StateMachine.Interfaces;
 using UnityEngine;
 
 
@@ -16,136 +19,21 @@ namespace Single
     public class ClientBehaviour : MonoBehaviour
     {
         public static ClientBehaviour Instance { get; private set; }
-
-        [Header("Game Managers")]
-        public BoardInfoManager BoardInfoManager;
-        public YamaManager YamaManager;
-        public PlayerHandManager[] HandManagers;
-        public OpenMeldManager[] OpenManagers;
-        public PlayerRiverManager[] RiverManagers;
-        public PlayerInfoManager PlayerInfoManager;
-        public HandPanelManager HandPanelManager;
-        public TimerController TurnTimeController;
-        public PlayerEffectManager PlayerEffectManager;
-        public InTurnPanelManager InTurnPanelManager;
-        public OutTurnPanelManager OutTurnPanelManager;
-        public WaitingPanelManager[] DrawPanelManagers;
-        public RoundDrawManager RoundDrawManager;
-        public PointSummaryPanelManager PointSummaryPanelManager;
-        public PointTransferManager PointTransferManager;
-        public GameEndPanelManager GameEndPanelManager;
-
-        [Header("Data")]
-        public int TotalPlayers;
-        public int[] Places = new int[4];
-        public string[] PlayerNames = new string[4];
-        public int[] TileCounts = new int[4];
-        public List<Meld>[] OpenMelds = new List<Meld>[4];
-        public int[] Points = new int[4];
-        public bool[] RichiStatus = new bool[4];
-        public bool IsRichiing = false;
-        public int BonusTurnTime;
-        public List<Tile> LocalPlayerHandTiles;
-        public Tile?[] LastDraws = new Tile?[4];
-        public RiverData[] Rivers = new RiverData[4];
-        public Player LocalPlayer = null;
-        public int OyaPlayerIndex;
-        public int Field;
-        public int Dice;
-        public int Extra;
-        public int RichiSticks;
-        private WaitForSeconds waitAutoDiscardAfterRichi = new WaitForSeconds(MahjongConstants.AutoDiscardDelayAfterRichi);
-        private NetworkSettings settings;
-        private MahjongSetData setData;
-        public MahjongSetData MahjongSetData
-        {
-            get => setData;
-            set
-            {
-                setData = value;
-                YamaManager.SetMahjongData(value);
-            }
-        }
+        private ClientRoundStatus CurrentRoundStatus;
+        private ViewController controller;
+        // private bool IsRichiing = false;
+        public IStateMachine StateMachine { get; private set; }
 
         private void OnEnable()
         {
             Debug.Log("ClientBehaviour.OnEnable() is called");
             Instance = this;
+            StateMachine = new StateMachine.StateMachine();
         }
 
-        private void Update()
+        private void Start()
         {
-            AssignData();
-        }
-
-        private void AssignData()
-        {
-            if (LocalPlayer == null) LocalPlayer = LobbyManager.Instance.LocalPlayer;
-            UpdateHandManager();
-            UpdateRiverManager();
-            UpdatePlayerInfoManager();
-            UpdateBoardInfoManager();
-            UpdateHandPanelManager();
-            UpdatePointTransferManager();
-        }
-
-        private void UpdateYamaManager()
-        {
-            YamaManager.Places = Places;
-            YamaManager.OyaPlayerIndex = OyaPlayerIndex;
-            YamaManager.Dice = Dice;
-            YamaManager.LingshangTilesCount = settings.LingShangTilesCount;
-        }
-
-        private void UpdateHandManager()
-        {
-            for (int i = 0; i < HandManagers.Length; i++)
-            {
-                var hand = HandManagers[i];
-                // update hand tile count
-                hand.Count = TileCounts[i];
-                // update last draw
-                hand.LastDraw = LastDraws[i];
-            }
-            // update local hand tiles
-            HandManagers[0].HandTiles = LocalPlayerHandTiles;
-        }
-
-        private void UpdateRiverManager()
-        {
-            for (int i = 0; i < RiverManagers.Length; i++)
-            {
-                var manager = RiverManagers[i];
-                manager.RiverTiles = Rivers[i].River;
-            }
-        }
-
-        private void UpdatePlayerInfoManager()
-        {
-            PlayerInfoManager.TotalPlayers = TotalPlayers;
-            PlayerInfoManager.Places = Places;
-            PlayerInfoManager.Names = PlayerNames;
-        }
-
-        private void UpdateBoardInfoManager()
-        {
-            BoardInfoManager.UpdateRoundInfo(OyaPlayerIndex, Field, Extra, RichiSticks);
-            BoardInfoManager.UpdatePoints(TotalPlayers, Places, Points);
-            BoardInfoManager.UpdatePosition(TotalPlayers, OyaPlayerIndex, Places);
-            BoardInfoManager.UpdateRichiStatus(TotalPlayers, Places, RichiStatus);
-        }
-
-        private void UpdateHandPanelManager()
-        {
-            HandPanelManager.Tiles = LocalPlayerHandTiles;
-            HandPanelManager.LastDraw = LastDraws[0];
-        }
-
-        private void UpdatePointTransferManager()
-        {
-            PointTransferManager.TotalPlayers = TotalPlayers;
-            PointTransferManager.Places = Places;
-            PointTransferManager.PlayerNames = PlayerNames;
+            controller = ViewController.Instance;
         }
 
         /// <summary>
@@ -156,22 +44,14 @@ namespace Single
         /// <param name="message">The message received from server</param>
         public void GamePrepare(ServerGamePrepareMessage message)
         {
-            TotalPlayers = message.TotalPlayers;
-            Places[0] = message.PlayerIndex;
-            settings = message.Settings;
-            LocalPlayerHandTiles = null;
-            MahjongSetData = default(MahjongSetData);
-            for (int i = 1; i < Places.Length; i++)
+            CurrentRoundStatus = new ClientRoundStatus(message.TotalPlayers, message.PlayerIndex, message.Settings);
+            var prepareState = new GamePrepareState
             {
-                var next = Places[0] + i;
-                if (next >= Places.Length) next -= Places.Length;
-                Places[i] = next;
-            }
-            // Sync points for every player
-            UpdatePoints(message.Points);
-            // Sync names for ui
-            UpdateNames(message.PlayerNames);
-            YamaManager.ResetAllTiles();
+                CurrentRoundStatus = CurrentRoundStatus,
+                Points = message.Points,
+                Names = message.PlayerNames
+            };
+            StateMachine.ChangeState(prepareState);
         }
 
         /// <summary>
@@ -184,372 +64,168 @@ namespace Single
         /// <param name="message">The message received from server</param>
         public void StartRound(ServerRoundStartMessage message)
         {
-            // todo -- add animation here
-            // data update
-            var tiles = message.InitialHandTiles;
-            for (int i = 0; i < TileCounts.Length; i++)
+            var startState = new RoundStartState
             {
-                if (Places[i] >= TotalPlayers) continue;
-                TileCounts[i] = tiles.Length;
-            }
-            LocalPlayerHandTiles = new List<Tile>(tiles);
-            LastDraws = new Tile?[4];
-            Rivers = new RiverData[4];
-            OyaPlayerIndex = message.OyaPlayerIndex;
-            Field = message.Field;
-            Dice = message.Dice;
-            Extra = message.Extra;
-            RichiSticks = message.RichiSticks;
-            MahjongSetData = message.MahjongSetData;
-            UpdateYamaManager();
-            // Sync points for every player
-            UpdatePoints(message.Points);
-            // All player should not be in richi status
-            RichiStatus = new bool[4];
-            // ui elements update
-            for (int i = 0; i < HandManagers.Length; i++)
-            {
-                HandManagers[i].StandUp();
-            }
-            HandPanelManager.gameObject.SetActive(true);
-            PointTransferManager.Close();
+                CurrentRoundStatus = CurrentRoundStatus,
+                LocalPlayerHandTiles = message.InitialHandTiles,
+                OyaPlayerIndex = message.OyaPlayerIndex,
+                Dice = message.Dice,
+                Field = message.Field,
+                Extra = message.Extra,
+                RichiSticks = message.RichiSticks,
+                MahjongSetData = message.MahjongSetData,
+                Points = message.Points
+            };
+            StateMachine.ChangeState(startState);
         }
 
         public void PlayerDrawTurn(ServerDrawTileMessage message)
         {
-            HandPanelManager.UnlockTiles();
-            var index = message.PlayerIndex;
-            var tile = message.Tile;
-            for (int i = 0; i < LastDraws.Length; i++)
+            var drawState = new PlayerDrawState
             {
-                LastDraws[i] = null;
-            }
-            LastDraws[0] = tile;
-            BonusTurnTime = message.BonusTurnTime;
-            MahjongSetData = message.MahjongSetData;
-            // UpdateYamas(MahjongSetData);
-            // auto discard when richied
-            if (message.Richied && message.Operations.All(op => op.Type == InTurnOperationType.Discard))
-            {
-                HandPanelManager.LockTiles();
-                StartCoroutine(AutoDiscard(message.Tile, message.BonusTurnTime));
-                return;
-            }
-            // not richied, show timer and panels
-            TurnTimeController.StartCountDown(settings.BaseTurnTime, BonusTurnTime, () =>
-            {
-                Debug.Log("Time out! Automatically discarding last drawn tile");
-                LocalPlayer.DiscardTile(tile, false, true, 0);
-            });
-            InTurnPanelManager.SetOperations(message.Operations);
-        }
-
-        public void OtherPlayerDrawTurn(ServerOtherDrawTileMessage message)
-        {
-            var index = message.CurrentTurnPlayerIndex;
-            for (int i = 0; i < LastDraws.Length; i++)
-            {
-                LastDraws[i] = null;
-            }
-            var place = GetPlaceIndexByPlayerIndex(index);
-            LastDraws[place] = default(Tile);
-            MahjongSetData = message.MahjongSetData;
-            // UpdateYamas(MahjongSetData);
-        }
-
-        private IEnumerator AutoDiscard(Tile tile, int bonusTimeLeft)
-        {
-            yield return waitAutoDiscardAfterRichi;
-            LocalPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
+                CurrentRoundStatus = CurrentRoundStatus,
+                PlayerIndex = message.DrawPlayerIndex,
+                Tile = message.Tile,
+                BonusTurnTime = message.BonusTurnTime,
+                Richied = message.Richied,
+                MahjongSetData = message.MahjongSetData,
+                Operations = message.Operations
+            };
+            StateMachine.ChangeState(drawState);
         }
 
         public void PlayerKong(ServerKongMessage message)
         {
-            // change hand tiles and open melds
-            LocalPlayerHandTiles = new List<Tile>(message.HandData.HandTiles);
-            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(message.KongPlayerIndex);
-            OpenManagers[currentPlaceIndex].SetMelds(message.HandData.OpenMelds);
-            LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-            // update mahjongSet
-            MahjongSetData = message.MahjongSetData;
-            // UpdateYamas(MahjongSetData);
+            var kongState = new PlayerKongState
+            {
+                CurrentRoundStatus = CurrentRoundStatus,
+                KongPlayerIndex = message.KongPlayerIndex,
+                HandData = message.HandData,
+                BonusTurnTime = message.BonusTurnTime,
+                Operations = message.Operations,
+                MahjongSetData = message.MahjongSetData
+            };
+            StateMachine.ChangeState(kongState);
         }
 
-        public void OtherPlayerKong(ServerKongMessage message)
+        public void PlayerDiscardOperation(ServerDiscardOperationMessage message)
         {
-            // change hand tiles count and open melds
-            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(message.KongPlayerIndex);
-            Debug.Log($"Hand tile count of player {message.KongPlayerIndex}: {message.HandData.HandTiles.Length}");
-            TileCounts[currentPlaceIndex] = message.HandData.HandTiles.Length;
-            OpenManagers[currentPlaceIndex].SetMelds(message.HandData.OpenMelds);
-            // update mahjongSet
-            MahjongSetData = message.MahjongSetData;
-            // UpdateYamas(MahjongSetData);
-            if (message.Operations.All(op => op.Type == OutTurnOperationType.Skip))
+            var discardOperationState = new PlayerDiscardOperationState
             {
-                Debug.Log("Only operation is skip, skipping turn");
-                LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-                OutTurnPanelManager.Close();
-                return;
-            }
-            // if there are valid operations, assign operations and start count down
-            OutTurnPanelManager.SetOperations(message.Operations);
-            TurnTimeController.StartCountDown(settings.BaseTurnTime, message.BonusTurnTime, () =>
-            {
-                Debug.Log("Time out! Automatically skip this turn");
-                LocalPlayer.SkipOutTurnOperation(0);
-                OutTurnPanelManager.Close();
-            });
-        }
-
-        public void PlayerOutTurnOperation(ServerDiscardOperationMessage message)
-        {
-            Debug.Log($"Player {message.PlayerIndex} just discarded {message.Tile}, valid operation: {string.Join(", ", message.Operations)}");
-            InTurnPanelManager.Close();
-            int currentPlaceIndex = GetPlaceIndexByPlayerIndex(message.CurrentTurnPlayerIndex);
-            // update hand tiles
-            LocalPlayerHandTiles = new List<Tile>(message.HandTiles);
-            StartCoroutine(UpdateHandData(currentPlaceIndex, message.DiscardingLastDraw, message.Tile, message.Rivers));
-            if (message.IsRichiing)
-                StartCoroutine(PlayerEffectManager.ShowEffect(currentPlaceIndex, PlayerEffectManager.Type.Richi));
-            BonusTurnTime = message.BonusTurnTime;
-            // check if message contains a valid operation
-            if (message.Operations == null || message.Operations.Length == 0)
-            {
-                Debug.LogError("Received with no operations, this should not happen");
-                LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-                OutTurnPanelManager.Close();
-                return;
-            }
-            // if all the operations are skip, automatically skip this turn.
-            if (message.Operations.All(op => op.Type == OutTurnOperationType.Skip))
-            {
-                Debug.Log("Only operation is skip, skipping turn.");
-                LocalPlayer.SkipOutTurnOperation(message.BonusTurnTime);
-                OutTurnPanelManager.Close();
-                return;
-            }
-            // if there are valid operations, assign operations and start count down
-            OutTurnPanelManager.SetOperations(message.Operations);
-            TurnTimeController.StartCountDown(settings.BaseTurnTime, message.BonusTurnTime, () =>
-            {
-                Debug.Log("Time out! Automatically skip this turn");
-                LocalPlayer.SkipOutTurnOperation(0);
-                OutTurnPanelManager.Close();
-            });
-        }
-
-        private IEnumerator UpdateHandData(int currentPlaceIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers)
-        {
-            for (int i = 0; i < LastDraws.Length; i++) LastDraws[i] = null;
-            // int currentPlaceIndex = GetPlaceIndexByPlayerIndex(currentIndex);
-            HandManagers[currentPlaceIndex].DiscardTile(discardingLastDraw);
-            Debug.Log($"Playing player (place: {currentPlaceIndex}) discarding animation");
-            yield return new WaitForEndOfFrame();
-            for (int playerIndex = 0; playerIndex < rivers.Length; playerIndex++)
-            {
-                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
-                Rivers[placeIndex] = rivers[playerIndex];
-            }
+                CurrentRoundStatus = CurrentRoundStatus,
+                CurrentPlayerIndex = message.CurrentTurnPlayerIndex,
+                IsRichiing = message.IsRichiing,
+                DiscardingLastDraw = message.DiscardingLastDraw,
+                Tile = message.Tile,
+                BonusTurnTime = message.BonusTurnTime,
+                Operations = message.Operations,
+                HandTiles = message.HandTiles,
+                Rivers = message.Rivers
+            };
+            StateMachine.ChangeState(discardOperationState);
         }
 
         public void PlayerTurnEnd(ServerTurnEndMessage message)
         {
-            // show operation related animation
-            Debug.Log($"Turn ends, operation {message.Operations} is taking.");
-            // update richi status
-            for (int playerIndex = 0; playerIndex < message.RichiStatus.Length; playerIndex++)
+            var turnEndState = new PlayerTurnEndState
             {
-                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
-                RichiStatus[placeIndex] = message.RichiStatus[playerIndex];
-            }
-            UpdatePoints(message.Points);
-            RichiSticks = message.RichiSticks;
-            MahjongSetData = message.MahjongSetData;
-            // UpdateYamas(MahjongSetData);
-            // perform operation effect
-            var operations = message.Operations;
-            if (operations.All(op => op.Type == OutTurnOperationType.Skip)) return;
-            for (int playerIndex = 0; playerIndex < operations.Length; playerIndex++)
-            {
-                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
-                var operation = operations[playerIndex];
-                var type = operation.Type;
-                switch (type)
-                {
-                    case OutTurnOperationType.Skip:
-                        continue;
-                    case OutTurnOperationType.Chow:
-                    case OutTurnOperationType.Pong:
-                    case OutTurnOperationType.Kong:
-                        Debug.LogError("This part is under construction");
-                        break;
-                    case OutTurnOperationType.Rong:
-                        StartCoroutine(PlayerEffectManager.ShowEffect(placeIndex, PlayerEffectManager.GetAnimationType(type)));
-                        StartCoroutine(RevealHandTiles(placeIndex, operation.HandData));
-                        break;
-                    case OutTurnOperationType.RoundDraw:
-                        Debug.Log("Round is draw");
-                        break;
-                }
-            }
-            // todo -- do some cleaning, etc
-        }
-
-        private IEnumerator RevealHandTiles(int placeIndex, PlayerHandData handData)
-        {
-            yield return new WaitForSeconds(MahjongConstants.HandTilesRevealDelay);
-            var manager = HandManagers[placeIndex];
-            manager.OpenUp();
-            manager.HandTiles = new List<Tile>(handData.HandTiles);
-        }
-
-        public IEnumerator PlayerTsumo(ServerPlayerTsumoMessage message)
-        {
-            // show tsumo animation
-            int playerIndex = message.TsumoPlayerIndex;
-            int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
-            LastDraws[placeIndex] = message.WinningTile;
-            // reveal hand tiles
-            StartCoroutine(RevealHandTiles(placeIndex, message.TsumoHandData));
-            yield return PlayerEffectManager.ShowEffect(placeIndex, PlayerEffectManager.Type.Tsumo);
-            // show summary panel
-            var data = new SummaryPanelData
-            {
-                HandInfo = new PlayerHandInfo
-                {
-                    HandTiles = message.TsumoHandData.HandTiles,
-                    OpenMelds = message.TsumoHandData.OpenMelds,
-                    WinningTile = message.WinningTile,
-                    DoraIndicators = message.DoraIndicators,
-                    UraDoraIndicators = message.UraDoraIndicators,
-                    IsRichi = message.IsRichi,
-                    IsTsumo = true
-                },
-                PointInfo = new PointInfo(message.TsumoPointInfo),
-                TotalPoints = message.TotalPoints,
-                PlayerName = message.TsumoPlayerName
+                CurrentRoundStatus = CurrentRoundStatus,
+                PlayerIndex = message.PlayerIndex,
+                ChosenOperationType = message.ChosenOperationType,
+                Operations = message.Operations,
+                Points = message.Points,
+                RichiStatus = message.RichiStatus,
+                RichiSticks = message.RichiSticks,
+                MahjongSetData = message.MahjongSetData
             };
-            PointSummaryPanelManager.ShowPanel(data, () =>
+            StateMachine.ChangeState(turnEndState);
+        }
+
+        public void PlayerTsumo(ServerPlayerTsumoMessage message)
+        {
+            var tsumoState = new PlayerTsumoState
             {
-                Debug.Log("Sending readiness message");
-                LocalPlayer.ClientReady(MessageIds.ServerPointTransferMessage);
-            });
+                CurrentRoundStatus = CurrentRoundStatus,
+                TsumoPlayerIndex = message.TsumoPlayerIndex,
+                TsumoPlayerName = message.TsumoPlayerName,
+                TsumoHandData = message.TsumoHandData,
+                WinningTile = message.WinningTile,
+                DoraIndicators = message.DoraIndicators,
+                UraDoraIndicators = message.UraDoraIndicators,
+                IsRichi = message.IsRichi,
+                TsumoPointInfo = message.TsumoPointInfo,
+                TotalPoints = message.TotalPoints
+            };
+            StateMachine.ChangeState(tsumoState);
         }
 
         public void PlayerRong(ServerPlayerRongMessage message)
         {
-            var indices = message.RongPlayerIndices.Select((playerIndex, index) => index).ToArray();
-            var dataArray = indices.Select(index => new SummaryPanelData
+            var rongState = new PlayerRongState
             {
-                HandInfo = new PlayerHandInfo
-                {
-                    HandTiles = message.HandData[index].HandTiles,
-                    OpenMelds = message.HandData[index].OpenMelds,
-                    WinningTile = message.WinningTile,
-                    DoraIndicators = message.DoraIndicators,
-                    UraDoraIndicators = message.UraDoraIndicators,
-                    IsRichi = message.RongPlayerRichiStatus[index],
-                    IsTsumo = false
-                },
-                PointInfo = new PointInfo(message.RongPointInfos[index]),
-                TotalPoints = message.TotalPoints[index],
-                PlayerName = message.RongPlayerNames[index]
-            });
-            var dataQueue = new Queue<SummaryPanelData>(dataArray);
-            ShowRongPanel(dataQueue);
-        }
-
-        private void ShowRongPanel(Queue<SummaryPanelData> queue)
-        {
-            if (queue.Count > 0)
-            {
-                // show panel for this data
-                var data = queue.Dequeue();
-                PointSummaryPanelManager.ShowPanel(data, () => ShowRongPanel(queue));
-                // todo wait between two panels
-            }
-            else
-            {
-                // no more data to show
-                Debug.Log("Sending readiness message");
-                PointSummaryPanelManager.StopCountDown();
-                LocalPlayer.ClientReady(MessageIds.ServerPointTransferMessage);
-            }
+                CurrentRoundStatus = CurrentRoundStatus,
+                RongPlayerIndices = message.RongPlayerIndices,
+                RongPlayerNames = message.RongPlayerNames,
+                HandData = message.HandData,
+                WinningTile = message.WinningTile,
+                DoraIndicators = message.DoraIndicators,
+                UraDoraIndicators = message.UraDoraIndicators,
+                RongPlayerRichiStatus = message.RongPlayerRichiStatus,
+                RongPointInfos = message.RongPointInfos,
+                TotalPoints = message.TotalPoints
+            };
+            StateMachine.ChangeState(rongState);
         }
 
         public void RoundDraw(ServerRoundDrawMessage message)
         {
-            RoundDrawManager.SetDrawType(message.RoundDrawType);
-            if (message.RoundDrawType == RoundDrawType.RoundDraw)
+            var roundDrawState = new RoundDrawState
             {
-                Debug.Log("Revealing hand tiles");
-                HandleRoundDraw(message.WaitingData);
-            }
-        }
-
-        private void HandleRoundDraw(WaitingData[] data)
-        {
-            // var waitingDataArray = message.WaitingData;
-            for (int playerIndex = 0; playerIndex < data.Length; playerIndex++)
-            {
-                int placeIndex = GetPlaceIndexByPlayerIndex(playerIndex);
-                CheckReadyOrNot(placeIndex, data[playerIndex]);
-            }
-        }
-
-        private void CheckReadyOrNot(int placeIndex, WaitingData data)
-        {
-            // Show tiles and corresponding panel
-            if (data.WaitingTiles == null || data.WaitingTiles.Length == 0)
-            {
-                // no-ting
-                HandManagers[placeIndex].CloseDown();
-                DrawPanelManagers[placeIndex].NotReady();
-            }
-            else
-            {
-                // ting
-                HandManagers[placeIndex].OpenUp();
-                HandManagers[placeIndex].HandTiles = data.HandTiles.ToList();
-                DrawPanelManagers[placeIndex].Ready(data.WaitingTiles);
-            }
+                CurrentRoundStatus = CurrentRoundStatus,
+                RoundDrawType = message.RoundDrawType,
+                WaitingData = message.WaitingData
+            };
+            StateMachine.ChangeState(roundDrawState);
         }
 
         public void PointTransfer(ServerPointTransferMessage message)
         {
-            PointSummaryPanelManager.Close();
-            var transfers = message.PointTransfers;
-            PointTransferManager.SetTransfer(Points, transfers, () =>
+            var transferState = new PointTransferState
             {
-                LocalPlayer.RequestNewRound();
-            });
-            UpdatePoints(message.Points);
+                CurrentRoundStatus = CurrentRoundStatus,
+                PlayerNames = message.PlayerNames,
+                Points = message.Points,
+                PointTransfers = message.PointTransfers
+            };
+            StateMachine.ChangeState(transferState);
         }
 
         public void GameEnd(ServerGameEndMessage message)
         {
-            GameEndPanelManager.SetPoints(message.PlayerNames, message.Points, message.Places, () =>
+            var endState = new GameEndState
             {
-                Debug.Log("Back to lobby");
-                // todo
-            });
+                CurrentRoundStatus = CurrentRoundStatus,
+                PlayerNames = message.PlayerNames,
+                Points = message.Points,
+                Places = message.Places
+            };
+            StateMachine.ChangeState(endState);
         }
 
         public void OnDiscardTile(Tile tile, bool isLastDraw)
         {
             Debug.Log($"Sending request of discarding tile {tile}");
-            int bonusTimeLeft = TurnTimeController.StopCountDown();
-            LocalPlayer.DiscardTile(tile, IsRichiing, isLastDraw, bonusTimeLeft);
-            InTurnPanelManager.Close();
-            IsRichiing = false;
-            HandPanelManager.RemoveCandidates();
+            int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
+            CurrentRoundStatus.LocalPlayer.DiscardTile(tile, CurrentRoundStatus.IsRichiing, isLastDraw, bonusTimeLeft);
+            controller.InTurnPanelManager.Close();
+            CurrentRoundStatus.IsRichiing = false;
+            controller.HandPanelManager.RemoveCandidates();
         }
 
         public void OnInTurnSkipButtonClicked()
         {
             Debug.Log("In turn skip button clicked, hide buttons");
-            InTurnPanelManager.Close();
+            controller.InTurnPanelManager.Close();
         }
 
         public void OnTsumoButtonClicked(InTurnOperation operation)
@@ -559,10 +235,10 @@ namespace Single
                 Debug.LogError($"Cannot send a operation with type {operation.Type} within OnTsumoButtonClicked method");
                 return;
             }
-            int bonusTimeLeft = TurnTimeController.StopCountDown();
+            int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of tsumo operation with bonus turn time {bonusTimeLeft}");
-            LocalPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
-            InTurnPanelManager.Close();
+            CurrentRoundStatus.LocalPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
+            controller.InTurnPanelManager.Close();
         }
 
         public void OnRichiButtonClicked(InTurnOperation operation)
@@ -574,8 +250,8 @@ namespace Single
             }
             // show richi selection panel
             Debug.Log($"Showing richi selection panel, candidates: {string.Join(",", operation.RichiAvailableTiles)}");
-            IsRichiing = true;
-            HandPanelManager.SetCandidates(operation.RichiAvailableTiles);
+            CurrentRoundStatus.IsRichiing = true;
+            controller.HandPanelManager.SetCandidates(operation.RichiAvailableTiles);
         }
 
         public void OnInTurnKongButtonClicked(InTurnOperation[] operationOptions)
@@ -592,10 +268,10 @@ namespace Single
             }
             if (operationOptions.Length == 1)
             {
-                int bonusTimeLeft = TurnTimeController.StopCountDown();
+                int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
-                LocalPlayer.InTurnOperationTaken(operationOptions[0], bonusTimeLeft);
-                InTurnPanelManager.Close();
+                CurrentRoundStatus.LocalPlayer.InTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                controller.InTurnPanelManager.Close();
                 return;
             }
             // todo -- show kong selection panel here
@@ -603,25 +279,25 @@ namespace Single
 
         public void OnInTurnBackButtonClicked(InTurnOperation[] operations)
         {
-            InTurnPanelManager.SetOperations(operations);
-            HandPanelManager.RemoveCandidates();
-            IsRichiing = false;
+            controller.InTurnPanelManager.SetOperations(operations);
+            controller.HandPanelManager.RemoveCandidates();
+            CurrentRoundStatus.IsRichiing = false;
         }
 
-        public void OnInTurnDrawButtonClicked()
+        public void OnInTurnDrawButtonClicked(InTurnOperation operation)
         {
             Debug.Log($"Requesting round draw due to 9 kinds of orphans");
-            TurnTimeController.StopCountDown();
-            LocalPlayer.NineKindsOfOrphans();
-            InTurnPanelManager.Close();
+            int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
+            CurrentRoundStatus.LocalPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
+            controller.InTurnPanelManager.Close();
         }
 
         public void OnOutTurnButtonClicked(OutTurnOperation operation)
         {
-            int bonusTimeLeft = TurnTimeController.StopCountDown();
+            int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of operation {operation} with bonus turn time {bonusTimeLeft}");
-            LocalPlayer.OutTurnOperationTaken(operation, bonusTimeLeft);
-            OutTurnPanelManager.Close();
+            CurrentRoundStatus.LocalPlayer.OutTurnOperationTaken(operation, bonusTimeLeft);
+            controller.OutTurnPanelManager.Close();
         }
 
         public void OnChowButtonClicked(OutTurnOperation[] operationOptions, OutTurnOperation[] originalOperations)
@@ -638,10 +314,10 @@ namespace Single
             }
             if (operationOptions.Length == 1)
             {
-                int bonusTimeLeft = TurnTimeController.StopCountDown();
+                int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of chow operation with bonus turn time {bonusTimeLeft}");
-                LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
-                OutTurnPanelManager.Close();
+                CurrentRoundStatus.LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                controller.OutTurnPanelManager.Close();
                 return;
             }
             // todo -- chow selection logic here
@@ -661,38 +337,13 @@ namespace Single
             }
             if (operationOptions.Length == 1)
             {
-                int bonusTimeLeft = TurnTimeController.StopCountDown();
+                int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
-                LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
-                OutTurnPanelManager.Close();
+                CurrentRoundStatus.LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                controller.OutTurnPanelManager.Close();
                 return;
             }
             // todo -- pong selection logic here
-        }
-
-        private void UpdatePoints(int[] points)
-        {
-            for (int i = 0; i < Points.Length; i++)
-            {
-                if (Places[i] < points.Length)
-                    Points[i] = points[Places[i]];
-            }
-        }
-
-        private void UpdateNames(string[] names)
-        {
-            for (int i = 0; i < PlayerNames.Length; i++)
-            {
-                if (Places[i] < names.Length)
-                    PlayerNames[i] = names[Places[i]];
-                else
-                    PlayerNames[i] = null;
-            }
-        }
-
-        private int GetPlaceIndexByPlayerIndex(int playerIndex)
-        {
-            return System.Array.FindIndex(Places, i => i == playerIndex);
         }
     }
 }

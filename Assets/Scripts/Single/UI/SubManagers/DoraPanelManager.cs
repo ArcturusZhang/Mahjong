@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Single.MahjongDataType;
+using Single.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 

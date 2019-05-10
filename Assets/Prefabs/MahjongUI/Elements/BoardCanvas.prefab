@@ -959,6 +959,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81e308f1cd13cf444beea0e009f8d414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RoundInfoManager: {fileID: 5585530377252821721}
+  PointsManager: {fileID: 2680627865803670081}
+  PositionManager: {fileID: 6444133661615718752}
+  RichiStatusManager: {fileID: 6984329683945710111}
 --- !u!1 &2679343211355247859
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,6 +13,7 @@ namespace Single.UI.SubManagers
         [HideInInspector] public bool[] RichiStatus;
         private void Update()
         {
+            if (Places == null) return;
             for (int i = 0; i < Places.Length; i++)
             {
                 if (IsValidPlayer(Places[i]))

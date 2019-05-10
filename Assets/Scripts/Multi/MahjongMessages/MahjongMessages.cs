@@ -54,6 +54,7 @@ namespace Multi.MahjongMessages
     public class ServerDrawTileMessage : MessageBase
     {
         public int PlayerIndex;
+        public int DrawPlayerIndex;
         public Tile Tile;
         public int BonusTurnTime;
         public bool Richied;
@@ -62,28 +63,30 @@ namespace Multi.MahjongMessages
 
         public override string ToString()
         {
+            var operationString = Operations == null ? "null" : string.Join(",", Operations);
             return $"PlayerIndex: {PlayerIndex}\n"
+                + $"DrawPlayerIndex: {DrawPlayerIndex}\n"
                 + $"Tile: {Tile}\n"
                 + $"BonusTurnTime: {BonusTurnTime}\n"
                 + $"Richied: {Richied}\n"
-                + $"Operations: {string.Join(",", Operations)}\n"
+                + $"Operations: {operationString}\n"
                 + $"MahjongSetData: {MahjongSetData}";
         }
     }
 
-    public class ServerOtherDrawTileMessage : MessageBase
-    {
-        public int PlayerIndex;
-        public int CurrentTurnPlayerIndex;
-        public MahjongSetData MahjongSetData;
+    // public class ServerOtherDrawTileMessage : MessageBase
+    // {
+    //     public int PlayerIndex;
+    //     public int CurrentTurnPlayerIndex;
+    //     public MahjongSetData MahjongSetData;
 
-        public override string ToString()
-        {
-            return $"PlayerIndex: {PlayerIndex}\n"
-                + $"CurrentTurnPlayerIndex: {CurrentTurnPlayerIndex}\n"
-                + $"MahjongSetData: {MahjongSetData}";
-        }
-    }
+    //     public override string ToString()
+    //     {
+    //         return $"PlayerIndex: {PlayerIndex}\n"
+    //             + $"CurrentTurnPlayerIndex: {CurrentTurnPlayerIndex}\n"
+    //             + $"MahjongSetData: {MahjongSetData}";
+    //     }
+    // }
 
     public class ServerKongMessage : MessageBase
     {

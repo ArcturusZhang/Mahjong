@@ -1,34 +1,35 @@
 ﻿using System.Collections.Generic;
 using Single.MahjongDataType;
+using Single.Managers;
 using Single.UI.Layout;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Single.UI
 {
-    public class HandPanelManager : MonoBehaviour
+    public class HandPanelManager : ManagerBase
     {
         private const float Width = 64;
         private const float LastDrawPositionX = 425;
         public HandTileInstance[] HandTileInstances;
         public HandTileInstance LastDrawInstance;
         public RectTransform LastDrawRect;
-        [HideInInspector] public List<Tile> Tiles;
-        [HideInInspector] public Tile? LastDraw;
 
         private void Update()
         {
+            if (CurrentRoundStatus == null) return;
             var count = ShowHandTiles();
             ShowLastDraw(count);
         }
 
         private int ShowHandTiles()
         {
-            int length = Tiles == null ? 0 : Tiles.Count;
+            var tiles = CurrentRoundStatus.LocalPlayerHandTiles;
+            int length = tiles == null ? 0 : tiles.Count;
             for (int i = 0; i < length; i++)
             {
                 HandTileInstances[i].gameObject.SetActive(true);
-                HandTileInstances[i].SetTile(Tiles[i]);
+                HandTileInstances[i].SetTile(tiles[i]);
             }
             for (int i = length; i < HandTileInstances.Length; i++)
             {
@@ -39,11 +40,12 @@ namespace Single.UI
 
         private void ShowLastDraw(int count)
         {
-            if (LastDraw == null)
+            var lastDraw = CurrentRoundStatus.GetLastDraw(0);
+            if (lastDraw == null)
                 LastDrawInstance.gameObject.SetActive(false);
             else
             {
-                LastDrawInstance.SetTile((Tile)LastDraw);
+                LastDrawInstance.SetTile((Tile)lastDraw);
                 LastDrawInstance.gameObject.SetActive(true);
             }
             int diff = HandTileInstances.Length - count;
@@ -93,6 +95,11 @@ namespace Single.UI
             {
                 HandTileInstances[i].Unlock();
             }
+        }
+
+        public void Show()
+        {
+            gameObject.SetActive(true);
         }
     }
 }

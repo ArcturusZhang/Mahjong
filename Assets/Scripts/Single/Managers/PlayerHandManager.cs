@@ -4,14 +4,14 @@ using Single.MahjongDataType;
 using UnityEngine;
 
 
-namespace Single
+namespace Single.Managers
 {
     public class PlayerHandManager : MonoBehaviour
     {
         public Transform handHolder;
         public Transform drawnHolder;
         [HideInInspector] public int Count;
-        [HideInInspector] public List<Tile> HandTiles = null;
+        [HideInInspector] public IList<Tile> HandTiles = null;
         [HideInInspector] public Tile? LastDraw = null;
         private Transform[] handTileTransforms;
         private TileInstance[] handTileInstances;
@@ -89,7 +89,6 @@ namespace Single
         {
             yield return discardingWait;
             discarding = false;
-            Debug.Log("Animation done");
         }
 
         public void OpenUp()

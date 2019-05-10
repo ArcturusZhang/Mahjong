@@ -59,7 +59,8 @@ namespace Single.UI
             if (operations.Any(op => op.Type == InTurnOperationType.RoundDraw)) {
                 DrawButton.onClick.RemoveAllListeners();
                 DrawButton.gameObject.SetActive(true);
-                DrawButton.onClick.AddListener(ClientBehaviour.Instance.OnInTurnDrawButtonClicked);
+                var drawOperation = System.Array.Find(operations, op => op.Type == InTurnOperationType.RoundDraw);
+                DrawButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnDrawButtonClicked(drawOperation));
             }
             // todo -- bei button
         }

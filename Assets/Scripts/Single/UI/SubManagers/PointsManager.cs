@@ -14,6 +14,7 @@ namespace Single.UI.SubManagers
 
         private void Update()
         {
+            if (Places == null) return;
             for (int i = 0; i < Places.Length; i++)
             {
                 if (IsValidPlayer(Places[i]))

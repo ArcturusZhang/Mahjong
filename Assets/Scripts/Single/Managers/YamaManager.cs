@@ -4,30 +4,25 @@ using Single.MahjongDataType;
 using UnityEngine;
 using Utils;
 
-namespace Single
+namespace Single.Managers
 {
-    public class YamaManager : MonoBehaviour
+    public class YamaManager : ManagerBase
     {
         public static readonly IDictionary<int, int> IndexToYama = new Dictionary<int, int> {
             {0, 0}, {1, 3}, {2, 2}, {3, 1}
         };
         [SerializeField] private Transform[] Walls;
-        [HideInInspector] public int[] Places;
-        [HideInInspector] public int OyaPlayerIndex;
-        [HideInInspector] public int Dice;
-        [HideInInspector] public int LingshangTilesCount;
-        private MahjongSetData MahjongSetData;
 
-        public void SetMahjongData(MahjongSetData data)
+        private void Update()
         {
-            MahjongSetData = data;
-            if (Dice == 0 || OyaPlayerIndex < 0) return;
+            if (CurrentRoundStatus == null) return;
+            if (CurrentRoundStatus.Dice == 0 || CurrentRoundStatus.OyaPlayerIndex < 0) return;
             UpdateTiles();
         }
 
         private void UpdateTiles()
         {
-            var yamaIndex = GetYamaIndex(Dice, OyaPlayerIndex, Places);
+            var yamaIndex = GetYamaIndex(CurrentRoundStatus.Dice, CurrentRoundStatus.OyaPlayerIndex, CurrentRoundStatus.Places);
             UpdateYama(yamaIndex);
         }
 
@@ -43,31 +38,35 @@ namespace Single
 
         private void UpdateYama(int openYamaIndex)
         {
+            var dice = CurrentRoundStatus.Dice;
+            var lingShangTilesCount = CurrentRoundStatus.Settings.LingShangTilesCount;
+            var setData = CurrentRoundStatus.MahjongSetData;
             // drawn tiles
-            for (int i = 0; i < MahjongSetData.TilesDrawn; i++)
+            for (int i = 0; i < setData.TilesDrawn; i++)
             {
-                var t = GetTileAt(openYamaIndex, Dice * 2 + i);
+                var t = GetTileAt(openYamaIndex, dice * 2 + i);
                 DrawTile(t);
             }
             // lingshang tiles
-            for (int i = 0; i < MahjongSetData.LingShangDrawn; i++)
+            for (int i = 0; i < setData.LingShangDrawn; i++)
             {
-                var s = Dice - i / 2;
+                var s = dice - i / 2;
                 var t = GetTileAt(openYamaIndex, (s - 1) * 2 + i % 2);
                 DrawTile(t);
             }
             // dora tiles
-            for (int i = 0; i < MahjongSetData.DoraIndicators.Length; i++)
+            for (int i = 0; i < setData.DoraIndicators.Length; i++)
             {
-                var s = Dice - LingshangTilesCount / 2 - i;
+                var s = dice - lingShangTilesCount / 2 - i;
                 var t = GetTileAt(openYamaIndex, (s - 1) * 2);
-                TurnTileFaceUp(t, MahjongSetData.DoraIndicators[i]);
+                TurnTileFaceUp(t, setData.DoraIndicators[i]);
             }
         }
 
         private Transform GetTileAt(int openYamaIndex, int index)
         {
-            if (index < 0) index += MahjongSetData.TotalTiles;
+            var totalTiles = CurrentRoundStatus.MahjongSetData.TotalTiles;
+            if (index < 0) index += totalTiles;
             int yamaIndex = openYamaIndex;
             while (index >= Walls[yamaIndex].childCount)
             {

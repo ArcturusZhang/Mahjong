@@ -4,7 +4,7 @@ using Single.MahjongDataType;
 using UnityEngine;
 using Utils;
 
-namespace Single
+namespace Single.Managers
 {
     public class OpenMeldManager : MonoBehaviour
     {
@@ -33,6 +33,11 @@ namespace Single
             meldObj.transform.localPosition = new Vector3(0, 0, -offset);
             meldInstance.SetMeld(meld);
             offset += meldInstance.MeldWidth + Gap;
+        }
+
+        public void ClearMelds()
+        {
+            transform.DestroyAllChild();
         }
 
         // private void FixedUpdate()

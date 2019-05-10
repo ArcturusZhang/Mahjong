@@ -24,8 +24,8 @@ namespace Multi.GameState
         private YakuSettings yakuSettings;
         private IList<Player> players;
         private MessageBase[] messages;
-        private bool[] responds;
-        private float lastSendTime;
+        // private bool[] responds;
+        // private float lastSendTime;
         private float firstSendTime;
         private float serverTimeOut;
         private bool[] operationResponds;
@@ -37,7 +37,6 @@ namespace Multi.GameState
             gameSettings = CurrentRoundStatus.GameSettings;
             yakuSettings = CurrentRoundStatus.YakuSettings;
             players = CurrentRoundStatus.Players;
-            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOperationMessageReceived);
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
             {
@@ -46,11 +45,11 @@ namespace Multi.GameState
             }
             // UpdateCurrentPlayerData();
             messages = new MessageBase[players.Count];
-            responds = new bool[players.Count];
+            // responds = new bool[players.Count];
             operationResponds = new bool[players.Count];
             outTurnOperations = new OutTurnOperation[players.Count];
             var rivers = CurrentRoundStatus.Rivers;
-            // Get messages
+            // Get messages and send them to players
             for (int i = 0; i < messages.Length; i++)
             {
                 messages[i] = new ServerDiscardOperationMessage
@@ -65,23 +64,22 @@ namespace Multi.GameState
                     HandTiles = CurrentRoundStatus.HandTiles(i),
                     Rivers = rivers
                 };
+                players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, messages[i]);
             }
-            // Send messages to players
-            SendMessages();
-            lastSendTime = Time.time;
+            // lastSendTime = Time.time;
             firstSendTime = Time.time;
             serverTimeOut = players.Max(p => p.BonusTurnTime) + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
-        private void SendMessages()
-        {
-            // Send message to the current turn player
-            for (int i = 0; i < players.Count; i++)
-            {
-                if (responds[i]) continue;
-                players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, messages[i]);
-            }
-        }
+        // private void SendMessages()
+        // {
+        //     // Send message to the current turn player
+        //     for (int i = 0; i < players.Count; i++)
+        //     {
+        //         if (responds[i]) continue;
+        //         players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, messages[i]);
+        //     }
+        // }
 
         // todo -- complete this
         private OutTurnOperation[] GetOperations(int playerIndex)
@@ -140,12 +138,6 @@ namespace Multi.GameState
                 TurnEnd();
                 return;
             }
-            if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
-            {
-                lastSendTime = Time.time;
-                SendMessages();
-                return;
-            }
             if (operationResponds.All(r => r))
             {
                 Debug.Log("[Server] Server received all operation response, ending this turn.");
@@ -155,21 +147,7 @@ namespace Multi.GameState
 
         private void TurnEnd()
         {
-            // if (TurnDoraAfterDiscard)
-            //     MahjongSet.TurnDora();
             ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, outTurnOperations, TurnDoraAfterDiscard);
-        }
-
-        private void OnReadinessMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientReadinessMessage>();
-            Debug.Log($"[Server] Received ClientReadinessMessage: {content}");
-            if (content.Content != MessageIds.ServerDiscardOperationMessage)
-            {
-                Debug.LogError("Something is wrong, the received readiness message contains invalid content.");
-                return;
-            }
-            responds[content.PlayerIndex] = true;
         }
 
         private void OnOperationMessageReceived(NetworkMessage message)
@@ -184,7 +162,6 @@ namespace Multi.GameState
         public void OnStateExit()
         {
             Debug.Log($"Server exits {GetType().Name}");
-            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
             NetworkServer.UnregisterHandler(MessageIds.ClientOutTurnOperationMessage);
         }
     }

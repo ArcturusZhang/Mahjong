@@ -26,10 +26,10 @@ namespace Single.UI.SubManagers
         {
             Debug.Log($"{name} is setting point to {point}, transfers are {string.Join(";", transfers)}");
             gameObject.SetActive(true);
-            int total = 0;
+            int totalTransfer = 0;
             foreach (var transfer in transfers)
             {
-                total += transfer.Amount;
+                totalTransfer += transfer.Amount;
                 if (transfer.Type == Type.None || transfer.Amount >= 0) continue;
                 switch (transfer.Type)
                 {
@@ -44,7 +44,7 @@ namespace Single.UI.SubManagers
                         break;
                 }
             }
-            PointController.SetNumber(point + total);
+            PointController.SetNumber(point);
         }
 
         private void OnDisable()

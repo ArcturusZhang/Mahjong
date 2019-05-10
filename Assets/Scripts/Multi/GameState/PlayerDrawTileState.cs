@@ -11,7 +11,6 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    // todo -- draw lingshang tile
     public class PlayerDrawTileState : IState
     {
         public int CurrentPlayerIndex;
@@ -24,8 +23,6 @@ namespace Multi.GameState
         private IList<Player> players;
         private Tile justDraw;
         private MessageBase[] messages;
-        private bool[] responds;
-        private float lastSendTime;
         private float firstSendTime;
         private float serverTimeOut;
 
@@ -35,10 +32,8 @@ namespace Multi.GameState
             gameSettings = CurrentRoundStatus.GameSettings;
             yakuSettings = CurrentRoundStatus.YakuSettings;
             players = CurrentRoundStatus.Players;
-            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
-            NetworkServer.RegisterHandler(MessageIds.ClientNineOrphansMessage, OnClientRoundDrawMessageReceived);
             if (IsLingShang)
                 justDraw = MahjongSet.DrawLingShang();
             else
@@ -49,21 +44,22 @@ namespace Multi.GameState
             Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}, "
                 + $"first turn: {CurrentRoundStatus.FirstTurn}.");
             messages = new MessageBase[players.Count];
-            responds = new bool[players.Count];
             for (int i = 0; i < players.Count; i++)
             {
                 if (i == CurrentPlayerIndex) continue;
-                messages[i] = new ServerOtherDrawTileMessage
+                messages[i] = new ServerDrawTileMessage
                 {
                     PlayerIndex = i,
-                    CurrentTurnPlayerIndex = CurrentPlayerIndex,
+                    DrawPlayerIndex = CurrentPlayerIndex,
+                    Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
                     MahjongSetData = MahjongSet.Data
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerOtherDrawTileMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerDrawTileMessage, messages[i]);
             }
             messages[CurrentPlayerIndex] = new ServerDrawTileMessage
             {
                 PlayerIndex = CurrentPlayerIndex,
+                DrawPlayerIndex = CurrentPlayerIndex,
                 Tile = justDraw,
                 BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
                 Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
@@ -72,7 +68,6 @@ namespace Multi.GameState
             };
             players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerDrawTileMessage, messages[CurrentPlayerIndex]);
             firstSendTime = Time.time;
-            lastSendTime = Time.time;
             serverTimeOut = gameSettings.BaseTurnTime + players[CurrentPlayerIndex].BonusTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
@@ -171,18 +166,6 @@ namespace Multi.GameState
             }
         }
 
-        private void OnReadinessMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientReadinessMessage>();
-            Debug.Log($"[Server] Received ClientReadinessMessage: {content}");
-            if (content.Content != MessageIds.ServerDrawTileMessage)
-            {
-                Debug.LogError("Something is wrong, the received readiness message contains invalid content.");
-                return;
-            }
-            responds[content.PlayerIndex] = true;
-        }
-
         private void OnDiscardTileReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ClientDiscardRequestMessage>();
@@ -220,17 +203,13 @@ namespace Multi.GameState
                 case InTurnOperationType.Kong:
                     HandleKong(operation);
                     break;
+                case InTurnOperationType.RoundDraw:
+                    HandleRoundDraw(operation);
+                    break;
                 default:
                     Debug.LogError($"[Server] This type of in turn operation should not be sent to server.");
                     break;
             }
-        }
-
-        private void OnClientRoundDrawMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientRoundDrawMessage>();
-            Debug.Log($"[Server] Received ClientNineOrphansMessage {content}");
-            ServerBehaviour.Instance.RoundDraw(content.Type);
         }
 
         private void HandleTsumo(InTurnOperation operation)
@@ -249,6 +228,12 @@ namespace Multi.GameState
             var kong = operation.Meld;
             Debug.Log($"Server is handling the operation of player {playerIndex} of claiming kong {kong}");
             ServerBehaviour.Instance.Kong(playerIndex, kong);
+        }
+
+        private void HandleRoundDraw(InTurnOperation operation) {
+            int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
+            Debug.Log($"Player {playerIndex} has claimed 9-orphans");
+            ServerBehaviour.Instance.RoundDraw(RoundDrawType.NineOrphans);
         }
 
         private PointInfo GetTsumoInfo(int playerIndex, Tile tile)
@@ -272,20 +257,7 @@ namespace Multi.GameState
 
         public void OnStateUpdate()
         {
-            // Debug.Log($"Server is in {GetType().Name}");
-            // Sending messages until received all responds from all players
-            if (Time.time - lastSendTime > ServerConstants.MessageResendInterval && !responds.All(r => r))
-            {
-                // resend message
-                for (int i = 0; i < players.Count; i++)
-                {
-                    if (responds[i]) continue;
-                    players[i].connectionToClient.Send(
-                        i == CurrentPlayerIndex ? MessageIds.ServerDrawTileMessage : MessageIds.ServerOtherDrawTileMessage,
-                        messages[i]);
-                }
-            }
-            // Time out
+            // Time out: auto discard
             if (Time.time - firstSendTime > serverTimeOut)
             {
                 // force auto discard
@@ -296,10 +268,8 @@ namespace Multi.GameState
         public void OnStateExit()
         {
             Debug.Log($"Server exits {GetType().Name}");
-            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
             NetworkServer.UnregisterHandler(MessageIds.ClientInTurnOperationMessage);
             NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
-            NetworkServer.UnregisterHandler(MessageIds.ClientNineOrphansMessage);
             CurrentRoundStatus.CheckOneShot(CurrentPlayerIndex);
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Single.MahjongDataType;
 using UnityEngine;
 
-namespace Single
+namespace Single.Managers
 {
     public class PlayerRiverManager : MonoBehaviour
     {

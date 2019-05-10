@@ -109,16 +109,6 @@ namespace Multi
             connectionToServer.Send(MessageIds.ClientReadinessMessage, message);
         }
 
-        public void NineKindsOfOrphans()
-        {
-            var message = new ClientRoundDrawMessage
-            {
-                PlayerIndex = PlayerIndex,
-                Type = RoundDrawType.NineOrphans
-            };
-            connectionToServer.Send(MessageIds.ClientNineOrphansMessage, message);
-        }
-
         public void RequestNewRound()
         {
             var message = new ClientNextRoundMessage
@@ -133,10 +123,9 @@ namespace Multi
             RegisterHandler(MessageIds.ServerGamePrepareMessage, OnGamePrepareMessageReceived);
             RegisterHandler(MessageIds.ServerRoundStartMessage, OnRoundStartMessageReceived);
             RegisterHandler(MessageIds.ServerDrawTileMessage, OnPlayerDrawTileMessageReceived);
-            RegisterHandler(MessageIds.ServerOtherDrawTileMessage, OnOtherPlayerDrawTileMessageReceived);
+            // RegisterHandler(MessageIds.ServerOtherDrawTileMessage, OnOtherPlayerDrawTileMessageReceived);
             RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
             RegisterHandler(MessageIds.ServerKongMessage, OnKongMessageReceived);
-            // RegisterHandler(MessageIds.ServerOtherKongMessage, OnOtherKongMessageReceived);
             RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
             RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
             RegisterHandler(MessageIds.ServerTsumoMessage, OnPlayerTsumoMessageReceived);
@@ -172,18 +161,7 @@ namespace Multi
         private void OnRoundStartMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ServerRoundStartMessage>();
-            if (PlayerIndex != content.PlayerIndex)
-            {
-                Debug.LogError($"Player {PlayerIndex} should not receive a message that is send to player {content.PlayerIndex}");
-                return;
-            }
             Debug.Log($"ServerRoundStartMessage received: {content}");
-            // confirm message received
-            connectionToServer.Send(MessageIds.ClientReadinessMessage, new ClientReadinessMessage
-            {
-                PlayerIndex = PlayerIndex,
-                Content = content.InitialHandTiles.Length
-            });
             // invoke client round start logic with the content received.
             ClientBehaviour.Instance.StartRound(content);
         }
@@ -192,60 +170,30 @@ namespace Multi
         {
             var content = message.ReadMessage<ServerDrawTileMessage>();
             Debug.Log($"ServerDrawTileMessage received: {content}");
-            // confirm message received
-            connectionToServer.Send(MessageIds.ClientReadinessMessage, new ClientReadinessMessage
-            {
-                PlayerIndex = PlayerIndex,
-                Content = MessageIds.ServerDrawTileMessage
-            });
-            Debug.Log($"Player bonusTurnTime is {BonusTurnTime}, received bonusTurnTime is {content.BonusTurnTime}");
             // invoke client draw tile method
             ClientBehaviour.Instance.PlayerDrawTurn(content);
-        }
-
-        private void OnOtherPlayerDrawTileMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ServerOtherDrawTileMessage>();
-            Debug.Log($"ServerOtherDrawTileMessage received: {content}");
-            // confirm message received
-            connectionToServer.Send(MessageIds.ClientReadinessMessage, new ClientReadinessMessage
-            {
-                PlayerIndex = PlayerIndex,
-                Content = MessageIds.ServerDrawTileMessage
-            });
-            // invoke client method for other player draw tile
-            ClientBehaviour.Instance.OtherPlayerDrawTurn(content);
         }
 
         private void OnDiscardOperationMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ServerDiscardOperationMessage>();
             Debug.Log($"ServerDiscardOperationMessage received: {content}");
-            // confirm message received
-            connectionToServer.Send(MessageIds.ClientReadinessMessage, new ClientReadinessMessage
-            {
-                PlayerIndex = PlayerIndex,
-                Content = MessageIds.ServerDiscardOperationMessage
-            });
             // invoke client method for discarding operations
-            ClientBehaviour.Instance.PlayerOutTurnOperation(content);
+            ClientBehaviour.Instance.PlayerDiscardOperation(content);
         }
 
         private void OnKongMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ServerKongMessage>();
             Debug.Log($"ServerKongMessage: {content}");
-            if (content.KongPlayerIndex == PlayerIndex)
-                ClientBehaviour.Instance.PlayerKong(content);
-            else
-                ClientBehaviour.Instance.OtherPlayerKong(content);
+            // invoke client method for kong
+            ClientBehaviour.Instance.PlayerKong(content);
         }
 
         private void OnTurnEndMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ServerTurnEndMessage>();
             Debug.Log($"ServerTurnEndMessage received: {content}");
-            // this message do not require confirm
             // invoke client method for turn end operations
             ClientBehaviour.Instance.PlayerTurnEnd(content);
         }
@@ -254,16 +202,14 @@ namespace Multi
         {
             var content = message.ReadMessage<ServerPlayerTsumoMessage>();
             Debug.Log($"ServerPlayerTsumoMessage received: {content}");
-            // this message do not require confirm
             // invoke client method for tsumo operation
-            StartCoroutine(ClientBehaviour.Instance.PlayerTsumo(content));
+            ClientBehaviour.Instance.PlayerTsumo(content);
         }
 
         private void OnPlayerRongMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ServerPlayerRongMessage>();
             Debug.Log($"ServerPlayerRongMessage received: {content}");
-            // this message do not require confirm
             // invoke client method for rong operations
             ClientBehaviour.Instance.PlayerRong(content);
         }
@@ -272,7 +218,6 @@ namespace Multi
         {
             var content = message.ReadMessage<ServerRoundDrawMessage>();
             Debug.Log($"ServerRoundDrawMessage received: {content}");
-            // this message do not require confirm
             // invoke client method for round draw operations
             ClientBehaviour.Instance.RoundDraw(content);
         }
@@ -281,7 +226,6 @@ namespace Multi
         {
             var content = message.ReadMessage<ServerPointTransferMessage>();
             Debug.Log($"ServerPointTransferMessage received: {content}");
-            // this message do not require confirm
             // invoke client method for point transfer
             ClientBehaviour.Instance.PointTransfer(content);
         }
@@ -290,7 +234,6 @@ namespace Multi
         {
             var content = message.ReadMessage<ServerGameEndMessage>();
             Debug.Log($"ServerGameEndMessage received: {content}");
-            // this message do not require confirm
             // invoke client method for game end summary
             ClientBehaviour.Instance.GameEnd(content);
         }

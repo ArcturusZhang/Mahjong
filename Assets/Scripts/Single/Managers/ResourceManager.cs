@@ -4,7 +4,7 @@ using System.Linq;
 using Single.MahjongDataType;
 using UnityEngine;
 
-namespace Single
+namespace Single.Managers
 {
     public class ResourceManager : MonoBehaviour
     {

@@ -28,13 +28,12 @@ namespace Multi.GameState
         private MessageBase[] messages;
         private bool[] responds;
         private float firstSendTime;
-        private float lastSendTime;
         public void OnStateEnter()
         {
             Debug.Log("Server enters RoundStartState");
             players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
-            var doraIndicators = MahjongSet.Reset();
+            MahjongSet.Reset();
             // throwing dice
             var dice = Random.Range(CurrentRoundStatus.GameSettings.DiceMin, CurrentRoundStatus.GameSettings.DiceMax + 1);
             CurrentRoundStatus.NextRound(dice, NextRound, ExtraRound, KeepSticks);
@@ -64,7 +63,6 @@ namespace Multi.GameState
                 players[index].BonusTurnTime = CurrentRoundStatus.GameSettings.BonusTurnTime;
             }
             firstSendTime = Time.time;
-            lastSendTime = Time.time;
         }
 
         public void OnStateUpdate()
@@ -73,15 +71,6 @@ namespace Multi.GameState
             {
                 ServerNextState();
                 return;
-            }
-            if (Time.time - lastSendTime >= ServerConstants.MessageResendInterval)
-            {
-                lastSendTime = Time.time;
-                for (int i = 0; i < players.Count; i++)
-                {
-                    if (responds[i]) continue;
-                    players[i].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[i]);
-                }
             }
         }
 
@@ -94,7 +83,7 @@ namespace Multi.GameState
         {
             var content = message.ReadMessage<ClientReadinessMessage>();
             Debug.Log($"Received ClientReadinessMessage: {content}");
-            if (content.Content != MahjongConstants.CompleteHandTilesCount)
+            if (content.Content != MessageIds.ServerRoundStartMessage)
             {
                 Debug.LogError("Something is wrong, the received readiness meassage contains invalid content");
                 return;
