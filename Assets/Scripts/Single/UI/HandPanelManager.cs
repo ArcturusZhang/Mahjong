@@ -73,12 +73,15 @@ namespace Single.UI
         private void SetCandidate(HandTileInstance instance, IList<Tile> candidates)
         {
             var tile = instance.Tile;
-            instance.SetAvailable(candidates.Contains(tile));
+            if (candidates.Contains(tile))
+                instance.Unlock();
+            else
+                instance.Lock();
         }
 
         private void RemoveCandidate(HandTileInstance instance)
         {
-            instance.SetAvailable(true);
+            instance.Unlock();
         }
 
         public void LockTiles()

@@ -11,30 +11,47 @@ namespace Single.UI
         public Transform ReadySign;
         public Transform NotReadySign;
         public Transform WaitingTilesParent;
+        private HandTileInstance[] instances;
 
-        public void Ready(Tile[] waitingTiles) {
-            StartCoroutine(ShowAfterDelay(MahjongConstants.ReadyPanelDelay, true, false));
-            for (int i = 0; i < WaitingTilesParent.childCount; i++) {
+        private void OnEnable()
+        {
+            if (instances == null || instances.Length < WaitingTilesParent.childCount)
+                instances = new HandTileInstance[WaitingTilesParent.childCount];
+            for (int i = 0; i < WaitingTilesParent.childCount; i++)
+            {
                 var t = WaitingTilesParent.GetChild(i);
-                t.gameObject.SetActive(i < waitingTiles.Length);
-                if (i < waitingTiles.Length) {
-                    var tileInstance = t.GetComponent<HandTileInstance>();
-                    tileInstance.SetTile(waitingTiles[i]);
-                }
+                instances[i] = t.GetComponent<HandTileInstance>();
+                Debug.Log(instances[i] == null);
             }
         }
 
-        public void NotReady() {
-            StartCoroutine(ShowAfterDelay(MahjongConstants.ReadyPanelDelay, false, true));
+        public void Ready(Tile[] waitingTiles)
+        {
+            for (int i = 0; i < WaitingTilesParent.childCount; i++)
+            {
+                var instance = instances[i];
+                instance.gameObject.SetActive(i < waitingTiles.Length);
+                if (i < waitingTiles.Length)
+                {
+                    instance.SetTile(waitingTiles[i]);
+                }
+            }
+            ShowPanel(true);
         }
 
-        private IEnumerator ShowAfterDelay(float delay, bool ready, bool notReady) {
-            yield return new WaitForSeconds(delay);
+        public void NotReady()
+        {
+            ShowPanel(false);
+        }
+
+        private void ShowPanel(bool ready)
+        {
             ReadySign.gameObject.SetActive(ready);
-            NotReadySign.gameObject.SetActive(notReady);
+            NotReadySign.gameObject.SetActive(!ready);
         }
 
-        public void Close() {
+        public void Close()
+        {
             ReadySign.gameObject.SetActive(false);
             NotReadySign.gameObject.SetActive(false);
         }

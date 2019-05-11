@@ -40,7 +40,7 @@ namespace Single.Managers
 
         public Texture2D GetTileTexture(Tile tile)
         {
-            var key = MahjongConstants.GetTileName(tile);
+            var key = GetTileName(tile);
             return textureDict[key];
         }
 
@@ -51,13 +51,19 @@ namespace Single.Managers
                 Debug.LogError("tileSprite is null, something is wrong, please wait and try again.");
                 return null;
             }
-            var key = MahjongConstants.GetTileName(tile);
+            var key = GetTileName(tile);
             return spriteDict[key];
         }
 
         public Sprite GetTileSpriteByName(string name)
         {
             return spriteDict[name];
+        }
+
+        public static string GetTileName(Tile tile)
+        {
+            int index = tile.IsRed ? 0 : tile.Rank;
+            return index + tile.Suit.ToString().ToLower();
         }
     }
 }

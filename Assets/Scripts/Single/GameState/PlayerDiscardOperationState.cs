@@ -24,7 +24,7 @@ namespace Single.GameState
             CurrentRoundStatus.SetHandTiles(HandTiles);
             controller.StartCoroutine(UpdateHandData(CurrentPlayerIndex, DiscardingLastDraw, Tile, Rivers));
             if (IsRichiing)
-                controller.StartCoroutine(controller.ShowEffect(CurrentPlayerIndex, UI.PlayerEffectManager.Type.Richi));
+                controller.StartCoroutine(controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Richi));
             if (Operations == null || Operations.Length == 0)
             {
                 Debug.LogError("Received with no operations, this should not happen");

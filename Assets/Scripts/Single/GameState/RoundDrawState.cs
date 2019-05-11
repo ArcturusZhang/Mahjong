@@ -35,12 +35,14 @@ namespace Single.GameState
             if (data.WaitingTiles == null || data.WaitingTiles.Length == 0)
             {
                 // no-ting
+                Debug.Log($"Place {placeIndex} is not ready");
                 controller.TableTilesManager.CloseDown(placeIndex);
                 controller.WaitingPanelManagers[placeIndex].NotReady();
             }
             else
             {
                 // ting
+                Debug.Log($"Place {placeIndex} is ready, waiting {string.Join(",", data.WaitingTiles)}");
                 controller.TableTilesManager.OpenUp(placeIndex);
                 controller.TableTilesManager.SetHandTiles(placeIndex, data.HandTiles);
                 controller.WaitingPanelManagers[placeIndex].Ready(data.WaitingTiles);

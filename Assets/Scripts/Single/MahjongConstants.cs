@@ -69,22 +69,6 @@ namespace Single
             return index;
         }
 
-        public static string GetTileName(Tile tile)
-        {
-            int index = tile.IsRed ? 0 : tile.Rank;
-            return index + tile.Suit.ToString().ToLower();
-        }
-
-        // public static MeldInstanceType GetMeldDirection(int currentPlayerIndex, int discardPlayerIndex,
-        //     bool isKong = false)
-        // {
-        //     if (RepeatIndex(currentPlayerIndex + 1, WallCount) == discardPlayerIndex)
-        //         return !isKong ? MeldInstanceType.Right : MeldInstanceType.RightKong;
-        //     if (RepeatIndex(currentPlayerIndex - 1, WallCount) == discardPlayerIndex)
-        //         return !isKong ? MeldInstanceType.Left : MeldInstanceType.LeftKong;
-        //     return !isKong ? MeldInstanceType.Opposite : MeldInstanceType.OppositeKong;
-        // }
-
         public static List<Tile> FullTiles = new List<Tile> {
             new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1),
             new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 2), new Tile(Suit.M, 2),

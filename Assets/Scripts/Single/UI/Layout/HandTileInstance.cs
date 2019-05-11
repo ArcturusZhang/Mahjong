@@ -12,45 +12,52 @@ namespace Single.UI.Layout
     [RequireComponent(typeof(Image))]
     public class HandTileInstance : MonoBehaviour
     {
-        private Tile tile;
+        [SerializeField] private Tile tile;
         private Image tileImage;
         private Button tileButton;
         [SerializeField] private bool IsLastDraw;
-        private bool available = true;
+        // private bool available = true;
+        private Sprite sprite;
 
         public Tile Tile => tile;
 
-        private void OnEnable() {
+        private void OnEnable()
+        {
             tileImage = GetComponent<Image>();
             tileButton = GetComponent<Button>();
         }
 
+        private void Start()
+        {
+            tileImage.sprite = sprite;
+        }
+
+        private void Update()
+        {
+            if (tileImage != null)
+            {
+                tileImage.sprite = sprite;
+            }
+        }
+
         public void SetTile(Tile tile)
         {
-            gameObject.SetActive(true);
-            var sprite = ResourceManager.Instance?.GetTileSprite(tile);
+            var sprite = ResourceManager.Instance.GetTileSprite(tile);
             if (sprite == null)
             {
                 Debug.LogWarning($"Sprite gets null when applied on tile {tile}");
             }
             this.tile = tile;
-            if (tileImage == null) tileImage = GetComponent<Image>();
-            if (tileButton == null) tileButton = GetComponent<Button>();
-            tileImage.sprite = sprite;
-            tileButton.interactable = available;
-            tileImage.color = available ? NormalColor : TintColor;
+            this.sprite = sprite;
         }
 
-        public void SetAvailable(bool available)
+        public void Lock()
         {
-            this.available = available;
-        }
-
-        public void Lock() {
             tileButton.interactable = false;
         }
 
-        public void Unlock() {
+        public void Unlock()
+        {
             tileButton.interactable = true;
         }
 
