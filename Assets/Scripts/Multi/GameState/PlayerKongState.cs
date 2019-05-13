@@ -82,8 +82,54 @@ namespace Multi.GameState
                 Type = OutTurnOperationType.Skip
             });
             if (playerIndex == CurrentPlayerIndex) return operations.ToArray();
-            // rob kong test -- todo
+            // rob kong test
+            TestRobKong(playerIndex, operations);
             return operations.ToArray();
+        }
+
+        private Tile GetTileFromKong()
+        {
+            if (Kong.Side == MeldSide.Self) return Kong.First;
+            return Kong.Tile;
+        }
+
+        private void TestRobKong(int playerIndex, IList<OutTurnOperation> operations)
+        {
+            var tile = GetTileFromKong();
+            var point = GetRongInfo(playerIndex, tile);
+            if (!gameSettings.CheckConstraint(point)) return;
+            if (Kong.Side == MeldSide.Self)
+            {
+                // handle self kong
+                if (yakuSettings.AllowGswsRobConcealedKong &&
+                    point.YakuList.Any(yaku => yaku.Name.StartsWith("国士无双")))
+                {
+                    operations.Add(new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.Rong,
+                        Tile = tile,
+                        HandData = CurrentRoundStatus.HandData(playerIndex)
+                    });
+                }
+            }
+            else
+            {
+                // handle added kong
+                operations.Add(new OutTurnOperation
+                {
+                    Type = OutTurnOperationType.Rong,
+                    Tile = tile,
+                    HandData = CurrentRoundStatus.HandData(playerIndex)
+                });
+            }
+        }
+
+        private PointInfo GetRongInfo(int playerIndex, Tile tile)
+        {
+            var baseHandStatus = HandStatus.RobKong;
+            var point = ServerMahjongLogic.GetPointInfo(
+                playerIndex, CurrentRoundStatus, tile, baseHandStatus, null, null, yakuSettings);
+            return point;
         }
 
         private void OnOutTurnMessageReceived(NetworkMessage message)
@@ -132,10 +178,8 @@ namespace Multi.GameState
             }
             if (outTurnOperations.Any(op => op.Type == OutTurnOperationType.Rong))
             {
-                Tile discardingTile;
-                if (Kong.Side == MeldSide.Self) discardingTile = Kong.First;
-                else discardingTile = Kong.DiscardTile;
-                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, discardingTile, false, outTurnOperations);
+                var discardingTile = GetTileFromKong();
+                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, discardingTile, false, outTurnOperations, true, false);
                 return;
             }
             Debug.LogError($"[Server] Logically cannot reach here, operations are {string.Join("|", outTurnOperations)}");

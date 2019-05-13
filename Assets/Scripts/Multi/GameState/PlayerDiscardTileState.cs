@@ -222,7 +222,8 @@ namespace Multi.GameState
 
         private void TurnEnd()
         {
-            ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, operations, TurnDoraAfterDiscard);
+            ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, operations,
+                false, TurnDoraAfterDiscard);
         }
 
         private void OnOperationMessageReceived(NetworkMessage message)

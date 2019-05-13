@@ -119,7 +119,7 @@ namespace Multi
         }
 
         public void TurnEnd(int playerIndex, Tile discardingTile, bool isRichiing, OutTurnOperation[] operations,
-            bool turnDoraAfterDiscard = false)
+            bool isRobKong, bool turnDoraAfterDiscard)
         {
             var turnEndState = new TurnEndState
             {
@@ -129,6 +129,7 @@ namespace Multi
                 IsRichiing = isRichiing,
                 Operations = operations,
                 MahjongSet = mahjongSet,
+                IsRobKong = isRobKong,
                 TurnDoraAfterDiscard = turnDoraAfterDiscard
             };
             StateMachine.ChangeState(turnEndState);

@@ -28,6 +28,7 @@ namespace Single.GameState
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(KongPlayerIndex);
             Assert.IsTrue(placeIndex == 0);
             CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
+            CurrentRoundStatus.ClearLastDraws();
             CurrentRoundStatus.MahjongSetData = MahjongSetData;
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             localPlayer.SkipOutTurnOperation(BonusTurnTime);
@@ -37,6 +38,7 @@ namespace Single.GameState
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(KongPlayerIndex);
             Debug.Log($"Hand tile count of player {KongPlayerIndex}: {HandData.HandTiles.Length}");
             CurrentRoundStatus.SetHandTiles(placeIndex, HandData.HandTiles.Length);
+            CurrentRoundStatus.ClearLastDraws();
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             CurrentRoundStatus.MahjongSetData = MahjongSetData;
             if (Operations.All(op => op.Type == OutTurnOperationType.Skip))

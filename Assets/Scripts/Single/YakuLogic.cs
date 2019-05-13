@@ -151,7 +151,7 @@ namespace Single
         public static YakuValue 抢杠(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
             RoundStatus roundStatus, YakuSettings settings)
         {
-            return handStatus.HasFlag(HandStatus.RobbKong) ? new YakuValue { Name = "抢杠", Value = 1 } : new YakuValue();
+            return handStatus.HasFlag(HandStatus.RobKong) ? new YakuValue { Name = "抢杠", Value = 1 } : new YakuValue();
         }
 
         public static YakuValue 七对子(List<Meld> decompose, Tile winningTile, HandStatus handStatus,

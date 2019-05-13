@@ -477,7 +477,7 @@ namespace Single
             return result.Select(meld => new OpenMeld
             {
                 Meld = meld,
-                DiscardTile = discardTile,
+                Tile = discardTile,
                 Side = side
             });
         }
@@ -537,7 +537,7 @@ namespace Single
             return result.Select(meld => new OpenMeld
             {
                 Meld = meld,
-                DiscardTile = discardTile,
+                Tile = discardTile,
                 Side = side
             });
         }
@@ -577,7 +577,7 @@ namespace Single
             return result.Select(meld => new OpenMeld
             {
                 Meld = meld,
-                DiscardTile = discardTile,
+                Tile = discardTile,
                 Side = side
             });
         }

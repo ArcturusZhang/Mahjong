@@ -6,7 +6,7 @@ namespace Single.MahjongDataType
     public struct OpenMeld
     {
         public Meld Meld;
-        public Tile DiscardTile;
+        public Tile Tile;
         public MeldSide Side;
 
         public MeldType Type => Meld.Type;
@@ -17,7 +17,7 @@ namespace Single.MahjongDataType
 
         public override string ToString()
         {
-            return $"{Meld}/{DiscardTile}/{Side}";
+            return $"{Meld}/{Tile}/{Side}";
         }
     }
 

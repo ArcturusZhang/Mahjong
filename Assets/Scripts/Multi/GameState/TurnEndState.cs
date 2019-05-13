@@ -23,6 +23,7 @@ namespace Multi.GameState
         public bool IsRichiing;
         public OutTurnOperation[] Operations;
         public MahjongSet MahjongSet;
+        public bool IsRobKong;
         public bool TurnDoraAfterDiscard;
         private OutTurnOperationType operationChosen;
         private float serverTurnEndTimeOut;
@@ -190,6 +191,9 @@ namespace Multi.GameState
             // test haidi
             if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
                 baseHandStatus |= HandStatus.Haidi;
+            // test rob kong
+            if (IsRobKong)
+                baseHandStatus |= HandStatus.RobKong;
             // test lingshang -- not gonna happen
             var allTiles = MahjongSet.AllTiles;
             var doraTiles = MahjongSet.DoraIndicators.Select(

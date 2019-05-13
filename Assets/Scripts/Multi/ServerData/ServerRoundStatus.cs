@@ -191,7 +191,7 @@ namespace Multi.ServerData
         {
             CheckRange(index);
             var tiles = handTiles[index];
-            int p = System.Array.FindIndex(meld.Tiles, tile => tile.EqualsConsiderColor(meld.DiscardTile));
+            int p = System.Array.FindIndex(meld.Tiles, tile => tile.EqualsConsiderColor(meld.Tile));
             for (int i = 0; i < meld.Tiles.Length; i++)
             {
                 if (i == p) continue;

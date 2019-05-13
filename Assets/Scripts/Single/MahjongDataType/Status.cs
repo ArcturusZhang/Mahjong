@@ -14,7 +14,7 @@ namespace Single.MahjongDataType
         FirstTurn = 1 << 5,
         Lingshang = 1 << 6,
         Haidi = 1 << 7,
-        RobbKong = 1 << 8,
+        RobKong = 1 << 8,
         OneShot = 1 << 9
     }
 

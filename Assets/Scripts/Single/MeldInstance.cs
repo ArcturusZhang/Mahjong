@@ -39,14 +39,14 @@ namespace Single
 
         private void OtherMeld()
         {
-            var index = Array.FindIndex(OpenMeld.Tiles, tile => tile.EqualsConsiderColor(OpenMeld.DiscardTile));
+            var index = Array.FindIndex(OpenMeld.Tiles, tile => tile.EqualsConsiderColor(OpenMeld.Tile));
             int tileCount = 1;
             for (int i = 0; i < OpenMeld.Tiles.Length; i++)
             {
                 if (i == index) continue;
                 instances[tileCount++].SetTile(OpenMeld.Tiles[i]);
             }
-            instances[0].SetTile(OpenMeld.DiscardTile);
+            instances[0].SetTile(OpenMeld.Tile);
         }
 
         // public void AddToKong(Tile addedTile)

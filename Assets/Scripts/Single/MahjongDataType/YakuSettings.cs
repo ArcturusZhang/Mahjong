@@ -9,6 +9,7 @@ namespace Single.MahjongDataType
         public bool OpenDuanYao = true;
         public bool HasOneShot = true;
         public bool 连风对子额外加符 = true;
+        public bool AllowGswsRobConcealedKong = true;
         public YakumanLevel SiAnKe = YakumanLevel.Two;
         public YakumanLevel GuoShi = YakumanLevel.Two;
         public YakumanLevel JiuLian = YakumanLevel.Two;
