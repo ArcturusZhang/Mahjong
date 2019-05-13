@@ -314,7 +314,6 @@ namespace Multi.ServerData
             return index == OyaPlayerIndex;
         }
 
-        // todo -- dealing with extra and new
         public void NextRound(int dice, bool next = true, bool extra = false, bool keepSticks = false)
         {
             this.dice = dice;
@@ -350,6 +349,18 @@ namespace Multi.ServerData
         {
             if (index < 0 || index >= players.Count)
                 throw new IndexOutOfRangeException($"Player index out of range, should be within {0} to {players.Count - 1}");
+        }
+
+        public override string ToString()
+        {
+            var handDataString = handTiles.SelectMany(openMeld => openMelds, (handList, meldList) =>
+            {
+                var handString = string.Join("", handList);
+                var meldString = string.Join(", ", meldList);
+                return $"Hand: {handString}, Open: {meldString}";
+            });
+            return $"HandData: \n{string.Join("\n", handDataString)}\n"
+                + $"RiverTiles: \n{string.Join("\n", Rivers)}";
         }
     }
 }

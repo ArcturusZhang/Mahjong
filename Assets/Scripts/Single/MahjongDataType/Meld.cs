@@ -51,7 +51,6 @@ namespace Single.MahjongDataType
                             throw new ArgumentException("Invalid meld composition");
                     }
                     else throw new ArgumentException("Will not happen");
-
                     break;
                 case 4:
                     for (int i = 1; i < 4; i++)

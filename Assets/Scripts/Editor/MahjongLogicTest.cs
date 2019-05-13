@@ -3,7 +3,7 @@ using System.Linq;
 using Single;
 using Single.MahjongDataType;
 using UnityEditor;
-using Debug = UnityEngine.Debug;
+using UnityEngine;
 
 public class MahjongLogicTest
 {
@@ -45,6 +45,54 @@ public class MahjongLogicTest
             new Tile(Suit.S, 8)
         };
         Debug.Log($"Hand tiles: {string.Join("", handTiles)}\nWaiting tiles: {string.Join("", MahjongLogic.WinningTiles(handTiles, new List<Meld>()))}");
+    }
+
+    [MenuItem("MahjongLogic/Test 4winds")]
+    public static void Test4Winds()
+    {
+        var handTiles = new List<Tile> {
+            new Tile(Suit.S, 4), new Tile(Suit.S, 5), new Tile(Suit.S, 6),
+            new Tile(Suit.Z, 2), new Tile(Suit.Z, 2),
+            new Tile(Suit.Z, 3), new Tile(Suit.Z, 3)
+        };
+        var openMelds = new List<Meld> {
+            new Meld(false, new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4)),
+            new Meld(true, new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1))
+        };
+        var yakuSettings = AssetDatabase.LoadAssetAtPath<YakuSettings>("Assets/GameData/YakuSettings.asset");
+        var handStatus = HandStatus.Tsumo;
+        var roundStatus = new RoundStatus {
+            PlayerIndex = 0,
+            OyaPlayerIndex = 1,
+            FieldCount = 0,
+            TotalPlayer = 2
+        };
+        var pointInfo = MahjongLogic.GetPointInfo(handTiles.ToArray(), openMelds.ToArray(), new Tile(Suit.Z, 2), handStatus, roundStatus, yakuSettings, false);
+        Debug.Log($"Point: {pointInfo}");
+    }
+
+    [MenuItem("MahjongLogic/Test 3dragons")]
+    public static void Test3Dragons()
+    {
+        var handTiles = new List<Tile> {
+            new Tile(Suit.S, 4), new Tile(Suit.S, 5), new Tile(Suit.S, 6),
+            new Tile(Suit.Z, 2), new Tile(Suit.Z, 2),
+            new Tile(Suit.Z, 5), new Tile(Suit.Z, 5)
+        };
+        var openMelds = new List<Meld> {
+            new Meld(false, new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6)),
+            new Meld(true, new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7))
+        };
+        var yakuSettings = AssetDatabase.LoadAssetAtPath<YakuSettings>("Assets/GameData/YakuSettings.asset");
+        var handStatus = HandStatus.Tsumo;
+        var roundStatus = new RoundStatus {
+            PlayerIndex = 0,
+            OyaPlayerIndex = 1,
+            FieldCount = 0,
+            TotalPlayer = 2
+        };
+        var pointInfo = MahjongLogic.GetPointInfo(handTiles.ToArray(), openMelds.ToArray(), new Tile(Suit.Z, 2), handStatus, roundStatus, yakuSettings, false);
+        Debug.Log($"Point: {pointInfo}");
     }
 
     [MenuItem("MahjongLogic/Test dora")]

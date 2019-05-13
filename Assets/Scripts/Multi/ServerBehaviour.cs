@@ -21,7 +21,7 @@ namespace Multi
         public YakuSettings YakuSettings;
         public IStateMachine StateMachine { get; private set; }
         private MahjongSet mahjongSet;
-        private ServerRoundStatus CurrentRoundStatus = null;
+        public ServerRoundStatus CurrentRoundStatus = null;
         public static ServerBehaviour Instance { get; private set; }
 
         private void OnEnable()

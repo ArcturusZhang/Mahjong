@@ -213,6 +213,24 @@ namespace Console
             return result;
         }
 
+        [ConsoleMethod("print_round", "Print round status to log")]
+        public static void PrintRoundStatus()
+        {
+            var server = ServerBehaviour.Instance;
+            if (server == null)
+            {
+                Debug.LogError("Game is not started, or you are not host.");
+                return;
+            }
+            var currentRoundStatus = server.CurrentRoundStatus;
+            if (currentRoundStatus == null)
+            {
+                Debug.LogError("Game is not started.");
+                return;
+            }
+            Debug.Log($"Current round status: \n{currentRoundStatus}");
+        }
+
         private static void CloseLobbyCanvas()
         {
             var lobby = LobbyManager.Instance;
