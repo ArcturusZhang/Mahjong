@@ -127,7 +127,7 @@ namespace Single.MahjongDataType
         {
             if (obj == null) return false;
             if (!(obj is Meld)) return false;
-            var other = (Meld) obj;
+            var other = (Meld)obj;
             if (Type != other.Type || Revealed != other.Revealed) return false;
             if (Tiles.Length != other.Tiles.Length) return false;
             for (int i = 0; i < Tiles.Length; i++)
@@ -141,6 +141,14 @@ namespace Single.MahjongDataType
         public bool IdenticalTo(MeldType type, Tile first)
         {
             return Type == type && First.EqualsIgnoreColor(first);
+        }
+
+        public Meld AddToKong(Tile extra)
+        {
+            if (Type != MeldType.Triplet || IsKong || !First.EqualsIgnoreColor(extra))
+                throw new InvalidOperationException();
+            var tiles = new List<Tile>(Tiles) { extra };
+            return new Meld(Revealed, tiles.ToArray());
         }
 
         public override int GetHashCode()

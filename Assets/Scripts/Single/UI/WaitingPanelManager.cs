@@ -21,7 +21,6 @@ namespace Single.UI
             {
                 var t = WaitingTilesParent.GetChild(i);
                 instances[i] = t.GetComponent<HandTileInstance>();
-                Debug.Log(instances[i] == null);
             }
         }
 

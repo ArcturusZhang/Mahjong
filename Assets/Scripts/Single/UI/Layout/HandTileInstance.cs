@@ -52,12 +52,18 @@ namespace Single.UI.Layout
 
         public void Lock()
         {
-            tileButton.interactable = false;
+            if (tileButton == null)
+                tileButton = GetComponent<Button>();
+            if (tileButton != null)
+                tileButton.interactable = false;
         }
 
         public void Unlock()
         {
-            tileButton.interactable = true;
+            if (tileButton == null)
+                tileButton = GetComponent<Button>();
+            if (tileButton != null)
+                tileButton.interactable = true;
         }
 
         public void OnClick()

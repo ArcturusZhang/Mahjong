@@ -59,16 +59,20 @@ namespace Multi.GameState
 
         private void UpdateRoundStatus()
         {
-            if (Kong.Revealed) // add kong
+            var lastDraw = (Tile)CurrentRoundStatus.LastDraw;
+            CurrentRoundStatus.LastDraw = null;
+            CurrentRoundStatus.AddTile(CurrentPlayerIndex, lastDraw);
+            if (Kong.IsAdded) // add kong
             {
                 CurrentRoundStatus.AddKong(CurrentPlayerIndex, Kong);
-                CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, Kong);
+                CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, Kong.Extra);
             }
             else // self kong
             {
                 CurrentRoundStatus.AddMeld(CurrentPlayerIndex, Kong);
                 CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, Kong);
             }
+            CurrentRoundStatus.SortHandTiles();
             // turn dora if this is a self kong
             if (Kong.Side == MeldSide.Self)
                 MahjongSet.TurnDora();

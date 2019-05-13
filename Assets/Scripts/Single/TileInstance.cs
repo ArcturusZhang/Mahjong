@@ -18,6 +18,11 @@ namespace Single
 
         public void SetTile(Tile tile)
         {
+            if (tile.Rank == 0) {
+                gameObject.SetActive(false);
+                return;
+            }
+            gameObject.SetActive(true);
             Tile = tile;
             var material = meshRenderer.material;
             material.mainTexture = ResourceManager.Instance?.GetTileTexture(tile);

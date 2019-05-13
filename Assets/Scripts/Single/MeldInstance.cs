@@ -25,6 +25,8 @@ namespace Single
             OpenMeld = meld;
             if (meld.Side == MeldSide.Self)
                 SelfKong();
+            else if (meld.IsAdded)
+                AddedKong();
             else
                 OtherMeld();
         }
@@ -47,18 +49,22 @@ namespace Single
                 instances[tileCount++].SetTile(OpenMeld.Tiles[i]);
             }
             instances[0].SetTile(OpenMeld.Tile);
+            instances[3].gameObject.SetActive(false);
         }
 
-        // public void AddToKong(Tile addedTile)
-        // {
-        //     if (OpenMeld.Type != MeldType.Triplet || OpenMeld.IsKong) return;
-        //     if (!OpenMeld.First.EqualsIgnoreColor(addedTile)) return;
-        //     var tiles = new List<Tile>(OpenMeld.Tiles) { addedTile };
-        //     Meld = new Meld(true, tiles.ToArray());
-        //     // visually add a tile
-        //     var tileObject = Instantiate(TileInstances[0], transform);
-        //     tileObject.transform.localPosition += new Vector3(-MahjongConstants.TileWidth, 0, 0);
-        // }
+        public void AddedKong()
+        {
+            var index1 = Array.FindIndex(OpenMeld.Tiles, tile => tile.EqualsConsiderColor(OpenMeld.Tile));
+            var index2 = Array.FindIndex(OpenMeld.Tiles, tile => tile.EqualsConsiderColor(OpenMeld.Extra));
+            int tileCount = 1;
+            for (int i = 0; i < OpenMeld.Tiles.Length; i++)
+            {
+                if (i == index1 || i == index2) continue;
+                instances[tileCount++].SetTile(OpenMeld.Tiles[i]);
+            }
+            instances[0].SetTile(OpenMeld.Tile);
+            instances[3].SetTile(OpenMeld.Extra);
+        }
 
         public float MeldWidth
         {
@@ -66,7 +72,7 @@ namespace Single
             {
                 if (OpenMeld.Side == MeldSide.Self)
                     return 4 * MahjongConstants.TileWidth;
-                if (OpenMeld.IsKong)
+                if (OpenMeld.IsKong && OpenMeld.IsAdded)
                     return 3 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
                 return 2 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
             }

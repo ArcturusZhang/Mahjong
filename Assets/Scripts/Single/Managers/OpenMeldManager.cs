@@ -10,7 +10,6 @@ namespace Single.Managers
     {
         private const float Gap = 0.005f;
         public GameObject[] ChowPongPrefabs;
-        public GameObject[] AddedKongPrefabs;
         public GameObject[] OpenKongPrefabs;
         public GameObject SelfKongPrefabs;
         private float offset = 0;
@@ -40,41 +39,13 @@ namespace Single.Managers
             transform.DestroyAllChild();
         }
 
-        // private void FixedUpdate()
-        // {
-        //     if (Input.GetKey(KeyCode.A))
-        //     {
-        //         var list = new List<OpenMeld> {
-        //             new OpenMeld {
-        //                 Meld = new Meld(true, new Tile(Suit.M, 1), new Tile(Suit.M, 2), new Tile(Suit.M, 3)),
-        //                 DiscardTile = new Tile(Suit.M, 2),
-        //                 Side = MeldSide.Left
-        //             },
-        //             new OpenMeld {
-        //                 Meld = new Meld(false, new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5), new Tile(Suit.Z, 5)),
-        //                 Side = MeldSide.Self
-        //             },
-        //             new OpenMeld {
-        //                 Meld = new Meld(false, new Tile(Suit.M, 5, true), new Tile(Suit.M, 5, true), new Tile(Suit.M, 5), new Tile(Suit.M, 5)),
-        //                 Side = MeldSide.Self
-        //             },
-        //             new OpenMeld {
-        //                 Meld = new Meld(false, new Tile(Suit.M, 5), new Tile(Suit.M, 5, true), new Tile(Suit.M, 5), new Tile(Suit.M, 5)),
-        //                 Side = MeldSide.Self
-        //             }
-        //         };
-        //         SetMelds(list);
-        //     }
-        // }
-
         private GameObject SelectPrefab(OpenMeld meld)
         {
             if (meld.Side == MeldSide.Self)
                 return SelfKongPrefabs;
-            if (meld.IsKong)
+            if (meld.IsKong && !meld.IsAdded)
                 return OpenKongPrefabs[(int)meld.Side];
             return ChowPongPrefabs[(int)meld.Side];
-            // todo -- added kong prefab
         }
     }
 }

@@ -503,24 +503,19 @@ namespace Single
             });
         }
 
-        public static IEnumerable<OpenMeld> GetAddKongs(IList<OpenMeld> openMelds, Tile lastDraw)
+        public static IEnumerable<OpenMeld> GetAddKongs(IList<Tile> handTiles, IList<OpenMeld> openMelds, Tile lastDraw)
         {
-            // var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
-            // var testTiles = new List<Tile>(handTiles) { lastDraw };
-            // var pongs = openMelds.Where(meld => meld.Type == MeldType.Triplet && !meld.IsKong).ToList();
-            // foreach (var tile in testTiles)
-            // {
-            //     foreach (var pong in pongs)
-            //     {
-            //         if (pong.First.EqualsIgnoreColor(tile))
-            //         {
-            //             var list = new List<Tile>(pong.Tiles) { tile };
-            //             result.Add(new Meld(true, list.ToArray()));
-            //         }
-            //     }
-            // }
-            // return result;
-            return new List<OpenMeld>(); // todo
+            var result = new List<OpenMeld>();
+            var testTiles = new List<Tile>(handTiles) { lastDraw };
+            var pongs = openMelds.Where(meld => meld.Type == MeldType.Triplet && !meld.IsKong);
+            foreach (var pong in pongs)
+            {
+                var extraIndex = testTiles.FindIndex(t => t.EqualsIgnoreColor(pong.First));
+                if (extraIndex < 0) continue;
+                var extraTile = testTiles[extraIndex];
+                result.Add(pong.AddToKong(extraTile));
+            }
+            return result;
         }
 
         public static IEnumerable<OpenMeld> GetPongs(IList<Tile> handTiles, Tile discardTile, MeldSide side)

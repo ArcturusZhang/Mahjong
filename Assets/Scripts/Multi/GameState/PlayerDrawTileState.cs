@@ -138,7 +138,8 @@ namespace Multi.GameState
                     }
                 }
                 // 2. test add kongs, aka whether a single tile in hand and lastdraw is identical to a pong in open melds
-                var addKongs = MahjongLogic.GetAddKongs(CurrentRoundStatus.OpenMelds(playerIndex), justDraw);
+                var addKongs = MahjongLogic.GetAddKongs(
+                    CurrentRoundStatus.HandTiles(playerIndex), CurrentRoundStatus.OpenMelds(playerIndex), justDraw);
                 if (addKongs.Any())
                 {
                     foreach (var kong in addKongs)
