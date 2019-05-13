@@ -16,35 +16,25 @@ namespace Multi.GameState
     /// Transfers to PlayerDiscardTileState (when a opening is claimed), PlayerDrawTileState (when kong is claimed or nothing claimed),
     /// RoundEndState (when a rong is claimed or when there are no more tiles to draw)
     /// </summary>
-    public class TurnEndState : IState
+    public class TurnEndState : ServerState
     {
         public int CurrentPlayerIndex;
-        public ServerRoundStatus CurrentRoundStatus;
         public Tile DiscardingTile;
         public bool IsRichiing;
         public OutTurnOperation[] Operations;
         public MahjongSet MahjongSet;
         public bool TurnDoraAfterDiscard;
-        private GameSettings gameSettings;
-        private YakuSettings yakuSettings;
-        private IList<Player> players;
-        private MessageBase[] messages;
         private OutTurnOperationType operationChosen;
         private float serverTurnEndTimeOut;
         private float firstTime;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            gameSettings = CurrentRoundStatus.GameSettings;
-            yakuSettings = CurrentRoundStatus.YakuSettings;
-            players = CurrentRoundStatus.Players;
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
             {
                 Debug.LogError("CurrentPlayerIndex does not match, this should not happen");
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
-            messages = new ServerTurnEndMessage[players.Count];
             firstTime = Time.time;
             // determines the operation to take when turn ends
             operationChosen = ChooseOperations();
@@ -55,7 +45,7 @@ namespace Multi.GameState
             // Send messages to clients
             for (int i = 0; i < players.Count; i++)
             {
-                messages[i] = new ServerTurnEndMessage
+                var message = new ServerTurnEndMessage
                 {
                     PlayerIndex = i,
                     ChosenOperationType = operationChosen,
@@ -65,7 +55,7 @@ namespace Multi.GameState
                     RichiSticks = CurrentRoundStatus.RichiSticks,
                     MahjongSetData = MahjongSet.Data
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, message);
             }
             serverTurnEndTimeOut = operationChosen == OutTurnOperationType.Rong || operationChosen == OutTurnOperationType.RoundDraw ?
                 ServerConstants.ServerTurnEndTimeOutExtra : ServerConstants.ServerTurnEndTimeOut;
@@ -133,7 +123,7 @@ namespace Multi.GameState
             return OutTurnOperationType.Skip;
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (Time.time - firstTime > serverTurnEndTimeOut)
             {
@@ -213,9 +203,8 @@ namespace Multi.GameState
             return point;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
             if (operationChosen != OutTurnOperationType.Rong && TurnDoraAfterDiscard)
                 MahjongSet.TurnDora();
         }

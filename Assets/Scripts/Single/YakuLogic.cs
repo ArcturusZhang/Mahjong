@@ -408,6 +408,7 @@ namespace Single
                 : new YakuValue {Name = "九连宝灯", Value = 1, Type = YakuType.Yakuman};
         }
 
+        // todo -- check
         public static YakuValue 四喜系(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
             RoundStatus roundStatus, YakuSettings settings)
         {

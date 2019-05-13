@@ -7,14 +7,10 @@ using UnityEngine;
 
 namespace Multi.GameState
 {
-    public class GameEndState : IState
+    public class GameEndState : ServerState
     {
-        public ServerRoundStatus CurrentRoundStatus;
-        private IList<Player> players;
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            players = CurrentRoundStatus.Players;
             var pointsAndIndices = CurrentRoundStatus.Points.Select((p, i) => new KeyValuePair<int, int>(p, i))
                 .OrderBy(key => key, new PointsComparer());
             var names = CurrentRoundStatus.PlayerNames.ToArray();
@@ -32,12 +28,11 @@ namespace Multi.GameState
             }
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
         }
 

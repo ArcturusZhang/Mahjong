@@ -8,24 +8,18 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class OperationPerformState : IState
+    public class OperationPerformState : ServerState
     {
-        public ServerRoundStatus CurrentRoundStatus;
         public int CurrentPlayerIndex;
         public int DiscardPlayerIndex;
         public OutTurnOperation Operation;
         public MahjongSet MahjongSet;
-        private GameSettings gameSettings;
-        private IList<Player> players;
         private bool turnDoraAfterDiscard;
         private float firstSendTime;
         private float serverTimeOut;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            gameSettings = CurrentRoundStatus.GameSettings;
-            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardMessageReceived);
             // update hand data
             UpdateRoundStatus();
@@ -95,13 +89,12 @@ namespace Multi.GameState
                 content.DiscardingLastDraw, content.BonusTurnTime, turnDoraAfterDiscard);
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             // time out: auto discard
             if (Time.time - firstSendTime > serverTimeOut)

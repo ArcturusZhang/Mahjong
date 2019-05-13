@@ -13,16 +13,15 @@ namespace Multi.GameState
     /// Otherwise the server will resend the messages to not-responding clients until get enough responds or time out.
     /// When time out, the server transfers to GameAbortState.
     /// </summary>
-    public class WaitForLoadingState : IState
+    public class WaitForLoadingState : ServerState
     {
         public int TotalPlayers;
         public float TimeOut;
         private ISet<uint> responds;
         private float lastTime;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log("Server enters WaitForLoadingState");
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             responds = new HashSet<uint>();
             lastTime = Time.time;
@@ -36,7 +35,7 @@ namespace Multi.GameState
             if (!responds.Contains(netId)) responds.Add(netId);
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (responds.Count == TotalPlayers)
             {
@@ -50,9 +49,8 @@ namespace Multi.GameState
             }
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log("Server exits WaitForLoadingState");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
     }

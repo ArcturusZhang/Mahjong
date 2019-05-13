@@ -73,7 +73,7 @@ namespace Multi
         public void GameAbort()
         {
             // todo -- implement abort logic here: at least one of the players cannot load into game, back to lobby scene
-            StateMachine.ChangeState(new IdleState());
+            Debug.LogError("The game aborted, this part is still under construction");
         }
 
         public void RoundStart(bool next, bool extra, bool keepSticks)
@@ -93,9 +93,9 @@ namespace Multi
         {
             var drawState = new PlayerDrawTileState
             {
+                CurrentRoundStatus = CurrentRoundStatus,
                 CurrentPlayerIndex = playerIndex,
                 MahjongSet = mahjongSet,
-                CurrentRoundStatus = CurrentRoundStatus,
                 IsLingShang = isLingShang,
                 TurnDoraAfterDiscard = turnDoraAfterDiscard
             };
@@ -104,29 +104,14 @@ namespace Multi
 
         public void DiscardTile(int playerIndex, Tile tile, bool isRichiing, bool discardLastDraw, int bonusTurnTime, bool turnDoraAfterDiscard)
         {
-            if (CurrentRoundStatus.CurrentPlayerIndex != playerIndex)
-            {
-                Debug.LogError("PlayerIndex does not match, this should not happen!");
-            }
-            var currentPlayer = LobbyManager.Instance.Players[playerIndex];
-            currentPlayer.BonusTurnTime = bonusTurnTime;
-            var lastDraw = CurrentRoundStatus.LastDraw;
-            CurrentRoundStatus.LastDraw = null;
-            if (!discardLastDraw)
-            {
-                CurrentRoundStatus.RemoveTile(playerIndex, tile);
-                if (lastDraw != null)
-                    CurrentRoundStatus.AddTile(playerIndex, (Tile)lastDraw);
-            }
-            CurrentRoundStatus.AddToRiver(playerIndex, tile, isRichiing);
-            CurrentRoundStatus.SortHandTiles();
             var discardState = new PlayerDiscardTileState
             {
+                CurrentRoundStatus = CurrentRoundStatus,
                 CurrentPlayerIndex = playerIndex,
                 DiscardTile = tile,
                 IsRichiing = isRichiing,
                 DiscardLastDraw = discardLastDraw,
-                CurrentRoundStatus = CurrentRoundStatus,
+                BonusTurnTime = bonusTurnTime,
                 MahjongSet = mahjongSet,
                 TurnDoraAfterDiscard = turnDoraAfterDiscard
             };
@@ -138,8 +123,8 @@ namespace Multi
         {
             var turnEndState = new TurnEndState
             {
-                CurrentPlayerIndex = playerIndex,
                 CurrentRoundStatus = CurrentRoundStatus,
+                CurrentPlayerIndex = playerIndex,
                 DiscardingTile = discardingTile,
                 IsRichiing = isRichiing,
                 Operations = operations,
@@ -166,8 +151,8 @@ namespace Multi
         {
             var tsumoState = new PlayerTsumoState
             {
-                TsumoPlayerIndex = currentPlayerIndex,
                 CurrentRoundStatus = CurrentRoundStatus,
+                TsumoPlayerIndex = currentPlayerIndex,
                 WinningTile = winningTile,
                 MahjongSet = mahjongSet,
                 TsumoPointInfo = pointInfo
@@ -179,8 +164,8 @@ namespace Multi
         {
             var rongState = new PlayerRongState
             {
-                CurrentPlayerIndex = currentPlayerIndex,
                 CurrentRoundStatus = CurrentRoundStatus,
+                CurrentPlayerIndex = currentPlayerIndex,
                 RongPlayerIndices = rongPlayerIndices,
                 WinningTile = winningTile,
                 MahjongSet = mahjongSet,
@@ -193,9 +178,9 @@ namespace Multi
         {
             var kongState = new PlayerKongState
             {
+                CurrentRoundStatus = CurrentRoundStatus,
                 CurrentPlayerIndex = playerIndex,
                 MahjongSet = mahjongSet,
-                CurrentRoundStatus = CurrentRoundStatus,
                 Kong = kong
             };
             StateMachine.ChangeState(kongState);
@@ -231,11 +216,6 @@ namespace Multi
                 CurrentRoundStatus = CurrentRoundStatus
             };
             StateMachine.ChangeState(gameEndState);
-        }
-
-        public void Idle()
-        {
-            StateMachine.ChangeState(new IdleState());
         }
     }
 }

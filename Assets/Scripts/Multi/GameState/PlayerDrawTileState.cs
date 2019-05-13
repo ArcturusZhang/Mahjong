@@ -11,27 +11,18 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class PlayerDrawTileState : IState
+    public class PlayerDrawTileState : ServerState
     {
         public int CurrentPlayerIndex;
         public MahjongSet MahjongSet;
-        public ServerRoundStatus CurrentRoundStatus;
         public bool IsLingShang;
         public bool TurnDoraAfterDiscard;
-        private GameSettings gameSettings;
-        private YakuSettings yakuSettings;
-        private IList<Player> players;
         private Tile justDraw;
-        private MessageBase[] messages;
         private float firstSendTime;
         private float serverTimeOut;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            gameSettings = CurrentRoundStatus.GameSettings;
-            yakuSettings = CurrentRoundStatus.YakuSettings;
-            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
             NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
             if (IsLingShang)
@@ -43,20 +34,19 @@ namespace Multi.GameState
             CurrentRoundStatus.CheckFirstTurn(CurrentPlayerIndex);
             Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}, "
                 + $"first turn: {CurrentRoundStatus.FirstTurn}.");
-            messages = new MessageBase[players.Count];
             for (int i = 0; i < players.Count; i++)
             {
                 if (i == CurrentPlayerIndex) continue;
-                messages[i] = new ServerDrawTileMessage
+                var message = new ServerDrawTileMessage
                 {
                     PlayerIndex = i,
                     DrawPlayerIndex = CurrentPlayerIndex,
                     Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
                     MahjongSetData = MahjongSet.Data
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerDrawTileMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerDrawTileMessage, message);
             }
-            messages[CurrentPlayerIndex] = new ServerDrawTileMessage
+            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerDrawTileMessage, new ServerDrawTileMessage
             {
                 PlayerIndex = CurrentPlayerIndex,
                 DrawPlayerIndex = CurrentPlayerIndex,
@@ -65,13 +55,11 @@ namespace Multi.GameState
                 Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
                 Operations = GetOperations(CurrentPlayerIndex),
                 MahjongSetData = MahjongSet.Data
-            };
-            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerDrawTileMessage, messages[CurrentPlayerIndex]);
+            });
             firstSendTime = Time.time;
             serverTimeOut = gameSettings.BaseTurnTime + players[CurrentPlayerIndex].BonusTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
-        // todo -- complete this
         private InTurnOperation[] GetOperations(int playerIndex)
         {
             var operations = new List<InTurnOperation> { new InTurnOperation { Type = InTurnOperationType.Discard } };
@@ -130,7 +118,6 @@ namespace Multi.GameState
         {
             if (CurrentRoundStatus.KongClaimed == MahjongConstants.MaxKongs) return; // no more kong can be claimed after 4 kongs claimed
             var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
-            // var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
             if (alreadyRichied)
             {
                 // test kongs in richied player hand -- todo
@@ -230,7 +217,8 @@ namespace Multi.GameState
             ServerBehaviour.Instance.Kong(playerIndex, kong);
         }
 
-        private void HandleRoundDraw(InTurnOperation operation) {
+        private void HandleRoundDraw(InTurnOperation operation)
+        {
             int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
             Debug.Log($"Player {playerIndex} has claimed 9-orphans");
             ServerBehaviour.Instance.RoundDraw(RoundDrawType.NineOrphans);
@@ -255,7 +243,7 @@ namespace Multi.GameState
             return point;
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             // Time out: auto discard
             if (Time.time - firstSendTime > serverTimeOut)
@@ -265,9 +253,8 @@ namespace Multi.GameState
             }
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientInTurnOperationMessage);
             NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
             CurrentRoundStatus.CheckOneShot(CurrentPlayerIndex);

@@ -11,37 +11,32 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class PlayerDiscardTileState : IState
+    public class PlayerDiscardTileState : ServerState
     {
         public int CurrentPlayerIndex;
         public Tile DiscardTile;
         public bool IsRichiing;
         public bool DiscardLastDraw;
-        public ServerRoundStatus CurrentRoundStatus;
+        public int BonusTurnTime;
         public MahjongSet MahjongSet;
         public bool TurnDoraAfterDiscard;
-        private GameSettings gameSettings;
-        private YakuSettings yakuSettings;
-        private IList<Player> players;
         private float firstSendTime;
         private float serverTimeOut;
-        private bool[] operationResponds;
-        private OutTurnOperation[] outTurnOperations;
+        private bool[] responds;
+        private OutTurnOperation[] operations;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
-            gameSettings = CurrentRoundStatus.GameSettings;
-            yakuSettings = CurrentRoundStatus.YakuSettings;
-            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOperationMessageReceived);
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
             {
                 Debug.LogError("[Server] currentPlayerIndex does not match, this should not happen");
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
-            operationResponds = new bool[players.Count];
-            outTurnOperations = new OutTurnOperation[players.Count];
+            UpdateHandData();
+            responds = new bool[players.Count];
+            operations = new OutTurnOperation[players.Count];
             var rivers = CurrentRoundStatus.Rivers;
             // Get messages and send them to players
             for (int i = 0; i < players.Count; i++)
@@ -62,6 +57,21 @@ namespace Multi.GameState
             }
             firstSendTime = Time.time;
             serverTimeOut = players.Max(p => p.BonusTurnTime) + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
+        }
+
+        private void UpdateHandData()
+        {
+            players[CurrentPlayerIndex].BonusTurnTime = BonusTurnTime;
+            var lastDraw = CurrentRoundStatus.LastDraw;
+            CurrentRoundStatus.LastDraw = null;
+            if (!DiscardLastDraw)
+            {
+                CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, DiscardTile);
+                if (lastDraw != null)
+                    CurrentRoundStatus.AddTile(CurrentPlayerIndex, (Tile)lastDraw);
+            }
+            CurrentRoundStatus.AddToRiver(CurrentPlayerIndex, DiscardTile, IsRichiing);
+            CurrentRoundStatus.SortHandTiles();
         }
 
         // todo -- complete this
@@ -188,22 +198,22 @@ namespace Multi.GameState
             return point;
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             // Send messages again until get enough responds or time out
             if (Time.time - firstSendTime > serverTimeOut)
             {
                 // Time out, entering next state
-                for (int i = 0; i < operationResponds.Length; i++)
+                for (int i = 0; i < responds.Length; i++)
                 {
-                    if (operationResponds[i]) continue;
+                    if (responds[i]) continue;
                     players[i].BonusTurnTime = 0;
-                    outTurnOperations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
+                    operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                 }
                 TurnEnd();
                 return;
             }
-            if (operationResponds.All(r => r))
+            if (responds.All(r => r))
             {
                 Debug.Log("[Server] Server received all operation response, ending this turn.");
                 TurnEnd();
@@ -212,21 +222,20 @@ namespace Multi.GameState
 
         private void TurnEnd()
         {
-            ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, outTurnOperations, TurnDoraAfterDiscard);
+            ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, DiscardTile, IsRichiing, operations, TurnDoraAfterDiscard);
         }
 
         private void OnOperationMessageReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ClientOutTurnOperationMessage>();
             Debug.Log($"[Server] Received ClientOutTurnOperationMessage: {content}");
-            operationResponds[content.PlayerIndex] = true;
-            outTurnOperations[content.PlayerIndex] = content.Operation;
+            responds[content.PlayerIndex] = true;
+            operations[content.PlayerIndex] = content.Operation;
             players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientOutTurnOperationMessage);
         }
     }

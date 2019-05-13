@@ -94,16 +94,7 @@ namespace Multi.ServerData
         public string[] PlayerNames => players.Select(player => player.PlayerName).ToArray();
         public int KongClaimed => kongClaimed;
 
-        private IList<Player> readOnlyPlayers = null;
-
-        public IList<Player> Players
-        {
-            get
-            {
-                if (readOnlyPlayers == null) readOnlyPlayers = players.AsReadOnly();
-                return readOnlyPlayers;
-            }
-        }
+        public IList<Player> Players => players;
 
         public void ClaimKong()
         {
@@ -113,7 +104,6 @@ namespace Multi.ServerData
         public void ShufflePlayers()
         {
             players.Shuffle();
-            readOnlyPlayers = null;
         }
 
         public Tile[] HandTiles(int index)

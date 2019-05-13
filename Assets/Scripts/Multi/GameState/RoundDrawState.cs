@@ -11,23 +11,17 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class RoundDrawState : IState
+    public class RoundDrawState : ServerState
     {
-        public ServerRoundStatus CurrentRoundStatus;
         public RoundDrawType RoundDrawType;
         private MessageBase[] messages;
-        private GameSettings gameSettings;
-        private IList<Player> players;
         private List<PointTransfer> transfers;
         private float firstTime;
         private bool next;
         private bool extra;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            gameSettings = CurrentRoundStatus.GameSettings;
-            players = CurrentRoundStatus.Players;
             messages = new ServerRoundDrawMessage[players.Count];
             transfers = new List<PointTransfer>();
             switch (RoundDrawType)
@@ -209,12 +203,11 @@ namespace Multi.GameState
             }
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (Time.time - firstTime > ServerConstants.ServerRoundDrawTimeOut)
             {

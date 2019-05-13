@@ -10,27 +10,21 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class PlayerRongState : IState
+    public class PlayerRongState : ServerState
     {
         public int CurrentPlayerIndex;
-        public ServerRoundStatus CurrentRoundStatus;
         public int[] RongPlayerIndices;
         public Tile WinningTile;
         public MahjongSet MahjongSet;
         public PointInfo[] RongPointInfos;
-        private GameSettings gameSettings;
-        private IList<Player> players;
         private IList<PointTransfer> transfers;
         private bool[] responds;
         private float serverTimeOut;
         private float firstTime;
         private bool next;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            gameSettings = CurrentRoundStatus.GameSettings;
-            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             var playerNames = RongPlayerIndices.Select(
                 playerIndex => players[playerIndex].PlayerName
@@ -116,13 +110,12 @@ namespace Multi.GameState
             responds[content.PlayerIndex] = true;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (responds.All(r => r))
             {

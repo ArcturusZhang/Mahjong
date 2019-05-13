@@ -9,24 +9,18 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class PlayerKongState : IState
+    public class PlayerKongState : ServerState
     {
         public int CurrentPlayerIndex;
         public MahjongSet MahjongSet;
-        public ServerRoundStatus CurrentRoundStatus;
         public OpenMeld Kong;
-        private GameSettings gameSettings;
-        private IList<Player> players;
         private bool[] responds;
         private OutTurnOperation[] outTurnOperations;
         private float firstTime;
         private float serverTimeOut;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            players = CurrentRoundStatus.Players;
-            gameSettings = CurrentRoundStatus.GameSettings;
             NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOutTurnMessageReceived);
             // update hand tiles and open melds
             UpdateRoundStatus();
@@ -101,12 +95,11 @@ namespace Multi.GameState
             players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             // check operations: if all operations are skip, let the current player to draw his lingshang
             // if some one claimed rong, transfer to TurnEndState handling rong operations

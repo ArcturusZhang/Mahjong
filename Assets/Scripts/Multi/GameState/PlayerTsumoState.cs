@@ -10,25 +10,19 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class PlayerTsumoState : IState
+    public class PlayerTsumoState : ServerState
     {
         public int TsumoPlayerIndex;
-        public ServerRoundStatus CurrentRoundStatus;
         public Tile WinningTile;
         public MahjongSet MahjongSet;
         public PointInfo TsumoPointInfo;
-        private GameSettings gameSettings;
-        private IList<Player> players;
         private IList<PointTransfer> transfers;
         private bool[] responds;
         private float serverTimeOut;
         private float firstTime;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
-            gameSettings = CurrentRoundStatus.GameSettings;
-            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             int multiplier = gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(TsumoPlayerIndex), players.Count);
             var netInfo = new NetworkPointInfo
@@ -99,13 +93,12 @@ namespace Multi.GameState
             responds[content.PlayerIndex] = true;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (responds.All(r => r))
             {

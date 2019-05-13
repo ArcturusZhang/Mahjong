@@ -16,17 +16,13 @@ namespace Multi.GameState
     /// The playerIndex is arranged in this state, so is the settings. Messages will be sent to clients to inform the information.
     /// Transfers to RoundStartState. The state transfer will be done regardless whether enough client responds received.
     /// </summary>
-    public class GamePrepareState : IState
+    public class GamePrepareState : ServerState
     {
-        public ServerRoundStatus CurrentRoundStatus;
         private MessageBase[] messages;
         private bool[] responds;
         private float lastSendTime;
-        private IList<Player> players;
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log("Server enters GamePrepareState");
-            players = CurrentRoundStatus.Players;
             Debug.Log($"This game has total {players.Count} players");
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             CurrentRoundStatus.ShufflePlayers();
@@ -63,7 +59,7 @@ namespace Multi.GameState
             }
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (responds.All(r => r))
             {
@@ -94,9 +90,8 @@ namespace Multi.GameState
             responds[content.PlayerIndex] = true;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log("Server exits GamePrepareState");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
     }

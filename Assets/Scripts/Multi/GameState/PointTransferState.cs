@@ -9,26 +9,20 @@ using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class PointTransferState : IState
+    public class PointTransferState : ServerState
     {
-        public ServerRoundStatus CurrentRoundStatus;
         public IList<PointTransfer> PointTransferList;
         public bool NextRound;
         public bool ExtraRound;
         public bool KeepSticks;
-        private IList<Player> players;
-        private MessageBase[] messages;
         private bool[] responds;
         private float firstTime;
         private float serverTimeOut;
 
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
             Debug.Log($"[Server] Transfers: {string.Join(", ", PointTransferList)}");
             NetworkServer.RegisterHandler(MessageIds.ClientNextRoundMessage, OnNextMessageReceived);
-            players = CurrentRoundStatus.Players;
-            messages = new ServerPointTransferMessage[players.Count];
             var names = players.Select(player => player.PlayerName).ToArray();
             // update points of each player
             foreach (var transfer in PointTransferList)
@@ -37,13 +31,13 @@ namespace Multi.GameState
             }
             for (int i = 0; i < players.Count; i++)
             {
-                messages[i] = new ServerPointTransferMessage
+                var message = new ServerPointTransferMessage
                 {
                     PlayerNames = names,
                     Points = CurrentRoundStatus.Points.ToArray(),
                     PointTransfers = PointTransferList.ToArray()
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerPointTransferMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerPointTransferMessage, message);
             }
             responds = new bool[players.Count];
             firstTime = Time.time;
@@ -57,12 +51,11 @@ namespace Multi.GameState
             responds[content.PlayerIndex] = true;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log($"Server exits {GetType().Name}");
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (responds.All(r => r))
             {

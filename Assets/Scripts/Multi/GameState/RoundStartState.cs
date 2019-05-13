@@ -17,21 +17,16 @@ namespace Multi.GameState
     /// All the data such as initial tiles, initial dora indicators, and mahjongSetData.
     /// Transfers to PlayerDrawTileState. The state transfer will be done regardless whether enough client responds received.
     /// </summary>
-    public class RoundStartState : IState
+    public class RoundStartState : ServerState
     {
-        public ServerRoundStatus CurrentRoundStatus;
         public MahjongSet MahjongSet;
         public bool NextRound;
         public bool ExtraRound;
         public bool KeepSticks;
-        private IList<Player> players;
-        private MessageBase[] messages;
         private bool[] responds;
         private float firstSendTime;
-        public void OnStateEnter()
+        public override void OnServerStateEnter()
         {
-            Debug.Log("Server enters RoundStartState");
-            players = CurrentRoundStatus.Players;
             NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             MahjongSet.Reset();
             // throwing dice
@@ -41,13 +36,12 @@ namespace Multi.GameState
             DrawInitial();
             Debug.Log("[Server] Initial tiles distribution done");
             CurrentRoundStatus.SortHandTiles();
-            messages = new ServerRoundStartMessage[players.Count];
             responds = new bool[players.Count];
             for (int index = 0; index < players.Count; index++)
             {
                 var tiles = CurrentRoundStatus.HandTiles(index);
                 Debug.Log($"[Server] Hand tiles of player {index}: {string.Join("", tiles)}");
-                messages[index] = new ServerRoundStartMessage
+                var message = new ServerRoundStartMessage
                 {
                     PlayerIndex = index,
                     Field = CurrentRoundStatus.Field,
@@ -59,13 +53,13 @@ namespace Multi.GameState
                     InitialHandTiles = tiles,
                     MahjongSetData = MahjongSet.Data
                 };
-                players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, messages[index]);
+                players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, message);
                 players[index].BonusTurnTime = CurrentRoundStatus.GameSettings.BonusTurnTime;
             }
             firstSendTime = Time.time;
         }
 
-        public void OnStateUpdate()
+        public override void OnStateUpdate()
         {
             if (responds.All(r => r) || Time.time - firstSendTime >= ServerConstants.ServerTimeOut)
             {
@@ -91,9 +85,8 @@ namespace Multi.GameState
             responds[content.PlayerIndex] = true;
         }
 
-        public void OnStateExit()
+        public override void OnServerStateExit()
         {
-            Debug.Log("Server exits RoundStartState");
             NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
 
