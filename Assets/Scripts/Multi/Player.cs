@@ -61,7 +61,7 @@ namespace Multi
 
         public void DiscardTile(Tile tile, bool isRichiing, bool isLastDraw, int bonusTurnTime)
         {
-            var message = new ClientDiscardRequestMessage
+            var message = new ClientDiscardTileMessage
             {
                 PlayerIndex = PlayerIndex,
                 IsRichiing = isRichiing,
@@ -123,10 +123,10 @@ namespace Multi
             RegisterHandler(MessageIds.ServerGamePrepareMessage, OnGamePrepareMessageReceived);
             RegisterHandler(MessageIds.ServerRoundStartMessage, OnRoundStartMessageReceived);
             RegisterHandler(MessageIds.ServerDrawTileMessage, OnPlayerDrawTileMessageReceived);
-            // RegisterHandler(MessageIds.ServerOtherDrawTileMessage, OnOtherPlayerDrawTileMessageReceived);
             RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
             RegisterHandler(MessageIds.ServerKongMessage, OnKongMessageReceived);
             RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
+            RegisterHandler(MessageIds.ServerOperationPerformMessage, OnOperationPerformedMessageReceived);
             RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
             RegisterHandler(MessageIds.ServerTsumoMessage, OnPlayerTsumoMessageReceived);
             RegisterHandler(MessageIds.ServerRongMessage, OnPlayerRongMessageReceived);
@@ -196,6 +196,13 @@ namespace Multi
             Debug.Log($"ServerTurnEndMessage received: {content}");
             // invoke client method for turn end operations
             ClientBehaviour.Instance.PlayerTurnEnd(content);
+        }
+
+        private void OnOperationPerformedMessageReceived(NetworkMessage message) {
+            var content  = message.ReadMessage<ServerOperationPerformMessage>();
+            Debug.Log($"ServerOperationPerformMessage received: {content}");
+            // invoke client method for operation perform
+            ClientBehaviour.Instance.OperationPerform(content);
         }
 
         private void OnPlayerTsumoMessageReceived(NetworkMessage message)

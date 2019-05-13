@@ -17,7 +17,7 @@ namespace Single.GameState
             Debug.Log($"Current points: {string.Join(",", CurrentRoundStatus.Points)}");
             controller.PointTransferManager.SetTransfer(CurrentRoundStatus.Points, PointTransfers, () =>
             {
-                CurrentRoundStatus.LocalPlayer.RequestNewRound();
+                localPlayer.RequestNewRound();
             });
         }
 

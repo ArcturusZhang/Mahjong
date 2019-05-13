@@ -21,7 +21,7 @@ namespace Single
         public static ClientBehaviour Instance { get; private set; }
         private ClientRoundStatus CurrentRoundStatus;
         private ViewController controller;
-        // private bool IsRichiing = false;
+        private Player localPlayer => CurrentRoundStatus.LocalPlayer;
         public IStateMachine StateMachine { get; private set; }
 
         private void OnEnable()
@@ -141,6 +141,22 @@ namespace Single
             StateMachine.ChangeState(turnEndState);
         }
 
+        public void OperationPerform(ServerOperationPerformMessage message)
+        {
+            var operationState = new PlayerOperationPerformState
+            {
+                CurrentRoundStatus = CurrentRoundStatus,
+                PlayerIndex = message.PlayerIndex,
+                OperationPlayerIndex = message.OperationPlayerIndex,
+                Operation = message.Operation,
+                HandData = message.HandData,
+                BonusTurnTime = message.BonusTurnTime,
+                Rivers = message.Rivers,
+                MahjongSetData = message.MahjongSetData
+            };
+            StateMachine.ChangeState(operationState);
+        }
+
         public void PlayerTsumo(ServerPlayerTsumoMessage message)
         {
             var tsumoState = new PlayerTsumoState
@@ -216,7 +232,7 @@ namespace Single
         {
             Debug.Log($"Sending request of discarding tile {tile}");
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
-            CurrentRoundStatus.LocalPlayer.DiscardTile(tile, CurrentRoundStatus.IsRichiing, isLastDraw, bonusTimeLeft);
+            localPlayer.DiscardTile(tile, CurrentRoundStatus.IsRichiing, isLastDraw, bonusTimeLeft);
             controller.InTurnPanelManager.Close();
             CurrentRoundStatus.IsRichiing = false;
             controller.HandPanelManager.RemoveCandidates();
@@ -237,7 +253,7 @@ namespace Single
             }
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of tsumo operation with bonus turn time {bonusTimeLeft}");
-            CurrentRoundStatus.LocalPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
+            localPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
             controller.InTurnPanelManager.Close();
         }
 
@@ -270,7 +286,7 @@ namespace Single
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
-                CurrentRoundStatus.LocalPlayer.InTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                localPlayer.InTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 controller.InTurnPanelManager.Close();
                 return;
             }
@@ -288,7 +304,7 @@ namespace Single
         {
             Debug.Log($"Requesting round draw due to 9 kinds of orphans");
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
-            CurrentRoundStatus.LocalPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
+            localPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
             controller.InTurnPanelManager.Close();
         }
 
@@ -296,7 +312,7 @@ namespace Single
         {
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of operation {operation} with bonus turn time {bonusTimeLeft}");
-            CurrentRoundStatus.LocalPlayer.OutTurnOperationTaken(operation, bonusTimeLeft);
+            localPlayer.OutTurnOperationTaken(operation, bonusTimeLeft);
             controller.OutTurnPanelManager.Close();
         }
 
@@ -316,7 +332,7 @@ namespace Single
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of chow operation with bonus turn time {bonusTimeLeft}");
-                CurrentRoundStatus.LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                localPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 controller.OutTurnPanelManager.Close();
                 return;
             }
@@ -330,7 +346,7 @@ namespace Single
                 Debug.LogError("The operations are null or empty in OnPongButtonClicked method, this should not happen.");
                 return;
             }
-            if (!operationOptions.All(op => op.Type == OutTurnOperationType.Chow))
+            if (!operationOptions.All(op => op.Type == OutTurnOperationType.Pong))
             {
                 Debug.LogError("There are incompatible type within OnPongButtonClicked method");
                 return;
@@ -339,7 +355,7 @@ namespace Single
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
-                CurrentRoundStatus.LocalPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                localPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 controller.OutTurnPanelManager.Close();
                 return;
             }

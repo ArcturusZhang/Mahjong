@@ -47,8 +47,8 @@ namespace Multi.GameState
             messages = new ServerTurnEndMessage[players.Count];
             firstTime = Time.time;
             // determines the operation to take when turn ends
-            ChooseOperations();
-            Debug.Log($"The operation chosen by this round is {operationChosen}");
+            operationChosen = ChooseOperations();
+            Debug.Log($"The operation chosen by this round is {operationChosen}, operation after choosing: {string.Join(",", Operations)}");
             // if operation is not rong or round-draw, perform richi
             if (operationChosen != OutTurnOperationType.Rong && operationChosen != OutTurnOperationType.RoundDraw)
                 CurrentRoundStatus.TryRichi(CurrentPlayerIndex, IsRichiing);
@@ -67,28 +67,28 @@ namespace Multi.GameState
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, messages[i]);
             }
-            serverTurnEndTimeOut = operationChosen == OutTurnOperationType.Skip ?
-                ServerConstants.ServerTurnEndTimeOut : ServerConstants.ServerTurnEndTimeOutExtra;
+            serverTurnEndTimeOut = operationChosen == OutTurnOperationType.Rong || operationChosen == OutTurnOperationType.RoundDraw ?
+                ServerConstants.ServerTurnEndTimeOutExtra : ServerConstants.ServerTurnEndTimeOut;
             if (operationChosen == OutTurnOperationType.Chow
                 || operationChosen == OutTurnOperationType.Pong
                 || operationChosen == OutTurnOperationType.Kong)
                 CurrentRoundStatus.BreakOneShotsAndFirstTurn();
         }
 
-        private void ChooseOperations()
+        private OutTurnOperationType ChooseOperations()
         {
             Debug.Log($"Operation before choosing: {string.Join(",", Operations)}");
             // test every circumstances by priority
             // test for rong
             if (Operations.Any(op => op.Type == OutTurnOperationType.Rong))
             {
+                // todo -- check if 3 rong
                 for (int i = 0; i < Operations.Length; i++)
                 {
                     if (Operations[i].Type != OutTurnOperationType.Rong)
                         Operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                 }
-                operationChosen = OutTurnOperationType.Rong;
-                return;
+                return OutTurnOperationType.Rong;
             }
             // check if round draws
             if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
@@ -97,8 +97,7 @@ namespace Multi.GameState
                 Debug.Log("No more tiles to draw and nobody claims a rong, the round has drawn.");
                 for (int i = 0; i < Operations.Length; i++)
                     Operations[i] = new OutTurnOperation { Type = OutTurnOperationType.RoundDraw };
-                operationChosen = OutTurnOperationType.RoundDraw;
-                return;
+                return OutTurnOperationType.RoundDraw;
             }
             // check if some one claimed kong
             if (Operations.Any(op => op.Type == OutTurnOperationType.Kong))
@@ -108,8 +107,7 @@ namespace Multi.GameState
                     if (Operations[i].Type != OutTurnOperationType.Kong)
                         Operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                 }
-                operationChosen = OutTurnOperationType.Kong;
-                return;
+                return OutTurnOperationType.Kong;
             }
             // check if some one claimed pong
             if (Operations.Any(op => op.Type == OutTurnOperationType.Pong))
@@ -119,8 +117,7 @@ namespace Multi.GameState
                     if (Operations[i].Type != OutTurnOperationType.Pong)
                         Operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                 }
-                operationChosen = OutTurnOperationType.Pong;
-                return;
+                return OutTurnOperationType.Pong;
             }
             // check if some one claimed chow
             if (Operations.Any(op => op.Type == OutTurnOperationType.Chow))
@@ -130,13 +127,10 @@ namespace Multi.GameState
                     if (Operations[i].Type != OutTurnOperationType.Chow)
                         Operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                 }
-                operationChosen = OutTurnOperationType.Chow;
-                return;
+                return OutTurnOperationType.Chow;
             }
             // no particular operations -- skip
-            operationChosen = OutTurnOperationType.Skip;
-            // todo -- check if 3 rong
-            Debug.Log($"Operation after choosing: {string.Join(",", Operations)}");
+            return OutTurnOperationType.Skip;
         }
 
         public void OnStateUpdate()

@@ -201,9 +201,11 @@ namespace Multi.ServerData
         {
             CheckRange(index);
             var tiles = handTiles[index];
-            foreach (var tile in meld.Tiles)
+            int p = System.Array.FindIndex(meld.Tiles, tile => tile.EqualsConsiderColor(meld.DiscardTile));
+            for (int i = 0; i < meld.Tiles.Length; i++)
             {
-                RemoveTile(index, tile);
+                if (i == p) continue;
+                RemoveTile(index, meld.Tiles[i]);
             }
         }
 

@@ -41,17 +41,29 @@ namespace Single.GameState
                     case OutTurnOperationType.Chow:
                     case OutTurnOperationType.Pong:
                     case OutTurnOperationType.Kong:
-                        Debug.LogError("Under construction");
+                        HandleOpen(placeIndex, operation);
                         break;
                     case OutTurnOperationType.Rong:
-                        controller.StartCoroutine(controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type)));
-                        controller.StartCoroutine(controller.RevealHandTiles(placeIndex, operation.HandData));
+                        HandleRong(placeIndex, operation);
                         break;
                     case OutTurnOperationType.RoundDraw:
                         Debug.Log("Round is draw");
                         break;
                 }
             }
+        }
+
+        private void HandleOpen(int placeIndex, OutTurnOperation operation)
+        {
+            Debug.Log($"Operation: {operation}");
+            // show effect
+            controller.StartCoroutine(controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type)));
+        }
+
+        private void HandleRong(int placeIndex, OutTurnOperation operation)
+        {
+            controller.StartCoroutine(controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type)));
+            controller.StartCoroutine(controller.RevealHandTiles(placeIndex, operation.HandData));
         }
 
         public override void OnClientStateExit()

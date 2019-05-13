@@ -28,21 +28,21 @@ namespace Single.GameState
             if (Operations == null || Operations.Length == 0)
             {
                 Debug.LogError("Received with no operations, this should not happen");
-                CurrentRoundStatus.LocalPlayer.SkipOutTurnOperation(BonusTurnTime);
+                localPlayer.SkipOutTurnOperation(BonusTurnTime);
                 return;
             }
             // if all the operations are skip, automatically skip this turn.
             if (Operations.All(op => op.Type == OutTurnOperationType.Skip))
             {
                 Debug.Log("Only operation is skip, skipping turn");
-                CurrentRoundStatus.LocalPlayer.SkipOutTurnOperation(BonusTurnTime);
+                localPlayer.SkipOutTurnOperation(BonusTurnTime);
                 return;
             }
             controller.OutTurnPanelManager.SetOperations(Operations);
             controller.TurnTimeController.StartCountDown(CurrentRoundStatus.Settings.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically skip this turn");
-                CurrentRoundStatus.LocalPlayer.SkipOutTurnOperation(0);
+                localPlayer.SkipOutTurnOperation(0);
             });
         }
 

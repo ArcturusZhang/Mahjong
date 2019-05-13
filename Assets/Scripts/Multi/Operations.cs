@@ -48,7 +48,7 @@ namespace Multi
     {
         public OutTurnOperationType Type;
         public Tile Tile;
-        public Meld Meld;
+        public OpenMeld Meld;
         public PlayerHandData HandData;
 
         public override string ToString()

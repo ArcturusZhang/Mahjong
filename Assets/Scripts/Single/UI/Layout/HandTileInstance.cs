@@ -16,7 +16,6 @@ namespace Single.UI.Layout
         private Image tileImage;
         private Button tileButton;
         [SerializeField] private bool IsLastDraw;
-        // private bool available = true;
         private Sprite sprite;
 
         public Tile Tile => tile;

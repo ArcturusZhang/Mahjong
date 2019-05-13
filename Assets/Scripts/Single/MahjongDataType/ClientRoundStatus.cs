@@ -93,6 +93,7 @@ namespace Single.MahjongDataType
         public void SetHandTiles(IList<Tile> handTiles)
         {
             LocalPlayerHandTiles = new List<Tile>(handTiles);
+            SetHandTiles(0, handTiles.Count);
         }
 
         public void SetHandTiles(int placeIndex, int count)

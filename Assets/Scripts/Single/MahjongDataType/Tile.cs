@@ -34,6 +34,23 @@ namespace Single.MahjongDataType
 
         public Tile Next => new Tile(Suit, Rank + 1);
 
+        public static bool TryTile(Suit suit, int rank, out Tile tile) {
+            tile = default(Tile);
+            switch (suit) {
+                case Suit.M:
+                case Suit.P:
+                case Suit.S:
+                    if (rank <= 0 || rank > 9) return false;
+                    tile = new Tile(suit, rank);
+                    return true;
+                case Suit.Z:
+                    if (rank <= 0 || rank > 7) return false;
+                    tile = new Tile(suit, rank);
+                    return true;
+            }
+            throw new Exception("This should never happen");
+        }
+
         public int CompareTo(Tile other)
         {
             if (Suit != other.Suit) return Suit - other.Suit;

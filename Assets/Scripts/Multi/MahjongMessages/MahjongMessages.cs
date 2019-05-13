@@ -152,6 +152,25 @@ namespace Multi.MahjongMessages
         }
     }
 
+    public class ServerOperationPerformMessage : MessageBase {
+        public int PlayerIndex;
+        public int OperationPlayerIndex;
+        public OutTurnOperation Operation;
+        public PlayerHandData HandData;
+        public int BonusTurnTime;
+        public RiverData[] Rivers;
+        public MahjongSetData MahjongSetData;
+
+        public override string ToString() {
+            return $"PlayerIndex: {PlayerIndex}\n"
+                + $"OperationPlayerIndex: {OperationPlayerIndex}\n"
+                + $"Operation: {Operation}\n"
+                + $"HandData: {HandData}\n"
+                + $"BonusTurnTime: {BonusTurnTime}\n"
+                + $"MahjongSetData: {MahjongSetData}";
+        }
+    }
+
     public class ServerRoundDrawMessage : MessageBase
     {
         public RoundDrawType RoundDrawType;
@@ -257,7 +276,7 @@ namespace Multi.MahjongMessages
         }
     }
 
-    public class ClientDiscardRequestMessage : MessageBase
+    public class ClientDiscardTileMessage : MessageBase
     {
         public int PlayerIndex;
         public bool IsRichiing;

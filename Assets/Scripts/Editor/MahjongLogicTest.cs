@@ -48,7 +48,8 @@ public class MahjongLogicTest
     }
 
     [MenuItem("MahjongLogic/Test dora")]
-    public static void TestDora() {
+    public static void TestDora()
+    {
         var allTiles = MahjongConstants.TwoPlayerTiles;
         var indicator = new Tile(Suit.Z, 2);
         Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
@@ -68,5 +69,57 @@ public class MahjongLogicTest
         Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
         indicator = new Tile(Suit.M, 9);
         Debug.Log($"When indicator is {indicator}, dora is {MahjongLogic.GetDoraTile(indicator, allTiles)}");
+    }
+
+    [MenuItem("MahjongLogic/Test pongs")]
+    public static void TestPongs()
+    {
+        var handTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5, true)
+        };
+        var result = MahjongLogic.GetPongs(handTiles, new Tile(Suit.M, 4), MeldSide.Opposite);
+        Debug.Log($"Melds: {string.Join(",", result)}");
+        result = MahjongLogic.GetPongs(handTiles, new Tile(Suit.M, 5), MeldSide.Opposite);
+        Debug.Log($"Melds: {string.Join(",", result)}");
+        result = MahjongLogic.GetPongs(handTiles, new Tile(Suit.M, 5, true), MeldSide.Opposite);
+        Debug.Log($"Melds: {string.Join(",", result)}");
+        handTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5)
+        };
+        result = MahjongLogic.GetPongs(handTiles, new Tile(Suit.M, 5, true), MeldSide.Opposite);
+        Debug.Log($"Melds: {string.Join(",", result)}");
+    }
+
+    [MenuItem("MahjongLogic/Test chows")]
+    public static void TestChows()
+    {
+        var handTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5, true), new Tile(Suit.M, 6)
+        };
+        var result = MahjongLogic.GetChows(handTiles, new Tile(Suit.M, 4), MeldSide.Left);
+        Debug.Log($"Melds: {string.Join(",", result)}");
+        handTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 5), new Tile(Suit.M, 6)
+        };
+        result = MahjongLogic.GetChows(handTiles, new Tile(Suit.M, 5, true), MeldSide.Opposite);
+        Debug.Log($"Melds: {string.Join(",", result)}");
+    }
+
+    [MenuItem("MahjongLogic/Test combinations")]
+    public static void TestCombinations()
+    {
+        var list = new List<int> {
+            1, 2, 3, 4, 5, 6, 7, 8
+        };
+        var result = MahjongLogic.Combination(list, 1);
+        Debug.Log($"Total results: {result.Count}");
+        for (int i = 0; i < result.Count; i++)
+        {
+            Debug.Log($"{i}: {string.Join(",", result[i])}");
+        }
     }
 }

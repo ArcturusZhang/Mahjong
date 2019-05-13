@@ -40,7 +40,7 @@ namespace Single.GameState
             controller.TurnTimeController.StartCountDown(CurrentRoundStatus.Settings.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
-                CurrentRoundStatus.LocalPlayer.DiscardTile(Tile, false, true, 0);
+                localPlayer.DiscardTile(Tile, false, true, 0);
             });
             controller.InTurnPanelManager.SetOperations(Operations);
         }
@@ -55,7 +55,7 @@ namespace Single.GameState
         private IEnumerator AutoDiscard(Tile tile, int bonusTimeLeft)
         {
             yield return waitAutoDiscardAfterRichi;
-            CurrentRoundStatus.LocalPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
+            localPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
         }
 
         public override void OnClientStateExit()

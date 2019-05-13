@@ -51,7 +51,7 @@ namespace Single.GameState
             controller.PointSummaryPanelManager.ShowPanel(data, () =>
             {
                 Debug.Log("Sending readiness message");
-                CurrentRoundStatus.LocalPlayer.ClientReady(MessageIds.ServerPointTransferMessage);
+                localPlayer.ClientReady(MessageIds.ServerPointTransferMessage);
             });
         }
 

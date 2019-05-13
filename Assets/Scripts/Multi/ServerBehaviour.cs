@@ -108,18 +108,15 @@ namespace Multi
             {
                 Debug.LogError("PlayerIndex does not match, this should not happen!");
             }
-            if (CurrentRoundStatus.LastDraw == null)
-            {
-                Debug.LogError("LastDraw is null, this should not happen!");
-            }
             var currentPlayer = LobbyManager.Instance.Players[playerIndex];
             currentPlayer.BonusTurnTime = bonusTurnTime;
-            var lastDraw = (Tile)CurrentRoundStatus.LastDraw;
+            var lastDraw = CurrentRoundStatus.LastDraw;
             CurrentRoundStatus.LastDraw = null;
             if (!discardLastDraw)
             {
                 CurrentRoundStatus.RemoveTile(playerIndex, tile);
-                CurrentRoundStatus.AddTile(playerIndex, lastDraw);
+                if (lastDraw != null)
+                    CurrentRoundStatus.AddTile(playerIndex, (Tile)lastDraw);
             }
             CurrentRoundStatus.AddToRiver(playerIndex, tile, isRichiing);
             CurrentRoundStatus.SortHandTiles();
@@ -136,7 +133,7 @@ namespace Multi
             StateMachine.ChangeState(discardState);
         }
 
-        public void TurnEnd(int playerIndex, Tile discardingTile, bool isRichiing, OutTurnOperation[] operations, 
+        public void TurnEnd(int playerIndex, Tile discardingTile, bool isRichiing, OutTurnOperation[] operations,
             bool turnDoraAfterDiscard = false)
         {
             var turnEndState = new TurnEndState
@@ -156,7 +153,11 @@ namespace Multi
         {
             var operationPerformState = new OperationPerformState
             {
-
+                CurrentRoundStatus = CurrentRoundStatus,
+                CurrentPlayerIndex = newPlayerIndex,
+                DiscardPlayerIndex = CurrentRoundStatus.CurrentPlayerIndex,
+                Operation = operation,
+                MahjongSet = mahjongSet
             };
             StateMachine.ChangeState(operationPerformState);
         }

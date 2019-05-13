@@ -143,9 +143,9 @@ namespace Single
         private static int CountDora(Tile[] handTiles, Meld[] openMelds, Tile winningTile, Tile dora)
         {
             int count = 0;
-            foreach (var handTile in handTiles)
+            foreach (var tile in handTiles)
             {
-                if (handTile.EqualsIgnoreColor(dora)) count++;
+                if (tile.EqualsIgnoreColor(dora)) count++;
             }
 
             foreach (var meld in openMelds)
@@ -243,9 +243,9 @@ namespace Single
             return WinningTiles(handTiles, openMelds).Count > 0;
         }
 
-        public static bool Test9KindsOfOrphans(IList<Tile> handTile, Tile lastDraw)
+        public static bool Test9KindsOfOrphans(IList<Tile> handTiles, Tile lastDraw)
         {
-            var set = new HashSet<Tile>(handTile, Tile.TileIgnoreColorEqualityComparer);
+            var set = new HashSet<Tile>(handTiles, Tile.TileIgnoreColorEqualityComparer);
             set.Add(lastDraw);
             int count = set.Count(tile => tile.IsYaojiu);
             return count >= 9;
@@ -463,6 +463,25 @@ namespace Single
             return availableTiles.Count > 0;
         }
 
+        public static IEnumerable<OpenMeld> GetKongs(IList<Tile> handTiles, Tile discardTile, MeldSide side)
+        {
+            var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
+            var tileList = new List<Tile>(handTiles) { discardTile };
+            var handCount = CountTiles(handTiles);
+            int index = Tile.GetIndex(discardTile);
+            if (handCount[index] == 3)
+            {
+                var tiles = tileList.FindAll(t => Tile.GetIndex(t) == index);
+                result.Add(new Meld(true, tiles.ToArray()));
+            }
+            return result.Select(meld => new OpenMeld
+            {
+                Meld = meld,
+                DiscardTile = discardTile,
+                Side = side
+            });
+        }
+
         public static IEnumerable<OpenMeld> GetSelfKongs(IList<Tile> handTiles, Tile lastDraw)
         {
             var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
@@ -484,7 +503,7 @@ namespace Single
             });
         }
 
-        public static IEnumerable<OpenMeld> GetAddKongs(PlayerHandData handData, Tile lastDraw)
+        public static IEnumerable<OpenMeld> GetAddKongs(IList<OpenMeld> openMelds, Tile lastDraw)
         {
             // var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
             // var testTiles = new List<Tile>(handTiles) { lastDraw };
@@ -504,103 +523,116 @@ namespace Single
             return new List<OpenMeld>(); // todo
         }
 
-        [System.Obsolete]
-        public static ISet<Meld> GetChows(List<Tile> handTiles, Tile discardTile)
+        public static IEnumerable<OpenMeld> GetPongs(IList<Tile> handTiles, Tile discardTile, MeldSide side)
         {
-            var result = new HashSet<Meld>();
-            if (discardTile.Suit == Suit.Z) return result;
-            var tilesP2 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank - 2);
-            var tilesP1 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank - 1);
-            var tilesN1 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank + 1);
-            var tilesN2 = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank + 2);
-            foreach (var tileP2 in tilesP2)
-                foreach (var tileP1 in tilesP1)
-                    result.Add(new Meld(true, tileP2, tileP1, discardTile));
+            var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
+            var handTileList = new List<Tile>(handTiles);
+            var particularTiles = handTileList.FindAll(tile => tile.EqualsIgnoreColor(discardTile));
+            var combination = Combination(particularTiles, 2);
+            foreach (var item in combination)
+            {
+                item.Add(discardTile);
+                result.Add(new Meld(true, item.ToArray()));
+            }
+            return result.Select(meld => new OpenMeld
+            {
+                Meld = meld,
+                DiscardTile = discardTile,
+                Side = side
+            });
+        }
 
-            foreach (var tileP1 in tilesP1)
-                foreach (var tileN1 in tilesN1)
-                    result.Add(new Meld(true, tileP1, discardTile, tileN1));
-
-            foreach (var tileN1 in tilesN1)
-                foreach (var tileN2 in tilesN2)
-                    result.Add(new Meld(true, discardTile, tileN1, tileN2));
+        public static IList<List<T>> Combination<T>(IList<T> list, int count)
+        {
+            var result = new List<List<T>>();
+            if (count <= 0 || count > list.Count) return result;
+            CombinationBackTrack(list, count, 0, new List<T>(), result);
             return result;
         }
 
-        [System.Obsolete]
-        public static ISet<Meld> GetPongs(List<Tile> handTiles, Tile discardTile)
+        private static void CombinationBackTrack<T>(IList<T> list, int count, int start, IList<T> current, IList<List<T>> result)
         {
-            var result = new HashSet<Meld>();
-            var tiles = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank);
-            if (tiles.Count < 2) return result;
-            if (tiles.Count == 2)
+            // exits
+            if (current.Count == count)
             {
-                tiles.Add(discardTile);
-                tiles.Sort();
-                result.Add(new Meld(true, tiles.ToArray()));
+                result.Add(new List<T>(current));
+                return;
             }
-
-            // tiles.Count == 3
-            Assert.IsTrue(tiles.Count == 3, "tiles.Count == 3");
-            tiles.Sort();
-            result.Add(new Meld(true, tiles[0], tiles[1], discardTile));
-            result.Add(new Meld(true, tiles[0], tiles[2], discardTile));
-            result.Add(new Meld(true, tiles[1], tiles[2], discardTile));
-            return result;
+            for (int i = start; i < list.Count; i++)
+            {
+                current.Add(list[i]);
+                CombinationBackTrack(list, count, i + 1, current, result);
+                // back track
+                current.RemoveAt(current.Count - 1);
+            }
         }
 
-        [System.Obsolete]
-        public static ISet<Meld> GetOutTurnKongs(List<Tile> handTiles, Tile discardTile)
+        public static IEnumerable<OpenMeld> GetChows(IList<Tile> handTiles, Tile discardTile, MeldSide side)
         {
-            var result = new HashSet<Meld>();
-            var tiles = handTiles.FindAll(tile => tile.Suit == discardTile.Suit && tile.Rank == discardTile.Rank);
-            if (tiles.Count < 3) return result;
-            tiles.Add(discardTile);
-            Assert.IsTrue(tiles.Count == 4, "tiles.Count == 4");
-            result.Add(new Meld(true, tiles.ToArray()));
-            return result;
+            var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
+            var handTileList = new List<Tile>(handTiles);
+            GetChows1(handTileList, discardTile, result);
+            GetChows2(handTileList, discardTile, result);
+            GetChows3(handTileList, discardTile, result);
+            return result.Select(meld => new OpenMeld
+            {
+                Meld = meld,
+                DiscardTile = discardTile,
+                Side = side
+            });
         }
 
-        [System.Obsolete]
-        public static ISet<Meld> GetInTurnKongs(List<Tile> handTiles, List<Meld> openMelds, Tile lastDraw)
+        private static void GetChows1(List<Tile> handTiles, Tile discardTile, HashSet<Meld> result)
         {
-            var result = new HashSet<Meld>();
-            // find added kongs
-            var addedKongIndex = openMelds.FindIndex(meld =>
-                meld.Type == MeldType.Triplet && !meld.IsKong && meld.First.EqualsIgnoreColor(lastDraw));
-            if (addedKongIndex >= 0)
+            Tile first, second;
+            if (Tile.TryTile(discardTile.Suit, discardTile.Rank - 2, out first) && Tile.TryTile(discardTile.Suit, discardTile.Rank - 1, out second))
             {
-                var meld = openMelds[addedKongIndex];
-                var tiles = new List<Tile>(meld.Tiles) { lastDraw };
-                result.Add(new Meld(true, tiles.ToArray()));
+                var firstTiles = handTiles.FindAll(tile => tile.EqualsIgnoreColor(first));
+                if (firstTiles.Count == 0) return;
+                var secondTiles = handTiles.FindAll(tile => tile.EqualsIgnoreColor(second));
+                if (secondTiles.Count == 0) return;
+                foreach (var pair in CartesianJoin(firstTiles, secondTiles))
+                {
+                    result.Add(new Meld(true, pair.Key, pair.Value, discardTile));
+                }
             }
-
-            // find concealed kongs
-            var tilesCount = new Dictionary<Tile, List<Tile>>(Tile.TileIgnoreColorEqualityComparer);
-            foreach (var handTile in handTiles)
-            {
-                if (tilesCount.ContainsKey(handTile)) tilesCount[handTile].Add(handTile);
-                else tilesCount.Add(handTile, new List<Tile> { handTile });
-            }
-
-            if (tilesCount.ContainsKey(lastDraw) && tilesCount[lastDraw].Count >= 3)
-            {
-                tilesCount[lastDraw].Add(lastDraw);
-                result.Add(new Meld(false, tilesCount[lastDraw].ToArray()));
-            }
-
-            foreach (var entry in tilesCount)
-            {
-                if (entry.Value.Count == 4) result.Add(new Meld(false, entry.Value.ToArray()));
-            }
-
-            return result;
         }
 
-        [System.Obsolete]
-        public static ISet<Meld> GetRichiKongs(List<Tile> handTiles, List<Meld> openMelds, Tile lastDraw)
+        private static void GetChows2(List<Tile> handTiles, Tile discardTile, HashSet<Meld> result)
         {
-            var result = new HashSet<Meld>();
+            Tile first, second;
+            if (Tile.TryTile(discardTile.Suit, discardTile.Rank - 1, out first) && Tile.TryTile(discardTile.Suit, discardTile.Rank + 1, out second))
+            {
+                var firstTiles = handTiles.FindAll(tile => tile.EqualsIgnoreColor(first));
+                if (firstTiles.Count == 0) return;
+                var secondTiles = handTiles.FindAll(tile => tile.EqualsIgnoreColor(second));
+                if (secondTiles.Count == 0) return;
+                foreach (var pair in CartesianJoin(firstTiles, secondTiles))
+                {
+                    result.Add(new Meld(true, pair.Key, pair.Value, discardTile));
+                }
+            }
+        }
+
+        private static void GetChows3(List<Tile> handTiles, Tile discardTile, HashSet<Meld> result)
+        {
+            Tile first, second;
+            if (Tile.TryTile(discardTile.Suit, discardTile.Rank + 1, out first) && Tile.TryTile(discardTile.Suit, discardTile.Rank + 2, out second))
+            {
+                var firstTiles = handTiles.FindAll(tile => tile.EqualsIgnoreColor(first));
+                if (firstTiles.Count == 0) return;
+                var secondTiles = handTiles.FindAll(tile => tile.EqualsIgnoreColor(second));
+                if (secondTiles.Count == 0) return;
+                foreach (var pair in CartesianJoin(firstTiles, secondTiles))
+                {
+                    result.Add(new Meld(true, pair.Key, pair.Value, discardTile));
+                }
+            }
+        }
+
+        private static IEnumerable<KeyValuePair<T, T>> CartesianJoin<T>(IEnumerable<T> first, IEnumerable<T> second)
+        {
+            var result = first.SelectMany(x => second, (x, y) => new KeyValuePair<T, T>(x, y));
             return result;
         }
 

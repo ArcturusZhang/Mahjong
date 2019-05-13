@@ -28,9 +28,9 @@ namespace Single.GameState
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(KongPlayerIndex);
             Assert.IsTrue(placeIndex == 0);
             CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
-            controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             CurrentRoundStatus.MahjongSetData = MahjongSetData;
-            CurrentRoundStatus.LocalPlayer.SkipOutTurnOperation(BonusTurnTime);
+            controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
+            localPlayer.SkipOutTurnOperation(BonusTurnTime);
         }
         private void HandleOtherPlayerKong()
         {
@@ -42,7 +42,7 @@ namespace Single.GameState
             if (Operations.All(op => op.Type == OutTurnOperationType.Skip))
             {
                 Debug.Log("Only operation is skip, skipping turn");
-                CurrentRoundStatus.LocalPlayer.SkipOutTurnOperation(BonusTurnTime);
+                localPlayer.SkipOutTurnOperation(BonusTurnTime);
                 controller.OutTurnPanelManager.Close();
                 return;
             }
@@ -51,7 +51,7 @@ namespace Single.GameState
             controller.TurnTimeController.StartCountDown(CurrentRoundStatus.Settings.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out, automatically skip");
-                CurrentRoundStatus.LocalPlayer.SkipOutTurnOperation(0);
+                localPlayer.SkipOutTurnOperation(0);
                 controller.OutTurnPanelManager.Close();
             });
         }

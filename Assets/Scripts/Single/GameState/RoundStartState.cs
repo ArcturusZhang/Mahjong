@@ -42,7 +42,7 @@ namespace Single.GameState
             // clear claimed open melds
             controller.TableTilesManager.ClearMelds();
             // send ready message
-            CurrentRoundStatus.LocalPlayer.ClientReady(MessageIds.ServerRoundStartMessage);
+            localPlayer.ClientReady(MessageIds.ServerRoundStartMessage);
         }
 
         public override void OnClientStateExit()

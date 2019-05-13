@@ -151,7 +151,7 @@ namespace Multi.GameState
                     }
                 }
                 // 2. test add kongs, aka whether a single tile in hand and lastdraw is identical to a pong in open melds
-                var addKongs = MahjongLogic.GetAddKongs(CurrentRoundStatus.HandData(playerIndex), justDraw);
+                var addKongs = MahjongLogic.GetAddKongs(CurrentRoundStatus.OpenMelds(playerIndex), justDraw);
                 if (addKongs.Any())
                 {
                     foreach (var kong in addKongs)
@@ -168,7 +168,7 @@ namespace Multi.GameState
 
         private void OnDiscardTileReceived(NetworkMessage message)
         {
-            var content = message.ReadMessage<ClientDiscardRequestMessage>();
+            var content = message.ReadMessage<ClientDiscardTileMessage>();
             if (content.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
             {
                 Debug.Log($"[Server] It is not player {content.PlayerIndex}'s turn to discard a tile, ignoring this message");

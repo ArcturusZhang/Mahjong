@@ -23,9 +23,6 @@ namespace Multi.GameState
         private GameSettings gameSettings;
         private YakuSettings yakuSettings;
         private IList<Player> players;
-        private MessageBase[] messages;
-        // private bool[] responds;
-        // private float lastSendTime;
         private float firstSendTime;
         private float serverTimeOut;
         private bool[] operationResponds;
@@ -43,16 +40,13 @@ namespace Multi.GameState
                 Debug.LogError("[Server] currentPlayerIndex does not match, this should not happen");
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
-            // UpdateCurrentPlayerData();
-            messages = new MessageBase[players.Count];
-            // responds = new bool[players.Count];
             operationResponds = new bool[players.Count];
             outTurnOperations = new OutTurnOperation[players.Count];
             var rivers = CurrentRoundStatus.Rivers;
             // Get messages and send them to players
-            for (int i = 0; i < messages.Length; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                messages[i] = new ServerDiscardOperationMessage
+                var message = new ServerDiscardOperationMessage
                 {
                     PlayerIndex = i,
                     CurrentTurnPlayerIndex = CurrentPlayerIndex,
@@ -64,22 +58,11 @@ namespace Multi.GameState
                     HandTiles = CurrentRoundStatus.HandTiles(i),
                     Rivers = rivers
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, messages[i]);
+                players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, message);
             }
-            // lastSendTime = Time.time;
             firstSendTime = Time.time;
             serverTimeOut = players.Max(p => p.BonusTurnTime) + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
         }
-
-        // private void SendMessages()
-        // {
-        //     // Send message to the current turn player
-        //     for (int i = 0; i < players.Count; i++)
-        //     {
-        //         if (responds[i]) continue;
-        //         players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, messages[i]);
-        //     }
-        // }
 
         // todo -- complete this
         private OutTurnOperation[] GetOperations(int playerIndex)
@@ -103,10 +86,92 @@ namespace Multi.GameState
                     HandData = CurrentRoundStatus.HandData(playerIndex)
                 });
             }
-            // test kong -- todo
-            // test pong -- todo
-            // test chow -- todo
+            if (!CurrentRoundStatus.RichiStatus(playerIndex))
+            {
+                // get side
+                var side = GetSide(playerIndex, CurrentPlayerIndex, CurrentRoundStatus.TotalPlayers);
+                var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
+                // test kong
+                TestKongs(handTiles, DiscardTile, side, operations);
+                // test pong
+                TestPongs(handTiles, DiscardTile, side, operations);
+                // test chow
+                TestChows(handTiles, DiscardTile, side, operations);
+            }
             return operations.ToArray();
+        }
+
+        private MeldSide GetSide(int playerIndex, int discardPlayerIndex, int totalPlayer)
+        {
+            int diff = discardPlayerIndex - playerIndex;
+            if (diff < 0) diff += totalPlayer;
+            switch (diff)
+            {
+                case 1:
+                    return MeldSide.Right;
+                case 2:
+                    return MeldSide.Opposite;
+                case 3:
+                    return MeldSide.Left;
+                default:
+                    Debug.LogError($"Diff = {diff}, this should not happen");
+                    return MeldSide.Left;
+            }
+        }
+
+        private void TestKongs(IList<Tile> handTiles, Tile discardTile, MeldSide side, IList<OutTurnOperation> operations)
+        {
+            if (!gameSettings.AllowPongs) return;
+            var kongs = MahjongLogic.GetKongs(handTiles, discardTile, side);
+            if (kongs.Any())
+            {
+                foreach (var kong in kongs)
+                {
+                    operations.Add(new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.Kong,
+                        Tile = discardTile,
+                        Meld = kong
+                    });
+                }
+            }
+        }
+
+        private void TestPongs(IList<Tile> handTiles, Tile discardTile, MeldSide side, IList<OutTurnOperation> operations)
+        {
+            if (!gameSettings.AllowPongs) return;
+            var pongs = MahjongLogic.GetPongs(handTiles, discardTile, side);
+            if (pongs.Any())
+            {
+                foreach (var pong in pongs)
+                {
+                    operations.Add(new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.Pong,
+                        Tile = discardTile,
+                        Meld = pong
+                    });
+                }
+            }
+        }
+
+        private void TestChows(IList<Tile> handTiles, Tile discardTile, MeldSide side, IList<OutTurnOperation> operations)
+        {
+            if (!gameSettings.AllowChows) return;
+            if (side != MeldSide.Left) return;
+            var chows = MahjongLogic.GetChows(handTiles, discardTile, side);
+            if (chows.Any())
+            {
+                foreach (var chow in chows)
+                {
+                    operations.Add(new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.Chow,
+                        Tile = discardTile,
+                        Meld = chow
+                    });
+                }
+            }
         }
 
         private PointInfo GetRongInfo(int playerIndex, Tile discard)
