@@ -58,6 +58,7 @@ namespace Multi.MahjongMessages
         public Tile Tile;
         public int BonusTurnTime;
         public bool Richied;
+        public bool Zhenting;
         public InTurnOperation[] Operations;
         public MahjongSetData MahjongSetData;
 
@@ -69,6 +70,7 @@ namespace Multi.MahjongMessages
                 + $"Tile: {Tile}\n"
                 + $"BonusTurnTime: {BonusTurnTime}\n"
                 + $"Richied: {Richied}\n"
+                + $"Zhenting: {Zhenting}\n"
                 + $"Operations: {operationString}\n"
                 + $"MahjongSetData: {MahjongSetData}";
         }
@@ -138,6 +140,7 @@ namespace Multi.MahjongMessages
         public int[] Points;
         public bool[] RichiStatus;
         public int RichiSticks;
+        public bool Zhenting;
         public MahjongSetData MahjongSetData;
 
         public override string ToString()
@@ -148,6 +151,7 @@ namespace Multi.MahjongMessages
                 + $"Points: {string.Join(",", Points)}\n"
                 + $"RichiStatus: {string.Join(",", RichiStatus)}\n"
                 + $"RichiSticks: {RichiSticks}\n"
+                + $"Zhenting: {Zhenting}\n"
                 + $"MahjongSetData: {MahjongSetData}";
         }
     }

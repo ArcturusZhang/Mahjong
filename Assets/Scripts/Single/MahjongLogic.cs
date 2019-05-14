@@ -199,8 +199,7 @@ namespace Single
                 : pointInfo.BasePoint * (roundStatus.TotalPlayer + 1);
         }
 
-        private static ISet<List<Meld>> Decompose(IList<Tile> handTiles,
-            IList<Meld> openMelds, Tile tile)
+        private static ISet<List<Meld>> Decompose(IList<Tile> handTiles, IList<Meld> openMelds, Tile tile)
         {
             var decompose = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             int count = handTiles.Count;
@@ -212,7 +211,7 @@ namespace Single
             var result = new HashSet<List<Meld>>(new MeldListEqualityComparer());
             foreach (var sub in decompose)
             {
-                sub.AddRange(openMelds);
+                if (openMelds != null) sub.AddRange(openMelds);
                 sub.Sort();
                 result.Add(sub);
             }
@@ -635,6 +634,17 @@ namespace Single
         {
             var strings = decomposes.Select(list => $"[{string.Join(", ", list)}");
             return string.Join("; ", strings);
+        }
+
+        public static bool TestDiscardZhenting(IList<Tile> handTiles, List<RiverTile> riverTiles)
+        {
+            var winningTiles = WinningTiles(handTiles, null);
+            foreach (var winningTile in winningTiles)
+            {
+                int index = riverTiles.FindIndex(riverTile => riverTile.Tile.EqualsIgnoreColor(winningTile));
+                if (index >= 0) return true;
+            }
+            return false;
         }
 
         public static Tile GetDoraTile(Tile doraIndicator, IList<Tile> allTiles = null)

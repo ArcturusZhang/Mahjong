@@ -15,6 +15,7 @@ namespace Single.GameState
         public int[] Points;
         public bool[] RichiStatus;
         public int RichiSticks;
+        public bool Zhenting;
         public MahjongSetData MahjongSetData;
 
         public override void OnClientStateEnter()
@@ -28,6 +29,7 @@ namespace Single.GameState
             CurrentRoundStatus.RichiSticks = RichiSticks;
             // update mahjong set
             CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            CurrentRoundStatus.IsZhenting = Zhenting;
             // perform operation
             if (Operations.All(op => op.Type == OutTurnOperationType.Skip)) return;
             for (int playerIndex = 0; playerIndex < Operations.Length; playerIndex++)

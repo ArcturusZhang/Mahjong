@@ -88,6 +88,7 @@ namespace Single
                 Tile = message.Tile,
                 BonusTurnTime = message.BonusTurnTime,
                 Richied = message.Richied,
+                Zhenting = message.Zhenting,
                 MahjongSetData = message.MahjongSetData,
                 Operations = message.Operations
             };
@@ -136,6 +137,7 @@ namespace Single
                 Points = message.Points,
                 RichiStatus = message.RichiStatus,
                 RichiSticks = message.RichiSticks,
+                Zhenting = message.Zhenting,
                 MahjongSetData = message.MahjongSetData
             };
             StateMachine.ChangeState(turnEndState);

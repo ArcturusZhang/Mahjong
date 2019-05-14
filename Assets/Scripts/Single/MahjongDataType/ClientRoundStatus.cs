@@ -23,6 +23,7 @@ namespace Single.MahjongDataType
         public int Extra { get; private set; }
         public int RichiSticks { get; set; }
         public bool IsRichiing { get; set; }
+        public bool IsZhenting { get; set; }
         public MahjongSetData MahjongSetData { get; set; }
         public NetworkSettings Settings { get; }
         public Player LocalPlayer { get; }

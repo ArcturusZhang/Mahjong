@@ -14,12 +14,14 @@ namespace Single.UI
         public HandTileInstance[] HandTileInstances;
         public HandTileInstance LastDrawInstance;
         public RectTransform LastDrawRect;
+        public Image Zhenting;
 
         private void Update()
         {
             if (CurrentRoundStatus == null) return;
             var count = ShowHandTiles();
             ShowLastDraw(count);
+            Zhenting.gameObject.SetActive(CurrentRoundStatus.IsZhenting);
         }
 
         private int ShowHandTiles()

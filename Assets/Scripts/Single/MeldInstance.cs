@@ -72,7 +72,7 @@ namespace Single
             {
                 if (OpenMeld.Side == MeldSide.Self)
                     return 4 * MahjongConstants.TileWidth;
-                if (OpenMeld.IsKong && OpenMeld.IsAdded)
+                if (OpenMeld.IsKong && !OpenMeld.IsAdded)
                     return 3 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
                 return 2 * MahjongConstants.TileWidth + MahjongConstants.TileHeight;
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Single;
 using Single.Exceptions;
 using Single.MahjongDataType;
 using UnityEngine;
@@ -30,6 +31,9 @@ namespace Multi.ServerData
         private bool firstTurn;
         private int turnCount;
         private List<RiverTile>[] rivers;
+        private bool[] tempZhenting;
+        private bool[] discardZhenting;
+        private bool[] richiZhenting;
 
         public ServerRoundStatus(GameSettings gameSettings, YakuSettings yakuSettings, List<Player> players)
         {
@@ -88,6 +92,10 @@ namespace Multi.ServerData
         public bool OneShotStatus(int playerIndex)
         {
             return oneShotStatus[playerIndex];
+        }
+        public bool IsZhenting(int playerIndex)
+        {
+            return tempZhenting[playerIndex] || discardZhenting[playerIndex] || richiZhenting[playerIndex];
         }
         public bool FirstTurn => firstTurn;
         public int TotalPlayers => players.Count;
@@ -260,6 +268,46 @@ namespace Multi.ServerData
             points[index] -= GameSettings.RichiMortgagePoints;
         }
 
+        public void BreakTempZhenting(int playerIndex)
+        {
+            tempZhenting[playerIndex] = false;
+        }
+
+        public void UpdateTempZhenting(int discardPlayerIndex, Tile discardTile)
+        {
+            // test temp zhenting
+            for (int playerIndex = 0; playerIndex < players.Count; playerIndex++)
+            {
+                if (playerIndex == discardPlayerIndex) continue;
+                if (MahjongLogic.HasWin(handTiles[playerIndex], null, discardTile))
+                    tempZhenting[playerIndex] = true;
+            }
+        }
+
+        public void UpdateDiscardZhenting()
+        {
+            for (int i = 0; i < players.Count; i++)
+                UpdateDiscardZhenting(i);
+        }
+
+        public void UpdateDiscardZhenting(int playerIndex)
+        {
+            discardZhenting[playerIndex] = MahjongLogic.TestDiscardZhenting(handTiles[playerIndex], rivers[playerIndex]);
+        }
+
+        public void UpdateRichiZhenting(Tile discardTile)
+        {
+            for (int i = 0; i < players.Count; i++)
+                UpdateRichiZhenting(i, discardTile);
+        }
+
+        public void UpdateRichiZhenting(int playerIndex, Tile discardTile)
+        {
+            if (!RichiStatus(playerIndex) || richiZhenting[playerIndex]) return;
+            if (MahjongLogic.HasWin(handTiles[playerIndex], null, discardTile))
+                richiZhenting[playerIndex] = true;
+        }
+
         public void CheckOneShot(int index)
         {
             if (oneShotStatus[index]) oneShotStatus[index] = false;
@@ -335,6 +383,9 @@ namespace Multi.ServerData
             rivers = new List<RiverTile>[players.Count];
             richiStatus = new bool[players.Count];
             oneShotStatus = new bool[players.Count];
+            tempZhenting = new bool[players.Count];
+            discardZhenting = new bool[players.Count];
+            richiZhenting = new bool[players.Count];
             firstTurn = true;
             turnCount = 0;
             for (int i = 0; i < players.Count; i++)

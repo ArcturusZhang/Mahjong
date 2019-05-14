@@ -16,6 +16,8 @@ namespace Multi.ServerData
         public static PointInfo GetPointInfo(int playerIndex, ServerRoundStatus CurrentRoundStatus, Tile winningTile,
             HandStatus baseHandStatus, Tile[] doraTiles, Tile[] uraDoraTiles, YakuSettings yakuSettings)
         {
+            var zhenting = CurrentRoundStatus.IsZhenting(playerIndex);
+            if (zhenting && !baseHandStatus.HasFlag(HandStatus.Tsumo)) return new PointInfo();
             var handData = CurrentRoundStatus.HandData(playerIndex);
             var handStatus = baseHandStatus;
             if (MahjongLogic.TestMenqing(handData.Melds))

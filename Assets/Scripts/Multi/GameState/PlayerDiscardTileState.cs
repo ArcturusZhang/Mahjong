@@ -84,18 +84,8 @@ namespace Multi.GameState
             var operations = new List<OutTurnOperation> {
                 new OutTurnOperation { Type = OutTurnOperationType.Skip}
             };
-            var point = GetRongInfo(playerIndex, DiscardTile);
-            Debug.Log($"PointInfo: {point}");
-            // test if enough
-            if (gameSettings.CheckConstraint(point))
-            {
-                operations.Add(new OutTurnOperation
-                {
-                    Type = OutTurnOperationType.Rong,
-                    Tile = DiscardTile,
-                    HandData = CurrentRoundStatus.HandData(playerIndex)
-                });
-            }
+            // test rong
+            TestRong(playerIndex, DiscardTile, operations);
             if (!CurrentRoundStatus.RichiStatus(playerIndex))
             {
                 // get side
@@ -109,6 +99,33 @@ namespace Multi.GameState
                 TestChows(handTiles, DiscardTile, side, operations);
             }
             return operations.ToArray();
+        }
+
+        private void TestRong(int playerIndex, Tile discardTile, IList<OutTurnOperation> operations)
+        {
+            var baseHandStatus = HandStatus.Nothing;
+            // test haidi
+            if (MahjongSet.Data.TilesDrawn == gameSettings.MountainReservedTiles)
+                baseHandStatus |= HandStatus.Haidi;
+            // test lingshang -- not gonna happen
+            var allTiles = MahjongSet.AllTiles;
+            var doraTiles = MahjongSet.DoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var point = ServerMahjongLogic.GetPointInfo(
+                playerIndex, CurrentRoundStatus, discardTile, baseHandStatus,
+                doraTiles, uraDoraTiles, yakuSettings);
+            // test if enough
+            if (gameSettings.CheckConstraint(point))
+            {
+                operations.Add(new OutTurnOperation
+                {
+                    Type = OutTurnOperationType.Rong,
+                    Tile = discardTile,
+                    HandData = CurrentRoundStatus.HandData(playerIndex)
+                });
+            }
         }
 
         private MeldSide GetSide(int playerIndex, int discardPlayerIndex, int totalPlayer)
@@ -182,20 +199,6 @@ namespace Multi.GameState
                     });
                 }
             }
-        }
-
-        private PointInfo GetRongInfo(int playerIndex, Tile discard)
-        {
-            var baseHandStatus = HandStatus.Nothing;
-            // test haidi
-            if (MahjongSet.Data.TilesRemain == gameSettings.MountainReservedTiles)
-                baseHandStatus |= HandStatus.Haidi;
-            // test lingshang -- not gonna happen
-            // just test if this player can claim rong, no need for dora
-            var point = ServerMahjongLogic.GetPointInfo(
-                playerIndex, CurrentRoundStatus, discard, baseHandStatus,
-                null, null, yakuSettings);
-            return point;
         }
 
         public override void OnStateUpdate()

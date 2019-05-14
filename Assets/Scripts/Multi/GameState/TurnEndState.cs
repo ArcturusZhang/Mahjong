@@ -40,9 +40,14 @@ namespace Multi.GameState
             // determines the operation to take when turn ends
             operationChosen = ChooseOperations();
             Debug.Log($"The operation chosen by this round is {operationChosen}, operation after choosing: {string.Join(",", Operations)}");
-            // if operation is not rong or round-draw, perform richi
+            // if operation is not rong or round-draw, perform richi and test zhenting
             if (operationChosen != OutTurnOperationType.Rong && operationChosen != OutTurnOperationType.RoundDraw)
+            {
                 CurrentRoundStatus.TryRichi(CurrentPlayerIndex, IsRichiing);
+                CurrentRoundStatus.UpdateTempZhenting(CurrentPlayerIndex, DiscardingTile);
+                CurrentRoundStatus.UpdateDiscardZhenting();
+                CurrentRoundStatus.UpdateRichiZhenting(DiscardingTile);
+            }
             // Send messages to clients
             for (int i = 0; i < players.Count; i++)
             {
@@ -54,6 +59,7 @@ namespace Multi.GameState
                     Points = CurrentRoundStatus.Points.ToArray(),
                     RichiStatus = CurrentRoundStatus.RichiStatusArray,
                     RichiSticks = CurrentRoundStatus.RichiSticks,
+                    Zhenting = CurrentRoundStatus.IsZhenting(i),
                     MahjongSetData = MahjongSet.Data
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, message);

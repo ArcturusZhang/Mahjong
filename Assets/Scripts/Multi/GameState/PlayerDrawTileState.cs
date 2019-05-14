@@ -20,6 +20,7 @@ namespace Multi.GameState
         private Tile justDraw;
         private float firstSendTime;
         private float serverTimeOut;
+        private PointInfo tsumoPointInfo;
 
         public override void OnServerStateEnter()
         {
@@ -32,6 +33,7 @@ namespace Multi.GameState
             CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             CurrentRoundStatus.LastDraw = justDraw;
             CurrentRoundStatus.CheckFirstTurn(CurrentPlayerIndex);
+            CurrentRoundStatus.BreakTempZhenting(CurrentPlayerIndex);
             Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}, "
                 + $"first turn: {CurrentRoundStatus.FirstTurn}.");
             for (int i = 0; i < players.Count; i++)
@@ -53,6 +55,7 @@ namespace Multi.GameState
                 Tile = justDraw,
                 BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
                 Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
+                Zhenting = CurrentRoundStatus.IsZhenting(CurrentPlayerIndex),
                 Operations = GetOperations(CurrentPlayerIndex),
                 MahjongSetData = MahjongSet.Data
             });
@@ -63,16 +66,8 @@ namespace Multi.GameState
         private InTurnOperation[] GetOperations(int playerIndex)
         {
             var operations = new List<InTurnOperation> { new InTurnOperation { Type = InTurnOperationType.Discard } };
-            var point = GetTsumoInfo(playerIndex, justDraw);
-            // test if enough
-            if (gameSettings.CheckConstraint(point))
-            {
-                operations.Add(new InTurnOperation
-                {
-                    Type = InTurnOperationType.Tsumo,
-                    Tile = justDraw
-                });
-            }
+            // test tsumo
+            TestTsumo(playerIndex, justDraw, operations);
             var handTiles = CurrentRoundStatus.HandTiles(playerIndex);
             var openMelds = CurrentRoundStatus.Melds(playerIndex);
             // test round draw
@@ -83,6 +78,33 @@ namespace Multi.GameState
             TestKongs(playerIndex, handTiles, operations);
             // test bei -- todo
             return operations.ToArray();
+        }
+
+        private void TestTsumo(int playerIndex, Tile tile, IList<InTurnOperation> operations)
+        {
+            var baseHandStatus = HandStatus.Tsumo;
+            // test haidi
+            if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
+                baseHandStatus |= HandStatus.Haidi;
+            // test lingshang
+            if (IsLingShang) baseHandStatus |= HandStatus.Lingshang;
+            var allTiles = MahjongSet.AllTiles;
+            var doraTiles = MahjongSet.DoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(
+                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            tsumoPointInfo = ServerMahjongLogic.GetPointInfo(
+                playerIndex, CurrentRoundStatus, tile, baseHandStatus,
+                doraTiles, uraDoraTiles, yakuSettings);
+            // test if enough
+            if (gameSettings.CheckConstraint(tsumoPointInfo))
+            {
+                operations.Add(new InTurnOperation
+                {
+                    Type = InTurnOperationType.Tsumo,
+                    Tile = justDraw
+                });
+            }
         }
 
         private void Test9Orphans(Tile[] handTiles, IList<InTurnOperation> operations)
@@ -203,11 +225,7 @@ namespace Multi.GameState
         private void HandleTsumo(InTurnOperation operation)
         {
             int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
-            var point = GetTsumoInfo(playerIndex, operation.Tile);
-            if (!gameSettings.CheckConstraint(point))
-                Debug.LogError(
-                    $"Tsumo requires minimum fan of {gameSettings.MinimumFanConstraintType}, but the point only contains {point.FanWithoutDora}");
-            ServerBehaviour.Instance.Tsumo(playerIndex, operation.Tile, point);
+            ServerBehaviour.Instance.Tsumo(playerIndex, operation.Tile, tsumoPointInfo);
         }
 
         private void HandleKong(InTurnOperation operation)
@@ -223,25 +241,6 @@ namespace Multi.GameState
             int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
             Debug.Log($"Player {playerIndex} has claimed 9-orphans");
             ServerBehaviour.Instance.RoundDraw(RoundDrawType.NineOrphans);
-        }
-
-        private PointInfo GetTsumoInfo(int playerIndex, Tile tile)
-        {
-            var baseHandStatus = HandStatus.Tsumo;
-            // test haidi
-            if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
-                baseHandStatus |= HandStatus.Haidi;
-            // test lingshang
-            if (IsLingShang) baseHandStatus |= HandStatus.Lingshang;
-            var allTiles = MahjongSet.AllTiles;
-            var doraTiles = MahjongSet.DoraIndicators.Select(
-                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
-            var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(
-                indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
-            var point = ServerMahjongLogic.GetPointInfo(
-                playerIndex, CurrentRoundStatus, tile, baseHandStatus,
-                doraTiles, uraDoraTiles, yakuSettings);
-            return point;
         }
 
         public override void OnStateUpdate()

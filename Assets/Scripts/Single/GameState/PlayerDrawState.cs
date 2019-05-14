@@ -13,6 +13,7 @@ namespace Single.GameState
         public Tile Tile;
         public int BonusTurnTime;
         public bool Richied;
+        public bool Zhenting;
         public MahjongSetData MahjongSetData;
         public InTurnOperation[] Operations;
         private WaitForSeconds waitAutoDiscardAfterRichi = new WaitForSeconds(MahjongConstants.AutoDiscardDelayAfterRichi);
@@ -29,6 +30,7 @@ namespace Single.GameState
         {
             CurrentRoundStatus.SetLastDraw(0, Tile);
             CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            CurrentRoundStatus.IsZhenting = Zhenting;
             // auto discard when richied
             if (Richied && Operations.All(op => op.Type == InTurnOperationType.Discard))
             {
