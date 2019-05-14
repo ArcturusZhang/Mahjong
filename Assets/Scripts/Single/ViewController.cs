@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Single.MahjongDataType;
 using Single.Managers;
 using Single.UI;
@@ -42,9 +43,9 @@ namespace Single
             PointTransferManager.CurrentRoundStatus = status;
         }
 
-        public IEnumerator ShowEffect(int placeIndex, PlayerEffectManager.Type type)
+        public float ShowEffect(int placeIndex, PlayerEffectManager.Type type)
         {
-            yield return PlayerEffectManager.ShowEffect(placeIndex, type);
+            return PlayerEffectManager.ShowEffect(placeIndex, type);
         }
 
         public IEnumerator RevealHandTiles(int placeIndex, PlayerHandData handData)

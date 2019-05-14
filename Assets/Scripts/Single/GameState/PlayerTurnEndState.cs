@@ -59,12 +59,12 @@ namespace Single.GameState
         {
             Debug.Log($"Operation: {operation}");
             // show effect
-            controller.StartCoroutine(controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type)));
+            controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type));
         }
 
         private void HandleRong(int placeIndex, OutTurnOperation operation)
         {
-            controller.StartCoroutine(controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type)));
+            controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type));
             controller.StartCoroutine(controller.RevealHandTiles(placeIndex, operation.HandData));
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using DG.Tweening;
 using Multi;
 using Single.UI.SubManagers;
 using UnityEngine;
@@ -9,11 +10,10 @@ namespace Single.UI
     public class PlayerEffectManager : MonoBehaviour
     {
         public EffectManager[] EffectManagers;
-        private WaitForSeconds wait = new WaitForSeconds(MahjongConstants.AnimationDelay);
 
-        public IEnumerator ShowEffect(int placeIndex, Type type)
+        public float ShowEffect(int placeIndex, Type type)
         {
-            yield return EffectManagers[placeIndex].StartAnimation(type);
+            return EffectManagers[placeIndex].StartAnimation(type);
         }
 
         public static Type GetAnimationType(OutTurnOperationType operation)

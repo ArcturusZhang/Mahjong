@@ -47,7 +47,8 @@ namespace Single.GameState
 
         private IEnumerator ShowAnimations(int placeIndex, SummaryPanelData data)
         {
-            yield return controller.ShowEffect(placeIndex, PlayerEffectManager.Type.Tsumo);
+            var duration = controller.ShowEffect(placeIndex, PlayerEffectManager.Type.Tsumo);
+            yield return new WaitForSeconds(duration);
             controller.PointSummaryPanelManager.ShowPanel(data, () =>
             {
                 Debug.Log("Sending readiness message");
