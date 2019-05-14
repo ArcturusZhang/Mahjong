@@ -52,6 +52,7 @@ namespace Single.GameState
         public override void OnClientStateExit()
         {
             System.Array.ForEach(controller.WaitingPanelManagers, m => m.Close());
+            controller.RoundDrawManager.Close();
             controller.TableTilesManager.StandUp();
         }
 

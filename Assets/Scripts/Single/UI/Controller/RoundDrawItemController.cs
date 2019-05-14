@@ -1,21 +1,23 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using DG.Tweening;
+using UnityEngine.UI;
 
 namespace Single.UI.Controller
 {
-    [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(Image))]
     public class RoundDrawItemController : MonoBehaviour
     {
-        private Animator animator;
+        private Image image;
 
-        private void OnEnable() {
-            animator = GetComponent<Animator>();
+        private void OnEnable()
+        {
+            image = GetComponent<Image>();
+            image.DOFade(1, MahjongConstants.FadeDuration);
         }
 
-        private void Start()
+        private void OnDisable()
         {
-            animator.SetTrigger("Fade");
+            image.color = new Color(1, 1, 1, 0);
         }
     }
 }

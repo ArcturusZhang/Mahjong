@@ -33,6 +33,7 @@ namespace Single
         public const int SummaryPanelWaitingTime = 5;
         public const float HandTilesRevealDelay = 0.5f;
         public const float AnimationDelay = 1f;
+        public const float FadeDuration = 1f;
         public static readonly Quaternion FacePlayer = Quaternion.Euler(270, 0, -90);
         public static readonly Quaternion FaceUp = Quaternion.Euler(-90, 0, -90);
         public static readonly Quaternion FaceDownOnWall = Quaternion.Euler(180, 180, -90);

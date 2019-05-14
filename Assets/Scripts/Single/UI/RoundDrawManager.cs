@@ -14,13 +14,14 @@ namespace Single.UI
         {
             var controller = Controllers[(int)type];
             controller.gameObject.SetActive(true);
-            StartCoroutine(Disable(controller));
         }
 
-        private IEnumerator Disable(RoundDrawItemController controller)
+        public void Close()
         {
-            yield return wait;
-            controller.gameObject.SetActive(false);
+            foreach (var controller in Controllers)
+            {
+                controller.gameObject.SetActive(false);
+            }
         }
     }
 }
