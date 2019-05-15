@@ -15,6 +15,8 @@ namespace Single.UI.SubManagers
         private const string back = "back";
         private Image[] tileImages;
         private ResourceManager manager;
+        private RectTransform rect;
+        private const float MaxWidth = 900f;
 
         private void OnEnable()
         {
@@ -24,6 +26,7 @@ namespace Single.UI.SubManagers
                 tileImages[i] = transform.GetChild(i).GetComponent<Image>();
             }
             manager = ResourceManager.Instance;
+            rect = GetComponent<RectTransform>();
         }
 
         public void SetHandTiles(IList<Tile> handTiles, IList<OpenMeld> openMelds, Tile winningTile)
@@ -39,10 +42,10 @@ namespace Single.UI.SubManagers
                 tileImages[count].rectTransform.anchoredPosition = new Vector2(offset, 0);
                 offset += TileWidth;
             }
+            if (openMelds.Count > 0) offset += Gap;
             // open melds
             for (int i = 0; i < openMelds.Count; i++)
             {
-                offset += Gap;
                 if (openMelds[i].IsKong && !openMelds[i].Revealed)
                 {
                     Assert.AreEqual(openMelds[i].Tiles.Length, 4);
@@ -81,7 +84,17 @@ namespace Single.UI.SubManagers
             {
                 tileImages[count].enabled = false;
             }
-            // change scale if necessary -- todo
+            // change scale if necessary
+            var width = offset + TileWidth;
+            if (width <= MaxWidth)
+            {
+                rect.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                var factor = MaxWidth / width;
+                rect.localScale = new Vector3(factor, factor, factor);
+            }
         }
     }
 }

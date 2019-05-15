@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.Assertions;
+using DG.Tweening;
 
 namespace Single.UI.SubManagers
 {
@@ -36,7 +37,17 @@ namespace Single.UI.SubManagers
             BeiYiMan = new[] { Bei, Yi, Man };
         }
 
-        public void SetYakuRank(PointInfo pointInfo)
+        public void ShowYakuRank(PointInfo pointInfo) {
+            SetYakuRank(pointInfo);
+            var rect = GetComponent<RectTransform>();
+            rect.localScale = new Vector3(ScaleFactor, ScaleFactor, ScaleFactor);
+            rect.DOScale(Vector3.one, AnimationDuration).SetEase(Ease.OutQuad);
+        }
+
+        private const float ScaleFactor = 1.2f;
+        private const float AnimationDuration = 0.5f;
+
+        private void SetYakuRank(PointInfo pointInfo)
         {
             if (pointInfo.TotalFan == 0) return;
             if (pointInfo.IsQTJ) return;

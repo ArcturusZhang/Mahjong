@@ -52,6 +52,7 @@ namespace Single.GameState
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(PlayerIndex);
             CurrentRoundStatus.SetLastDraw(placeIndex);
             CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            Debug.Log($"LastDraws: {string.Join(",", CurrentRoundStatus.LastDraws)}");
         }
 
         private IEnumerator AutoDiscard(Tile tile, int bonusTimeLeft)

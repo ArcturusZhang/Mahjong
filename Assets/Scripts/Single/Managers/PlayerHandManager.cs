@@ -66,8 +66,8 @@ namespace Single.Managers
                 lastDrawTransform.gameObject.SetActive(false);
                 return;
             }
-            lastDrawTransform.gameObject.SetActive(true);
             lastDrawInstance.SetTile((Tile)LastDraw);
+            lastDrawTransform.gameObject.SetActive(true);
             var p = drawnHolder.transform.localPosition;
             drawnHolder.transform.localPosition = new Vector3(
                 Count * MahjongConstants.HandTileWidth + MahjongConstants.LastDrawGap, p.y, p.z);

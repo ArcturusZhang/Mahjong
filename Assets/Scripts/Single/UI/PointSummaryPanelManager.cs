@@ -32,14 +32,14 @@ namespace Single.UI
             var uraDora = data.HandInfo.IsRichi ? data.HandInfo.UraDoraIndicators : null;
             DoraPanelManager.SetDoraIndicators(data.HandInfo.DoraIndicators, uraDora);
             // yaku list, total point and yaku rank
-            StartCoroutine(YakuListCoroutine(data.PointInfo, data.TotalPoints, callback));
+            StartCoroutine(YakuListCoroutine(data.PointInfo, data.TotalPoints, data.HandInfo.IsRichi, callback));
         }
 
-        private IEnumerator YakuListCoroutine(PointInfo point, int totalPoints, UnityAction callback)
+        private IEnumerator YakuListCoroutine(PointInfo point, int totalPoints, bool richi, UnityAction callback)
         {
-            yield return PointInfoManager.SetPointInfo(point, totalPoints);
+            yield return PointInfoManager.SetPointInfo(point, totalPoints, richi);
             yield return waiting;
-            YakuRankManager.SetYakuRank(point);
+            YakuRankManager.ShowYakuRank(point);
             ConfirmCountDownController.StartCountDown(MahjongConstants.SummaryPanelWaitingTime, callback);
         }
 

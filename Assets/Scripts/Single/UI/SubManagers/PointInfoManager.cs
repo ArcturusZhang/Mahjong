@@ -5,6 +5,7 @@ using Single.MahjongDataType;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
+using DG.Tweening;
 
 namespace Single.UI.SubManagers
 {
@@ -17,9 +18,10 @@ namespace Single.UI.SubManagers
         public YakuPointManager PointManager;
         private WaitForSeconds waiting;
 
-		private void OnEnable() {
-			waiting = new WaitForSeconds(MahjongConstants.SummaryPanelDelayTime);
-		}
+        private void OnEnable()
+        {
+            waiting = new WaitForSeconds(MahjongConstants.SummaryPanelDelayTime);
+        }
 
         private void OnDisable()
         {
@@ -29,34 +31,47 @@ namespace Single.UI.SubManagers
             gameObject.SetActive(false);
         }
 
-        public IEnumerator SetPointInfo(PointInfo pointInfo, int totalPoints)
+        public IEnumerator SetPointInfo(PointInfo pointInfo, int totalPoints, bool richi)
         {
             gameObject.SetActive(true);
             yield return waiting;
-            yield return StartCoroutine(AddYakuEntries(pointInfo));
-            ShowPointInfo(pointInfo);
+            yield return AddYakuEntries(pointInfo, richi);
+            ShowFuAndFan(pointInfo);
             yield return waiting;
-			PointManager.SetNumber(totalPoints);
+            ShowTotalPoints(totalPoints);
         }
 
-        private void ShowPointInfo(PointInfo pointInfo)
+        private void ShowFuAndFan(PointInfo pointInfo)
         {
+            RectTransform rect;
             if (pointInfo.IsQTJ || !pointInfo.IsYakuman)
             {
                 FanAndFuManager.gameObject.SetActive(true);
                 YakuMan.gameObject.SetActive(false);
                 FanAndFuManager.SetPointInfo(pointInfo.TotalFan, pointInfo.Fu);
+                rect = FanAndFuManager.GetComponent<RectTransform>();
             }
             else
             {
                 FanAndFuManager.gameObject.SetActive(false);
                 YakuMan.gameObject.SetActive(true);
+                rect = YakuMan.GetComponent<RectTransform>();
             }
+            rect.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+            rect.DOScale(new Vector3(1, 1, 1), AnimationDuration).SetEase(Ease.OutQuad);
         }
 
-        private IEnumerator AddYakuEntries(PointInfo pointInfo)
+        private void ShowTotalPoints(int totalPoints)
         {
-            var entries = GetYakuEntries(pointInfo, YakuItems);
+            PointManager.SetNumber(totalPoints);
+            var rect = PointManager.GetComponent<RectTransform>();
+            rect.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+            rect.DOScale(new Vector3(1, 1, 1), AnimationDuration).SetEase(Ease.OutQuad);
+        }
+
+        private IEnumerator AddYakuEntries(PointInfo pointInfo, bool richi)
+        {
+            var entries = GetYakuEntries(pointInfo, richi, YakuItems);
             Debug.Log($"YakuItem count: {entries.Count}");
             int rows = Mathf.CeilToInt((float)entries.Count / MahjongConstants.YakuItemColumns);
             rows = Math.Max(MahjongConstants.FullItemCountPerColumn, rows);
@@ -69,16 +84,19 @@ namespace Single.UI.SubManagers
             }
         }
 
+        private const float scaleFactor = 1.2f;
+        private const float Displacement = 50;
+        private const float AnimationDuration = 0.5f;
+
         private void AddEntry(GameObject obj, int row, int col, int rows)
         {
+            obj.SetActive(true);
             var rectTransform = obj.GetComponent<RectTransform>();
             float alpha = Alpha + Range / rows * row;
             float theta = (-2 * col + 1) * alpha;
             var position = new Vector2(-Mathf.Sin(theta * Mathf.Deg2Rad), Mathf.Cos(theta * Mathf.Deg2Rad)) * Distance;
-            rectTransform.anchoredPosition = position;
-            obj.SetActive(true);
-            var yakuItem = obj.GetComponent<YakuItem>();
-            Debug.Log($"Yaku: {yakuItem.YakuName.text}, row: {row}, col: {col}, theta: {theta}");
+            rectTransform.anchoredPosition = position - new Vector2(Displacement, 0);
+            rectTransform.DOAnchorPos(position, AnimationDuration).SetEase(Ease.OutQuad);
         }
 
         private const float Distance = 300;
@@ -86,7 +104,7 @@ namespace Single.UI.SubManagers
         private const float Beta = 48;
         private const float Range = 180 - Alpha - Beta;
 
-        private List<GameObject> GetYakuEntries(PointInfo pointInfo, Transform holder)
+        private List<GameObject> GetYakuEntries(PointInfo pointInfo, bool richi, Transform holder)
         {
             var entries = new List<GameObject>();
             foreach (var yakuValue in pointInfo.YakuList)
@@ -114,7 +132,7 @@ namespace Single.UI.SubManagers
                 var yakuItem = entry.GetComponent<YakuItem>();
                 yakuItem.SetYakuItem(new YakuValue { Name = "红宝牌", Value = pointInfo.RedDora }, pointInfo.IsQTJ);
             }
-            if (pointInfo.UraDora > 0)
+            if (richi)
             {
                 var entry = Instantiate(YakuItemPrefab, holder);
                 entry.SetActive(false);
