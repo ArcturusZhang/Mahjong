@@ -49,7 +49,10 @@ namespace Single
                 instances[tileCount++].SetTile(OpenMeld.Tiles[i]);
             }
             instances[0].SetTile(OpenMeld.Tile);
-            instances[3].gameObject.SetActive(false);
+            for (int i = OpenMeld.Tiles.Length; i < instances.Length; i++)
+            {
+                instances[i].gameObject.SetActive(false);
+            }
         }
 
         public void AddedKong()

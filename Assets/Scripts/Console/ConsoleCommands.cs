@@ -158,7 +158,7 @@ namespace Console
             JsonUtility.FromJsonOverwrite(json, settings);
         }
 
-        [ConsoleMethod("set_tiles", "Set the upcoming tiles in current mahjong set. If game is not started, this command has no effect")]
+        [ConsoleMethod("alter_yama", "Set the upcoming tiles in current mahjong set. If game is not started, this command has no effect")]
         public static bool SetTiles(string tileString)
         {
             var tiles = ParseTiles(tileString);
@@ -180,7 +180,7 @@ namespace Console
             return true;
         }
 
-        [ConsoleMethod("set_tiles_reverse", "Set the upcoming lingshang tiles in current mahjong set. If game is not started, this command has no effect")]
+        [ConsoleMethod("alter_yama_reverse", "Set the upcoming lingshang tiles in current mahjong set. If game is not started, this command has no effect")]
         public static bool ReplaceLingShang(string tileString)
         {
             var tiles = ParseTiles(tileString);
@@ -199,6 +199,33 @@ namespace Console
             }
             var methodInfo = typeof(MahjongSet).GetMethod("SetTilesReverse", BindingFlags.NonPublic | BindingFlags.Instance);
             methodInfo.Invoke(set, new[] { tiles });
+            return true;
+        }
+
+        [ConsoleMethod("alter_hand", "Alter hand tiles on server")]
+        public static bool AlterHand(int playerIndex, string handString)
+        {
+            var tiles = ParseTiles(handString);
+            var server = ServerBehaviour.Instance;
+            if (server == null)
+            {
+                Debug.LogError("Game is not started, or you are not host.");
+                return false;
+            }
+            var status = server.CurrentRoundStatus;
+            if (status == null)
+            {
+                Debug.LogError("Game is not started, or you are not host.");
+                return false;
+            }
+            var fieldInfo = status.GetType().GetField("handTiles", BindingFlags.NonPublic | BindingFlags.Instance);
+            var handTileArray = (List<Tile>[])fieldInfo.GetValue(status);
+            var handTiles = handTileArray[playerIndex];
+            for (int i = 0; i < Math.Min(tiles.Count, handTiles.Count); i++)
+            {
+                handTiles[i] = tiles[i];
+            }
+            status.SortHandTiles();
             return true;
         }
 

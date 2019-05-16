@@ -54,9 +54,16 @@ namespace Single.UI
                 KongButton.onClick.RemoveAllListeners();
                 KongButton.gameObject.SetActive(true);
                 var kongOperations = System.Array.FindAll(operations, op => op.Type == InTurnOperationType.Kong);
-                KongButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnKongButtonClicked(kongOperations));
+                KongButton.onClick.AddListener(() =>
+                {
+                    ClientBehaviour.Instance.OnInTurnKongButtonClicked(kongOperations);
+                    Close();
+                    BackButton.gameObject.SetActive(true);
+                    BackButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnBackButtonClicked(operations));
+                });
             }
-            if (operations.Any(op => op.Type == InTurnOperationType.RoundDraw)) {
+            if (operations.Any(op => op.Type == InTurnOperationType.RoundDraw))
+            {
                 DrawButton.onClick.RemoveAllListeners();
                 DrawButton.gameObject.SetActive(true);
                 var drawOperation = System.Array.Find(operations, op => op.Type == InTurnOperationType.RoundDraw);

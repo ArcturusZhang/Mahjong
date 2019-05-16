@@ -292,14 +292,20 @@ namespace Single
                 controller.InTurnPanelManager.Close();
                 return;
             }
-            // todo -- show kong selection panel here
-        }
-
-        public void OnInTurnBackButtonClicked(InTurnOperation[] operations)
-        {
-            controller.InTurnPanelManager.SetOperations(operations);
-            controller.HandPanelManager.RemoveCandidates();
-            CurrentRoundStatus.IsRichiing = false;
+            // show kong selection panel here
+            var meldOptions = operationOptions.Select(op => op.Meld);
+            controller.MeldSelectionManager.SetMeldOptions(meldOptions.ToArray(), meld =>
+            {
+                int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
+                Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
+                localPlayer.InTurnOperationTaken(new InTurnOperation
+                {
+                    Type = InTurnOperationType.Kong,
+                    Meld = meld
+                }, bonusTimeLeft);
+                controller.InTurnPanelManager.Close();
+                controller.MeldSelectionManager.Close();
+            });
         }
 
         public void OnInTurnDrawButtonClicked(InTurnOperation operation)
@@ -308,6 +314,20 @@ namespace Single
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             localPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
             controller.InTurnPanelManager.Close();
+        }
+
+        public void OnInTurnBackButtonClicked(InTurnOperation[] operations)
+        {
+            controller.InTurnPanelManager.SetOperations(operations);
+            controller.MeldSelectionManager.Close();
+            controller.HandPanelManager.RemoveCandidates();
+            CurrentRoundStatus.IsRichiing = false;
+        }
+
+        public void OnOutTurnBackButtonClicked(OutTurnOperation[] operations)
+        {
+            controller.OutTurnPanelManager.SetOperations(operations);
+            controller.MeldSelectionManager.Close();
         }
 
         public void OnOutTurnButtonClicked(OutTurnOperation operation)
@@ -338,7 +358,20 @@ namespace Single
                 controller.OutTurnPanelManager.Close();
                 return;
             }
-            // todo -- chow selection logic here
+            // chow selection logic here
+            var meldOptions = operationOptions.Select(op => op.Meld);
+            controller.MeldSelectionManager.SetMeldOptions(meldOptions.ToArray(), meld =>
+            {
+                int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
+                Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
+                localPlayer.OutTurnOperationTaken(new OutTurnOperation
+                {
+                    Type = OutTurnOperationType.Chow,
+                    Meld = meld
+                }, bonusTimeLeft);
+                controller.InTurnPanelManager.Close();
+                controller.MeldSelectionManager.Close();
+            });
         }
 
         public void OnPongButtonClicked(OutTurnOperation[] operationOptions, OutTurnOperation[] originalOperations)
@@ -361,7 +394,20 @@ namespace Single
                 controller.OutTurnPanelManager.Close();
                 return;
             }
-            // todo -- pong selection logic here
+            // pong selection logic here
+            var meldOptions = operationOptions.Select(op => op.Meld);
+            controller.MeldSelectionManager.SetMeldOptions(meldOptions.ToArray(), meld =>
+            {
+                int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
+                Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
+                localPlayer.OutTurnOperationTaken(new OutTurnOperation
+                {
+                    Type = OutTurnOperationType.Pong,
+                    Meld = meld
+                }, bonusTimeLeft);
+                controller.InTurnPanelManager.Close();
+                controller.MeldSelectionManager.Close();
+            });
         }
     }
 }

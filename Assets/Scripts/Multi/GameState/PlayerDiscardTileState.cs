@@ -74,7 +74,6 @@ namespace Multi.GameState
             CurrentRoundStatus.SortHandTiles();
         }
 
-        // todo -- complete this
         private OutTurnOperation[] GetOperations(int playerIndex)
         {
             if (playerIndex == CurrentPlayerIndex) return new OutTurnOperation[] {
@@ -132,14 +131,42 @@ namespace Multi.GameState
         {
             int diff = discardPlayerIndex - playerIndex;
             if (diff < 0) diff += totalPlayer;
+            switch (totalPlayer)
+            {
+                case 2: return GetSide2();
+                case 3: return GetSide3(diff);
+                case 4: return GetSide4(diff);
+                default:
+                    Debug.LogError($"TotalPlayer = {totalPlayer}, this should not happen");
+                    return MeldSide.Left;
+
+            }
+        }
+
+        private MeldSide GetSide2()
+        {
+            return MeldSide.Left;
+        }
+
+        private MeldSide GetSide3(int diff)
+        {
             switch (diff)
             {
-                case 1:
-                    return MeldSide.Right;
-                case 2:
-                    return MeldSide.Opposite;
-                case 3:
+                case 1: return MeldSide.Right;
+                case 2: return MeldSide.Left;
+                default:
+                    Debug.LogError($"Diff = {diff}, this should not happen");
                     return MeldSide.Left;
+            }
+        }
+
+        private MeldSide GetSide4(int diff)
+        {
+            switch (diff)
+            {
+                case 1: return MeldSide.Right;
+                case 2: return MeldSide.Opposite;
+                case 3: return MeldSide.Left;
                 default:
                     Debug.LogError($"Diff = {diff}, this should not happen");
                     return MeldSide.Left;

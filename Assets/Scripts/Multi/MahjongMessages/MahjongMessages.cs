@@ -76,20 +76,6 @@ namespace Multi.MahjongMessages
         }
     }
 
-    // public class ServerOtherDrawTileMessage : MessageBase
-    // {
-    //     public int PlayerIndex;
-    //     public int CurrentTurnPlayerIndex;
-    //     public MahjongSetData MahjongSetData;
-
-    //     public override string ToString()
-    //     {
-    //         return $"PlayerIndex: {PlayerIndex}\n"
-    //             + $"CurrentTurnPlayerIndex: {CurrentTurnPlayerIndex}\n"
-    //             + $"MahjongSetData: {MahjongSetData}";
-    //     }
-    // }
-
     public class ServerKongMessage : MessageBase
     {
         public int PlayerIndex;

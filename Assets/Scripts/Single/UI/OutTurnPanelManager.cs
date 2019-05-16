@@ -14,6 +14,7 @@ namespace Single.UI
         public Button PongButton;
         public Button KongButton;
         public Button SkipButton;
+        public Button BackButton;
 
         public void SetOperations(OutTurnOperation[] operations)
         {
@@ -27,6 +28,8 @@ namespace Single.UI
             SkipButton.gameObject.SetActive(true);
             var skipOperation = System.Array.Find(operations, op => op.Type == OutTurnOperationType.Skip);
             SkipButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnButtonClicked(skipOperation));
+            BackButton.onClick.RemoveAllListeners();
+            BackButton.gameObject.SetActive(false);
             if (operations.Any(op => op.Type == OutTurnOperationType.Rong))
             {
                 RongButton.onClick.RemoveAllListeners();
@@ -46,14 +49,26 @@ namespace Single.UI
                 ChowButton.onClick.RemoveAllListeners();
                 ChowButton.gameObject.SetActive(true);
                 var chowOptions = System.Array.FindAll(operations, op => op.Type == OutTurnOperationType.Chow);
-                ChowButton.onClick.AddListener(() => ClientBehaviour.Instance.OnChowButtonClicked(chowOptions, operations));
+                ChowButton.onClick.AddListener(() =>
+                {
+                    ClientBehaviour.Instance.OnChowButtonClicked(chowOptions, operations);
+                    Close();
+                    BackButton.gameObject.SetActive(true);
+                    BackButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnBackButtonClicked(operations));
+                });
             }
             if (operations.Any(op => op.Type == OutTurnOperationType.Pong))
             {
                 PongButton.onClick.RemoveAllListeners();
                 PongButton.gameObject.SetActive(true);
                 var pongOptions = System.Array.FindAll(operations, op => op.Type == OutTurnOperationType.Pong);
-                PongButton.onClick.AddListener(() => ClientBehaviour.Instance.OnPongButtonClicked(pongOptions, operations));
+                PongButton.onClick.AddListener(() =>
+                {
+                    ClientBehaviour.Instance.OnPongButtonClicked(pongOptions, operations);
+                    Close();
+                    BackButton.gameObject.SetActive(true);
+                    BackButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnBackButtonClicked(operations));
+                });
             }
         }
 
@@ -64,6 +79,7 @@ namespace Single.UI
             PongButton.gameObject.SetActive(false);
             KongButton.gameObject.SetActive(false);
             SkipButton.gameObject.SetActive(false);
+            BackButton.gameObject.SetActive(false);
         }
     }
 }

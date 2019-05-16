@@ -22,6 +22,7 @@ namespace Single
         public PlayerEffectManager PlayerEffectManager;
         public InTurnPanelManager InTurnPanelManager;
         public OutTurnPanelManager OutTurnPanelManager;
+        public MeldSelectionManager MeldSelectionManager;
         public WaitingPanelManager[] WaitingPanelManagers;
         public RoundDrawManager RoundDrawManager;
         public PointSummaryPanelManager PointSummaryPanelManager;
