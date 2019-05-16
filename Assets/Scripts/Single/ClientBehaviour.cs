@@ -119,6 +119,7 @@ namespace Single
                 DiscardingLastDraw = message.DiscardingLastDraw,
                 Tile = message.Tile,
                 BonusTurnTime = message.BonusTurnTime,
+                Zhenting = message.Zhenting,
                 Operations = message.Operations,
                 HandTiles = message.HandTiles,
                 Rivers = message.Rivers

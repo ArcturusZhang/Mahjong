@@ -14,6 +14,7 @@ namespace Single.GameState
         public bool DiscardingLastDraw;
         public Tile Tile;
         public int BonusTurnTime;
+        public bool Zhenting;
         public OutTurnOperation[] Operations;
         public Tile[] HandTiles;
         public RiverData[] Rivers;
@@ -22,6 +23,7 @@ namespace Single.GameState
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(CurrentPlayerIndex);
             // update hand tiles
             CurrentRoundStatus.SetHandTiles(HandTiles);
+            CurrentRoundStatus.IsZhenting = Zhenting;
             controller.StartCoroutine(UpdateHandData(CurrentPlayerIndex, DiscardingLastDraw, Tile, Rivers));
             if (IsRichiing)
                 controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Richi);

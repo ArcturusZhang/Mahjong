@@ -33,7 +33,7 @@ namespace Multi.GameState
                 Debug.LogError("[Server] currentPlayerIndex does not match, this should not happen");
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
-            UpdateHandData();
+            UpdateRoundStatus();
             Debug.Log($"CurrentRoundStatus: {CurrentRoundStatus}");
             responds = new bool[players.Count];
             operations = new OutTurnOperation[players.Count];
@@ -49,6 +49,7 @@ namespace Multi.GameState
                     DiscardingLastDraw = DiscardLastDraw,
                     Tile = DiscardTile,
                     BonusTurnTime = players[i].BonusTurnTime,
+                    Zhenting = CurrentRoundStatus.IsZhenting(i),
                     Operations = GetOperations(i),
                     HandTiles = CurrentRoundStatus.HandTiles(i),
                     Rivers = rivers
@@ -59,7 +60,7 @@ namespace Multi.GameState
             serverTimeOut = players.Max(p => p.BonusTurnTime) + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
-        private void UpdateHandData()
+        private void UpdateRoundStatus()
         {
             players[CurrentPlayerIndex].BonusTurnTime = BonusTurnTime;
             var lastDraw = CurrentRoundStatus.LastDraw;
@@ -72,6 +73,7 @@ namespace Multi.GameState
             }
             CurrentRoundStatus.AddToRiver(CurrentPlayerIndex, DiscardTile, IsRichiing);
             CurrentRoundStatus.SortHandTiles();
+            CurrentRoundStatus.UpdateDiscardZhenting();
         }
 
         private OutTurnOperation[] GetOperations(int playerIndex)

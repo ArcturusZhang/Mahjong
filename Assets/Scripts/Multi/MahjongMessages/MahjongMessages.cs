@@ -101,6 +101,7 @@ namespace Multi.MahjongMessages
         public bool DiscardingLastDraw;
         public Tile Tile;
         public int BonusTurnTime;
+        public bool Zhenting;
         public OutTurnOperation[] Operations;
         public Tile[] HandTiles;
         public RiverData[] Rivers;
@@ -113,6 +114,7 @@ namespace Multi.MahjongMessages
                 + $"DiscardingLastDraw: {DiscardingLastDraw}\n"
                 + $"Tile: {Tile}\n"
                 + $"BonusTurnTime: {BonusTurnTime}\n"
+                + $"Zhenting: {Zhenting}\n"
                 + $"Operations: {string.Join(",", Operations)}\n"
                 + $"HandTiles: {string.Join("", HandTiles)}";
         }
