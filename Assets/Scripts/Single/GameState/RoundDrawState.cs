@@ -12,12 +12,12 @@ namespace Single.GameState
 
         public override void OnClientStateEnter()
         {
-            controller.RoundDrawManager.SetDrawType(RoundDrawType);
             if (RoundDrawType == RoundDrawType.RoundDraw)
             {
                 Debug.Log("Revealing hand tiles");
                 HandleRoundDraw(WaitingData);
             }
+            // todo other types of round draw
         }
 
         private void HandleRoundDraw(WaitingData[] data)
@@ -53,7 +53,6 @@ namespace Single.GameState
         {
             System.Array.ForEach(controller.WaitingPanelManagers, m => m.Close());
             controller.RoundDrawManager.Close();
-            controller.TableTilesManager.StandUp();
         }
 
         public override void OnStateUpdate()

@@ -1,4 +1,5 @@
 using System;
+using Multi.ServerData;
 using Single.MahjongDataType;
 using UnityEngine;
 
@@ -50,14 +51,16 @@ namespace Multi
         public Tile Tile;
         public OpenMeld Meld;
         public PlayerHandData HandData;
+        public RoundDrawType RoundDrawType;
 
         public override string ToString()
         {
             switch (Type)
             {
                 case OutTurnOperationType.Skip:
-                case OutTurnOperationType.RoundDraw:
                     return $"Type: {Type}";
+                case OutTurnOperationType.RoundDraw:
+                    return $"Type: {Type}, RoundDrawType: {RoundDrawType}";
                 case OutTurnOperationType.Chow:
                 case OutTurnOperationType.Pong:
                 case OutTurnOperationType.Kong:

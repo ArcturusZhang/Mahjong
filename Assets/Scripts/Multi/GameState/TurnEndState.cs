@@ -93,7 +93,11 @@ namespace Multi.GameState
                 // no more tiles to draw and no one choose a rong operation.
                 Debug.Log("No more tiles to draw and nobody claims a rong, the round has drawn.");
                 for (int i = 0; i < Operations.Length; i++)
-                    Operations[i] = new OutTurnOperation { Type = OutTurnOperationType.RoundDraw };
+                    Operations[i] = new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.RoundDraw,
+                        RoundDrawType = RoundDrawType.RoundDraw
+                    };
                 return OutTurnOperationType.RoundDraw;
             }
             // check if some one claimed kong

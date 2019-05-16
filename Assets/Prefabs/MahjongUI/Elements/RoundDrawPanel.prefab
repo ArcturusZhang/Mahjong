@@ -68,7 +68,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -88,8 +88,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 694723647}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &3185662254410040953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +163,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ReadySign: {fileID: 3537162579244895}
+  ReadyImage: {fileID: 3537162579244894}
+  ReadyTiles:
+  - {fileID: 694723646}
+  - {fileID: 4229127785636855165}
+  - {fileID: 5787756666887085712}
+  - {fileID: 4739800431602234794}
+  - {fileID: 2787541605402208059}
+  - {fileID: 330301323546870103}
+  - {fileID: 3767012834539018331}
+  - {fileID: 6156914587542254071}
+  - {fileID: 4781630216444318234}
+  - {fileID: 4870745718726600265}
+  - {fileID: 1031855666995241552}
+  - {fileID: 6204642085270020293}
+  - {fileID: 696166542177829380}
   NotReadySign: {fileID: 3537162154690807}
+  NotReadyImage: {fileID: 3537162154690806}
   WaitingTilesParent: {fileID: 5890548380786895500}
 --- !u!1 &3537162154690760
 GameObject:
@@ -304,7 +322,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300064, guid: 77842b8b909205449ac197573a2b5ba8, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -380,7 +398,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -400,8 +418,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 7543425041173450725}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &1060420720114722834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -490,7 +510,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -510,8 +530,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 5561575231101058825}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &9154592555856615026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,7 +622,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -620,8 +642,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 3507254890130909300}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &5218138251518693094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,7 +734,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -730,8 +754,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 8517362282499012284}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &4451519861207786664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -820,7 +846,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -840,8 +866,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 8873609191965049918}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &4312258822375906812
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -930,7 +958,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -950,8 +978,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 2301636819244708554}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &6147173302085714381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1040,7 +1070,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1060,8 +1090,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 3857770579413458278}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &2587943374297583295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1150,7 +1182,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1170,8 +1202,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 4255819796163595750}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &401199132212748821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1260,7 +1294,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1280,8 +1314,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 2605977432215608730}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &1879994864328213003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1370,7 +1406,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1390,8 +1426,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 8820738970131259623}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &341048046193927244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1554,7 +1592,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1574,8 +1612,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 4631998959585287956}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &282949309384238195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1664,7 +1704,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300028, guid: fd95cc3379b968948acdfa9b1ed62b6e, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1684,8 +1724,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffbe3fe132bd48f4986b043ffb350788, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TileImage: {fileID: 601486660697078169}
-  IsLastDraw: 0
+  tile:
+    Suit: 0
+    Rank: 0
+    IsRed: 0
 --- !u!114 &6909819116369887604
 MonoBehaviour:
   m_ObjectHideFlags: 0

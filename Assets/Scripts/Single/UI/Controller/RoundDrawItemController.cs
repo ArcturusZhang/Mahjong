@@ -15,6 +15,11 @@ namespace Single.UI.Controller
             image.DOFade(1, MahjongConstants.FadeDuration);
         }
 
+        public void Fade()
+        {
+            image.DOFade(0, MahjongConstants.FadeDuration);
+        }
+
         private void OnDisable()
         {
             image.color = new Color(1, 1, 1, 0);

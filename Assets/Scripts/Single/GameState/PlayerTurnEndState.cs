@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using Multi;
+using Multi.ServerData;
 using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
@@ -49,7 +50,7 @@ namespace Single.GameState
                         HandleRong(placeIndex, operation);
                         break;
                     case OutTurnOperationType.RoundDraw:
-                        Debug.Log("Round is draw");
+                        HandleRoundDraw(operation);
                         break;
                 }
             }
@@ -66,6 +67,18 @@ namespace Single.GameState
         {
             controller.ShowEffect(placeIndex, UI.PlayerEffectManager.GetAnimationType(operation.Type));
             controller.StartCoroutine(controller.RevealHandTiles(placeIndex, operation.HandData));
+        }
+
+        private void HandleRoundDraw(OutTurnOperation operation)
+        {
+            // controller.RoundDrawManager.SetDrawType(operation.RoundDrawType);
+            controller.StartCoroutine(ShowRoundDrawEffect(operation.RoundDrawType));
+        }
+
+        private IEnumerator ShowRoundDrawEffect(RoundDrawType type) {
+            controller.RoundDrawManager.SetDrawType(type);
+            yield return new WaitForSeconds(2);
+            controller.RoundDrawManager.Fade(type);
         }
 
         public override void OnClientStateExit()
