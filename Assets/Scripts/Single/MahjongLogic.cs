@@ -564,6 +564,7 @@ namespace Single
         public static IEnumerable<OpenMeld> GetChows(IList<Tile> handTiles, Tile discardTile, MeldSide side)
         {
             var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);
+            if (discardTile.Suit == Suit.Z) return new List<OpenMeld>();
             var handTileList = new List<Tile>(handTiles);
             GetChows1(handTileList, discardTile, result);
             GetChows2(handTileList, discardTile, result);

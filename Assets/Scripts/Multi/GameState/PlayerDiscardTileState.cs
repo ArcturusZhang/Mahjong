@@ -27,7 +27,6 @@ namespace Multi.GameState
 
         public override void OnServerStateEnter()
         {
-            Debug.Log($"Server enters {GetType().Name}");
             NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOperationMessageReceived);
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
             {
@@ -35,6 +34,7 @@ namespace Multi.GameState
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
             UpdateHandData();
+            Debug.Log($"CurrentRoundStatus: {CurrentRoundStatus}");
             responds = new bool[players.Count];
             operations = new OutTurnOperation[players.Count];
             var rivers = CurrentRoundStatus.Rivers;

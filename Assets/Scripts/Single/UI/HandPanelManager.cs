@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Single.MahjongDataType;
 using Single.Managers;
+using Single.UI.Elements;
 using Single.UI.Layout;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +11,9 @@ namespace Single.UI
     public class HandPanelManager : ManagerBase
     {
         private const float Width = 64;
-        private const float LastDrawPositionX = 425;
-        public HandTileInstance[] HandTileInstances;
-        public HandTileInstance LastDrawInstance;
+        private const float DefaultLastDrawX = 425;
+        [SerializeField] private HandTile[] handTiles;
+        [SerializeField] private HandTile lastDrawTile;
         public RectTransform LastDrawRect;
         public Image Zhenting;
 
@@ -30,12 +31,12 @@ namespace Single.UI
             int length = tiles == null ? 0 : tiles.Count;
             for (int i = 0; i < length; i++)
             {
-                HandTileInstances[i].gameObject.SetActive(true);
-                HandTileInstances[i].SetTile(tiles[i]);
+                handTiles[i].gameObject.SetActive(true);
+                handTiles[i].SetTile(tiles[i]);
             }
-            for (int i = length; i < HandTileInstances.Length; i++)
+            for (int i = length; i < handTiles.Length; i++)
             {
-                HandTileInstances[i].gameObject.SetActive(false);
+                handTiles[i].gameObject.SetActive(false);
             }
             return length;
         }
@@ -44,61 +45,62 @@ namespace Single.UI
         {
             var lastDraw = CurrentRoundStatus.GetLastDraw(0);
             if (lastDraw == null)
-                LastDrawInstance.gameObject.SetActive(false);
+                lastDrawTile.gameObject.SetActive(false);
             else
             {
-                LastDrawInstance.SetTile((Tile)lastDraw);
-                LastDrawInstance.gameObject.SetActive(true);
+                lastDrawTile.SetTile((Tile)lastDraw);
+                lastDrawTile.gameObject.SetActive(true);
             }
-            int diff = HandTileInstances.Length - count;
-            LastDrawRect.anchoredPosition = new Vector2(LastDrawPositionX - diff * Width, 0);
+            int diff = handTiles.Length - count;
+            LastDrawRect.anchoredPosition = new Vector2(DefaultLastDrawX - diff * Width, 0);
         }
 
         public void SetCandidates(IList<Tile> candidates)
         {
-            for (int i = 0; i < HandTileInstances.Length; i++)
+            for (int i = 0; i < handTiles.Length; i++)
             {
-                SetCandidate(HandTileInstances[i], candidates);
+                SetCandidate(handTiles[i], candidates);
             }
-            SetCandidate(LastDrawInstance, candidates);
+            SetCandidate(lastDrawTile, candidates);
         }
 
         public void RemoveCandidates()
         {
-            for (int i = 0; i < HandTileInstances.Length; i++)
+            for (int i = 0; i < handTiles.Length; i++)
             {
-                RemoveCandidate(HandTileInstances[i]);
+                RemoveCandidate(handTiles[i]);
             }
-            RemoveCandidate(LastDrawInstance);
+            RemoveCandidate(lastDrawTile);
         }
 
-        private void SetCandidate(HandTileInstance instance, IList<Tile> candidates)
+        private void SetCandidate(HandTile instance, IList<Tile> candidates)
         {
+            // if (!instance.gameObject.activeSelf) return;
             var tile = instance.Tile;
             if (candidates.Contains(tile))
-                instance.Unlock();
+                instance.TurnOn();
             else
-                instance.Lock();
+                instance.TurnOff();
         }
 
-        private void RemoveCandidate(HandTileInstance instance)
+        private void RemoveCandidate(HandTile instance)
         {
-            instance.Unlock();
+            instance.TurnOn();
         }
 
         public void LockTiles()
         {
-            for (int i = 0; i < HandTileInstances.Length; i++)
+            for (int i = 0; i < handTiles.Length; i++)
             {
-                HandTileInstances[i].Lock();
+                handTiles[i].SetLock(true);
             }
         }
 
         public void UnlockTiles()
         {
-            for (int i = 0; i < HandTileInstances.Length; i++)
+            for (int i = 0; i < handTiles.Length; i++)
             {
-                HandTileInstances[i].Unlock();
+                handTiles[i].SetLock(false);
             }
         }
 

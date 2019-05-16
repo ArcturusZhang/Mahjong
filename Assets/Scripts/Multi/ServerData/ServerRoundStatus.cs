@@ -404,14 +404,14 @@ namespace Multi.ServerData
 
         public override string ToString()
         {
-            var handDataString = handTiles.SelectMany(openMeld => openMelds, (handList, meldList) =>
+            var list = new List<string>();
+            for (int i = 0; i < handTiles.Length; i++)
             {
-                var handString = string.Join("", handList);
-                var meldString = string.Join(", ", meldList);
-                return $"Hand: {handString}, Open: {meldString}";
-            });
-            return $"HandData: \n{string.Join("\n", handDataString)}\n"
-                + $"RiverTiles: \n{string.Join("\n", Rivers)}";
+                list.Add($"Hand: {string.Join("", handTiles[i])}, "
+                    + $"Open: {string.Join(",", openMelds[i])}, "
+                    + $"River: {string.Join("", rivers[i])}");
+            }
+            return string.Join("\n", list);
         }
     }
 }
