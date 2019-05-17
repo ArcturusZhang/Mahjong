@@ -92,12 +92,12 @@ namespace Multi.GameState
 
         private void DrawInitial()
         {
-            for (int round = 0; round < CurrentRoundStatus.GameSettings.InitialDrawRound; round++)
+            for (int round = 0; round < MahjongConstants.InitialDrawRound; round++)
             {
                 // Draw 4 tiles for each player
                 for (int index = 0; index < players.Count; index++)
                 {
-                    for (int i = 0; i < CurrentRoundStatus.GameSettings.TilesEveryRound; i++)
+                    for (int i = 0; i < MahjongConstants.TilesEveryRound; i++)
                     {
                         var tile = MahjongSet.DrawTile();
                         CurrentRoundStatus.AddTile(index, tile);
@@ -107,7 +107,7 @@ namespace Multi.GameState
             // Last round, 1 tile for each player
             for (int index = 0; index < players.Count; index++)
             {
-                for (int i = 0; i < CurrentRoundStatus.GameSettings.TilesLastRound; i++)
+                for (int i = 0; i < MahjongConstants.TilesLastRound; i++)
                 {
                     var tile = MahjongSet.DrawTile();
                     CurrentRoundStatus.AddTile(index, tile);

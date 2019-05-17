@@ -2656,6 +2656,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6ca2462b71430648aaff55919735e32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameSettings: {fileID: 11400000, guid: 37a8861d2ac47e54fa164b2c642c3755, type: 2}
+  YakuSettings: {fileID: 11400000, guid: a613a7e49d525434b922fd32b51111e3, type: 2}
 --- !u!1001 &495231461
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -82,10 +82,6 @@ namespace Single.MahjongDataType
         [Header("Time settings")] public int BaseTurnTime = 5;
         public int BonusTurnTime = 20;
 
-        [Header("Tile drawing settings")] public int InitialDrawRound = 3;
-        public int TilesEveryRound = 4;
-        public int TilesLastRound = 1;
-
         [Header("Mahjong settings")]
         public int DiceMin = 2;
         public int DiceMax = 12;
@@ -93,8 +89,6 @@ namespace Single.MahjongDataType
         public int LingshangTilesCount = 4;
         public int InitialDora = 1;
         public int MaxDora = 5;
-
-        public bool IsChowAllowed => AllowChows;
 
         public Tile[] redTiles = new Tile[] {
             new Tile(Suit.M, 5, true),

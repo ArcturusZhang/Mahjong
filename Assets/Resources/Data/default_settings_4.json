@@ -1,0 +1,20 @@
+{
+    "GamePlayers": 2,
+    "MinimumFanConstraintType": 0,
+    "GameEndsWhenAllLastTop": true,
+    "AllowDiscardSameAfterOpen": false,
+    "AllowRichiWhenPointsLow": false,
+    "AllowChows": true,
+    "AllowPongs": true,
+    "InitialPoints": 25000,
+    "FirstPlacePoints": 30000,
+    "RichiMortgagePoints": 1000,
+    "ExtraRoundBonusPerPlayer": 100,
+    "NotReadyPunishPerPlayer": 1000,
+    "FalseRichiPunishPerPlayer": 2000,
+    "Allow3RongDraw": true,
+    "Allow4RichiDraw": true,
+    "Allow4KongDraw": true,
+    "Allow4WindDraw": true,
+    "Allow9OrphanDraw": true
+}

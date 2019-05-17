@@ -7,17 +7,20 @@ namespace Single
 {
     public static class MahjongConstants
     {
+        // game constants
         public const int WallCount = 4;
         public const int WallTilesCount = 34;
         public const int TotalTilesCount = WallCount * WallTilesCount;
         public const int TileKinds = 34;
         public const int SuitCount = 4;
-        public const int CompleteHandTilesCount = 13;
         public const int FullHandTilesCount = 14;
         public const int MaxKongs = 4;
-        public const float Gap = 0.0005f;
         public const int TilesPerRowInRiver = 6;
         public const int MaxRowInRiver = 3;
+        public const int InitialDrawRound = 3;
+        public const int TilesEveryRound = 4;
+        public const int TilesLastRound = 1;
+        // ui constants
         public const float TileRiverGapCol = 0.002f;
         public const float TileRiverGapRow = 0.0025f;
         public const float TileWidth = 0.026667f;
@@ -28,7 +31,6 @@ namespace Single
         public const float LastDrawGap = HandTileWidth / 2;
         public const float PlayerHandTilesSortDelay = 0.75f;
         public const float AutoDiscardDelayAfterRichi = 0.5f;
-        public const float ReadyPanelDelay = 0.5f;
         public const float SummaryPanelDelayTime = 0.5f;
         public const int SummaryPanelWaitingTime = 5;
         public const float HandTilesRevealDelay = 0.5f;
@@ -39,8 +41,6 @@ namespace Single
         public static readonly Quaternion FaceUpOnWall = Quaternion.Euler(0, 180, -90);
         public static readonly Quaternion RichiTile = Quaternion.Euler(0, -90, 0);
         public static readonly Quaternion RiverTile = Quaternion.Euler(-90, -90, 0);
-
-        // UI Settings
         public const int YakuItemColumns = 2;
         public const int FullItemCountPerColumn = 4;
 
@@ -49,7 +49,6 @@ namespace Single
         public const int Haneman = 3000;
         public const int Baiman = 4000;
         public const int Sanbaiman = 6000;
-
         public const int Yakuman = 8000;
 
         // Character constants
@@ -61,13 +60,6 @@ namespace Single
         {
             "零", "一", "二", "三", "四", "五", "六", "七", "八", "九"
         };
-
-        public static int RepeatIndex(int index, int length)
-        {
-            while (index >= length) index -= length;
-            while (index < 0) index += length;
-            return index;
-        }
 
         public static List<Tile> FullTiles = new List<Tile> {
             new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1), new Tile(Suit.M, 1),
