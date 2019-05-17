@@ -12,12 +12,16 @@ namespace Single.GameState
 
         public override void OnClientStateEnter()
         {
-            if (RoundDrawType == RoundDrawType.RoundDraw)
+            Debug.Log($"[Client] RoundDrawType: {RoundDrawType}");
+            switch (RoundDrawType)
             {
-                Debug.Log("Revealing hand tiles");
-                HandleRoundDraw(WaitingData);
+                case RoundDrawType.RoundDraw:
+                case RoundDrawType.FourRichis:
+                    Debug.Log("Revealing hand tiles");
+                    HandleRoundDraw(WaitingData);
+                    break;
             }
-            // todo other types of round draw
+            // other types of round draw -- todo
         }
 
         private void HandleRoundDraw(WaitingData[] data)

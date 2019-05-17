@@ -177,6 +177,7 @@ namespace Multi.GameState
             {
                 // no one claimed a rob kong
                 var turnDoraAfterDiscard = Kong.Side != MeldSide.Self;
+                CurrentRoundStatus.BreakOneShotsAndFirstTurn();
                 ServerBehaviour.Instance.DrawTile(CurrentPlayerIndex, true, turnDoraAfterDiscard);
                 return;
             }

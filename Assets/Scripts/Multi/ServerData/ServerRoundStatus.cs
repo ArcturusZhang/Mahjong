@@ -335,6 +335,49 @@ namespace Multi.ServerData
             }
         }
 
+        public bool CheckFourWinds()
+        {
+            if (!GameSettings.Allow4WindDraw) return false;
+            if (!FirstTurn) return false;
+            if (TotalPlayers < 4) return false;
+            var first = rivers[0][0].Tile;
+            for (int i = 1; i < TotalPlayers; i++)
+            {
+                var current = rivers[i][0].Tile;
+                if (!current.EqualsIgnoreColor(first)) return false;
+            }
+            return true;
+        }
+
+        public bool CheckFourRichis()
+        {
+            if (!GameSettings.Allow4RichiDraw) return false;
+            if (TotalPlayers < 4) return false;
+            return richiStatus.All(r => r);
+        }
+
+        public bool CheckFourKongs()
+        {
+            if (!GameSettings.Allow4KongDraw) return false;
+            if (KongClaimed < 4) return false;
+            // check if 4 kongs are in same person
+            for (int i = 0; i < TotalPlayers; i++)
+            {
+                var melds = openMelds[i];
+                var kongCount = melds.Count(meld => meld.IsKong);
+                if (kongCount >= 4) return false;
+            }
+            return true;
+        }
+
+        public bool CheckThreeRongs(OutTurnOperation[] operations)
+        {
+            if (!GameSettings.Allow3RongDraw) return false;
+            if (TotalPlayers < 4) return false;
+            var count = operations.Count(op => op.Type == OutTurnOperationType.Rong);
+            return count == 3;
+        }
+
         public bool IsAllLast
         {
             get

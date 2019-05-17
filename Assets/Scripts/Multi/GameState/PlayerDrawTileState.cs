@@ -109,6 +109,7 @@ namespace Multi.GameState
 
         private void Test9Orphans(Tile[] handTiles, IList<InTurnOperation> operations)
         {
+            if (!gameSettings.Allow9OrphanDraw) return;
             if (!CurrentRoundStatus.FirstTurn) return;
             if (MahjongLogic.Test9KindsOfOrphans(handTiles, justDraw))
             {
@@ -208,14 +209,14 @@ namespace Multi.GameState
                 case InTurnOperationType.Tsumo:
                     HandleTsumo(operation);
                     break;
-                case InTurnOperationType.Bei:
-                // todo
                 case InTurnOperationType.Kong:
                     HandleKong(operation);
                     break;
                 case InTurnOperationType.RoundDraw:
                     HandleRoundDraw(operation);
                     break;
+                case InTurnOperationType.Bei:
+                // todo
                 default:
                     Debug.LogError($"[Server] This type of in turn operation should not be sent to server.");
                     break;

@@ -29,8 +29,13 @@ namespace Multi.GameState
                 case RoundDrawType.RoundDraw:
                     HandleRoundDraw();
                     break;
+                case RoundDrawType.FourRichis:
+                    HandleFourRichis();
+                    break;
                 case RoundDrawType.NineOrphans:
-                    HandleNineOrphans();
+                case RoundDrawType.FourWinds:
+                case RoundDrawType.FourKongs:
+                    HandleSpecialType(RoundDrawType);
                     break;
                 default:
                     throw new System.Exception($"Type {RoundDrawType} not implemented");
@@ -41,13 +46,13 @@ namespace Multi.GameState
             firstTime = Time.time;
         }
 
-        private void HandleNineOrphans()
+        private void HandleSpecialType(RoundDrawType type)
         {
             for (int i = 0; i < players.Count; i++)
             {
                 messages[i] = new ServerRoundDrawMessage
                 {
-                    RoundDrawType = RoundDrawType.NineOrphans
+                    RoundDrawType = type
                 };
             }
             next = false;
@@ -107,6 +112,61 @@ namespace Multi.GameState
                 default:
                     Debug.LogError("This should not happen");
                     break;
+            }
+            // test for false richi
+            foreach (var playerIndex in notReadyIndices)
+            {
+                if (CurrentRoundStatus.RichiStatus(playerIndex))
+                    GetTransfersForFalseRichi(playerIndex, transfers);
+            }
+        }
+
+        private void HandleFourRichis()
+        {
+            // Get waiting tiles for each player
+            var waitingDataArray = new WaitingData[players.Count];
+            for (int playerIndex = 0; playerIndex < players.Count; playerIndex++)
+            {
+                var hand = CurrentRoundStatus.HandTiles(playerIndex);
+                var open = CurrentRoundStatus.Melds(playerIndex);
+                waitingDataArray[playerIndex] = new WaitingData
+                {
+                    HandTiles = hand,
+                    WaitingTiles = MahjongLogic.WinningTiles(hand, open).ToArray()
+                };
+            }
+            // Get messages
+            for (int i = 0; i < players.Count; i++)
+            {
+                messages[i] = new ServerRoundDrawMessage
+                {
+                    RoundDrawType = RoundDrawType,
+                    WaitingData = waitingDataArray
+                };
+            }
+            next = waitingDataArray[CurrentRoundStatus.OyaPlayerIndex].WaitingTiles.Length > 0;
+            extra = true;
+            // Get point transfers
+            for (int playerIndex = 0; playerIndex < players.Count; playerIndex++)
+            {
+                var waitingTiles = waitingDataArray[playerIndex].WaitingTiles;
+                if (waitingTiles.Length > 0) continue;
+                GetTransfersForFalseRichi(playerIndex, transfers);
+            }
+        }
+
+        private void GetTransfersForFalseRichi(int playerIndex, List<PointTransfer> transfers)
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (i == playerIndex) continue;
+                int multiplier = CurrentRoundStatus.IsDealer(playerIndex) || CurrentRoundStatus.IsDealer(i) ? 2 : 1;
+                transfers.Add(new PointTransfer
+                {
+                    From = playerIndex,
+                    To = i,
+                    Amount = gameSettings.FalseRichiPunishPerPlayer * multiplier
+                });
             }
         }
 

@@ -24,6 +24,12 @@ namespace Single.MahjongDataType
         public int RichiMortgagePoints = 1000;
         public int ExtraRoundBonusPerPlayer = 100;
         public int NotReadyPunishPerPlayer = 1000;
+        public int FalseRichiPunishPerPlayer = 2000;
+        public bool Allow3RongDraw = true;
+        public bool Allow4RichiDraw = true;
+        public bool Allow4KongDraw = true;
+        public bool Allow4WindDraw = true;
+        public bool Allow9OrphanDraw = true;
 
         public int MaxPlayer
         {

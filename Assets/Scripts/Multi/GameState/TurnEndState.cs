@@ -74,12 +74,21 @@ namespace Multi.GameState
 
         private OutTurnOperationType ChooseOperations()
         {
-            Debug.Log($"Operation before choosing: {string.Join(",", Operations)}");
+            Debug.Log($"[Server] Operation before choosing: {string.Join(",", Operations)}");
             // test every circumstances by priority
             // test for rong
             if (Operations.Any(op => op.Type == OutTurnOperationType.Rong))
             {
-                // todo -- check if 3 rong
+                // check if 3 rong
+                if (CurrentRoundStatus.CheckThreeRongs(Operations)) {
+                    for (int i = 0; i < Operations.Length; i++) {
+                        Operations[i] = new OutTurnOperation {
+                            Type = OutTurnOperationType.RoundDraw,
+                            RoundDrawType = RoundDrawType.ThreeRong
+                        };
+                    }
+                    return OutTurnOperationType.RoundDraw;
+                }
                 for (int i = 0; i < Operations.Length; i++)
                 {
                     if (Operations[i].Type != OutTurnOperationType.Rong)
@@ -87,7 +96,48 @@ namespace Multi.GameState
                 }
                 return OutTurnOperationType.Rong;
             }
-            // check if round draws
+            // check if 4 winds
+            if (CurrentRoundStatus.CheckFourWinds())
+            {
+                Debug.Log($"[Server] Round draw -- Four winds");
+                for (int i = 0; i < Operations.Length; i++)
+                {
+                    Operations[i] = new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.RoundDraw,
+                        RoundDrawType = RoundDrawType.FourWinds
+                    };
+                }
+                return OutTurnOperationType.RoundDraw;
+            }
+            // check if 4 richis
+            if (CurrentRoundStatus.CheckFourRichis())
+            {
+                Debug.Log($"[Server] Round draw -- Four richis");
+                for (int i = 0; i < Operations.Length; i++)
+                {
+                    Operations[i] = new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.RoundDraw,
+                        RoundDrawType = RoundDrawType.FourRichis
+                    };
+                }
+                return OutTurnOperationType.RoundDraw;
+            }
+            // check if 4 kongs
+            if (CurrentRoundStatus.CheckFourKongs()) {
+                Debug.Log($"[Server] Round draw -- Four kongs");
+                for (int i = 0; i < Operations.Length; i++)
+                {
+                    Operations[i] = new OutTurnOperation
+                    {
+                        Type = OutTurnOperationType.RoundDraw,
+                        RoundDrawType = RoundDrawType.FourKongs
+                    };
+                }
+                return OutTurnOperationType.RoundDraw;
+            }
+            // check if run out of tiles -- leads to a normal round draw
             if (MahjongSet.TilesRemain == gameSettings.MountainReservedTiles)
             {
                 // no more tiles to draw and no one choose a rong operation.
@@ -142,7 +192,6 @@ namespace Multi.GameState
             }
         }
 
-        // todo -- choose which state to transfer
         private void TurnEndTimeOut()
         {
             // determines which state the server should transfer to by operationChosen.
@@ -152,7 +201,8 @@ namespace Multi.GameState
                     HandleRong();
                     break;
                 case OutTurnOperationType.RoundDraw:
-                    ServerBehaviour.Instance.RoundDraw(RoundDrawType.RoundDraw);
+                    var operation = System.Array.Find(Operations, op => op.Type == OutTurnOperationType.RoundDraw);
+                    ServerBehaviour.Instance.RoundDraw(operation.RoundDrawType);
                     break;
                 case OutTurnOperationType.Kong:
                 case OutTurnOperationType.Pong:
