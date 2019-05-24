@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System.IO;
+using UnityEngine;
 
 namespace Single.MahjongDataType
 {
     [CreateAssetMenu(menuName = "Mahjong/YakuData")]
-    public class YakuSettings : ScriptableObject
+    public class YakuSettings : SettingsBase
     {
         [Header("Yaku settings")] public const int YakumanBaseFan = 13;
         public bool OpenDuanYao = true;

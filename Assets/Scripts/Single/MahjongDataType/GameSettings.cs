@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Single.MahjongDataType
 {
     [CreateAssetMenu(menuName = "Mahjong/GameSettings")]
-    public class GameSettings : ScriptableObject
+    public class GameSettings : SettingsBase
     {
         [Header("General settings")] public GameMode GameMode = GameMode.Normal;
         public GamePlayers GamePlayers = GamePlayers.Four;
@@ -31,22 +31,21 @@ namespace Single.MahjongDataType
         public bool Allow4WindDraw = true;
         public bool Allow9OrphanDraw = true;
 
-        public int MaxPlayer
+        public int MaxPlayer => GetPlayerCount(GamePlayers);
+
+        public static int GetPlayerCount(GamePlayers playerSetting)
         {
-            get
+            switch (playerSetting)
             {
-                switch (GamePlayers)
-                {
-                    case GamePlayers.Two:
-                        return 2;
-                    case GamePlayers.Three:
-                        return 3;
-                    case GamePlayers.Four:
-                        return 4;
-                    default:
-                        Debug.LogError($"Unknown GamePlayers option: {GamePlayers}");
-                        return 4;
-                }
+                case GamePlayers.Two:
+                    return 2;
+                case GamePlayers.Three:
+                    return 3;
+                case GamePlayers.Four:
+                    return 4;
+                default:
+                    Debug.LogError($"Unknown GamePlayers option: {playerSetting}");
+                    return 4;
             }
         }
 
@@ -120,20 +119,6 @@ namespace Single.MahjongDataType
         public bool IsAllLast(int oyaIndex, int field, int totalPlayers)
         {
             return oyaIndex == totalPlayers - 1 && field == FieldThreshold - 1;
-        }
-
-        public string ToJson()
-        {
-            return JsonUtility.ToJson(this, true);
-        }
-
-        public void Save()
-        {
-            var json = ToJson();
-            var filepath = Application.persistentDataPath + "Settings.json";
-            var writer = new StreamWriter(filepath);
-            writer.WriteLine(json);
-            writer.Close();
         }
 
         private int FieldThreshold

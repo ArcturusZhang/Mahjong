@@ -27,7 +27,8 @@ namespace Lobby
 
         public void OnClickHost()
         {
-            lobbyManager.StartHost();
+            // open settings panel
+            lobbyManager.settingsPanel.OpenSettingsPanelForHost();
         }
 
         public void OnClickJoin()

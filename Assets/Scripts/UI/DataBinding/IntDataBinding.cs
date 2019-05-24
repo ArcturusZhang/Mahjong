@@ -1,6 +1,8 @@
+using System;
 using System.Reflection;
 using UI.DataBinding.DataVerify;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace UI.DataBinding
@@ -68,5 +70,10 @@ namespace UI.DataBinding
             }
             return true;
         }
+
+        public IntEvent OnValueChanged;
+
+        [Serializable]
+        public class IntEvent : UnityEvent<int> {}
     }
 }

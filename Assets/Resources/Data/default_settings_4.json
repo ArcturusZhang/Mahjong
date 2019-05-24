@@ -1,9 +1,13 @@
 {
+    "GameMode": 0,
     "GamePlayers": 2,
+    "RoundCount": 1,
     "MinimumFanConstraintType": 0,
+    "PointsToGameEnd": 0,
     "GameEndsWhenAllLastTop": true,
     "AllowDiscardSameAfterOpen": false,
     "AllowRichiWhenPointsLow": false,
+    "AllowRichiWhenNotReady": false,
     "AllowChows": true,
     "AllowPongs": true,
     "InitialPoints": 25000,

@@ -40,6 +40,8 @@ namespace Lobby
 
         public Text statusInfo;
         public Text hostInfo;
+        public LobbySettingsPanel settingsPanel;
+        public Button GameStartButton;
 
         //Client numPlayers from NetworkManager is always 0, so we count (through connect/destroy in LobbyPlayer) the number
         //of players, so that even client know how many player there is.
@@ -265,7 +267,7 @@ namespace Lobby
         public override void OnStartHost()
         {
             base.OnStartHost();
-
+            maxPlayers = GameSettings.MaxPlayer;
             ChangeTo(lobbyPanel);
             backDelegate = StopHostClbk;
             SetServerInfo("Hosting", networkAddress);
@@ -368,15 +370,40 @@ namespace Lobby
 
         public override void OnLobbyServerPlayersReady()
         {
+            bool allready = CheckReadiness();
+            GameStartButton.interactable = allready && _playerNumber == maxPlayers;
+        }
+
+        private bool CheckReadiness()
+        {
             bool allready = true;
-            for (int i = 0; i < lobbySlots.Length; ++i)
+            for (int i = 0; i < lobbySlots.Length; i++)
             {
                 if (lobbySlots[i] != null)
                     allready &= lobbySlots[i].readyToBegin;
             }
+            return allready;
+        }
 
-            if (allready)
-                StartCoroutine(ServerCountdownCoroutine());
+        public void OnGameStartButtonClicked()
+        {
+            StartCoroutine(ServerCountdownCoroutine());
+        }
+
+        public void OnTotalPlayerChanged(int value)
+        {
+            Debug.Log($"GamePlayers has been changed to {(GamePlayers)value}");
+            maxPlayers = GameSettings.GetPlayerCount((GamePlayers)value);
+            // kick redundant players
+            if (_playerNumber > maxPlayers)
+            {
+                for (int i = maxPlayers; i < lobbySlots.Length; i++)
+                {
+                    KickPlayer(lobbySlots[i].connectionToClient);
+                }
+            }
+            // check start button interactability
+            GameStartButton.interactable = CheckReadiness() && _playerNumber == maxPlayers;
         }
 
         public IEnumerator ServerCountdownCoroutine()

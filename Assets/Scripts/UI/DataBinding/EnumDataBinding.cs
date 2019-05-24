@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace UI.DataBinding
@@ -34,8 +35,11 @@ namespace UI.DataBinding
         public void UpdateBind()
         {
             if (!CheckNull()) return;
+            var oldValue = (int)fieldInfo.GetValue(Target);
             var activeIndex = Array.FindIndex(toggles, t => t.isOn);
             fieldInfo.SetValue(Target, activeIndex);
+            if (oldValue != activeIndex)
+                OnValueChanged.Invoke(activeIndex);
         }
 
         private bool CheckNull()
@@ -73,5 +77,10 @@ namespace UI.DataBinding
             }
             return true;
         }
+
+        public EnumEvent OnValueChanged;
+
+        [Serializable]
+        public class EnumEvent : UnityEvent<int> { }
     }
 }
