@@ -33,8 +33,11 @@ namespace UI.DataBinding
         {
             if (!CheckNull()) return;
             if (inputField.isFocused) return;
+            var oldValue = (int)fieldInfo.GetValue(Target);
             var value = int.Parse(inputField.text);
             fieldInfo.SetValue(Target, value);
+            if (oldValue != value)
+                OnValueChanged.Invoke(value);
         }
 
         private void VerifyData(string data)
@@ -74,6 +77,6 @@ namespace UI.DataBinding
         public IntEvent OnValueChanged;
 
         [Serializable]
-        public class IntEvent : UnityEvent<int> {}
+        public class IntEvent : UnityEvent<int> { }
     }
 }

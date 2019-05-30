@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace UI.DataBinding
@@ -35,8 +34,11 @@ namespace UI.DataBinding
         public void UpdateBind()
         {
             if (!CheckNull()) return;
+            var oldValue = (bool)fieldInfo.GetValue(Target);
             var activeIndex = Array.FindIndex(toggles, t => t.isOn);
             fieldInfo.SetValue(Target, activeIndex == 0);
+            if (oldValue != (activeIndex == 0))
+                OnValueChanged.Invoke(activeIndex == 0);
         }
 
         private bool CheckNull()
@@ -76,5 +78,10 @@ namespace UI.DataBinding
             }
             return true;
         }
+
+        public BoolEvent OnValueChanged;
+
+        [Serializable]
+        public class BoolEvent : UnityEvent<bool> { }
     }
 }

@@ -390,22 +390,6 @@ namespace Lobby
             StartCoroutine(ServerCountdownCoroutine());
         }
 
-        public void OnTotalPlayerChanged(int value)
-        {
-            Debug.Log($"GamePlayers has been changed to {(GamePlayers)value}");
-            maxPlayers = GameSettings.GetPlayerCount((GamePlayers)value);
-            // kick redundant players
-            if (_playerNumber > maxPlayers)
-            {
-                for (int i = maxPlayers; i < lobbySlots.Length; i++)
-                {
-                    KickPlayer(lobbySlots[i].connectionToClient);
-                }
-            }
-            // check start button interactability
-            GameStartButton.interactable = CheckReadiness() && _playerNumber == maxPlayers;
-        }
-
         public IEnumerator ServerCountdownCoroutine()
         {
             float remainingTime = prematchCountdown;

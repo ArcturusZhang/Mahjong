@@ -43,6 +43,13 @@ namespace Lobby
             SaveSettings();
         }
 
+        public void OnTotalPlayerChanged(int value)
+        {
+            var players = (GamePlayers)value;
+            Debug.Log($"GamePlayers has been changed to {players}");
+            ResetSettings();
+        }
+
         private void LoadSettings()
         {
             Debug.Log("Loading last settings...");

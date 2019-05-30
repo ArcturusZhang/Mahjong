@@ -20,7 +20,6 @@ namespace UI.DataBinding
             {
                 foreach (var obj in GetComponentsInChildren(type.AsType(), true))
                 {
-                    Debug.Log($"Binding {obj.name}");
                     var bindingInstance = obj as IBindData;
                     if (bindingInstance != null)
                     {

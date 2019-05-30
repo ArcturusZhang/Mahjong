@@ -1409,11 +1409,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: RichiMortgagePoints
-  OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &154857631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2947,11 +2942,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: FirstPlacePoints
-  OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &500666071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3080,11 +3070,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: InitialPoints
-  OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &507402044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4660,8 +4645,8 @@ MonoBehaviour:
   OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1776144909}
-        m_MethodName: Test
+      - m_Target: {fileID: 489517671}
+        m_MethodName: OnTotalPlayerChanged
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5167,11 +5152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: ExtraRoundBonusPerPlayer
-  OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &882954443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6707,10 +6687,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 489517668}
     m_Modifications:
-    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
-      propertyPath: m_Name
-      value: SettingResetButton
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 489517671}
+    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResetSettings
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545667398423, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
@@ -6767,15 +6752,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.x
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 489517671}
-    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ResetSettings
+      propertyPath: m_Name
+      value: SettingResetButton
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412073, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
@@ -7946,10 +7926,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 489517668}
     m_Modifications:
-    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
-      propertyPath: m_Name
-      value: SettingBackButton
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 489517671}
+    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CloseSettingsPanel
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545667398423, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
@@ -8006,15 +7991,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.x
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 489517671}
-    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseSettingsPanel
+      propertyPath: m_Name
+      value: SettingBackButton
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412073, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
@@ -8223,11 +8203,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: NotReadyPunishPerPlayer
-  OnValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1845204466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10202,10 +10177,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 489517668}
     m_Modifications:
-    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
-      propertyPath: m_Name
-      value: StartHostButton
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 489517671}
+    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnStartHostButtonClicked
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545667398423, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
@@ -10312,15 +10292,10 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 489517671}
-    - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnStartHostButtonClicked
+      propertyPath: m_Name
+      value: StartHostButton
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412073, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
