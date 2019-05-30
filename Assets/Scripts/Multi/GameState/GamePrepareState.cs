@@ -41,6 +41,7 @@ namespace Multi.GameState
                     PlayerNames = CurrentRoundStatus.PlayerNames,
                     Settings = new NetworkSettings
                     {
+                        GamePlayers = gameSettings.GamePlayers,
                         BaseTurnTime = CurrentRoundStatus.GameSettings.BaseTurnTime,
                         LingShangTilesCount = CurrentRoundStatus.GameSettings.LingshangTilesCount
                     }

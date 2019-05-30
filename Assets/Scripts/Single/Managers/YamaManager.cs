@@ -11,6 +11,12 @@ namespace Single.Managers
         public static readonly IDictionary<int, int> IndexToYama = new Dictionary<int, int> {
             {0, 0}, {1, 3}, {2, 2}, {3, 1}
         };
+        private static readonly IDictionary<GamePlayers, int[]> TileCountOnWall = new Dictionary<GamePlayers, int[]> {
+            {GamePlayers.Four, new int[] {34, 34, 34, 34}},
+            {GamePlayers.Three, new int[] {28, 26, 28, 26}},
+            {GamePlayers.Two, new int[] {20, 20, 20, 20}}
+        };
+
         [SerializeField] private Transform[] Walls;
 
         private void Update()
@@ -22,8 +28,22 @@ namespace Single.Managers
 
         private void UpdateTiles()
         {
+            HideUnusedTiles();
             var yamaIndex = GetYamaIndex(CurrentRoundStatus.Dice, CurrentRoundStatus.OyaPlayerIndex, CurrentRoundStatus.Places);
             UpdateYama(yamaIndex);
+        }
+
+        private void HideUnusedTiles()
+        {
+            for (int yamaIndex = 0; yamaIndex < Walls.Length; yamaIndex++)
+            {
+                int count = GetYamaTotalTiles(yamaIndex, CurrentRoundStatus.Settings.GamePlayers);
+                for (int i = count; i < Walls[yamaIndex].childCount; i++)
+                {
+                    var t = Walls[yamaIndex].GetChild(i);
+                    t.gameObject.SetActive(false);
+                }
+            }
         }
 
         private static int GetYamaIndex(int dice, int oya, int[] places)
@@ -34,6 +54,11 @@ namespace Single.Managers
             var openIndex = (oya + openSideOffset) % 4;
             var index = System.Array.FindIndex(places, i => i == openIndex);
             return IndexToYama[index];
+        }
+
+        private static int GetYamaTotalTiles(int yamaIndex, GamePlayers gamePlayers)
+        {
+            return TileCountOnWall[gamePlayers][yamaIndex];
         }
 
         private void UpdateYama(int openYamaIndex)
@@ -68,9 +93,10 @@ namespace Single.Managers
             var totalTiles = CurrentRoundStatus.MahjongSetData.TotalTiles;
             if (index < 0) index += totalTiles;
             int yamaIndex = openYamaIndex;
-            while (index >= Walls[yamaIndex].childCount)
+            var gamePlayers = CurrentRoundStatus.Settings.GamePlayers;
+            while (index >= GetYamaTotalTiles(yamaIndex, gamePlayers))
             {
-                index -= Walls[yamaIndex].childCount;
+                index -= GetYamaTotalTiles(yamaIndex, gamePlayers);
                 yamaIndex++;
                 if (yamaIndex >= 4) yamaIndex -= 4;
             }
