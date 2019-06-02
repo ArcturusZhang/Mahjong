@@ -28,9 +28,7 @@ namespace Single.GameState
             // update local data
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(OperationPlayerIndex);
             Assert.IsTrue(placeIndex == 0);
-            CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
-            SetRiverData();
+            SetRoundStatusData();
             // update ui elements
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             // if not kong, start timer
@@ -45,6 +43,11 @@ namespace Single.GameState
             }
         }
 
+        private void EnableAllTiles()
+        {
+            CurrentRoundStatus.ForbiddenTiles = null;
+        }
+
         private void HandleOtherPlayerOperation()
         {
             // update local data
@@ -55,6 +58,14 @@ namespace Single.GameState
             SetRiverData();
             // update ui elements
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
+        }
+
+        private void SetRoundStatusData()
+        {
+            CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
+            CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            SetRiverData();
+            CurrentRoundStatus.ForbiddenTiles = Operation.ForbiddenTiles;
         }
 
         private void SetRiverData()
@@ -68,6 +79,7 @@ namespace Single.GameState
 
         public override void OnClientStateExit()
         {
+            EnableAllTiles();
         }
 
         public override void OnStateUpdate()

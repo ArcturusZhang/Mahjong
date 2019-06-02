@@ -27,6 +27,7 @@ namespace Single.MahjongDataType
         public MahjongSetData MahjongSetData { get; set; }
         public NetworkSettings Settings { get; }
         public Player LocalPlayer { get; }
+        public Tile[] ForbiddenTiles { get; set; }
         public int LocalPlayerIndex => LocalPlayer.PlayerIndex;
 
         public ClientRoundStatus(int totalPlayers, int playerIndex, NetworkSettings settings)

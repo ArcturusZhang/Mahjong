@@ -17,8 +17,15 @@ namespace Single.MahjongDataType
         public bool Revealed => Meld.Revealed;
         public Tile[] Tiles => Meld.Tiles;
 
-        public OpenMeld AddToKong(Tile extra) {
-            return new OpenMeld {
+        public Tile[] GetForbiddenTiles(Tile tile)
+        {
+            return Meld.GetForbiddenTiles(tile);
+        }
+
+        public OpenMeld AddToKong(Tile extra)
+        {
+            return new OpenMeld
+            {
                 Meld = Meld.AddToKong(extra),
                 Tile = Tile,
                 Side = Side,

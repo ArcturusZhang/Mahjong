@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Single.MahjongDataType;
 using Single.Managers;
 using Single.UI.Elements;
@@ -22,6 +23,7 @@ namespace Single.UI
             if (CurrentRoundStatus == null) return;
             var count = ShowHandTiles();
             ShowLastDraw(count);
+            ToggleForbiddens();
             Zhenting.gameObject.SetActive(CurrentRoundStatus.IsZhenting);
         }
 
@@ -55,6 +57,23 @@ namespace Single.UI
             LastDrawRect.anchoredPosition = new Vector2(DefaultLastDrawX - diff * Width, 0);
         }
 
+        private void ToggleForbiddens()
+        {
+            if (CurrentRoundStatus.ForbiddenTiles == null)
+            {
+                RemoveCandidates();
+                return;
+            }
+            var forbiddens = CurrentRoundStatus.ForbiddenTiles;
+            for (int i = 0; i < handTiles.Length; i++)
+            {
+                var instance = handTiles[i];
+                if (!instance.interactable) continue;
+                if (forbiddens.Contains(instance.Tile)) instance.TurnOff();
+            }
+            if (lastDrawTile.interactable && forbiddens.Contains(lastDrawTile.Tile)) lastDrawTile.TurnOff();
+        }
+
         public void SetCandidates(IList<Tile> candidates)
         {
             for (int i = 0; i < handTiles.Length; i++)
@@ -75,7 +94,6 @@ namespace Single.UI
 
         private void SetCandidate(HandTile instance, IList<Tile> candidates)
         {
-            // if (!instance.gameObject.activeSelf) return;
             var tile = instance.Tile;
             if (candidates.Contains(tile))
                 instance.TurnOn();

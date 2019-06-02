@@ -50,6 +50,7 @@ namespace Multi
         public OutTurnOperationType Type;
         public Tile Tile;
         public OpenMeld Meld;
+        public Tile[] ForbiddenTiles;
         public PlayerHandData HandData;
         public RoundDrawType RoundDrawType;
 
@@ -64,7 +65,7 @@ namespace Multi
                 case OutTurnOperationType.Chow:
                 case OutTurnOperationType.Pong:
                 case OutTurnOperationType.Kong:
-                    return $"Type: {Type}, Tile: {Tile}, Meld: {Meld}";
+                    return $"Type: {Type}, Tile: {Tile}, Meld: {Meld}, ForbiddenTiles: {string.Join(",", ForbiddenTiles)}";
                 case OutTurnOperationType.Rong:
                     return $"Type: {Type}, Tile: {Tile}";
                 default:

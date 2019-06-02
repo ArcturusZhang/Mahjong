@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Single.MahjongDataType
 {
@@ -174,6 +175,38 @@ namespace Single.MahjongDataType
             if (tile.Rank == 3 && First.Rank == 1) return false;
             if (tile.Rank == 7 && Last.Rank == 9) return false;
             return true;
+        }
+
+        public int IndexOfIgnoreColor(Tile tile)
+        {
+            return Array.FindIndex(Tiles, t => t.EqualsIgnoreColor(tile));
+        }
+
+        public Tile[] GetForbiddenTiles(Tile tile)
+        {
+            switch (Type)
+            {
+                case MeldType.Triplet:
+                    return new Tile[] { tile };
+                case MeldType.Sequence:
+                    return GetForbiddenTilesForSequence(tile);
+                default:
+                    Debug.LogError($"Type of {Type} should not call this method");
+                    return null;
+            }
+        }
+
+        private Tile[] GetForbiddenTilesForSequence(Tile tile)
+        {
+            var list = new List<Tile>() { tile };
+            int index = IndexOfIgnoreColor(tile);
+            if (index == 1) return list.ToArray();
+            int other;
+            if (index == 0) other = tile.Rank + 3;
+            else other = tile.Rank - 3;
+            if (other <= 0 || other > 9) return list.ToArray();
+            list.Add(new Tile(tile.Suit, other));
+            return list.ToArray();
         }
 
         /// <summary>

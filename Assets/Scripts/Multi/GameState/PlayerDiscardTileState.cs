@@ -187,7 +187,8 @@ namespace Multi.GameState
                     {
                         Type = OutTurnOperationType.Kong,
                         Tile = discardTile,
-                        Meld = kong
+                        Meld = kong,
+                        ForbiddenTiles = gameSettings.AllowDiscardSameAfterOpen ? null : kong.GetForbiddenTiles(discardTile)
                     });
                 }
             }
@@ -205,7 +206,8 @@ namespace Multi.GameState
                     {
                         Type = OutTurnOperationType.Pong,
                         Tile = discardTile,
-                        Meld = pong
+                        Meld = pong,
+                        ForbiddenTiles = gameSettings.AllowDiscardSameAfterOpen ? null : pong.GetForbiddenTiles(discardTile)
                     });
                 }
             }
@@ -224,7 +226,8 @@ namespace Multi.GameState
                     {
                         Type = OutTurnOperationType.Chow,
                         Tile = discardTile,
-                        Meld = chow
+                        Meld = chow,
+                        ForbiddenTiles = gameSettings.AllowDiscardSameAfterOpen ? null : chow.GetForbiddenTiles(discardTile)
                     });
                 }
             }

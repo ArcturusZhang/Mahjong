@@ -230,6 +230,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: AllowRichiWhenNotReady
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.BoolDataBinding+BoolEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &6840083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -598,6 +603,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: OpenDuanYao
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.BoolDataBinding+BoolEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &96467811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1409,6 +1419,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: RichiMortgagePoints
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &154857631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1716,9 +1731,10 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 662.35693, y: 536.3708, z: -100.80474}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1971762382}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &269755647
 MonoBehaviour:
@@ -2398,6 +2414,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: AllowPongs
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.BoolDataBinding+BoolEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &327815366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2942,6 +2963,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: FirstPlacePoints
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &500666071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3070,6 +3096,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: InitialPoints
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &507402044
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4125,7 +4156,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 269755646}
     m_Modifications:
     - target: {fileID: 132536, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_Name
@@ -4145,19 +4176,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 100.80474
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4165,7 +4196,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4181,11 +4212,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -662.35693
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -536.3708
       objectReference: {fileID: 0}
     - target: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_SizeDelta.x
@@ -5152,6 +5183,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: ExtraRoundBonusPerPlayer
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &882954443
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5612,6 +5648,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: AllowDiscardSameAfterOpen
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.BoolDataBinding+BoolEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1074558852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6687,6 +6728,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 489517668}
     m_Modifications:
+    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+        type: 3}
+      propertyPath: m_Name
+      value: SettingResetButton
+      objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -6751,11 +6797,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
-        type: 3}
-      propertyPath: m_Name
-      value: SettingResetButton
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412073, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
@@ -7847,6 +7888,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: AllowRichiWhenPointsLow
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.BoolDataBinding+BoolEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1774285878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7926,6 +7972,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 489517668}
     m_Modifications:
+    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+        type: 3}
+      propertyPath: m_Name
+      value: SettingBackButton
+      objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -7990,11 +8041,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
-        type: 3}
-      propertyPath: m_Name
-      value: SettingBackButton
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412073, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
@@ -8203,6 +8249,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: NotReadyPunishPerPlayer
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.IntDataBinding+IntEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1845204466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8724,6 +8775,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: GameEndsWhenAllLastTop
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.BoolDataBinding+BoolEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &1946740580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8901,6 +8957,12 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!224 &1971762382 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 22457152, guid: 67117722a812a2e46ab8cb8eafbf5f5e,
+    type: 3}
+  m_PrefabInstance: {fileID: 680803857}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1985837821
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10015,6 +10077,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: AllowChows
+  OnValueChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UI.DataBinding.BoolDataBinding+BoolEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
 --- !u!114 &2088934297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10177,6 +10244,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 489517668}
     m_Modifications:
+    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
+        type: 3}
+      propertyPath: m_Name
+      value: StartHostButton
+      objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -10291,11 +10363,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6158753545689002061, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
-        type: 3}
-      propertyPath: m_Name
-      value: StartHostButton
       objectReference: {fileID: 0}
     - target: {fileID: 6158753545678412073, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
         type: 3}
