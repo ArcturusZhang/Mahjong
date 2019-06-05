@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Single.UI.SubManagers;
 using Multi.ServerData;
-using static Single.UI.SubManagers.PlayerPointTransferManager;
 using UnityEngine.UI;
 using Single.UI.Controller;
 using UnityEngine.Events;
 using Single.MahjongDataType;
-using Single.Managers;
 using Single.MahjongDataType.Interfaces;
+using static Single.UI.SubManagers.PlayerPointTransferManager;
 
 namespace Single.UI
 {
@@ -50,6 +48,7 @@ namespace Single.UI
                 }
                 SubManagers[placeIndex].SetTransfers(points[placeIndex], localTransfers);
             }
+            // todo -- places animation
             // count down
             ConfirmButton.onClick.RemoveAllListeners();
             ConfirmButton.onClick.AddListener(() =>
@@ -58,7 +57,6 @@ namespace Single.UI
                 ConfirmCountDownController.StopCountDown();
             });
             ConfirmCountDownController.StartCountDown(MahjongConstants.SummaryPanelWaitingTime, callback);
-            // todo -- places animation
         }
 
         public void Close()

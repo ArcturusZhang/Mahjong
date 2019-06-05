@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34bbbe923f2045aebe5382ad17f7b144, type: 3}
+  m_Name: PlaceNumbers
+  m_EditorClassIdentifier: 
+  sprites:
+  - {fileID: 21300218, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300220, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300282, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}
+  - {fileID: 21300234, guid: c6c411fa874e5d64db401bd5e14caa27, type: 3}

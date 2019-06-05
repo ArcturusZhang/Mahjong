@@ -10,7 +10,8 @@ namespace Single.UI.SubManagers
     {
         [SerializeField] private Text PlayerNameText;
         [SerializeField] private NumberPanelController PointController;
-        // todo -- add a panel to show point change
+        [SerializeField] private NumberChangeController ChangeController;
+        [SerializeField] private PlayerPlaceController PlaceController;
         [SerializeField] private Image LeftArrow;
         [SerializeField] private Image StraightArrow;
         [SerializeField] private Image RightArrow;
@@ -30,21 +31,46 @@ namespace Single.UI.SubManagers
             foreach (var transfer in transfers)
             {
                 totalTransfer += transfer.Amount;
-                if (transfer.Type == Type.None || transfer.Amount >= 0) continue;
-                switch (transfer.Type)
-                {
-                    case Type.Left:
-                        LeftArrow.gameObject.SetActive(true);
-                        break;
-                    case Type.Straight:
-                        StraightArrow.gameObject.SetActive(true);
-                        break;
-                    case Type.Right:
-                        RightArrow.gameObject.SetActive(true);
-                        break;
-                }
+                SetArrow(transfer);
+            }
+            StartCoroutine(SetAnimation(point, totalTransfer));
+        }
+
+        private void SetArrow(Transfer transfer)
+        {
+            if (transfer.Type == Type.None || transfer.Amount >= 0) return;
+            switch (transfer.Type)
+            {
+                case Type.Left:
+                    LeftArrow.gameObject.SetActive(true);
+                    break;
+                case Type.Straight:
+                    StraightArrow.gameObject.SetActive(true);
+                    break;
+                case Type.Right:
+                    RightArrow.gameObject.SetActive(true);
+                    break;
+            }
+        }
+
+        private const float Duration = 1.5f;
+        private const int Ticks = 50;
+
+        private IEnumerator SetAnimation(int point, int totalTransfer)
+        {
+            var waiting = new WaitForSeconds(Duration / Ticks);
+            int gap = totalTransfer / Ticks;
+            int currentPoint = point - totalTransfer;
+            for (int tick = 0; tick <= Ticks; tick++)
+            // for (int currentPoint = point - totalTransfer; System.Math.Abs(currentPoint - point) > gap; currentPoint += gap)
+            {
+                PointController.SetNumber(currentPoint);
+                ChangeController.SetNumber(point - currentPoint);
+                currentPoint += gap;
+                yield return waiting;
             }
             PointController.SetNumber(point);
+            ChangeController.Close();
         }
 
         private void OnDisable()

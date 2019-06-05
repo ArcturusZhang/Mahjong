@@ -16,7 +16,7 @@ namespace Single.Managers
 
         public void SetMelds(IList<OpenMeld> melds)
         {
-            transform.DestroyAllChild();
+            transform.DestroyAllChildren();
             offset = 0;
             foreach (var meld in melds)
             {
@@ -36,7 +36,7 @@ namespace Single.Managers
 
         public void ClearMelds()
         {
-            transform.DestroyAllChild();
+            transform.DestroyAllChildren();
         }
 
         private GameObject SelectPrefab(OpenMeld meld)

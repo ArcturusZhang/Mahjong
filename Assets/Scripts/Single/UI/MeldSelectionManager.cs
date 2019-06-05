@@ -28,7 +28,7 @@ namespace Single.UI
 
         private void OnDisable()
         {
-            transform.DestroyAllChild();
+            transform.DestroyAllChildren();
         }
     }
 }

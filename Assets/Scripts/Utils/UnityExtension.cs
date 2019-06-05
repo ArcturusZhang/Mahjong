@@ -5,7 +5,7 @@ namespace Utils
 {
     public static class UnityExtension
     {
-        public static void DestroyAllChild(this Transform transform)
+        public static void DestroyAllChildren(this Transform transform)
         {
             for (int i = transform.childCount - 1; i >= 0; i--)
             {

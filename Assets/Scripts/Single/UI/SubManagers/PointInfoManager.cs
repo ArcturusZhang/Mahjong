@@ -25,7 +25,7 @@ namespace Single.UI.SubManagers
 
         private void OnDisable()
         {
-            YakuItems.DestroyAllChild();
+            YakuItems.DestroyAllChildren();
             FanAndFuManager.gameObject.SetActive(false);
             YakuMan.gameObject.SetActive(false);
             gameObject.SetActive(false);
