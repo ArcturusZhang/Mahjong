@@ -44,7 +44,8 @@ namespace Single
         /// <param name="message">The message received from server</param>
         public void GamePrepare(ServerGamePrepareMessage message)
         {
-            CurrentRoundStatus = new ClientRoundStatus(message.TotalPlayers, message.PlayerIndex, message.Settings);
+            CurrentRoundStatus = new ClientRoundStatus(
+                message.TotalPlayers, message.PlayerIndex, message.GameSetting, message.YakuSetting);
             var prepareState = new GamePrepareState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
@@ -237,7 +238,7 @@ namespace Single
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             localPlayer.DiscardTile(tile, CurrentRoundStatus.IsRichiing, isLastDraw, bonusTimeLeft);
             controller.InTurnPanelManager.Close();
-            CurrentRoundStatus.IsRichiing = false;
+            CurrentRoundStatus.SetRichiing(false);
             controller.HandPanelManager.RemoveCandidates();
         }
 
@@ -269,7 +270,7 @@ namespace Single
             }
             // show richi selection panel
             Debug.Log($"Showing richi selection panel, candidates: {string.Join(",", operation.RichiAvailableTiles)}");
-            CurrentRoundStatus.IsRichiing = true;
+            CurrentRoundStatus.SetRichiing(true);
             controller.HandPanelManager.SetCandidates(operation.RichiAvailableTiles);
         }
 
@@ -322,7 +323,7 @@ namespace Single
             controller.InTurnPanelManager.SetOperations(operations);
             controller.MeldSelectionManager.Close();
             controller.HandPanelManager.RemoveCandidates();
-            CurrentRoundStatus.IsRichiing = false;
+            CurrentRoundStatus.SetRichiing(false);
         }
 
         public void OnOutTurnBackButtonClicked(OutTurnOperation[] operations)

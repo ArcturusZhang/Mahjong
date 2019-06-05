@@ -32,7 +32,7 @@ namespace Single.MahjongDataType
             {
                 foreach (var yaku in yakuValues)
                 {
-                    Fan += yaku.Type == YakuType.Yakuman ? yaku.Value * YakuSettings.YakumanBaseFan : yaku.Value;
+                    Fan += yaku.Type == YakuType.Yakuman ? yaku.Value * MahjongConstants.YakumanBaseFan : yaku.Value;
                     if (yaku.Type == YakuType.Yakuman) IsYakuman = true;
                 }
             }
@@ -44,7 +44,7 @@ namespace Single.MahjongDataType
                     if (yaku.Type == YakuType.Yakuman) IsYakuman = true;
                 }
             }
-            FanWithoutDora = yakuValues.Sum(y => y.Type == YakuType.Yakuman ? y.Value * YakuSettings.YakumanBaseFan : y.Value);
+            FanWithoutDora = yakuValues.Sum(y => y.Type == YakuType.Yakuman ? y.Value * MahjongConstants.YakumanBaseFan : y.Value);
 
             if (yakuValues.Count == 0)
             {

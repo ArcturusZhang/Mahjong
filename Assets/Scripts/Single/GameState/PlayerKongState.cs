@@ -29,7 +29,7 @@ namespace Single.GameState
             Assert.IsTrue(placeIndex == 0);
             CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
             CurrentRoundStatus.ClearLastDraws();
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             localPlayer.SkipOutTurnOperation(BonusTurnTime);
         }
@@ -39,8 +39,8 @@ namespace Single.GameState
             Debug.Log($"Hand tile count of player {KongPlayerIndex}: {HandData.HandTiles.Length}");
             CurrentRoundStatus.SetHandTiles(placeIndex, HandData.HandTiles.Length);
             CurrentRoundStatus.ClearLastDraws();
+            CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
             if (Operations.All(op => op.Type == OutTurnOperationType.Skip))
             {
                 Debug.Log("Only operation is skip, skipping turn");
@@ -50,7 +50,7 @@ namespace Single.GameState
             }
             // if there are valid operations, assign operations and start count down
             controller.OutTurnPanelManager.SetOperations(Operations);
-            controller.TurnTimeController.StartCountDown(CurrentRoundStatus.Settings.BaseTurnTime, BonusTurnTime, () =>
+            controller.TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out, automatically skip");
                 localPlayer.SkipOutTurnOperation(0);

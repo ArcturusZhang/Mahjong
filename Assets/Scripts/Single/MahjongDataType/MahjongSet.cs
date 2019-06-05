@@ -11,20 +11,20 @@ namespace Single.MahjongDataType
     [Serializable]
     public class MahjongSet
     {
-        private GameSettings settings;
+        private GameSetting setting;
         private List<Tile> allTiles;
         private int tilesDrawn = 0;
         private int lingShangDrawn = 0;
         private int doraTurned = 0;
 
-        public MahjongSet(GameSettings settings, IEnumerable<Tile> tiles)
+        public MahjongSet(GameSetting setting, IEnumerable<Tile> tiles)
         {
-            this.settings = settings;
+            this.setting = setting;
             allTiles = new List<Tile>(tiles);
             Debug.Log($"In current settings, total count of all tiles is {allTiles.Count}");
-            for (int i = 0; i < settings.redTiles.Length; i++)
+            for (int i = 0; i < setting.redTiles.Length; i++)
             {
-                var red = settings.redTiles[i];
+                var red = setting.redTiles[i];
                 var index = allTiles.FindIndex(t => t.EqualsIgnoreColor(red) && !t.IsRed);
                 if (index < 0)
                 {
@@ -46,7 +46,7 @@ namespace Single.MahjongDataType
             lingShangDrawn = 0;
             doraTurned = 0;
             var doraList = new List<Tile>();
-            for (int i = 0; i < settings.InitialDora; i++)
+            for (int i = 0; i < setting.InitialDora; i++)
             {
                 doraList.Add(TurnDora());
             }
@@ -79,7 +79,7 @@ namespace Single.MahjongDataType
         /// <returns>The lingshang tile</returns>
         public Tile DrawLingShang()
         {
-            if (LingShangDrawn >= settings.LingshangTilesCount) throw new NoMoreTilesException("There are no more LingShang tiles to drawn!");
+            if (LingShangDrawn >= setting.LingshangTilesCount) throw new NoMoreTilesException("There are no more LingShang tiles to drawn!");
             var tile = allTiles[allTiles.Count - lingShangDrawn - 1];
             lingShangDrawn++;
             return tile;
@@ -91,8 +91,8 @@ namespace Single.MahjongDataType
         /// <returns>The new dora indicator</returns>
         public Tile TurnDora()
         {
-            if (doraTurned >= settings.MaxDora) throw new NoMoreTilesException("There are no more dora indicators to turn.");
-            var firstDora = settings.LingshangTilesCount; // index from tail of list
+            if (doraTurned >= setting.MaxDora) throw new NoMoreTilesException("There are no more dora indicators to turn.");
+            var firstDora = setting.LingshangTilesCount; // index from tail of list
             var currentDora = firstDora + DoraTurned * 2;
             doraTurned++;
             return allTiles[allTiles.Count - 1 - currentDora];
@@ -106,7 +106,7 @@ namespace Single.MahjongDataType
         {
             get
             {
-                var firstDora = settings.LingshangTilesCount;
+                var firstDora = setting.LingshangTilesCount;
                 var doraTiles = new Tile[DoraTurned];
                 for (int i = 0; i < doraTiles.Length; i++)
                 {
@@ -125,7 +125,7 @@ namespace Single.MahjongDataType
         {
             get
             {
-                var firstUraDora = settings.LingshangTilesCount + 1;
+                var firstUraDora = setting.LingshangTilesCount + 1;
                 var uraDoraTiles = new Tile[DoraTurned];
                 for (int i = 0; i < uraDoraTiles.Length; i++)
                 {

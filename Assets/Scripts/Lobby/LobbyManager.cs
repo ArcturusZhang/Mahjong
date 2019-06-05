@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Multi;
 using Single.MahjongDataType;
+using Single.Managers;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.Match;
@@ -60,9 +61,6 @@ namespace Lobby
         public List<Player> Players = new List<Player>();
 
         public Player LocalPlayer;
-
-        [Header("Game Settings")] public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
 
         public void Start()
         {
@@ -267,7 +265,6 @@ namespace Lobby
         public override void OnStartHost()
         {
             base.OnStartHost();
-            maxPlayers = GameSettings.MaxPlayer;
             ChangeTo(lobbyPanel);
             backDelegate = StopHostClbk;
             SetServerInfo("Hosting", networkAddress);
@@ -387,7 +384,8 @@ namespace Lobby
 
         public void OnGameStartButtonClicked()
         {
-            StartCoroutine(ServerCountdownCoroutine());
+            ServerChangeScene(playScene);
+            // StartCoroutine(ServerCountdownCoroutine());
         }
 
         public IEnumerator ServerCountdownCoroutine()

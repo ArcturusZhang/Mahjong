@@ -1,38 +1,40 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Single.MahjongDataType;
+using Single.MahjongDataType.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Single.Managers
 {
-    public class PlayerInfoManager : ManagerBase
+    public class PlayerInfoManager : MonoBehaviour, IObserver<ClientRoundStatus>
     {
         public Text[] TextFields;
-        private void Update()
-        {
-            if (CurrentRoundStatus == null) return;
-            UpdateNames();
-        }
 
-        private void UpdateNames()
+        private void UpdateNames(ClientRoundStatus status)
         {
             for (int placeIndex = 0; placeIndex < TextFields.Length; placeIndex++)
             {
-                int playerIndex = CurrentRoundStatus.GetPlayerIndex(placeIndex);
-                if (IsValidPlayer(playerIndex))
+                int playerIndex = status.GetPlayerIndex(placeIndex);
+                if (IsValidPlayer(playerIndex, status.TotalPlayers))
                 {
                     TextFields[placeIndex].gameObject.SetActive(true);
-                    TextFields[placeIndex].text = CurrentRoundStatus.GetPlayerName(placeIndex);
+                    TextFields[placeIndex].text = status.GetPlayerName(placeIndex);
                 }
                 else
                     TextFields[placeIndex].gameObject.SetActive(false);
             }
         }
 
-        private bool IsValidPlayer(int index)
+        private bool IsValidPlayer(int index, int totalPlayers)
         {
-            return index >= 0 && index < CurrentRoundStatus.TotalPlayers;
+            return index >= 0 && index < totalPlayers;
+        }
+
+        public void UpdateStatus(ClientRoundStatus subject)
+        {
+            if (subject == null) return;
+            UpdateNames(subject);
         }
     }
 }

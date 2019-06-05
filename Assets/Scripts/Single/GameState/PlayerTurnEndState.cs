@@ -27,10 +27,11 @@ namespace Single.GameState
             // update points
             CurrentRoundStatus.UpdatePoints(Points);
             // update richi sticks
-            CurrentRoundStatus.RichiSticks = RichiSticks;
+            CurrentRoundStatus.SetRichiSticks(RichiSticks);
             // update mahjong set
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
-            CurrentRoundStatus.IsZhenting = Zhenting;
+            CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
+            // update zhenting status
+            CurrentRoundStatus.SetZhenting(Zhenting);
             // perform operation
             if (Operations.All(op => op.Type == OutTurnOperationType.Skip)) return;
             for (int playerIndex = 0; playerIndex < Operations.Length; playerIndex++)

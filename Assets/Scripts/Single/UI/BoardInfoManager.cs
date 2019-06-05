@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Single.MahjongDataType;
+using Single.MahjongDataType.Interfaces;
 using Single.Managers;
 using Single.UI.SubManagers;
 using UnityEngine;
@@ -8,49 +9,48 @@ using UnityEngine;
 
 namespace Single.UI
 {
-    public class BoardInfoManager : ManagerBase
+    public class BoardInfoManager : MonoBehaviour, IObserver<ClientRoundStatus>
     {
         [SerializeField] private RoundInfoManager RoundInfoManager;
         [SerializeField] private PointsManager PointsManager;
         [SerializeField] private PositionManager PositionManager;
         [SerializeField] private RichiStatusManager RichiStatusManager;
 
-        private void Update()
+        public void UpdateRoundInfo(ClientRoundStatus status)
         {
-            if (CurrentRoundStatus == null) return;
-            UpdateRoundInfo();
-            UpdatePoints();
-            UpdatePosition();
-            UpdateRichiStatus();
+            RoundInfoManager.OyaPlayerIndex = status.OyaPlayerIndex;
+            RoundInfoManager.Field = status.Field;
+            RoundInfoManager.Extra = status.Extra;
+            RoundInfoManager.RichiSticks = status.RichiSticks;
         }
 
-        public void UpdateRoundInfo()
+        public void UpdatePoints(ClientRoundStatus status)
         {
-            RoundInfoManager.OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex;
-            RoundInfoManager.Field = CurrentRoundStatus.Field;
-            RoundInfoManager.Extra = CurrentRoundStatus.Extra;
-            RoundInfoManager.RichiSticks = CurrentRoundStatus.RichiSticks;
+            PointsManager.TotalPlayers = status.TotalPlayers;
+            PointsManager.Places = status.Places;
+            PointsManager.Points = status.Points;
         }
 
-        public void UpdatePoints()
+        public void UpdatePosition(ClientRoundStatus status)
         {
-            PointsManager.TotalPlayers = CurrentRoundStatus.TotalPlayers;
-            PointsManager.Places = CurrentRoundStatus.Places;
-            PointsManager.Points = CurrentRoundStatus.Points;
+            PositionManager.TotalPlayers = status.TotalPlayers;
+            PositionManager.OyaPlayerIndex = status.OyaPlayerIndex;
+            PositionManager.Places = status.Places;
         }
 
-        public void UpdatePosition()
+        public void UpdateRichiStatus(ClientRoundStatus status)
         {
-            PositionManager.TotalPlayers = CurrentRoundStatus.TotalPlayers;
-            PositionManager.OyaPlayerIndex = CurrentRoundStatus.OyaPlayerIndex;
-            PositionManager.Places = CurrentRoundStatus.Places;
+            RichiStatusManager.TotalPlayers = status.TotalPlayers;
+            RichiStatusManager.Places = status.Places;
+            RichiStatusManager.RichiStatus = status.RichiStatus;
         }
 
-        public void UpdateRichiStatus()
+        public void UpdateStatus(ClientRoundStatus subject)
         {
-            RichiStatusManager.TotalPlayers = CurrentRoundStatus.TotalPlayers;
-            RichiStatusManager.Places = CurrentRoundStatus.Places;
-            RichiStatusManager.RichiStatus = CurrentRoundStatus.RichiStatus;
+            UpdateRoundInfo(subject);
+            UpdatePoints(subject);
+            UpdatePosition(subject);
+            UpdateRichiStatus(subject);
         }
     }
 }

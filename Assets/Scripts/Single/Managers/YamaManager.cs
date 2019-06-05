@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Single.MahjongDataType;
+using Single.MahjongDataType.Interfaces;
 using UnityEngine;
 using Utils;
 
 namespace Single.Managers
 {
-    public class YamaManager : ManagerBase
+    public class YamaManager : MonoBehaviour, IObserver<ClientRoundStatus>
     {
         public static readonly IDictionary<int, int> IndexToYama = new Dictionary<int, int> {
             {0, 0}, {1, 3}, {2, 2}, {3, 1}
@@ -19,25 +20,18 @@ namespace Single.Managers
 
         [SerializeField] private Transform[] Walls;
 
-        private void Update()
+        private void UpdateTiles(ClientRoundStatus status)
         {
-            if (CurrentRoundStatus == null) return;
-            if (CurrentRoundStatus.Dice == 0 || CurrentRoundStatus.OyaPlayerIndex < 0) return;
-            UpdateTiles();
+            HideUnusedTiles(status.GameSetting.GamePlayers);
+            var yamaIndex = GetYamaIndex(status.Dice, status.OyaPlayerIndex, status.Places);
+            UpdateYama(yamaIndex, status);
         }
 
-        private void UpdateTiles()
-        {
-            HideUnusedTiles();
-            var yamaIndex = GetYamaIndex(CurrentRoundStatus.Dice, CurrentRoundStatus.OyaPlayerIndex, CurrentRoundStatus.Places);
-            UpdateYama(yamaIndex);
-        }
-
-        private void HideUnusedTiles()
+        private void HideUnusedTiles(GamePlayers gamePlayers)
         {
             for (int yamaIndex = 0; yamaIndex < Walls.Length; yamaIndex++)
             {
-                int count = GetYamaTotalTiles(yamaIndex, CurrentRoundStatus.Settings.GamePlayers);
+                int count = GetYamaTotalTiles(yamaIndex, gamePlayers);
                 for (int i = count; i < Walls[yamaIndex].childCount; i++)
                 {
                     var t = Walls[yamaIndex].GetChild(i);
@@ -61,39 +55,40 @@ namespace Single.Managers
             return TileCountOnWall[gamePlayers][yamaIndex];
         }
 
-        private void UpdateYama(int openYamaIndex)
+        private void UpdateYama(int openYamaIndex, ClientRoundStatus status)
         {
-            var dice = CurrentRoundStatus.Dice;
-            var lingShangTilesCount = CurrentRoundStatus.Settings.LingShangTilesCount;
-            var setData = CurrentRoundStatus.MahjongSetData;
+            var dice = status.Dice;
+            var lingShangTilesCount = status.GameSetting.LingshangTilesCount;
+            var setData = status.MahjongSetData;
             // drawn tiles
             for (int i = 0; i < setData.TilesDrawn; i++)
             {
-                var t = GetTileAt(openYamaIndex, dice * 2 + i);
+                var t = GetTileAt(openYamaIndex, dice * 2 + i, status);
                 DrawTile(t);
             }
             // lingshang tiles
             for (int i = 0; i < setData.LingShangDrawn; i++)
             {
                 var s = dice - i / 2;
-                var t = GetTileAt(openYamaIndex, (s - 1) * 2 + i % 2);
+                var t = GetTileAt(openYamaIndex, (s - 1) * 2 + i % 2, status);
                 DrawTile(t);
             }
             // dora tiles
-            for (int i = 0; i < setData.DoraIndicators.Length; i++)
+            var length = setData.DoraIndicators == null ? 0 : setData.DoraIndicators.Length;
+            for (int i = 0; i < length; i++)
             {
                 var s = dice - lingShangTilesCount / 2 - i;
-                var t = GetTileAt(openYamaIndex, (s - 1) * 2);
+                var t = GetTileAt(openYamaIndex, (s - 1) * 2, status);
                 TurnTileFaceUp(t, setData.DoraIndicators[i]);
             }
         }
 
-        private Transform GetTileAt(int openYamaIndex, int index)
+        private Transform GetTileAt(int openYamaIndex, int index, ClientRoundStatus status)
         {
-            var totalTiles = CurrentRoundStatus.MahjongSetData.TotalTiles;
+            var totalTiles = status.MahjongSetData.TotalTiles;
             if (index < 0) index += totalTiles;
             int yamaIndex = openYamaIndex;
-            var gamePlayers = CurrentRoundStatus.Settings.GamePlayers;
+            var gamePlayers = status.GameSetting.GamePlayers;
             while (index >= GetYamaTotalTiles(yamaIndex, gamePlayers))
             {
                 index -= GetYamaTotalTiles(yamaIndex, gamePlayers);
@@ -130,6 +125,12 @@ namespace Single.Managers
         private static void TurnTileFaceDown(Transform t)
         {
             t.localRotation = MahjongConstants.FaceDownOnWall;
+        }
+
+        public void UpdateStatus(ClientRoundStatus subject)
+        {
+            if (subject == null || subject.Dice == 0 || subject.OyaPlayerIndex < 0) return;
+            UpdateTiles(subject);
         }
     }
 }

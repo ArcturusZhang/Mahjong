@@ -14,14 +14,17 @@ namespace Multi.MahjongMessages
         public int PlayerIndex;
         public int[] Points;
         public string[] PlayerNames;
-        public NetworkSettings Settings;
+        public string GameSetting;
+        public string YakuSetting;
 
         public override string ToString()
         {
             return $"TotalPlayers: {TotalPlayers}\n"
                 + $"PlayerIndex: {PlayerIndex}\n"
                 + $"Points: {string.Join(", ", Points)}\n"
-                + $"PlayerNames: {string.Join(", ", PlayerNames)}";
+                + $"PlayerNames: {string.Join(", ", PlayerNames)}\n"
+                + $"GameSettings: {GameSetting}\n"
+                + $"YakuSettings: {YakuSetting}";
         }
     }
 

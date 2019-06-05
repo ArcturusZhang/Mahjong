@@ -7,7 +7,7 @@ TextureImporter:
     second: 4richi
   - first:
       213: 21300002
-    second: mjdesktop3_1
+    second: waiting_panel
   - first:
       213: 21300004
     second: mjdesktop3_2
@@ -247,7 +247,7 @@ TextureImporter:
     second: time3
   - first:
       213: 21300162
-    second: mjdesktop3_81
+    second: ready_icon
   - first:
       213: 21300164
     second: place_num3
@@ -563,7 +563,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop3_1
+      name: waiting_panel
       rect:
         serializedVersion: 2
         x: 105
@@ -572,7 +572,7 @@ TextureImporter:
         height: 95
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 7, y: 8, z: 7, w: 8}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -2243,7 +2243,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: mjdesktop3_81
+      name: ready_icon
       rect:
         serializedVersion: 2
         x: 352

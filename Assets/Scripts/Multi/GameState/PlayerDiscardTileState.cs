@@ -34,7 +34,7 @@ namespace Multi.GameState
                 CurrentRoundStatus.CurrentPlayerIndex = CurrentPlayerIndex;
             }
             UpdateRoundStatus();
-            Debug.Log($"CurrentRoundStatus: {CurrentRoundStatus}");
+            Debug.Log($"[Server] CurrentRoundStatus: {CurrentRoundStatus}");
             responds = new bool[players.Count];
             operations = new OutTurnOperation[players.Count];
             var rivers = CurrentRoundStatus.Rivers;

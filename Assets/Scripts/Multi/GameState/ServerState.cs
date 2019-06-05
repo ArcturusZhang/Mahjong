@@ -9,8 +9,8 @@ namespace Multi.GameState
     public abstract class ServerState : IState
     {
         public ServerRoundStatus CurrentRoundStatus;
-        protected GameSettings gameSettings;
-        protected YakuSettings yakuSettings;
+        protected GameSetting gameSettings;
+        protected YakuSetting yakuSettings;
         protected IList<Player> players;
         public void OnStateEnter()
         {

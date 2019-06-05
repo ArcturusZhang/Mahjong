@@ -1,32 +1,26 @@
 ﻿using System.Collections.Generic;
 using Single.MahjongDataType;
+using Single.MahjongDataType.Interfaces;
 using UnityEngine;
 using Utils;
 
 namespace Single.Managers
 {
-    public class TableTilesManager : ManagerBase
+    public class TableTilesManager : MonoBehaviour, IObserver<ClientRoundStatus>
     {
         public PlayerHandManager[] HandManagers;
         public OpenMeldManager[] OpenManagers;
         public PlayerRiverManager[] RiverManagers;
 
-        private void Update()
-        {
-            if (CurrentRoundStatus == null) return;
-            UpdateHands();
-            UpdateRivers();
-        }
-
-        private void UpdateHands()
+        private void UpdateHands(ClientRoundStatus status)
         {
             for (int placeIndex = 0; placeIndex < HandManagers.Length; placeIndex++)
             {
                 var hand = HandManagers[placeIndex];
-                hand.Count = CurrentRoundStatus.GetTileCount(placeIndex);
-                hand.LastDraw = CurrentRoundStatus.GetLastDraw(placeIndex);
+                hand.Count = status.GetTileCount(placeIndex);
+                hand.LastDraw = status.GetLastDraw(placeIndex);
             }
-            HandManagers[0].HandTiles = CurrentRoundStatus.LocalPlayerHandTiles;
+            HandManagers[0].HandTiles = status.LocalPlayerHandTiles;
         }
 
         public void SetMelds(int placeIndex, IList<OpenMeld> melds)
@@ -44,12 +38,12 @@ namespace Single.Managers
             System.Array.ForEach(OpenManagers, m => m.ClearMelds());
         }
 
-        private void UpdateRivers()
+        private void UpdateRivers(ClientRoundStatus status)
         {
             for (int placeIndex = 0; placeIndex < RiverManagers.Length; placeIndex++)
             {
                 var manager = RiverManagers[placeIndex];
-                manager.RiverTiles = CurrentRoundStatus.GetRiverTiles(placeIndex);
+                manager.RiverTiles = status.GetRiverTiles(placeIndex);
             }
         }
 
@@ -91,6 +85,13 @@ namespace Single.Managers
         public void CloseDown()
         {
             System.Array.ForEach(HandManagers, m => m.CloseDown());
+        }
+
+        public void UpdateStatus(ClientRoundStatus subject)
+        {
+            if (subject == null) return;
+            UpdateHands(subject);
+            UpdateRivers(subject);
         }
     }
 }

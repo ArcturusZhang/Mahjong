@@ -1,36 +1,65 @@
-using System.Collections.Generic;
-using System.IO;
-using UI.Attribute;
+using System;
 using UnityEngine;
+using Utils;
 
 namespace Single.MahjongDataType
 {
-    [CreateAssetMenu(menuName = "Mahjong/GameSettings")]
-    public class GameSettings : SettingsBase
+    [Serializable]
+    public class GameSetting
     {
-        [Header("General settings")] public GameMode GameMode = GameMode.Normal;
-        public GamePlayers GamePlayers = GamePlayers.Four;
-        public RoundCount RoundCount = RoundCount.ES;
-        public MinimumFanConstraintType MinimumFanConstraintType = MinimumFanConstraintType.One;
-        public PointsToGameEnd PointsToGameEnd = PointsToGameEnd.Negative;
-        public bool GameEndsWhenAllLastTop = true;
-        public bool AllowDiscardSameAfterOpen = false;
-        public bool AllowRichiWhenPointsLow = false;
-        public bool AllowRichiWhenNotReady = true;
-        public bool AllowChows = true;
-        public bool AllowPongs = true;
-        public int InitialPoints = 25000;
-        public int FirstPlacePoints = 30000;
-        public int RichiMortgagePoints = 1000;
-        public int ExtraRoundBonusPerPlayer = 100;
-        public int NotReadyPunishPerPlayer = 1000;
-        public int FalseRichiPunishPerPlayer = 2000;
-        public bool Allow3RongDraw = true;
-        public bool Allow4RichiDraw = true;
-        public bool Allow4KongDraw = true;
-        public bool Allow4WindDraw = true;
-        public bool Allow9OrphanDraw = true;
+        public GameMode GameMode;
+        public GamePlayers GamePlayers;
+        public RoundCount RoundCount;
+        public MinimumFanConstraintType MinimumFanConstraintType;
+        public PointsToGameEnd PointsToGameEnd;
+        public bool GameEndsWhenAllLastTop;
+        public bool AllowDiscardSameAfterOpen;
+        public bool AllowRichiWhenPointsLow;
+        public bool AllowRichiWhenNotReady;
+        public bool AllowChows;
+        public bool AllowPongs;
+        public int InitialPoints;
+        public int FirstPlacePoints;
+        public int RichiMortgagePoints;
+        public int ExtraRoundBonusPerPlayer;
+        public int NotReadyPunishPerPlayer;
+        public int FalseRichiPunishPerPlayer;
+        public bool Allow3RongDraw;
+        public bool Allow4RichiDraw;
+        public bool Allow4KongDraw;
+        public bool Allow4WindDraw;
+        public bool Allow9OrphanDraw;
+        public bool AllowHint; // todo -- add setting panel entry
+        public int BaseTurnTime = 5;
+        public int BonusTurnTime = 20;
+        public int DiceMin = 2;
+        public int DiceMax = 12;
+        public int MountainReservedTiles = 14;
+        public int LingshangTilesCount = 4;
+        public int InitialDora = 1;
+        public int MaxDora = 5;
 
+        public Tile[] redTiles = new Tile[] {
+            new Tile(Suit.M, 5, true),
+            new Tile(Suit.P, 5, true),
+            new Tile(Suit.S, 5, true)
+        };
+
+        public Tile[] GetAllTiles()
+        {
+            switch (GamePlayers)
+            {
+                case GamePlayers.Two:
+                    return MahjongConstants.TwoPlayerTiles.ToArray();
+                case GamePlayers.Three:
+                    return MahjongConstants.ThreePlayerTiles.ToArray();
+                case GamePlayers.Four:
+                    return MahjongConstants.FullTiles.ToArray();
+                default:
+                    Debug.LogError($"This should not happen, GamePlayers: {GamePlayers}");
+                    return null;
+            }
+        }
         public int MaxPlayer => GetPlayerCount(GamePlayers);
 
         public static int GetPlayerCount(GamePlayers playerSetting)
@@ -78,39 +107,6 @@ namespace Single.MahjongDataType
             }
         }
 
-        [Header("Time settings")] public int BaseTurnTime = 5;
-        public int BonusTurnTime = 20;
-
-        [Header("Mahjong settings")]
-        public int DiceMin = 2;
-        public int DiceMax = 12;
-        public int MountainReservedTiles = 14;
-        public int LingshangTilesCount = 4;
-        public int InitialDora = 1;
-        public int MaxDora = 5;
-
-        public Tile[] redTiles = new Tile[] {
-            new Tile(Suit.M, 5, true),
-            new Tile(Suit.P, 5, true),
-            new Tile(Suit.S, 5, true)
-        };
-
-        public Tile[] GetAllTiles(int totalPlayers)
-        {
-            switch (totalPlayers)
-            {
-                case 2:
-                    return MahjongConstants.TwoPlayerTiles.ToArray();
-                case 3:
-                    return MahjongConstants.ThreePlayerTiles.ToArray();
-                case 4:
-                    return MahjongConstants.FullTiles.ToArray();
-                default:
-                    Debug.LogError($"This should not happen, totalPlayers: {totalPlayers}");
-                    return null;
-            }
-        }
-
         public int GetMultiplier(bool isDealer, int totalPlayers)
         {
             return isDealer ? 6 : 4; // this is for 4-player mahjong -- todo
@@ -138,6 +134,11 @@ namespace Single.MahjongDataType
                         return 2;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return this.ToJson(true);
         }
     }
 

@@ -20,5 +20,6 @@
     "Allow4RichiDraw": true,
     "Allow4KongDraw": true,
     "Allow4WindDraw": true,
-    "Allow9OrphanDraw": true
+    "Allow9OrphanDraw": true,
+    "AllowHint": true
 }

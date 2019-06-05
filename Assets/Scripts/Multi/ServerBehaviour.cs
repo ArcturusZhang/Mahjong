@@ -5,6 +5,7 @@ using Multi.GameState;
 using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
+using Single.Managers;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -17,8 +18,8 @@ namespace Multi
     /// </summary>
     public class ServerBehaviour : NetworkBehaviour
     {
-        public GameSettings GameSettings;
-        public YakuSettings YakuSettings;
+        public GameSetting GameSettings;
+        public YakuSetting YakuSettings;
         public IStateMachine StateMachine { get; private set; }
         private MahjongSet mahjongSet;
         public ServerRoundStatus CurrentRoundStatus = null;
@@ -44,8 +45,8 @@ namespace Multi
         public override void OnStartServer()
         {
             Debug.Log("[Server] OnStartServer");
-            GameSettings = LobbyManager.Instance.GameSettings;
-            YakuSettings = LobbyManager.Instance.YakuSettings;
+            ResourceManager.Instance.LoadSettings(out GameSettings, out YakuSettings);
+            Debug.Log($"[Server] GameSettings: {GameSettings}\nYakuSetting: {YakuSettings}");
             var waitingState = new WaitForLoadingState
             {
                 TotalPlayers = LobbyManager.Instance._playerNumber,
@@ -62,7 +63,7 @@ namespace Multi
         public void GamePrepare()
         {
             CurrentRoundStatus = new ServerRoundStatus(GameSettings, YakuSettings, LobbyManager.Instance.Players);
-            mahjongSet = new MahjongSet(GameSettings, GameSettings.GetAllTiles(CurrentRoundStatus.TotalPlayers));
+            mahjongSet = new MahjongSet(GameSettings, GameSettings.GetAllTiles());
             var prepareState = new GamePrepareState
             {
                 CurrentRoundStatus = CurrentRoundStatus,

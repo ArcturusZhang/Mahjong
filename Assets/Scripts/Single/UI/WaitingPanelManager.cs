@@ -16,22 +16,6 @@ namespace Single.UI
         public Transform NotReadySign;
         public Image NotReadyImage;
         public Transform WaitingTilesParent;
-        // private Image[] simpleTileImages;
-
-        // private void OnEnable()
-        // {
-        //     if (instances == null || instances.Length < WaitingTilesParent.childCount)
-        //     {
-        //         instances = new SimpleTile[WaitingTilesParent.childCount];
-        //         simpleTileImages = new Image[WaitingTilesParent.childCount];
-        //     }
-        //     for (int i = 0; i < WaitingTilesParent.childCount; i++)
-        //     {
-        //         var t = WaitingTilesParent.GetChild(i);
-        //         instances[i] = t.GetComponent<SimpleTile>();
-        //         simpleTileImages[i] = t.GetComponent<Image>();
-        //     }
-        // }
 
         public void Ready(Tile[] waitingTiles)
         {

@@ -1,12 +1,14 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Multi;
 using Multi.ServerData;
+using Single.MahjongDataType.Interfaces;
+using UnityEngine;
 
 namespace Single.MahjongDataType
 {
-    [Serializable]
-    public class ClientRoundStatus
+    [System.Serializable]
+    public class ClientRoundStatus : ISubject<ClientRoundStatus>
     {
         public int TotalPlayers { get; }
         public int[] Places { get; }
@@ -21,19 +23,22 @@ namespace Single.MahjongDataType
         public int Field { get; private set; }
         public int Dice { get; private set; }
         public int Extra { get; private set; }
-        public int RichiSticks { get; set; }
-        public bool IsRichiing { get; set; }
-        public bool IsZhenting { get; set; }
-        public MahjongSetData MahjongSetData { get; set; }
-        public NetworkSettings Settings { get; }
+        public int RichiSticks { get; private set; }
+        public bool IsRichiing { get; private set; }
+        public bool IsZhenting { get; private set; }
+        public MahjongSetData MahjongSetData { get; private set; }
         public Player LocalPlayer { get; }
-        public Tile[] ForbiddenTiles { get; set; }
+        public IList<Tile> ForbiddenTiles { get; private set; }
+        public GameSetting GameSetting { get; private set; }
+        public YakuSetting YakuSetting { get; private set; }
+        public IDictionary<Tile, IList<Tile>> PossibleWaitingTiles { get; private set; }
+        public IList<Tile> WaitingTiles { get; private set; }
         public int LocalPlayerIndex => LocalPlayer.PlayerIndex;
 
-        public ClientRoundStatus(int totalPlayers, int playerIndex, NetworkSettings settings)
+        public ClientRoundStatus(int totalPlayers, int playerIndex, string gameSetting, string yakuSetting)
         {
             TotalPlayers = totalPlayers;
-            Settings = settings;
+            // Settings = settings;
             Places = new int[4];
             PlayerNames = new string[4];
             TileCounts = new int[4];
@@ -43,6 +48,7 @@ namespace Single.MahjongDataType
             Rivers = new RiverData[4];
             LocalPlayerHandTiles = new List<Tile>();
             LocalPlayer = Lobby.LobbyManager.Instance.LocalPlayer;
+            AssignSettings(gameSetting, yakuSetting);
             AssignPlaces(playerIndex);
         }
 
@@ -56,6 +62,9 @@ namespace Single.MahjongDataType
             RichiStatus = new bool[4];
             LastDraws = new Tile?[4];
             Rivers = new RiverData[4];
+            WaitingTiles = null;
+            PossibleWaitingTiles = null;
+            NotifyObservers();
         }
 
         public void UpdatePoints(int[] points)
@@ -66,6 +75,7 @@ namespace Single.MahjongDataType
                 if (playerIndex < points.Length)
                     Points[placeIndex] = points[playerIndex];
             }
+            NotifyObservers();
         }
 
         public void UpdateNames(string[] names)
@@ -78,6 +88,7 @@ namespace Single.MahjongDataType
                 else
                     PlayerNames[placeIndex] = null;
             }
+            NotifyObservers();
         }
 
         public void UpdateRichiStatus(bool[] status)
@@ -90,17 +101,122 @@ namespace Single.MahjongDataType
                 else
                     RichiStatus[placeIndex] = false;
             }
+            NotifyObservers();
         }
 
         public void SetHandTiles(IList<Tile> handTiles)
         {
             LocalPlayerHandTiles = new List<Tile>(handTiles);
             SetHandTiles(0, handTiles.Count);
+            NotifyObservers();
         }
 
         public void SetHandTiles(int placeIndex, int count)
         {
             TileCounts[placeIndex] = count;
+            NotifyObservers();
+        }
+
+        public void SetLastDraw(int placeIndex, Tile lastDraw = default(Tile))
+        {
+            for (int i = 0; i < LastDraws.Length; i++)
+            {
+                if (i == placeIndex) LastDraws[i] = lastDraw;
+                else LastDraws[i] = null;
+            }
+            NotifyObservers();
+        }
+
+        public void ClearLastDraws()
+        {
+            if (LastDraws == null) return;
+            for (int i = 0; i < LastDraws.Length; i++)
+                LastDraws[i] = null;
+            NotifyObservers();
+        }
+
+        public void SetRiverData(int placeIndex, RiverData data)
+        {
+            Rivers[placeIndex] = data;
+            NotifyObservers();
+        }
+
+        public void SetRichiing(bool isRichiing)
+        {
+            IsRichiing = isRichiing;
+            NotifyObservers();
+        }
+
+        public void SetZhenting(bool zhenting)
+        {
+            IsZhenting = zhenting;
+            NotifyObservers();
+        }
+
+        public void SetRichiSticks(int sticks)
+        {
+            RichiSticks = sticks;
+            NotifyObservers();
+        }
+
+        public void SetMahjongSetData(MahjongSetData data)
+        {
+            MahjongSetData = data;
+            NotifyObservers();
+        }
+
+        public void SetForbiddenTiles(IList<Tile> forbiddenTiles)
+        {
+            ForbiddenTiles = forbiddenTiles;
+            NotifyObservers();
+        }
+
+        public void CalculatePossibleWaitingTiles()
+        {
+            if (LocalPlayerHandTiles == null) return;
+            if (!GameSetting.AllowHint)
+            {
+                PossibleWaitingTiles = null;
+                return;
+            }
+            var handTiles = new List<Tile>(LocalPlayerHandTiles);
+            var lastDraw = GetLastDraw(0);
+            if (lastDraw == null)
+            {
+                PossibleWaitingTiles = null;
+                NotifyObservers();
+                return;
+            }
+            PossibleWaitingTiles = MahjongLogic.DiscardForReady(LocalPlayerHandTiles, (Tile)lastDraw);
+            if (PossibleWaitingTiles == null)
+                Debug.Log("WaitingTiles: null");
+            else
+                Debug.Log($"WaitingTiles: {string.Join(";", PossibleWaitingTiles.Select(x => x.Key + ": " + string.Join(",", x.Value)))}");
+            NotifyObservers();
+        }
+
+        public void ClearPossibleWaitingTiles()
+        {
+            PossibleWaitingTiles = null;
+            NotifyObservers();
+        }
+
+        public void CalculateWaitingTiles()
+        {
+            if (LocalPlayerHandTiles == null) return;
+            if (!GameSetting.AllowHint)
+            {
+                WaitingTiles = null;
+                return;
+            }
+            WaitingTiles = MahjongLogic.WinningTiles(LocalPlayerHandTiles, null);
+            NotifyObservers();
+        }
+
+        public void ClearWaitingTiles()
+        {
+            WaitingTiles = null;
+            NotifyObservers();
         }
 
         public int GetPlaceIndex(int playerIndex)
@@ -120,26 +236,10 @@ namespace Single.MahjongDataType
             return TileCounts[placeIndex];
         }
 
-        public void SetLastDraw(int placeIndex, Tile lastDraw = default(Tile))
-        {
-            for (int i = 0; i < LastDraws.Length; i++)
-            {
-                if (i == placeIndex) LastDraws[i] = lastDraw;
-                else LastDraws[i] = null;
-            }
-        }
-
         public string GetPlayerName(int placeIndex)
         {
             if (PlayerNames == null) return "";
             return PlayerNames[placeIndex];
-        }
-
-        public void ClearLastDraws()
-        {
-            if (LastDraws == null) return;
-            for (int i = 0; i < LastDraws.Length; i++)
-                LastDraws[i] = null;
         }
 
         public Tile? GetLastDraw(int placeIndex)
@@ -148,15 +248,16 @@ namespace Single.MahjongDataType
             return LastDraws[placeIndex];
         }
 
-        public void SetRiverData(int placeIndex, RiverData data)
-        {
-            Rivers[placeIndex] = data;
-        }
-
         public RiverTile[] GetRiverTiles(int placeIndex)
         {
             if (Rivers == null) return null;
             return Rivers[placeIndex].River;
+        }
+
+        private void AssignSettings(string gameSetting, string yakuSetting)
+        {
+            GameSetting = JsonUtility.FromJson<GameSetting>(gameSetting);
+            YakuSetting = JsonUtility.FromJson<YakuSetting>(yakuSetting);
         }
 
         private void AssignPlaces(int playerIndex)
@@ -167,6 +268,31 @@ namespace Single.MahjongDataType
                 var next = Places[0] + i;
                 if (next >= Places.Length) next -= Places.Length;
                 Places[i] = next;
+            }
+        }
+
+        private IList<IObserver<ClientRoundStatus>> observers = new List<IObserver<ClientRoundStatus>>();
+
+        public void AddObserver(IObserver<ClientRoundStatus> observer)
+        {
+            if (observer == null)
+            {
+                Debug.Log("Parameter [observer] cannot be null");
+                return;
+            }
+            observers.Add(observer);
+        }
+
+        public void RemoveObserver(IObserver<ClientRoundStatus> observer)
+        {
+            observers.Remove(observer);
+        }
+
+        public void NotifyObservers()
+        {
+            foreach (var observer in observers)
+            {
+                observer.UpdateStatus(this);
             }
         }
     }

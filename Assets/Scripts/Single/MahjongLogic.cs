@@ -17,11 +17,11 @@ namespace Single
         {
             YakuMethods = typeof(YakuLogic).GetMethods(BindingFlags.Static | BindingFlags.Public).Where(p =>
                 p.GetParameters().Select(q => q.ParameterType).SequenceEqual(new[]
-                    {typeof(List<Meld>), typeof(Tile), typeof(HandStatus), typeof(RoundStatus), typeof(YakuSettings)}));
+                    {typeof(List<Meld>), typeof(Tile), typeof(HandStatus), typeof(RoundStatus), typeof(YakuSetting)}));
         }
 
         public static int CountFu(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
-            RoundStatus roundStatus, IList<YakuValue> yakus, YakuSettings yakuSettings)
+            RoundStatus roundStatus, IList<YakuValue> yakus, YakuSetting yakuSettings)
         {
             if (decompose.Count == 7) return 25; // 7 pairs
             if (decompose.Count == 13) return 30; // 13 orphans
@@ -91,7 +91,7 @@ namespace Single
         }
 
         private static IList<YakuValue> CountYaku(List<Meld> decompose, Tile winningTile, HandStatus handStatus,
-            RoundStatus roundStatus, YakuSettings yakuSettings, bool isQTJ)
+            RoundStatus roundStatus, YakuSetting yakuSettings, bool isQTJ)
         {
             var result = new List<YakuValue>();
             if (decompose == null || decompose.Count == 0) return result;
@@ -111,7 +111,7 @@ namespace Single
         }
 
         public static PointInfo GetPointInfo(Tile[] handTiles, Meld[] openMelds, Tile winningTile,
-            HandStatus handStatus, RoundStatus roundStatus, YakuSettings yakuSettings, bool isQTJ,
+            HandStatus handStatus, RoundStatus roundStatus, YakuSetting yakuSettings, bool isQTJ,
             Tile[] doraTiles = null, Tile[] uraDoraTiles = null)
         {
             var decomposes = Decompose(handTiles, openMelds, winningTile);
@@ -170,7 +170,7 @@ namespace Single
         }
 
         private static PointInfo GetPointInfo(ISet<List<Meld>> decomposes, Tile winningTile, HandStatus handStatus,
-            RoundStatus roundStatus, YakuSettings yakuSettings, bool isQTJ, int dora = 0, int uraDora = 0, int redDora = 0)
+            RoundStatus roundStatus, YakuSetting yakuSettings, bool isQTJ, int dora = 0, int uraDora = 0, int redDora = 0)
         {
             Debug.Log($"GetPointInfo method, parameters: \ndecomposes: {DecompositionToString(decomposes)}, "
                       + $"winningTile: {winningTile}, handStatus: {handStatus}, roundStatus: {roundStatus}, "
@@ -235,6 +235,25 @@ namespace Single
             }
 
             return list;
+        }
+
+        public static IDictionary<Tile, IList<Tile>> DiscardForReady(IList<Tile> handTiles, Tile lastDraw)
+        {
+            var list = new List<Tile>(handTiles) { lastDraw };
+            Dictionary<Tile, IList<Tile>> result = null;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var first = list[0];
+                list.RemoveAt(0);
+                var waitingList = WinningTiles(list, null);
+                if (waitingList.Count > 0)
+                {
+                    if (result == null) result = new Dictionary<Tile, IList<Tile>>(Tile.TileIgnoreColorEqualityComparer);
+                    if (!result.ContainsKey(first)) result.Add(first, waitingList);
+                }
+                list.Add(first);
+            }
+            return result;
         }
 
         public static bool IsReady(IList<Tile> handTiles, IList<Meld> openMelds)

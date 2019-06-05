@@ -9,7 +9,7 @@ namespace UI.DataBinding
 {
     public class IntDataBinding : MonoBehaviour, IBindData
     {
-        public ScriptableObject Target { get; set; }
+        public object Target { get; set; }
         [SerializeField] private string fieldName;
         private InputField inputField;
         private FieldInfo fieldInfo;

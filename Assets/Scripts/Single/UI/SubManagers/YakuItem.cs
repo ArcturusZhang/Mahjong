@@ -13,7 +13,6 @@ namespace Single.UI.SubManagers
         public Image YakuMan;
         public NumberPanelController FanController;
         public Text YakuName;
-        public YakuSettings YakuSettings;
 
         public void SetYakuItem(YakuValue yaku, bool 青天井 = false)
         {
@@ -24,7 +23,7 @@ namespace Single.UI.SubManagers
                 // use normal display
                 Normal.gameObject.SetActive(true);
                 YakuMan.gameObject.SetActive(false);
-                int value = yaku.Type == YakuType.Normal ? yaku.Value : yaku.Value * YakuSettings.YakumanBaseFan;
+                int value = yaku.Type == YakuType.Normal ? yaku.Value : yaku.Value * MahjongConstants.YakumanBaseFan;
                 Debug.Log($"{yaku.Name}: {value}");
                 FanController.SetNumber(value);
             }

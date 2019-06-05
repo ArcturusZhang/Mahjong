@@ -29,17 +29,20 @@ namespace Single.GameState
         private void HandleLocalPlayerDraw()
         {
             CurrentRoundStatus.SetLastDraw(0, Tile);
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
-            CurrentRoundStatus.IsZhenting = Zhenting;
+            CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
+            CurrentRoundStatus.SetZhenting(Zhenting);
             // auto discard when richied
             if (Richied && Operations.All(op => op.Type == InTurnOperationType.Discard))
             {
+                // CurrentRoundStatus.CalculateWaitingTiles();
                 controller.HandPanelManager.LockTiles();
                 controller.StartCoroutine(AutoDiscard(Tile, BonusTurnTime));
                 return;
             }
             // not richied, show timer and panels
-            controller.TurnTimeController.StartCountDown(CurrentRoundStatus.Settings.BaseTurnTime, BonusTurnTime, () =>
+            CurrentRoundStatus.CalculatePossibleWaitingTiles();
+            CurrentRoundStatus.ClearWaitingTiles();
+            controller.TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
                 localPlayer.DiscardTile(Tile, false, true, 0);
@@ -51,7 +54,7 @@ namespace Single.GameState
         {
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(PlayerIndex);
             CurrentRoundStatus.SetLastDraw(placeIndex);
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             Debug.Log($"LastDraws: {string.Join(",", CurrentRoundStatus.LastDraws)}");
         }
 
@@ -63,6 +66,7 @@ namespace Single.GameState
 
         public override void OnClientStateExit()
         {
+            CurrentRoundStatus.ClearPossibleWaitingTiles();
             controller.InTurnPanelManager.Close();
         }
 

@@ -7,31 +7,36 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using DG.Tweening;
+using Single.UI.SubManagers;
+using System.Linq;
 
 namespace Single.UI.Elements
 {
     [RequireComponent(typeof(Image))]
-    public class HandTile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+    public class HandTile : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler,
+        Single.MahjongDataType.Interfaces.IObserver<ClientRoundStatus>
     {
         public bool IsLastDraw;
         public bool interactable = true;
+        public Tile Tile => tile;
         private Image image;
         private RectTransform rect;
         private Tile tile;
         private bool locked = false;
+        private IDictionary<Tile, IList<Tile>> waitingTiles;
+        private DiscardHintManager hintManager;
 
         private void Awake()
         {
             rect = GetComponent<RectTransform>();
             image = GetComponent<Image>();
+            hintManager = ViewController.Instance.HandPanelManager.DiscardHintManager;
         }
 
         private void OnEnable()
         {
             rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, 0);
         }
-
-        public Tile Tile => tile;
 
         public void SetTile(Tile tile)
         {
@@ -70,12 +75,24 @@ namespace Single.UI.Elements
         {
             if (!interactable) return;
             rect.DOAnchorPosY(20, AnimationDuration);
+            if (waitingTiles != null && waitingTiles.ContainsKey(Tile))
+            {
+                var tiles = waitingTiles[Tile];
+                hintManager.SetWaitingTiles(tiles);
+                hintManager.Show();
+            }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             if (!interactable) return;
             rect.DOAnchorPosY(0, AnimationDuration);
+            hintManager.Close();
+        }
+
+        public void UpdateStatus(ClientRoundStatus subject)
+        {
+            waitingTiles = subject.PossibleWaitingTiles;
         }
 
         private const float AnimationDuration = 0.5f;

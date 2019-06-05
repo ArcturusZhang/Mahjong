@@ -2679,6 +2679,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lobbyManager: {fileID: 1776144909}
   StartHostButton: {fileID: 2113288539}
+  GameSettingBinder: {fileID: 498626181}
+  YakuSettingBinder: {fileID: 1918131609}
 --- !u!1001 &495231461
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2875,7 +2877,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03763d8b5c8e99f49ac53e9c8e5281af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 11400000, guid: 37a8861d2ac47e54fa164b2c642c3755, type: 2}
 --- !u!222 &498626182
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8661,7 +8662,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03763d8b5c8e99f49ac53e9c8e5281af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 11400000, guid: a613a7e49d525434b922fd32b51111e3, type: 2}
 --- !u!114 &1918131610
 MonoBehaviour:
   m_ObjectHideFlags: 0

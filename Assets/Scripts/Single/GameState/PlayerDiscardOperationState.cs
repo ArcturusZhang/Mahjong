@@ -23,7 +23,8 @@ namespace Single.GameState
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(CurrentPlayerIndex);
             // update hand tiles
             CurrentRoundStatus.SetHandTiles(HandTiles);
-            CurrentRoundStatus.IsZhenting = Zhenting;
+            CurrentRoundStatus.SetZhenting(Zhenting);
+            CurrentRoundStatus.CalculateWaitingTiles();
             controller.StartCoroutine(UpdateHandData(CurrentPlayerIndex, DiscardingLastDraw, Tile, Rivers));
             if (IsRichiing)
                 controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Richi);
@@ -41,7 +42,7 @@ namespace Single.GameState
                 return;
             }
             controller.OutTurnPanelManager.SetOperations(Operations);
-            controller.TurnTimeController.StartCountDown(CurrentRoundStatus.Settings.BaseTurnTime, BonusTurnTime, () =>
+            controller.TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically skip this turn");
                 localPlayer.SkipOutTurnOperation(0);
@@ -63,7 +64,6 @@ namespace Single.GameState
 
         public override void OnClientStateExit()
         {
-            Debug.Log($"Client exits {GetType().Name}");
             controller.OutTurnPanelManager.Close();
         }
 

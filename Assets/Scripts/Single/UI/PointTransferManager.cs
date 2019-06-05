@@ -9,38 +9,24 @@ using Single.UI.Controller;
 using UnityEngine.Events;
 using Single.MahjongDataType;
 using Single.Managers;
+using Single.MahjongDataType.Interfaces;
 
 namespace Single.UI
 {
-    public class PointTransferManager : ManagerBase
+    public class PointTransferManager : MonoBehaviour, IObserver<ClientRoundStatus>
     {
         public PlayerPointTransferManager[] SubManagers;
         public Button ConfirmButton;
         public CountDownController ConfirmCountDownController;
 
-        private void Update()
-        {
-            if (CurrentRoundStatus == null) return;
-            for (int placeIndex = 0; placeIndex < SubManagers.Length; placeIndex++)
-            {
-                int playerIndex = CurrentRoundStatus.GetPlayerIndex(placeIndex);
-                if (IsValidPlayer(playerIndex))
-                {
-                    SubManagers[placeIndex].gameObject.SetActive(true);
-                    SubManagers[placeIndex].PlayerName = CurrentRoundStatus.GetPlayerName(placeIndex);
-                }
-                else
-                    SubManagers[placeIndex].gameObject.SetActive(false);
-            }
-        }
-
-        public void SetTransfer(int[] points, IList<PointTransfer> transfers, UnityAction callback)
+        public void SetTransfer(ClientRoundStatus CurrentRoundStatus, IList<PointTransfer> transfers, UnityAction callback)
         {
             gameObject.SetActive(true);
+            var points = CurrentRoundStatus.Points;
             for (int placeIndex = 0; placeIndex < SubManagers.Length; placeIndex++)
             {
                 int playerIndex = CurrentRoundStatus.GetPlayerIndex(placeIndex);
-                if (!IsValidPlayer(playerIndex)) continue;
+                if (!IsValidPlayer(playerIndex, CurrentRoundStatus.TotalPlayers)) continue;
                 // get corresponding transfers
                 var localTransfers = new List<Transfer>();
                 foreach (var transfer in transfers)
@@ -106,9 +92,25 @@ namespace Single.UI
             }
         }
 
-        private bool IsValidPlayer(int index)
+        private bool IsValidPlayer(int index, int totalPlayers)
         {
-            return index >= 0 && index < CurrentRoundStatus.TotalPlayers;
+            return index >= 0 && index < totalPlayers;
+        }
+
+        public void UpdateStatus(ClientRoundStatus subject)
+        {
+            if (subject == null) return;
+            for (int placeIndex = 0; placeIndex < SubManagers.Length; placeIndex++)
+            {
+                int playerIndex = subject.GetPlayerIndex(placeIndex);
+                if (IsValidPlayer(playerIndex, subject.TotalPlayers))
+                {
+                    SubManagers[placeIndex].gameObject.SetActive(true);
+                    SubManagers[placeIndex].PlayerName = subject.GetPlayerName(placeIndex);
+                }
+                else
+                    SubManagers[placeIndex].gameObject.SetActive(false);
+            }
         }
     }
 }

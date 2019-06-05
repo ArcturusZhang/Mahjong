@@ -24,6 +24,7 @@ namespace Single
         public OutTurnPanelManager OutTurnPanelManager;
         public MeldSelectionManager MeldSelectionManager;
         public WaitingPanelManager[] WaitingPanelManagers;
+        public ReadyHintManager ReadyHintManager;
         public RoundDrawManager RoundDrawManager;
         public PointSummaryPanelManager PointSummaryPanelManager;
         public PointTransferManager PointTransferManager;
@@ -36,12 +37,19 @@ namespace Single
 
         public void AssignRoundStatus(ClientRoundStatus status)
         {
-            BoardInfoManager.CurrentRoundStatus = status;
-            YamaManager.CurrentRoundStatus = status;
-            TableTilesManager.CurrentRoundStatus = status;
-            PlayerInfoManager.CurrentRoundStatus = status;
-            HandPanelManager.CurrentRoundStatus = status;
-            PointTransferManager.CurrentRoundStatus = status;
+            status.AddObserver(BoardInfoManager);
+            status.AddObserver(YamaManager);
+            status.AddObserver(TableTilesManager);
+            status.AddObserver(PlayerInfoManager);
+            status.AddObserver(HandPanelManager);
+            status.AddObserver(PointTransferManager);
+            status.AddObserver(ReadyHintManager);
+            // add tiles as observer
+            foreach (var tile in HandPanelManager.HandTiles)
+            {
+                status.AddObserver(tile);
+            }
+            status.AddObserver(HandPanelManager.LastDrawTile);
         }
 
         public float ShowEffect(int placeIndex, PlayerEffectManager.Type type)

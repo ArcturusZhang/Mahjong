@@ -1,12 +1,10 @@
-﻿using System.IO;
-using UnityEngine;
+using System;
 
 namespace Single.MahjongDataType
 {
-    [CreateAssetMenu(menuName = "Mahjong/YakuData")]
-    public class YakuSettings : SettingsBase
+    [Serializable]
+    public class YakuSetting
     {
-        [Header("Yaku settings")] public const int YakumanBaseFan = 13;
         public bool OpenDuanYao = true;
         public bool HasOneShot = true;
         public bool 连风对子额外加符 = true;

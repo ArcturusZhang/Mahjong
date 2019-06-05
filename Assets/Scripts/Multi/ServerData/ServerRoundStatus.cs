@@ -35,7 +35,7 @@ namespace Multi.ServerData
         private bool[] discardZhenting;
         private bool[] richiZhenting;
 
-        public ServerRoundStatus(GameSettings gameSettings, YakuSettings yakuSettings, List<Player> players)
+        public ServerRoundStatus(GameSetting gameSettings, YakuSetting yakuSettings, List<Player> players)
         {
             GameSettings = gameSettings;
             YakuSettings = yakuSettings;
@@ -43,8 +43,8 @@ namespace Multi.ServerData
             points = new int[players.Count];
         }
 
-        public GameSettings GameSettings { get; }
-        public YakuSettings YakuSettings { get; }
+        public GameSetting GameSettings { get; }
+        public YakuSetting YakuSettings { get; }
 
         public int CurrentPlayerIndex
         {

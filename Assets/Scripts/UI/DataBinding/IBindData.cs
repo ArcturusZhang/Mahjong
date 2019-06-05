@@ -6,7 +6,7 @@ namespace UI.DataBinding
 {
     public interface IBindData
     {
-        ScriptableObject Target { get; set; }
+        object Target { get; set; }
         void Apply();
         void UpdateBind();
     }

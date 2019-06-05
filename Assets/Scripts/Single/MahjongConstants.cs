@@ -50,6 +50,7 @@ namespace Single
         public const int Baiman = 4000;
         public const int Sanbaiman = 6000;
         public const int Yakuman = 8000;
+        public const int YakumanBaseFan = 13;
 
         // Character constants
         public static readonly string[] PositionWinds = {

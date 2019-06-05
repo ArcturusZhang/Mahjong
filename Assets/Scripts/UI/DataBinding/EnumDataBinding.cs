@@ -10,7 +10,7 @@ namespace UI.DataBinding
     [RequireComponent(typeof(ToggleGroup))]
     public class EnumDataBinding : MonoBehaviour, IBindData
     {
-        public ScriptableObject Target { get; set; }
+        public object Target { get; set; }
         [SerializeField] private string fieldName;
         private ToggleGroup toggleGroup;
         private FieldInfo fieldInfo;

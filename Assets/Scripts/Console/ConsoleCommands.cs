@@ -12,6 +12,8 @@ using Single.UI;
 using System.IO;
 using Multi;
 using System.Reflection;
+using Single.Managers;
+using Utils;
 
 namespace Console
 {
@@ -29,7 +31,9 @@ namespace Console
             switch (target)
             {
                 case "lobby":
-                    CloseLobbyCanvas();
+                    var lobby = LobbyManager.Instance;
+                    var canvas = lobby?.GetComponent<Canvas>();
+                    if (canvas != null) canvas.enabled = false;
                     return;
                 default:
                     var obj = GameObject.Find(target);
@@ -75,7 +79,7 @@ namespace Console
             var roundStatus = new RoundStatus();
             var tiles = ParseTiles(handString);
             var winningTiles = ParseTiles(winningString);
-            var yakuSettings = LobbyManager.Instance.YakuSettings;
+            var yakuSettings = new YakuSetting();
             var point = MahjongLogic.GetPointInfo(tiles.ToArray(), new Meld[0], winningTiles[0],
                 handStatus, roundStatus, yakuSettings, isQTJ);
             return point;
@@ -105,57 +109,6 @@ namespace Console
                 PlayerName = "Console"
             };
             pointSummaryPanelManager.ShowPanel(data, () => Debug.Log("Time is up!"));
-        }
-
-        [ConsoleMethod("save_settings", "Save game settings to file")]
-        public static void SaveSettings(string which)
-        {
-            ScriptableObject settings;
-            string filepath;
-            Debug.Log($"Saving settings {which}");
-            switch (which)
-            {
-                case "game":
-                    settings = LobbyManager.Instance.GameSettings;
-                    filepath = Application.persistentDataPath + "/GameSettings.json";
-                    break;
-                case "yaku":
-                    settings = LobbyManager.Instance.YakuSettings;
-                    filepath = Application.persistentDataPath + "/YakuSettings.json";
-                    break;
-                default:
-                    Debug.LogError($"Unknown setting key: {which}");
-                    return;
-            }
-            var json = JsonUtility.ToJson(settings, true);
-            var writer = new StreamWriter(filepath);
-            writer.WriteLine(json);
-            writer.Close();
-        }
-
-        [ConsoleMethod("load_settings", "Read game settings from json")]
-        public static void LoadSettings(string which)
-        {
-            ScriptableObject settings;
-            string filepath;
-            Debug.Log($"Loading settings {which}");
-            switch (which)
-            {
-                case "game":
-                    settings = LobbyManager.Instance.GameSettings;
-                    filepath = Application.persistentDataPath + "/GameSettings.json";
-                    break;
-                case "yaku":
-                    settings = LobbyManager.Instance.YakuSettings;
-                    filepath = Application.persistentDataPath + "/YakuSettings.json";
-                    break;
-                default:
-                    Debug.LogError($"Unknown setting key: {which}");
-                    return;
-            }
-            var reader = new StreamReader(filepath);
-            var json = reader.ReadToEnd();
-            JsonUtility.FromJsonOverwrite(json, settings);
         }
 
         [ConsoleMethod("alter_yama", "Set the upcoming tiles in current mahjong set. If game is not started, this command has no effect")]
@@ -258,11 +211,18 @@ namespace Console
             Debug.Log($"Current round status: \n{currentRoundStatus}");
         }
 
-        private static void CloseLobbyCanvas()
+        [ConsoleMethod("show_setting", "Show current setting")]
+        public static void ShowSetting()
         {
-            var lobby = LobbyManager.Instance;
-            var canvas = lobby?.GetComponent<Canvas>();
-            if (canvas != null) canvas.enabled = false;
+            var server = ServerBehaviour.Instance;
+            if (server == null)
+            {
+                Debug.Log("Server setting: null");
+            }
+            else
+            {
+                Debug.Log($"Server setting: {server.GameSettings.ToJson(true)}");
+            }
         }
     }
 }

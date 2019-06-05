@@ -10,10 +10,11 @@ namespace Single.GameState
         public string[] Names;
         public override void OnClientStateEnter()
         {
-            CurrentRoundStatus.UpdatePoints(Points);
-            CurrentRoundStatus.UpdateNames(Names);
             // assign round status
             controller.AssignRoundStatus(CurrentRoundStatus);
+            // update data
+            CurrentRoundStatus.UpdatePoints(Points);
+            CurrentRoundStatus.UpdateNames(Names);
         }
 
         public override void OnClientStateExit()

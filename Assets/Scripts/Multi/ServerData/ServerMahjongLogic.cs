@@ -14,7 +14,7 @@ namespace Multi.ServerData
         /// <param name="baseHandStatus"></param>
         /// <returns></returns>
         public static PointInfo GetPointInfo(int playerIndex, ServerRoundStatus CurrentRoundStatus, Tile winningTile,
-            HandStatus baseHandStatus, Tile[] doraTiles, Tile[] uraDoraTiles, YakuSettings yakuSettings)
+            HandStatus baseHandStatus, Tile[] doraTiles, Tile[] uraDoraTiles, YakuSetting yakuSettings)
         {
             var zhenting = CurrentRoundStatus.IsZhenting(playerIndex);
             if (zhenting && !baseHandStatus.HasFlag(HandStatus.Tsumo)) return new PointInfo();

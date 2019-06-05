@@ -39,17 +39,12 @@ namespace Multi.GameState
                     PlayerIndex = i,
                     Points = CurrentRoundStatus.Points.ToArray(),
                     PlayerNames = CurrentRoundStatus.PlayerNames,
-                    Settings = new NetworkSettings
-                    {
-                        GamePlayers = gameSettings.GamePlayers,
-                        BaseTurnTime = CurrentRoundStatus.GameSettings.BaseTurnTime,
-                        LingShangTilesCount = CurrentRoundStatus.GameSettings.LingshangTilesCount
-                    }
+                    GameSetting = gameSettings.ToJson(false),
+                    YakuSetting = yakuSettings.ToJson(false)
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerGamePrepareMessage, messages[i]);
             }
             lastSendTime = Time.time;
-            // todo -- Maybe other initialization work needs to be done.
         }
 
         private void AssignInitialPoints()

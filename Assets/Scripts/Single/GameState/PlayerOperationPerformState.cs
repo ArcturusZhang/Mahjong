@@ -34,7 +34,7 @@ namespace Single.GameState
             // if not kong, start timer
             if (Operation.Type != OutTurnOperationType.Kong)
             {
-                controller.TurnTimeController.StartCountDown(CurrentRoundStatus.Settings.BaseTurnTime, BonusTurnTime, () =>
+                controller.TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, BonusTurnTime, () =>
                 {
                     Debug.Log("Time out, automatically discard rightmost tile");
                     var tile = HandData.HandTiles[HandData.HandTiles.Length - 1];
@@ -45,7 +45,7 @@ namespace Single.GameState
 
         private void EnableAllTiles()
         {
-            CurrentRoundStatus.ForbiddenTiles = null;
+            CurrentRoundStatus.SetForbiddenTiles(null);
         }
 
         private void HandleOtherPlayerOperation()
@@ -54,7 +54,7 @@ namespace Single.GameState
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(OperationPlayerIndex);
             Debug.Log($"Hand tile count of player {OperationPlayerIndex}: {HandData.HandTiles.Length}");
             CurrentRoundStatus.SetHandTiles(placeIndex, HandData.HandTiles.Length);
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             SetRiverData();
             // update ui elements
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
@@ -63,9 +63,9 @@ namespace Single.GameState
         private void SetRoundStatusData()
         {
             CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
-            CurrentRoundStatus.MahjongSetData = MahjongSetData;
+            CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             SetRiverData();
-            CurrentRoundStatus.ForbiddenTiles = Operation.ForbiddenTiles;
+            CurrentRoundStatus.SetForbiddenTiles(Operation.ForbiddenTiles);
         }
 
         private void SetRiverData()

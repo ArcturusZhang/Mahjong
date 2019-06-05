@@ -59,9 +59,10 @@ public class MahjongLogicTest
             new Meld(false, new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4)),
             new Meld(true, new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1))
         };
-        var yakuSettings = AssetDatabase.LoadAssetAtPath<YakuSettings>("Assets/GameData/YakuSettings.asset");
+        var yakuSettings = new YakuSetting();
         var handStatus = HandStatus.Tsumo;
-        var roundStatus = new RoundStatus {
+        var roundStatus = new RoundStatus
+        {
             PlayerIndex = 0,
             OyaPlayerIndex = 1,
             FieldCount = 0,
@@ -83,9 +84,10 @@ public class MahjongLogicTest
             new Meld(false, new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6)),
             new Meld(true, new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7))
         };
-        var yakuSettings = AssetDatabase.LoadAssetAtPath<YakuSettings>("Assets/GameData/YakuSettings.asset");
+        var yakuSettings = new YakuSetting();
         var handStatus = HandStatus.Tsumo;
-        var roundStatus = new RoundStatus {
+        var roundStatus = new RoundStatus
+        {
             PlayerIndex = 0,
             OyaPlayerIndex = 1,
             FieldCount = 0,
@@ -168,6 +170,20 @@ public class MahjongLogicTest
         for (int i = 0; i < result.Count; i++)
         {
             Debug.Log($"{i}: {string.Join(",", result[i])}");
+        }
+    }
+
+    [MenuItem("MahjongLogic/TestDiscard")]
+    public static void TestDiscard()
+    {
+        var handTiles = new List<Tile> {
+            new Tile(Suit.M, 1), new Tile(Suit.M, 2), new Tile(Suit.M, 3), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5, true)
+        };
+        var dict = MahjongLogic.DiscardForReady(handTiles, new Tile(Suit.Z, 1));
+        foreach (var item in dict)
+        {
+            Debug.Log($"{item.Key}, {string.Join(",", item.Value)}");
         }
     }
 }

@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Single.MahjongDataType;
+using Single.MahjongDataType.Interfaces;
 using Single.Managers;
 using Single.UI.Elements;
 using Single.UI.Layout;
+using Single.UI.SubManagers;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Single.UI
 {
-    public class HandPanelManager : ManagerBase
+    public class HandPanelManager : MonoBehaviour, IObserver<ClientRoundStatus>
     {
         private const float Width = 64;
         private const float DefaultLastDrawX = 425;
@@ -17,19 +19,14 @@ namespace Single.UI
         [SerializeField] private HandTile lastDrawTile;
         public RectTransform LastDrawRect;
         public Image Zhenting;
+        public DiscardHintManager DiscardHintManager;
 
-        private void Update()
-        {
-            if (CurrentRoundStatus == null) return;
-            var count = ShowHandTiles();
-            ShowLastDraw(count);
-            ToggleForbiddens();
-            Zhenting.gameObject.SetActive(CurrentRoundStatus.IsZhenting);
-        }
+        public IList<HandTile> HandTiles => handTiles;
+        public HandTile LastDrawTile => lastDrawTile;
 
-        private int ShowHandTiles()
+        private int ShowHandTiles(ClientRoundStatus status)
         {
-            var tiles = CurrentRoundStatus.LocalPlayerHandTiles;
+            var tiles = status.LocalPlayerHandTiles;
             int length = tiles == null ? 0 : tiles.Count;
             for (int i = 0; i < length; i++)
             {
@@ -43,9 +40,9 @@ namespace Single.UI
             return length;
         }
 
-        private void ShowLastDraw(int count)
+        private void ShowLastDraw(int count, ClientRoundStatus status)
         {
-            var lastDraw = CurrentRoundStatus.GetLastDraw(0);
+            var lastDraw = status.GetLastDraw(0);
             if (lastDraw == null)
                 lastDrawTile.gameObject.SetActive(false);
             else
@@ -57,14 +54,14 @@ namespace Single.UI
             LastDrawRect.anchoredPosition = new Vector2(DefaultLastDrawX - diff * Width, 0);
         }
 
-        private void ToggleForbiddens()
+        private void ToggleForbiddens(ClientRoundStatus status)
         {
-            if (CurrentRoundStatus.ForbiddenTiles == null)
+            if (status.ForbiddenTiles == null)
             {
                 RemoveCandidates();
                 return;
             }
-            var forbiddens = CurrentRoundStatus.ForbiddenTiles;
+            var forbiddens = status.ForbiddenTiles;
             for (int i = 0; i < handTiles.Length; i++)
             {
                 var instance = handTiles[i];
@@ -125,6 +122,17 @@ namespace Single.UI
         public void Show()
         {
             gameObject.SetActive(true);
+        }
+
+        public void UpdateStatus(ClientRoundStatus subject)
+        {
+            if (subject == null) return;
+            var count = ShowHandTiles(subject);
+            ShowLastDraw(count, subject);
+            ToggleForbiddens(subject);
+            Zhenting.gameObject.SetActive(subject.IsZhenting);
+            if (subject.PossibleWaitingTiles == null)
+                DiscardHintManager.Close();
         }
     }
 }
