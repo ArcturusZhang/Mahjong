@@ -33,6 +33,7 @@ namespace Single.MahjongDataType
         public YakuSetting YakuSetting { get; private set; }
         public IDictionary<Tile, IList<Tile>> PossibleWaitingTiles { get; private set; }
         public IList<Tile> WaitingTiles { get; private set; }
+        public ClientLocalSettings LocalSettings { get; private set; }
         public int LocalPlayerIndex => LocalPlayer.PlayerIndex;
 
         public ClientRoundStatus(int totalPlayers, int playerIndex, string gameSetting, string yakuSetting)
@@ -48,6 +49,7 @@ namespace Single.MahjongDataType
             Rivers = new RiverData[4];
             LocalPlayerHandTiles = new List<Tile>();
             LocalPlayer = Lobby.LobbyManager.Instance.LocalPlayer;
+            LocalSettings = new ClientLocalSettings();
             AssignSettings(gameSetting, yakuSetting);
             AssignPlaces(playerIndex);
         }
@@ -64,6 +66,7 @@ namespace Single.MahjongDataType
             Rivers = new RiverData[4];
             WaitingTiles = null;
             PossibleWaitingTiles = null;
+            LocalSettings.Reset();
             NotifyObservers();
         }
 

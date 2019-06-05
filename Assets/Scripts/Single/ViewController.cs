@@ -29,6 +29,7 @@ namespace Single
         public PointSummaryPanelManager PointSummaryPanelManager;
         public PointTransferManager PointTransferManager;
         public GameEndPanelManager GameEndPanelManager;
+        public LocalSettingManager LocalSettingManager;
 
         private void OnEnable()
         {
@@ -50,6 +51,7 @@ namespace Single
                 status.AddObserver(tile);
             }
             status.AddObserver(HandPanelManager.LastDrawTile);
+            status.LocalSettings.AddObserver(LocalSettingManager);
         }
 
         public float ShowEffect(int placeIndex, PlayerEffectManager.Type type)

@@ -17,6 +17,7 @@ namespace Single.GameState
         public MahjongSetData MahjongSetData;
         public InTurnOperation[] Operations;
         private WaitForSeconds waitAutoDiscardAfterRichi = new WaitForSeconds(MahjongConstants.AutoDiscardDelayAfterRichi);
+        private ClientLocalSettings settings;
 
         public override void OnClientStateEnter()
         {
@@ -31,23 +32,34 @@ namespace Single.GameState
             CurrentRoundStatus.SetLastDraw(0, Tile);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             CurrentRoundStatus.SetZhenting(Zhenting);
-            // auto discard when richied
-            if (Richied && Operations.All(op => op.Type == InTurnOperationType.Discard))
+            settings = CurrentRoundStatus.LocalSettings;
+            // auto discard when richied or set to qie
+            if ((settings.Qie || Richied) && Operations.All(op => op.Type == InTurnOperationType.Discard))
             {
-                // CurrentRoundStatus.CalculateWaitingTiles();
-                controller.HandPanelManager.LockTiles();
+                if (Richied) controller.HandPanelManager.LockTiles();
                 controller.StartCoroutine(AutoDiscard(Tile, BonusTurnTime));
                 return;
+            }
+            // check settings
+            if (settings.He)
+            {
+                // handle auto-win
+                int index = System.Array.FindIndex(Operations, op => op.Type == InTurnOperationType.Tsumo);
+                if (index >= 0)
+                {
+                    ClientBehaviour.Instance.OnTsumoButtonClicked(Operations[index]);
+                    return;
+                }
             }
             // not richied, show timer and panels
             CurrentRoundStatus.CalculatePossibleWaitingTiles();
             CurrentRoundStatus.ClearWaitingTiles();
+            controller.InTurnPanelManager.SetOperations(Operations);
             controller.TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, BonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
                 localPlayer.DiscardTile(Tile, false, true, 0);
             });
-            controller.InTurnPanelManager.SetOperations(Operations);
         }
 
         private void HandleOtherPlayerDraw()

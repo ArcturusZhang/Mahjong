@@ -50,7 +50,7 @@ namespace UI.DataBinding
         {
             if (Target == null)
             {
-                Debug.LogError($"Binding target cannot be null ({name})");
+                Debug.Log($"Target is null");
                 return false;
             }
             if (inputField == null)

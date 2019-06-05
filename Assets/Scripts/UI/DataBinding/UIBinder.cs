@@ -37,7 +37,7 @@ namespace UI.DataBinding
 
         private void Update()
         {
-            UpdateBinds();
+            if (Target != null) UpdateBinds();
         }
 
         public virtual void ApplyBinds()

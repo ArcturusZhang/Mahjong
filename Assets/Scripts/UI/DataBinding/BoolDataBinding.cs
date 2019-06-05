@@ -45,7 +45,7 @@ namespace UI.DataBinding
         {
             if (Target == null)
             {
-                Debug.LogError("Target should not be null");
+                Debug.Log("Target is null");
                 return false;
             }
             if (fieldInfo == null)

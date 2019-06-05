@@ -1,9 +1,144 @@
 fileFormatVersion: 2
 guid: 969d6936150eb3842bdfb6bd0cfc3e84
 TextureImporter:
-  fileIDToRecycleName: {}
+  internalIDToNameTable:
+  - first:
+      213: -501653793428538880
+    second: bothui_0
+  - first:
+      213: -6855359553601651590
+    second: bothui_1
+  - first:
+      213: -4702351510489211395
+    second: bothui_2
+  - first:
+      213: -6223215552839740855
+    second: bothui_3
+  - first:
+      213: 6252113988513057364
+    second: bothui_4
+  - first:
+      213: -3657403364458141359
+    second: bothui_5
+  - first:
+      213: -8885259293608508375
+    second: bothui_6
+  - first:
+      213: -5155770622333536443
+    second: bothui_7
+  - first:
+      213: 7939125151638748554
+    second: bothui_8
+  - first:
+      213: 6866485621425271370
+    second: bothui_9
+  - first:
+      213: 6392683407273883580
+    second: bothui_10
+  - first:
+      213: -1846919781250224203
+    second: little_panel
+  - first:
+      213: 373778948993062064
+    second: bothui_12
+  - first:
+      213: -4046966967924858551
+    second: bothui_13
+  - first:
+      213: 1356131702009759937
+    second: bothui_14
+  - first:
+      213: 1259430186602077114
+    second: bothui_15
+  - first:
+      213: -758284619294186486
+    second: bothui_16
+  - first:
+      213: 5591422899628379614
+    second: bothui_17
+  - first:
+      213: -7836228036166755262
+    second: bothui_18
+  - first:
+      213: -3026597579598333968
+    second: bothui_19
+  - first:
+      213: 2891979031544759437
+    second: bothui_20
+  - first:
+      213: -5955113024907618367
+    second: bothui_21
+  - first:
+      213: -7332657521861503199
+    second: bothui_22
+  - first:
+      213: -7273338479442353073
+    second: bothui_23
+  - first:
+      213: -7461959266159064918
+    second: bothui_24
+  - first:
+      213: -8461325227477356942
+    second: bothui_25
+  - first:
+      213: -2331574930543174778
+    second: bothui_26
+  - first:
+      213: 423381174495691151
+    second: bothui_27
+  - first:
+      213: -9082859246200893816
+    second: bothui_28
+  - first:
+      213: -3919182054145294503
+    second: bothui_29
+  - first:
+      213: 2954832607899711701
+    second: bothui_30
+  - first:
+      213: 1728424854892971691
+    second: bothui_31
+  - first:
+      213: -7826058728298773823
+    second: bothui_32
+  - first:
+      213: 4528745595599860190
+    second: bothui_33
+  - first:
+      213: -2752882233689031755
+    second: bothui_34
+  - first:
+      213: -823154724519851770
+    second: bothui_35
+  - first:
+      213: -4312004894201777241
+    second: bothui_36
+  - first:
+      213: -4478863676299680125
+    second: bothui_37
+  - first:
+      213: 889773771719292220
+    second: bothui_38
+  - first:
+      213: -1675664644504285284
+    second: bothui_39
+  - first:
+      213: 9049753849477626115
+    second: bothui_40
+  - first:
+      213: -7039004345698396217
+    second: bothui_41
+  - first:
+      213: -7356713677762657827
+    second: bothui_42
+  - first:
+      213: 3843454371336105815
+    second: bothui_43
+  - first:
+      213: -5001337048715782563
+    second: bothui_44
   externalObjects: {}
-  serializedVersion: 9
+  serializedVersion: 10
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -40,7 +175,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -93,15 +228,962 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: bothui_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 239
+        width: 305
+        height: 640
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0dc519a6883ad9547b64fb53f02ba8a6
+      internalID: -501653793428538880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_1
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 253
+        width: 296
+        height: 626
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 53afa81512c201c4d966ece812f21ecc
+      internalID: -6855359553601651590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_2
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 693
+        width: 187
+        height: 186
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ada56278b741a554f8600013a1d2ac3f
+      internalID: -4702351510489211395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_3
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 711
+        width: 58
+        height: 168
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67819ca31f3ef79408ef2d3b361df9ae
+      internalID: -6223215552839740855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_4
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 622
+        width: 263
+        height: 70
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7121f4c72ba6924bb639f89e6b17388
+      internalID: 6252113988513057364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_5
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 556
+        width: 160
+        height: 65
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 966ba265d506b55408990feaf1b3204e
+      internalID: -3657403364458141359
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_6
+      rect:
+        serializedVersion: 2
+        x: 766
+        y: 493
+        width: 70
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3a97a63f17243943923143aa8003a57
+      internalID: -8885259293608508375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_7
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 574
+        width: 46
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d2c6e4c3af9b9d49ba6ab890874ed07
+      internalID: -5155770622333536443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_8
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 486
+        width: 158
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d974ed07e7ece0847bc8793e0dc3254f
+      internalID: 7939125151638748554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_9
+      rect:
+        serializedVersion: 2
+        x: 837
+        y: 526
+        width: 40
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d75f6bba1f23754c93cb5a60b8f132e
+      internalID: 6866485621425271370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_10
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 488
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a4c42a5a511a794a87cfb2fd8fe95a4
+      internalID: 6392683407273883580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: little_panel
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 364
+        width: 70
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 7, y: 19, z: 6, w: 19}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b56d9360d7a7d94f98f5976c1fd73f5
+      internalID: -1846919781250224203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_12
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 485
+        width: 40
+        height: 40
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47b49e70e723b6f40b8dc85317bddc96
+      internalID: 373778948993062064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_13
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 425
+        width: 169
+        height: 60
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c29826f464356f546bfe4b61af25f04d
+      internalID: -4046966967924858551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_14
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 449
+        width: 36
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 405b7431cff89bf469543e7419692776
+      internalID: 1356131702009759937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_15
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 364
+        width: 169
+        height: 60
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f09872554b9881428ddb52882f28339
+      internalID: 1259430186602077114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_16
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 413
+        width: 36
+        height: 35
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fe382219e2605614da124ea40179de67
+      internalID: -758284619294186486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_17
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 382
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 443e91a9c132987499ded1cbf5cc1c0f
+      internalID: 5591422899628379614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_18
+      rect:
+        serializedVersion: 2
+        x: 854
+        y: 390
+        width: 22
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 21b2e1b55d6acc74dbc5afe158c3cd3e
+      internalID: -7836228036166755262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_19
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 296
+        width: 145
+        height: 67
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 541f0a377356f714e819b49cf75d7b58
+      internalID: -3026597579598333968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_20
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 306
+        width: 136
+        height: 57
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6fe1586c03a618f47bd117a33633dc82
+      internalID: 2891979031544759437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_21
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 239
+        width: 63
+        height: 56
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8299fce43a4b2f40b76d71bbcfffeb9
+      internalID: -5955113024907618367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_22
+      rect:
+        serializedVersion: 2
+        x: 669
+        y: 248
+        width: 46
+        height: 47
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bce3815ef92b1148b92cd4ced391799
+      internalID: -7332657521861503199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_23
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 228
+        width: 145
+        height: 67
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de92f4ca4f7c8b34cbd065fe19970fa4
+      internalID: -7273338479442353073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_24
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 267
+        width: 21
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d6ef5354b972d0d4f93e495cee28970e
+      internalID: -7461959266159064918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_25
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 108
+        width: 715
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca8d46cdde02a4e4192b03e563679633
+      internalID: -8461325227477356942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_26
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 166
+        width: 112
+        height: 61
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 608c617618f17f94f87fdfbc6d4ca295
+      internalID: -2331574930543174778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_27
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 179
+        width: 56
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5868729091b27634aadd52e9e93cbc79
+      internalID: 423381174495691151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_28
+      rect:
+        serializedVersion: 2
+        x: 716
+        y: 111
+        width: 121
+        height: 54
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 937cdd3336c0cab468b825bb3a288de5
+      internalID: -9082859246200893816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_29
+      rect:
+        serializedVersion: 2
+        x: 838
+        y: 129
+        width: 55
+        height: 49
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1a62b5db9c4a30e44a638915a3c0f246
+      internalID: -3919182054145294503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_30
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 61
+        width: 363
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bed2a825e708d4c48bfef625a1f5953b
+      internalID: 2954832607899711701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_31
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 48
+        width: 227
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 860e85c296f73244ea04eb6d9ac37d63
+      internalID: 1728424854892971691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_32
+      rect:
+        serializedVersion: 2
+        x: 592
+        y: 43
+        width: 178
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b319f7c989dbc8e42891bb3d648e6fcf
+      internalID: -7826058728298773823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_33
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 64
+        width: 121
+        height: 46
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cbfcfa1854dfae944a0496ae6852aa14
+      internalID: 4528745595599860190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_34
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 45
+        width: 258
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cac9e53214500f4ba0825c5f9f104e0
+      internalID: -2752882233689031755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_35
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 53
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef84c4582c27a634f8bde9ef740766dd
+      internalID: -823154724519851770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_36
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 1
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a40d6ca205c2b947a95f21a274b02a4
+      internalID: -4312004894201777241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_37
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 33
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcc4512b3113dd944bb6cbac8956fe5c
+      internalID: -4478863676299680125
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_38
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 34
+        width: 800
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b36b2b64a0fe7af4b8aab5fbab867f19
+      internalID: 889773771719292220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_39
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 24
+        width: 293
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a6e1869d34db37e4d9c5c3d84d5f782e
+      internalID: -1675664644504285284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_40
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 24
+        width: 293
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f08e6016447f5b741a566b1b7294f080
+      internalID: 9049753849477626115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_41
+      rect:
+        serializedVersion: 2
+        x: 588
+        y: 18
+        width: 124
+        height: 15
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f98f0d3038ac765468c3e2950fe1e637
+      internalID: -7039004345698396217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_42
+      rect:
+        serializedVersion: 2
+        x: 713
+        y: 5
+        width: 50
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: eca00f72bf79d054f8ac14a34f5f1b7f
+      internalID: -7356713677762657827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_43
+      rect:
+        serializedVersion: 2
+        x: 764
+        y: 0
+        width: 33
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bc19837c6a04b5b47960d013b6ef4ecc
+      internalID: 3843454371336105815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bothui_44
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 14
+        width: 293
+        height: 9
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aff0ab37a6cf3924fb067d670c1e137a
+      internalID: -5001337048715782563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 9d9e52120cceabb4ba095ffe4a053053
+    internalID: 0
     vertices: []
     indices: 
     edges: []
     weights: []
+    secondaryTextures: []
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

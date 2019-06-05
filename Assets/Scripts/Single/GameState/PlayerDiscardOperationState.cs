@@ -18,6 +18,7 @@ namespace Single.GameState
         public OutTurnOperation[] Operations;
         public Tile[] HandTiles;
         public RiverData[] Rivers;
+        private ClientLocalSettings settings;
         public override void OnClientStateEnter()
         {
             int placeIndex = CurrentRoundStatus.GetPlaceIndex(CurrentPlayerIndex);
@@ -33,6 +34,29 @@ namespace Single.GameState
                 Debug.LogError("Received with no operations, this should not happen");
                 localPlayer.SkipOutTurnOperation(BonusTurnTime);
                 return;
+            }
+            settings = CurrentRoundStatus.LocalSettings;
+            if (settings.He)
+            {
+                // handle auto-win
+                int index = System.Array.FindIndex(Operations, op => op.Type == OutTurnOperationType.Rong);
+                if (index >= 0)
+                {
+                    ClientBehaviour.Instance.OnOutTurnButtonClicked(Operations[index]);
+                    return;
+                }
+            }
+            if (settings.Ming)
+            {
+                // handle dont-open
+                for (int i = 0; i < Operations.Length; i++)
+                {
+                    var operation = Operations[i];
+                    if (operation.Type == OutTurnOperationType.Chow
+                        || operation.Type == OutTurnOperationType.Pong
+                        || operation.Type == OutTurnOperationType.Kong)
+                        Operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
+                }
             }
             // if all the operations are skip, automatically skip this turn.
             if (Operations.All(op => op.Type == OutTurnOperationType.Skip))
