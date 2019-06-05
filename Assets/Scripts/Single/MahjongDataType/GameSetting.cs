@@ -114,7 +114,12 @@ namespace Single.MahjongDataType
 
         public bool IsAllLast(int oyaIndex, int field, int totalPlayers)
         {
-            return oyaIndex == totalPlayers - 1 && field == FieldThreshold - 1;
+            return (oyaIndex == totalPlayers - 1 && field == FieldThreshold - 1) || field >= FieldThreshold;
+        }
+
+        public bool GameForceEnd(int oyaIndex, int field, int totalPlayers)
+        {
+            return oyaIndex == totalPlayers - 1 && field == MaxField - 1;
         }
 
         private int FieldThreshold
@@ -127,6 +132,25 @@ namespace Single.MahjongDataType
                         return 1;
                     case RoundCount.ES:
                         return 2;
+                    case RoundCount.FULL:
+                        return 4;
+                    default:
+                        Debug.LogError($"Unknown type {RoundCount}");
+                        return 2;
+                }
+            }
+        }
+
+        private int MaxField
+        {
+            get
+            {
+                switch (RoundCount)
+                {
+                    case RoundCount.E:
+                        return 2;
+                    case RoundCount.ES:
+                        return 3;
                     case RoundCount.FULL:
                         return 4;
                     default:

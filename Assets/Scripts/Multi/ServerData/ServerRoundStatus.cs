@@ -378,13 +378,9 @@ namespace Multi.ServerData
             return count == 3;
         }
 
-        public bool IsAllLast
-        {
-            get
-            {
-                return GameSettings.IsAllLast(OyaPlayerIndex, Field, TotalPlayers);
-            }
-        }
+        public bool IsAllLast => GameSettings.IsAllLast(OyaPlayerIndex, Field, TotalPlayers);
+
+        public bool GameForceEnd => GameSettings.GameForceEnd(OyaPlayerIndex, Field, TotalPlayers);
 
         public void SortHandTiles(int index)
         {

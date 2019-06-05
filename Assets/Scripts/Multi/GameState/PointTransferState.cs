@@ -80,6 +80,10 @@ namespace Multi.GameState
                 ServerBehaviour.Instance.RoundStart(NextRound, ExtraRound, KeepSticks);
         }
 
+        /// <summary>
+        /// Check if game ends. When the game ends, return true, otherwise return false
+        /// </summary>
+        /// <returns></returns>
         private bool CheckIfGameEnds()
         {
             // check if allow zero or negative points
@@ -93,18 +97,28 @@ namespace Multi.GameState
                     if (lowestPoint < 0) return true;
                     break;
             }
+            if (CurrentRoundStatus.GameForceEnd) return true;
             var isAllLast = CurrentRoundStatus.IsAllLast;
             if (!isAllLast) return false;
             // is all last
-            if (NextRound) return true;
-            // if not next
             var maxPoint = CurrentRoundStatus.Points.Max();
-            int playerIndex = CurrentRoundStatus.Points.IndexOf(maxPoint);
-            if (playerIndex == CurrentRoundStatus.OyaPlayerIndex) // last oya is top
+            if (NextRound) // if next round
             {
-                return CurrentRoundStatus.GameSettings.GameEndsWhenAllLastTop;
+                return maxPoint >= CurrentRoundStatus.GameSettings.FirstPlacePoints;
             }
-            return false;
+            else // if not next -- same oya
+            {
+                if (maxPoint < CurrentRoundStatus.GameSettings.FirstPlacePoints)
+                {
+                    return false;
+                }
+                int playerIndex = CurrentRoundStatus.Points.IndexOf(maxPoint);
+                if (playerIndex == CurrentRoundStatus.OyaPlayerIndex) // last oya is top
+                {
+                    return CurrentRoundStatus.GameSettings.GameEndsWhenAllLastTop;
+                }
+                return false;
+            }
         }
 
         private void ChangePoints(PointTransfer transfer)
