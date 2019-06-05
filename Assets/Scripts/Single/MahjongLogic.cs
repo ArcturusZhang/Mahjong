@@ -536,6 +536,29 @@ namespace Single
             return result;
         }
 
+        public static IEnumerable<OpenMeld> GetRichiKongs(IList<Tile> handTiles, Tile lastDraw)
+        {
+            var winningTiles = WinningTiles(handTiles, null);
+            foreach (var winningTile in winningTiles)
+            {
+                var decomposes = Decompose(handTiles, null, winningTile);
+                if (!decomposes.All(list => list.Exists(m => m.Type == MeldType.Triplet && m.First.EqualsIgnoreColor(lastDraw))))
+                    return new List<OpenMeld>();
+            }
+            var tiles = new List<Tile>();
+            for (int i = 0; i < handTiles.Count; i++) {
+                if (handTiles[i].EqualsIgnoreColor(lastDraw)) tiles.Add(handTiles[i]);
+            }
+            tiles.Add(lastDraw);
+            Assert.AreEqual(tiles.Count, 4);
+            return new List<OpenMeld> {
+                new OpenMeld {
+                    Meld = new Meld(false, tiles.ToArray()),
+                    Side = MeldSide.Self
+                }
+            };
+        }
+
         public static IEnumerable<OpenMeld> GetPongs(IList<Tile> handTiles, Tile discardTile, MeldSide side)
         {
             var result = new HashSet<Meld>(Meld.MeldConsiderColorEqualityComparer);

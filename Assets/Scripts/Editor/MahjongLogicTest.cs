@@ -186,4 +186,23 @@ public class MahjongLogicTest
             Debug.Log($"{item.Key}, {string.Join(",", item.Value)}");
         }
     }
+
+    [MenuItem("MahjongLogic/TestRichiKongs")]
+    public static void TestRichiKongs()
+    {
+        var handTiles = new List<Tile> {
+            new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 4), new Tile(Suit.M, 4),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5, true), new Tile(Suit.M, 5)
+        };
+        var kongs = MahjongLogic.GetRichiKongs(handTiles, new Tile(Suit.M, 5));
+        Debug.Log($"Kongs: {string.Join(",", kongs)}");
+        handTiles = new List<Tile> {
+            new Tile(Suit.M, 3), new Tile(Suit.M, 3), new Tile(Suit.M, 6), new Tile(Suit.M, 6),
+            new Tile(Suit.M, 5), new Tile(Suit.M, 5, true), new Tile(Suit.M, 5)
+        };
+        kongs = MahjongLogic.GetRichiKongs(handTiles, new Tile(Suit.M, 5));
+        Debug.Log($"Kongs: {string.Join(",", kongs)}");
+        kongs = MahjongLogic.GetRichiKongs(handTiles, new Tile(Suit.M, 3));
+        Debug.Log($"Kongs: {string.Join(",", kongs)}");
+    }
 }

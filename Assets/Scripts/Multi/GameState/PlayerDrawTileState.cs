@@ -143,7 +143,19 @@ namespace Multi.GameState
             var alreadyRichied = CurrentRoundStatus.RichiStatus(playerIndex);
             if (alreadyRichied)
             {
-                // test kongs in richied player hand -- todo
+                // test kongs in richied player hand
+                var richiKongs = MahjongLogic.GetRichiKongs(handTiles, justDraw);
+                if (richiKongs.Any())
+                {
+                    foreach (var kong in richiKongs)
+                    {
+                        operations.Add(new InTurnOperation
+                        {
+                            Type = InTurnOperationType.Kong,
+                            Meld = kong
+                        });
+                    }
+                }
             }
             else
             {
