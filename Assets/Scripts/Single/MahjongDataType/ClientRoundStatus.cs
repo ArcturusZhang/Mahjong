@@ -184,13 +184,7 @@ namespace Single.MahjongDataType
             }
             var handTiles = new List<Tile>(LocalPlayerHandTiles);
             var lastDraw = GetLastDraw(0);
-            if (lastDraw == null)
-            {
-                PossibleWaitingTiles = null;
-                NotifyObservers();
-                return;
-            }
-            PossibleWaitingTiles = MahjongLogic.DiscardForReady(LocalPlayerHandTiles, (Tile)lastDraw);
+            PossibleWaitingTiles = MahjongLogic.DiscardForReady(LocalPlayerHandTiles, lastDraw);
             if (PossibleWaitingTiles == null)
                 Debug.Log("WaitingTiles: null");
             else
@@ -220,6 +214,11 @@ namespace Single.MahjongDataType
         {
             WaitingTiles = null;
             NotifyObservers();
+        }
+
+        public bool IsLocalPlayerTurn(int currentPlayerIndex)
+        {
+            return LocalPlayerIndex == currentPlayerIndex;
         }
 
         public int GetPlaceIndex(int playerIndex)

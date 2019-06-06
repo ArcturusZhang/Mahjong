@@ -65,6 +65,7 @@ namespace Single.GameState
             CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             SetRiverData();
+            CurrentRoundStatus.CalculatePossibleWaitingTiles();
             CurrentRoundStatus.SetForbiddenTiles(Operation.ForbiddenTiles);
         }
 

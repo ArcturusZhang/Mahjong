@@ -25,7 +25,8 @@ namespace Single.GameState
             // update hand tiles
             CurrentRoundStatus.SetHandTiles(HandTiles);
             CurrentRoundStatus.SetZhenting(Zhenting);
-            CurrentRoundStatus.CalculateWaitingTiles();
+            if (CurrentRoundStatus.IsLocalPlayerTurn(CurrentPlayerIndex))
+                CurrentRoundStatus.CalculateWaitingTiles();
             controller.StartCoroutine(UpdateHandData(CurrentPlayerIndex, DiscardingLastDraw, Tile, Rivers));
             if (IsRichiing)
                 controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Richi);

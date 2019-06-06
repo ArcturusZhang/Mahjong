@@ -237,9 +237,10 @@ namespace Single
             return list;
         }
 
-        public static IDictionary<Tile, IList<Tile>> DiscardForReady(IList<Tile> handTiles, Tile lastDraw)
+        public static IDictionary<Tile, IList<Tile>> DiscardForReady(IList<Tile> handTiles, Tile? lastDraw)
         {
-            var list = new List<Tile>(handTiles) { lastDraw };
+            var list = new List<Tile>(handTiles);
+            if (lastDraw != null) list.Add((Tile)lastDraw);
             Dictionary<Tile, IList<Tile>> result = null;
             for (int i = 0; i < list.Count; i++)
             {
