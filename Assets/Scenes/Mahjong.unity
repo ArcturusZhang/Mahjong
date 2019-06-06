@@ -1353,6 +1353,7 @@ MonoBehaviour:
   DigitPrefab: {fileID: 1692833495780502, guid: 8f643f7d9ca0e254db1784d4f1ef5cc0,
     type: 3}
   NumberSprites: {fileID: 11400000, guid: 7a670cd8c8fb1a64baaca7d3712c052e, type: 2}
+  PlusSign: {fileID: 0}
   MinusSign: {fileID: 0}
 --- !u!114 &110753708
 MonoBehaviour:
@@ -6876,6 +6877,7 @@ MonoBehaviour:
   DigitPrefab: {fileID: 1367403738414840, guid: 7c5c3c19d7b72434ba6718165c3a4593,
     type: 3}
   NumberSprites: {fileID: 11400000, guid: 99b2649adad93a4479d60e2f8b8613f4, type: 2}
+  PlusSign: {fileID: 0}
   MinusSign: {fileID: 0}
 --- !u!114 &907563689
 MonoBehaviour:
@@ -11963,6 +11965,7 @@ MonoBehaviour:
   DigitPrefab: {fileID: 1289360237010328, guid: 9383bb03cf39b864f94940cc8652dcaf,
     type: 3}
   NumberSprites: {fileID: 11400000, guid: 91efd6998d2eb114c97d9f35d30afa3e, type: 2}
+  PlusSign: {fileID: 0}
   MinusSign: {fileID: 0}
 --- !u!114 &1639400949
 MonoBehaviour:
@@ -12937,6 +12940,7 @@ MonoBehaviour:
   DigitPrefab: {fileID: 1662779375768644, guid: 8d6b2fc286e156a4fa3739283b2d002c,
     type: 3}
   NumberSprites: {fileID: 11400000, guid: 100068ec308a6e94bbcc17b772c98e66, type: 2}
+  PlusSign: {fileID: 0}
   MinusSign: {fileID: 0}
 --- !u!222 &1767146694
 CanvasRenderer:
@@ -14135,6 +14139,7 @@ MonoBehaviour:
   DigitPrefab: {fileID: 1367403738414840, guid: 7c5c3c19d7b72434ba6718165c3a4593,
     type: 3}
   NumberSprites: {fileID: 11400000, guid: 99b2649adad93a4479d60e2f8b8613f4, type: 2}
+  PlusSign: {fileID: 0}
   MinusSign: {fileID: 0}
 --- !u!114 &1878672166
 MonoBehaviour:
@@ -16418,6 +16423,7 @@ MonoBehaviour:
   DigitPrefab: {fileID: 1367403738414840, guid: 7c5c3c19d7b72434ba6718165c3a4593,
     type: 3}
   NumberSprites: {fileID: 11400000, guid: 99b2649adad93a4479d60e2f8b8613f4, type: 2}
+  PlusSign: {fileID: 0}
   MinusSign: {fileID: 0}
 --- !u!114 &2125702547
 MonoBehaviour:

@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Single.UI.Controller;
 using Single.UI.SubManagers;
 using UnityEngine;
@@ -21,17 +20,22 @@ namespace Single.UI
             ConfirmButton.onClick.AddListener(callback);
             for (int i = 0; i < playerPlaces.Length; i++)
             {
-                PlaceManagers[i].gameObject.SetActive(true);
                 int playerIndex = playerPlaces[i];
-                PlaceManagers[i].SetPoints(playerNames[playerIndex], playerPoints[playerIndex]);
+                PlaceManagers[i].SetPoints(playerNames[playerIndex], playerPoints[playerIndex], i);
             }
-            for (int i = playerPlaces.Length; i < PlaceManagers.Length; i++)
+            StartCoroutine(ShowAnimation(playerPlaces.Length));
+        }
+
+        private IEnumerator ShowAnimation(int totalPlayers)
+        {
+            for (int i = 0; i < totalPlayers; i++)
             {
-                PlaceManagers[i].gameObject.SetActive(false);
+                var duration = PlaceManagers[i].Show();
+                yield return new WaitForSeconds(duration);
             }
         }
 
-        public void Close() 
+        public void Close()
         {
             gameObject.SetActive(false);
         }
