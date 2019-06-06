@@ -368,6 +368,7 @@ namespace Lobby
         public override void OnLobbyServerPlayersReady()
         {
             bool allready = CheckReadiness();
+            Debug.Log($"Max players: {maxPlayers}");
             GameStartButton.interactable = allready && _playerNumber == maxPlayers;
         }
 
@@ -385,7 +386,6 @@ namespace Lobby
         public void OnGameStartButtonClicked()
         {
             ServerChangeScene(playScene);
-            // StartCoroutine(ServerCountdownCoroutine());
         }
 
         public IEnumerator ServerCountdownCoroutine()

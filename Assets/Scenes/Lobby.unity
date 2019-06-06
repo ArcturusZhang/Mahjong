@@ -2678,7 +2678,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lobbyManager: {fileID: 1776144909}
-  StartHostButton: {fileID: 2113288539}
   GameSettingBinder: {fileID: 498626181}
   YakuSettingBinder: {fileID: 1918131609}
 --- !u!1001 &495231461
@@ -10377,18 +10376,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2113288537}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2113288539 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6158753545678412719, guid: 9a8ccbdc2bcca26468c2f33bd1a90e86,
-    type: 3}
-  m_PrefabInstance: {fileID: 2113288537}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2128313873
 PrefabInstance:
   m_ObjectHideFlags: 0

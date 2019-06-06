@@ -1,22 +1,25 @@
+using Lobby;
 using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Single.GameState
 {
     public class GameEndState : ClientState
     {
-        // public ClientRoundStatus CurrentRoundStatus;
         public string[] PlayerNames;
         public int[] Points;
         public int[] Places;
-        // private ViewController controller;
         public override void OnClientStateEnter()
         {
             controller.GameEndPanelManager.SetPoints(PlayerNames, Points, Places, () =>
             {
                 Debug.Log("Back to lobby");
-                // todo
+                var lobby = LobbyManager.Instance;
+                lobby.ServerChangeScene(lobby.offlineScene);
+                // todo -- record points (maybe)?
+                CurrentRoundStatus.LocalPlayer.connectionToServer.Disconnect();
             });
         }
 
