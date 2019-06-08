@@ -20,7 +20,9 @@ namespace Multi.GameState
     {
         private MessageBase[] messages;
         private bool[] responds;
+        private float firstSendTime;
         private float lastSendTime;
+        private float serverTimeOut = 5f;
         public override void OnServerStateEnter()
         {
             Debug.Log($"This game has total {players.Count} players");
@@ -44,6 +46,7 @@ namespace Multi.GameState
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerGamePrepareMessage, messages[i]);
             }
+            firstSendTime = Time.time;
             lastSendTime = Time.time;
         }
 
@@ -59,6 +62,12 @@ namespace Multi.GameState
         {
             if (responds.All(r => r))
             {
+                ServerBehaviour.Instance.RoundStart(true, false, false);
+                return;
+            }
+            if (Time.time - firstSendTime > serverTimeOut)
+            {
+                Debug.Log("[Server] Prepare state time out");
                 ServerBehaviour.Instance.RoundStart(true, false, false);
                 return;
             }

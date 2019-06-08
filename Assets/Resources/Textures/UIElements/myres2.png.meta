@@ -91,7 +91,7 @@ TextureImporter:
     second: myres2_28
   - first:
       213: 21300058
-    second: myres2_29
+    second: sakura
   - first:
       213: 21300060
     second: myres2_30
@@ -881,7 +881,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: myres2_29
+      name: sakura
       rect:
         serializedVersion: 2
         x: 825

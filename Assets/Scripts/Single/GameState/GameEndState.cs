@@ -1,5 +1,7 @@
+using System.Collections;
 using Lobby;
 using Single.MahjongDataType;
+using Single.UI;
 using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,12 +17,20 @@ namespace Single.GameState
         {
             controller.GameEndPanelManager.SetPoints(PlayerNames, Points, Places, () =>
             {
-                Debug.Log("Back to lobby");
-                var lobby = LobbyManager.Instance;
-                lobby.ServerChangeScene(lobby.offlineScene);
+                controller.StartCoroutine(BackToLobby());
                 // todo -- record points (maybe)?
-                CurrentRoundStatus.LocalPlayer.connectionToServer.Disconnect();
             });
+        }
+
+        private IEnumerator BackToLobby()
+        {
+            Debug.Log("Back to lobby");
+            var transition = GameObject.FindObjectOfType<SceneTransitionManager>();
+            transition.FadeOut();
+            yield return new WaitForSeconds(1f);
+            var lobby = LobbyManager.Instance;
+            lobby.ServerChangeScene(lobby.offlineScene);
+            CurrentRoundStatus.LocalPlayer.connectionToServer.Disconnect();
         }
 
         public override void OnClientStateExit()

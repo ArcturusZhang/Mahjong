@@ -8,6 +8,8 @@ namespace Single.GameState
     {
         public int[] Points;
         public string[] Names;
+        private float firstTime;
+        private const float waitTime = 0.25f;
         public override void OnClientStateEnter()
         {
             // assign round status
@@ -15,6 +17,7 @@ namespace Single.GameState
             // update data
             CurrentRoundStatus.UpdatePoints(Points);
             CurrentRoundStatus.UpdateNames(Names);
+            firstTime = Time.time;
         }
 
         public override void OnClientStateExit()
@@ -23,6 +26,8 @@ namespace Single.GameState
 
         public override void OnStateUpdate()
         {
+            if (Time.time - firstTime > waitTime)
+                localPlayer.ClientReady(localPlayer.PlayerIndex);
         }
     }
 }

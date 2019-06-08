@@ -149,12 +149,6 @@ namespace Multi
                 PlayerIndex = content.PlayerIndex;
             }
             gameStarted = true;
-            connectionToServer.Send(MessageIds.ClientReadinessMessage, new ClientReadinessMessage
-            {
-                PlayerIndex = PlayerIndex,
-                Content = PlayerIndex
-            });
-            // invoke client game prepare logic with the content received.
             ClientBehaviour.Instance.GamePrepare(content);
         }
 

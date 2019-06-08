@@ -385,6 +385,13 @@ namespace Lobby
 
         public void OnGameStartButtonClicked()
         {
+            StartCoroutine(ServerSceneTransition());
+        }
+
+        private IEnumerator ServerSceneTransition() {
+            var transition = GameObject.FindObjectOfType<Single.UI.SceneTransitionManager>();
+            transition.FadeOut();
+            yield return new WaitForSeconds(1f);
             ServerChangeScene(playScene);
         }
 
