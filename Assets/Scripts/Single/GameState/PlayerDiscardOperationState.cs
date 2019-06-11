@@ -26,16 +26,9 @@ namespace Single.GameState
             CurrentRoundStatus.SetZhenting(Zhenting);
             if (CurrentRoundStatus.IsLocalPlayerTurn(CurrentPlayerIndex))
                 CurrentRoundStatus.CalculateWaitingTiles();
-            controller.StartCoroutine(UpdateHandData(placeIndex, DiscardingLastDraw, Tile, Rivers));
             if (IsRichiing)
                 controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Richi);
-            if (Operations == null || Operations.Length == 0)
-            {
-                Debug.LogError("Received with no operations, this should not happen");
-                localPlayer.SkipOutTurnOperation(BonusTurnTime);
-                return;
-            }
-            controller.ShowOutTurnPanels(Operations, BonusTurnTime);
+            controller.StartCoroutine(UpdateHandData(placeIndex, DiscardingLastDraw, Tile, Rivers));
         }
 
         private IEnumerator UpdateHandData(int currentPlaceIndex, bool discardingLastDraw, Tile tile, RiverData[] rivers)
@@ -49,11 +42,15 @@ namespace Single.GameState
                 int placeIndex = CurrentRoundStatus.GetPlaceIndex(playerIndex);
                 CurrentRoundStatus.SetRiverData(placeIndex, rivers[playerIndex]);
             }
+            var panelShown = controller.ShowOutTurnPanels(Operations, BonusTurnTime);
+            if (panelShown)
+                controller.TableTilesManager.ShineLastTile(currentPlaceIndex);
         }
 
         public override void OnClientStateExit()
         {
             controller.OutTurnPanelManager.Close();
+            controller.TableTilesManager.ShineOff();
         }
 
         public override void OnStateUpdate()

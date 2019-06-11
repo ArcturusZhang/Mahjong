@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Single.MahjongDataType;
 using UnityEngine;
 
@@ -60,6 +61,21 @@ namespace Single.Managers
             for (int i = validTileCount; i < tiles.Length; i++)
             {
                 tiles[i].gameObject.SetActive(false);
+            }
+        }
+
+        public TileInstance GetLastTile()
+        {
+            if (RiverTiles == null) return null;
+            int count = RiverTiles.Count(t => !t.IsGone);
+            return tileInstances[count - 1];
+        }
+
+        public void ShineOff()
+        {
+            foreach (var tile in tileInstances)
+            {
+                tile.ShineOff();
             }
         }
 

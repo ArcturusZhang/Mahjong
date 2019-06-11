@@ -34,7 +34,7 @@ namespace Single.Managers
                 for (int rank = 0; rank <= 9; rank++)
                 {
                     var key = $"{rank}{TileSuits[i]}";
-                    var texture = Resources.Load<Texture2D>($"Textures/{key}");
+                    var texture = Resources.Load<Texture2D>($"Textures/TileTextures/{key}");
                     if (texture != null) textureDict.Add(key, texture);
                 }
                 yield return null;

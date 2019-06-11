@@ -42,12 +42,13 @@ namespace Single.GameState
             CurrentRoundStatus.ClearLastDraws();
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
-            controller.ShowOutTurnPanels(Operations, BonusTurnTime);
             controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Kong);
+            controller.ShowOutTurnPanels(Operations, BonusTurnTime);
         }
 
         public override void OnClientStateExit()
         {
+            // controller.TableTilesManager.ShineOff();
         }
 
         public override void OnStateUpdate()

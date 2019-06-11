@@ -2,7 +2,6 @@
 using Single.MahjongDataType;
 using Single.MahjongDataType.Interfaces;
 using UnityEngine;
-using Utils;
 
 namespace Single.Managers
 {
@@ -96,6 +95,27 @@ namespace Single.Managers
         public void CloseDown()
         {
             System.Array.ForEach(HandManagers, m => m.CloseDown());
+        }
+
+
+        public void ShineLastTile(int placeIndex)
+        {
+            var lastTile = RiverManagers[placeIndex].GetLastTile();
+            if (lastTile == null) return;
+            lastTile.Shine();
+        }
+
+        public void ShineOff(int placeIndex)
+        {
+            RiverManagers[placeIndex].ShineOff();
+        }
+
+        public void ShineOff()
+        {
+            for (int placeIndex = 0; placeIndex < RiverManagers.Length; placeIndex++)
+            {
+                ShineOff(placeIndex);
+            }
         }
 
         public void UpdateStatus(ClientRoundStatus subject)

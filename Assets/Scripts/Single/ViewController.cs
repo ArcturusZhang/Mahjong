@@ -102,10 +102,16 @@ namespace Single
             CurrentRoundStatus.LocalPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
         }
 
-        public void ShowOutTurnPanels(OutTurnOperation[] operations, int bonusTurnTime)
+        public bool ShowOutTurnPanels(OutTurnOperation[] operations, int bonusTurnTime)
         {
-            var settings = CurrentRoundStatus.LocalSettings;
             var localPlayer = CurrentRoundStatus.LocalPlayer;
+            if (operations == null || operations.Length == 0)
+            {
+                Debug.LogError("Received with no operations, this should not happen");
+                localPlayer.SkipOutTurnOperation(bonusTurnTime);
+                return false;
+            }
+            var settings = CurrentRoundStatus.LocalSettings;
             if (settings.He)
             {
                 // handle auto-win
@@ -113,7 +119,7 @@ namespace Single
                 if (index >= 0)
                 {
                     ClientBehaviour.Instance.OnOutTurnButtonClicked(operations[index]);
-                    return;
+                    return false;
                 }
             }
             if (settings.Ming)
@@ -134,7 +140,7 @@ namespace Single
                 Debug.Log("Only operation is skip, skipping turn");
                 localPlayer.SkipOutTurnOperation(bonusTurnTime);
                 OutTurnPanelManager.Close();
-                return;
+                return false;
             }
             OutTurnPanelManager.SetOperations(operations);
             TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, bonusTurnTime, () =>
@@ -143,6 +149,7 @@ namespace Single
                 localPlayer.SkipOutTurnOperation(0);
                 OutTurnPanelManager.Close();
             });
+            return true;
         }
 
         public float ShowEffect(int placeIndex, PlayerEffectManager.Type type)

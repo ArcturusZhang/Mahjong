@@ -8,7 +8,7 @@ namespace Single
     public class TileInstance : MonoBehaviour
     {
         public Tile Tile;
-
+        public Canvas Canvas;
         private MeshRenderer meshRenderer;
 
         private void OnEnable()
@@ -18,7 +18,8 @@ namespace Single
 
         public void SetTile(Tile tile)
         {
-            if (tile.Rank == 0) {
+            if (tile.Rank == 0)
+            {
                 gameObject.SetActive(false);
                 return;
             }
@@ -26,6 +27,16 @@ namespace Single
             Tile = tile;
             var material = meshRenderer.material;
             material.mainTexture = ResourceManager.Instance?.GetTileTexture(tile);
+        }
+
+        public void Shine()
+        {
+            Canvas.gameObject.SetActive(true);
+        }
+
+        public void ShineOff()
+        {
+            Canvas.gameObject.SetActive(false);
         }
     }
 }
