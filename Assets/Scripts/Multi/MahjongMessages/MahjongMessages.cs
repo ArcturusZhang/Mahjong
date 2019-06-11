@@ -15,7 +15,6 @@ namespace Multi.MahjongMessages
         public int[] Points;
         public string[] PlayerNames;
         public string GameSetting;
-        public string YakuSetting;
 
         public override string ToString()
         {
@@ -23,8 +22,7 @@ namespace Multi.MahjongMessages
                 + $"PlayerIndex: {PlayerIndex}\n"
                 + $"Points: {string.Join(", ", Points)}\n"
                 + $"PlayerNames: {string.Join(", ", PlayerNames)}\n"
-                + $"GameSettings: {GameSetting}\n"
-                + $"YakuSettings: {YakuSetting}";
+                + $"GameSettings: {GameSetting}";
         }
     }
 
@@ -60,7 +58,6 @@ namespace Multi.MahjongMessages
         public int DrawPlayerIndex;
         public Tile Tile;
         public int BonusTurnTime;
-        public bool Richied;
         public bool Zhenting;
         public InTurnOperation[] Operations;
         public MahjongSetData MahjongSetData;
@@ -72,7 +69,6 @@ namespace Multi.MahjongMessages
                 + $"DrawPlayerIndex: {DrawPlayerIndex}\n"
                 + $"Tile: {Tile}\n"
                 + $"BonusTurnTime: {BonusTurnTime}\n"
-                + $"Richied: {Richied}\n"
                 + $"Zhenting: {Zhenting}\n"
                 + $"Operations: {operationString}\n"
                 + $"MahjongSetData: {MahjongSetData}";
@@ -91,6 +87,25 @@ namespace Multi.MahjongMessages
         public override string ToString()
         {
             return $"PlayerIndex: {PlayerIndex}, KongPlayerIndex: {KongPlayerIndex}\n"
+                + $"HandData: {HandData}, Operations: {string.Join("|", Operations)}\n"
+                + $"MahjongSetData: {MahjongSetData}";
+        }
+    }
+
+    public class ServerBeiDoraMessage : MessageBase
+    {
+        public int PlayerIndex;
+        public int BeiDoraPlayerIndex;
+        public int[] BeiDoras;
+        public PlayerHandData HandData;
+        public int BonusTurnTime;
+        public OutTurnOperation[] Operations;
+        public MahjongSetData MahjongSetData;
+
+        public override string ToString()
+        {
+            return $"PlayerIndex: {PlayerIndex}, BeiDoraPlayerIndex: {BeiDoraPlayerIndex}\n"
+                + $"BeiDoras: {string.Join(",", BeiDoras)}\n"
                 + $"HandData: {HandData}, Operations: {string.Join("|", Operations)}\n"
                 + $"MahjongSetData: {MahjongSetData}";
         }
@@ -147,7 +162,8 @@ namespace Multi.MahjongMessages
         }
     }
 
-    public class ServerOperationPerformMessage : MessageBase {
+    public class ServerOperationPerformMessage : MessageBase
+    {
         public int PlayerIndex;
         public int OperationPlayerIndex;
         public OutTurnOperation Operation;
@@ -156,7 +172,8 @@ namespace Multi.MahjongMessages
         public RiverData[] Rivers;
         public MahjongSetData MahjongSetData;
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"PlayerIndex: {PlayerIndex}\n"
                 + $"OperationPlayerIndex: {OperationPlayerIndex}\n"
                 + $"Operation: {Operation}\n"

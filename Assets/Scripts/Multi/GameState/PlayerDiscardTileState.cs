@@ -114,9 +114,10 @@ namespace Multi.GameState
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
             var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var beiDora = CurrentRoundStatus.GetBeiDora(playerIndex);
             var point = ServerMahjongLogic.GetPointInfo(
                 playerIndex, CurrentRoundStatus, discardTile, baseHandStatus,
-                doraTiles, uraDoraTiles, yakuSettings);
+                doraTiles, uraDoraTiles, beiDora, gameSettings);
             // test if enough
             if (gameSettings.CheckConstraint(point))
             {

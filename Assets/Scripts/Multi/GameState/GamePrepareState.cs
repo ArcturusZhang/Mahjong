@@ -41,8 +41,7 @@ namespace Multi.GameState
                     PlayerIndex = i,
                     Points = CurrentRoundStatus.Points.ToArray(),
                     PlayerNames = CurrentRoundStatus.PlayerNames,
-                    GameSetting = gameSettings.ToJson(false),
-                    YakuSetting = yakuSettings.ToJson(false)
+                    GameSetting = gameSettings.ToJson(false)
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerGamePrepareMessage, messages[i]);
             }

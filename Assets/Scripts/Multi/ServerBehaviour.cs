@@ -19,7 +19,6 @@ namespace Multi
     public class ServerBehaviour : NetworkBehaviour
     {
         public GameSetting GameSettings;
-        public YakuSetting YakuSettings;
         public IStateMachine StateMachine { get; private set; }
         private MahjongSet mahjongSet;
         public ServerRoundStatus CurrentRoundStatus = null;
@@ -45,8 +44,8 @@ namespace Multi
         public override void OnStartServer()
         {
             Debug.Log("[Server] OnStartServer");
-            ResourceManager.Instance.LoadSettings(out GameSettings, out YakuSettings);
-            Debug.Log($"[Server] GameSettings: {GameSettings}\nYakuSetting: {YakuSettings}");
+            ResourceManager.Instance.LoadSettings(out GameSettings);
+            Debug.Log($"[Server] GameSettings: {GameSettings}");
             var waitingState = new WaitForLoadingState
             {
                 TotalPlayers = LobbyManager.Instance._playerNumber,
@@ -62,7 +61,7 @@ namespace Multi
 
         public void GamePrepare()
         {
-            CurrentRoundStatus = new ServerRoundStatus(GameSettings, YakuSettings, LobbyManager.Instance.Players);
+            CurrentRoundStatus = new ServerRoundStatus(GameSettings, LobbyManager.Instance.Players);
             mahjongSet = new MahjongSet(GameSettings, GameSettings.GetAllTiles());
             var prepareState = new GamePrepareState
             {
@@ -196,6 +195,15 @@ namespace Multi
                 RoundDrawType = type
             };
             StateMachine.ChangeState(drawState);
+        }
+
+        public void BeiDora(int playerIndex) {
+            var beiState = new PlayerBeiDoraState {
+                CurrentRoundStatus = CurrentRoundStatus,
+                CurrentPlayerIndex = playerIndex,
+                MahjongSet = mahjongSet
+            };
+            StateMachine.ChangeState(beiState);
         }
 
         public void PointTransfer(IList<PointTransfer> transfers, bool next, bool extra, bool keepSticks)

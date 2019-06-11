@@ -43,7 +43,6 @@ namespace Multi.GameState
                 {
                     PlayerIndex = i,
                     DrawPlayerIndex = CurrentPlayerIndex,
-                    Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
                     MahjongSetData = MahjongSet.Data
                 };
                 players[i].connectionToClient.Send(MessageIds.ServerDrawTileMessage, message);
@@ -54,7 +53,6 @@ namespace Multi.GameState
                 DrawPlayerIndex = CurrentPlayerIndex,
                 Tile = justDraw,
                 BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
-                Richied = CurrentRoundStatus.RichiStatus(CurrentPlayerIndex),
                 Zhenting = CurrentRoundStatus.IsZhenting(CurrentPlayerIndex),
                 Operations = GetOperations(CurrentPlayerIndex),
                 MahjongSetData = MahjongSet.Data
@@ -76,7 +74,8 @@ namespace Multi.GameState
             TestRichi(playerIndex, handTiles, openMelds, operations);
             // test kongs
             TestKongs(playerIndex, handTiles, operations);
-            // test bei -- todo
+            // test bei
+            TestBei(playerIndex, handTiles, operations);
             return operations.ToArray();
         }
 
@@ -93,9 +92,10 @@ namespace Multi.GameState
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
             var uraDoraTiles = MahjongSet.UraDoraIndicators.Select(
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
+            var beiDora = CurrentRoundStatus.GetBeiDora(playerIndex);
             tsumoPointInfo = ServerMahjongLogic.GetPointInfo(
                 playerIndex, CurrentRoundStatus, tile, baseHandStatus,
-                doraTiles, uraDoraTiles, yakuSettings);
+                doraTiles, uraDoraTiles, beiDora, gameSettings);
             // test if enough
             if (gameSettings.CheckConstraint(tsumoPointInfo))
             {
@@ -189,6 +189,27 @@ namespace Multi.GameState
             }
         }
 
+        public void TestBei(int playerIndex, Tile[] handTiles, IList<InTurnOperation> operations)
+        {
+            if (!gameSettings.AllowBeiDora) return;
+            var beiTile = new Tile(Suit.Z, 4);
+            int bei = handTiles.Count(tile => tile.EqualsIgnoreColor(beiTile));
+            if (bei > 0)
+            {
+                operations.Add(new InTurnOperation
+                {
+                    Type = InTurnOperationType.Bei
+                });
+            }
+            else if (justDraw.EqualsIgnoreColor(beiTile))
+            {
+                operations.Add(new InTurnOperation
+                {
+                    Type = InTurnOperationType.Bei
+                });
+            }
+        }
+
         private void OnDiscardTileReceived(NetworkMessage message)
         {
             var content = message.ReadMessage<ClientDiscardTileMessage>();
@@ -228,7 +249,8 @@ namespace Multi.GameState
                     HandleRoundDraw(operation);
                     break;
                 case InTurnOperationType.Bei:
-                // todo
+                    HandleBei(operation);
+                    break;
                 default:
                     Debug.LogError($"[Server] This type of in turn operation should not be sent to server.");
                     break;
@@ -254,6 +276,13 @@ namespace Multi.GameState
             int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
             Debug.Log($"Player {playerIndex} has claimed 9-orphans");
             ServerBehaviour.Instance.RoundDraw(RoundDrawType.NineOrphans);
+        }
+
+        private void HandleBei(InTurnOperation operation)
+        {
+            int playerIndex = CurrentRoundStatus.CurrentPlayerIndex;
+            Debug.Log($"Player {playerIndex} has claimed a bei-dora");
+            ServerBehaviour.Instance.BeiDora(playerIndex);
         }
 
         public override void OnStateUpdate()

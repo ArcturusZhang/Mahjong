@@ -9,6 +9,7 @@ namespace Multi.MahjongMessages
         public const short ServerDiscardOperationMessage = 103;
         public const short ServerKongMessage = 104;
         public const short ServerOperationPerformMessage = 105;
+        public const short ServerBeiDoraMessage = 106;
         public const short ServerTurnEndMessage = 110;
         public const short ServerTsumoMessage = 111;
         public const short ServerRongMessage = 112;

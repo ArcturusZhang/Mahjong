@@ -17,7 +17,6 @@ namespace Lobby
         public UIBinder YakuSettingBinder;
         private ResourceManager manager;
         private GameSetting GameSetting;
-        private YakuSetting YakuSetting;
 
         public void CloseSettingsPanel()
         {
@@ -37,15 +36,15 @@ namespace Lobby
             binders.Clear();
             binders.AddRange(GetComponentsInChildren<UIBinder>(true));
             manager = ResourceManager.Instance;
-            manager.LoadSettings(out GameSetting, out YakuSetting);
+            manager.LoadSettings(out GameSetting);
             GameSettingBinder.Target = GameSetting;
-            YakuSettingBinder.Target = YakuSetting;
+            YakuSettingBinder.Target = GameSetting;
         }
 
         public void ResetSettings()
         {
             Debug.Log("Reset to corresponding default settings");
-            manager.ResetSettings(GameSetting, YakuSetting);
+            manager.ResetSettings(GameSetting);
             binders.ForEach(binder => binder?.ApplyBinds());
         }
 
@@ -58,8 +57,8 @@ namespace Lobby
             lobbyManager.StartHost();
             gameObject.SetActive(false);
             // save settings to data folder
-            manager.SaveSettings(GameSetting, YakuSetting);
-            Debug.Log($"GameSettings: {GameSetting}\nYakuSetting: {YakuSetting}");
+            manager.SaveSettings(GameSetting);
+            Debug.Log($"GameSettings: {GameSetting}");
         }
 
         public void OnTotalPlayerChanged(int value)

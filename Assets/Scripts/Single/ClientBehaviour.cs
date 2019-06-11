@@ -45,7 +45,7 @@ namespace Single
         public void GamePrepare(ServerGamePrepareMessage message)
         {
             CurrentRoundStatus = new ClientRoundStatus(
-                message.TotalPlayers, message.PlayerIndex, message.GameSetting, message.YakuSetting);
+                message.TotalPlayers, message.PlayerIndex, message.GameSetting);
             var prepareState = new GamePrepareState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
@@ -88,7 +88,6 @@ namespace Single
                 PlayerIndex = message.DrawPlayerIndex,
                 Tile = message.Tile,
                 BonusTurnTime = message.BonusTurnTime,
-                Richied = message.Richied,
                 Zhenting = message.Zhenting,
                 MahjongSetData = message.MahjongSetData,
                 Operations = message.Operations
@@ -108,6 +107,21 @@ namespace Single
                 MahjongSetData = message.MahjongSetData
             };
             StateMachine.ChangeState(kongState);
+        }
+
+        public void PlayerBeiDora(ServerBeiDoraMessage message)
+        {
+            var beiDoraState = new PlayerBeiDoraState
+            {
+                CurrentRoundStatus = CurrentRoundStatus,
+                BeiDoraPlayerIndex = message.BeiDoraPlayerIndex,
+                BeiDoras = message.BeiDoras,
+                HandData = message.HandData,
+                BonusTurnTime = message.BonusTurnTime,
+                Operations = message.Operations,
+                MahjongSetData = message.MahjongSetData
+            };
+            StateMachine.ChangeState(beiDoraState);
         }
 
         public void PlayerDiscardOperation(ServerDiscardOperationMessage message)
@@ -310,9 +324,9 @@ namespace Single
             });
         }
 
-        public void OnInTurnDrawButtonClicked(InTurnOperation operation)
+        public void OnInTurnButtonClicked(InTurnOperation operation)
         {
-            Debug.Log($"Requesting round draw due to 9 kinds of orphans");
+            Debug.Log($"Requesting to proceed operation: {operation}");
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             localPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
             controller.InTurnPanelManager.Close();

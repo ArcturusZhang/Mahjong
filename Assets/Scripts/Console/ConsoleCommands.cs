@@ -79,9 +79,9 @@ namespace Console
             var roundStatus = new RoundStatus();
             var tiles = ParseTiles(handString);
             var winningTiles = ParseTiles(winningString);
-            var yakuSettings = new YakuSetting();
+            var gameSettings = new GameSetting();
             var point = MahjongLogic.GetPointInfo(tiles.ToArray(), new Meld[0], winningTiles[0],
-                handStatus, roundStatus, yakuSettings, isQTJ);
+                handStatus, roundStatus, gameSettings, isQTJ);
             return point;
         }
 

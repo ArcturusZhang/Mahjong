@@ -19,6 +19,7 @@ namespace Single.MahjongDataType
         public List<Tile> LocalPlayerHandTiles { get; private set; }
         public Tile?[] LastDraws { get; private set; }
         public RiverData[] Rivers { get; private set; }
+        public int[] BeiDoras { get; private set; }
         public int OyaPlayerIndex { get; private set; }
         public int Field { get; private set; }
         public int Dice { get; private set; }
@@ -30,13 +31,12 @@ namespace Single.MahjongDataType
         public Player LocalPlayer { get; }
         public IList<Tile> ForbiddenTiles { get; private set; }
         public GameSetting GameSetting { get; private set; }
-        public YakuSetting YakuSetting { get; private set; }
         public IDictionary<Tile, IList<Tile>> PossibleWaitingTiles { get; private set; }
         public IList<Tile> WaitingTiles { get; private set; }
         public ClientLocalSettings LocalSettings { get; private set; }
         public int LocalPlayerIndex => LocalPlayer.PlayerIndex;
 
-        public ClientRoundStatus(int totalPlayers, int playerIndex, string gameSetting, string yakuSetting)
+        public ClientRoundStatus(int totalPlayers, int playerIndex, string gameSetting)
         {
             TotalPlayers = totalPlayers;
             // Settings = settings;
@@ -50,7 +50,7 @@ namespace Single.MahjongDataType
             LocalPlayerHandTiles = new List<Tile>();
             LocalPlayer = Lobby.LobbyManager.Instance.LocalPlayer;
             LocalSettings = new ClientLocalSettings();
-            AssignSettings(gameSetting, yakuSetting);
+            AssignSettings(gameSetting);
             AssignPlaces(playerIndex);
         }
 
@@ -64,6 +64,7 @@ namespace Single.MahjongDataType
             RichiStatus = new bool[4];
             LastDraws = new Tile?[4];
             Rivers = new RiverData[4];
+            BeiDoras = new int[4];
             WaitingTiles = null;
             PossibleWaitingTiles = null;
             LocalSettings.Reset();
@@ -103,6 +104,19 @@ namespace Single.MahjongDataType
                     RichiStatus[placeIndex] = status[playerIndex];
                 else
                     RichiStatus[placeIndex] = false;
+            }
+            NotifyObservers();
+        }
+
+        public void UpdateBeiDoras(int[] beiDoras)
+        {
+            for (int placeIndex = 0; placeIndex < BeiDoras.Length; placeIndex++)
+            {
+                int playerIndex = GetPlayerIndex(placeIndex);
+                if (playerIndex < beiDoras.Length)
+                    BeiDoras[placeIndex] = beiDoras[playerIndex];
+                else
+                    BeiDoras[placeIndex] = 0;
             }
             NotifyObservers();
         }
@@ -232,6 +246,11 @@ namespace Single.MahjongDataType
             return Places[placeIndex];
         }
 
+        public bool GetRichiStatus(int placeIndex)
+        {
+            return RichiStatus[placeIndex];
+        }
+
         public int GetTileCount(int placeIndex)
         {
             if (TileCounts == null) return 0;
@@ -256,10 +275,9 @@ namespace Single.MahjongDataType
             return Rivers[placeIndex].River;
         }
 
-        private void AssignSettings(string gameSetting, string yakuSetting)
+        private void AssignSettings(string gameSetting)
         {
             GameSetting = JsonUtility.FromJson<GameSetting>(gameSetting);
-            YakuSetting = JsonUtility.FromJson<YakuSetting>(yakuSetting);
         }
 
         private void AssignPlaces(int playerIndex)

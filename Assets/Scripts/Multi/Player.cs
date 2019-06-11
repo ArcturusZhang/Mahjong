@@ -106,6 +106,7 @@ namespace Multi
                 PlayerIndex = PlayerIndex,
                 Content = code
             };
+            Debug.Log($"Client sending message {message}");
             connectionToServer.Send(MessageIds.ClientReadinessMessage, message);
         }
 
@@ -125,6 +126,7 @@ namespace Multi
             RegisterHandler(MessageIds.ServerDrawTileMessage, OnPlayerDrawTileMessageReceived);
             RegisterHandler(MessageIds.ServerDiscardOperationMessage, OnDiscardOperationMessageReceived);
             RegisterHandler(MessageIds.ServerKongMessage, OnKongMessageReceived);
+            RegisterHandler(MessageIds.ServerBeiDoraMessage, OnBeiDoraMessageReceived);
             RegisterHandler(MessageIds.ServerTurnEndMessage, OnTurnEndMessageReceived);
             RegisterHandler(MessageIds.ServerOperationPerformMessage, OnOperationPerformedMessageReceived);
             RegisterHandler(MessageIds.ServerRoundDrawMessage, OnRoundDrawMessageReceived);
@@ -182,6 +184,13 @@ namespace Multi
             Debug.Log($"ServerKongMessage: {content}");
             // invoke client method for kong
             ClientBehaviour.Instance.PlayerKong(content);
+        }
+
+        private void OnBeiDoraMessageReceived(NetworkMessage message) {
+            var content = message.ReadMessage<ServerBeiDoraMessage>();
+            Debug.Log($"ServerBeiDoraMessage received: {content}");
+            // invoke client method for bei dora
+            ClientBehaviour.Instance.PlayerBeiDora(content);
         }
 
         private void OnTurnEndMessageReceived(NetworkMessage message)

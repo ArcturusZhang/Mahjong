@@ -11,6 +11,7 @@ namespace Single.Managers
         public PlayerHandManager[] HandManagers;
         public OpenMeldManager[] OpenManagers;
         public PlayerRiverManager[] RiverManagers;
+        public PlayerBeiDoraManager[] BeiManagers;
 
         private void UpdateHands(ClientRoundStatus status)
         {
@@ -44,6 +45,16 @@ namespace Single.Managers
             {
                 var manager = RiverManagers[placeIndex];
                 manager.RiverTiles = status.GetRiverTiles(placeIndex);
+            }
+        }
+
+        private void UpdateBeiDoras(ClientRoundStatus status)
+        {
+            if (status.BeiDoras == null) return;
+            for (int placeIndex = 0; placeIndex < BeiManagers.Length; placeIndex++)
+            {
+                var manager = BeiManagers[placeIndex];
+                manager.SetBeiDoras(status.BeiDoras[placeIndex]);
             }
         }
 
@@ -92,6 +103,7 @@ namespace Single.Managers
             if (subject == null) return;
             UpdateHands(subject);
             UpdateRivers(subject);
+            UpdateBeiDoras(subject);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Single.UI
         public Button RichiButton;
         public Button DrawButton;
         public Button KongButton;
+        public Button BeiButton;
         public Button SkipButton;
         public Button BackButton;
 
@@ -67,9 +68,15 @@ namespace Single.UI
                 DrawButton.onClick.RemoveAllListeners();
                 DrawButton.gameObject.SetActive(true);
                 var drawOperation = System.Array.Find(operations, op => op.Type == InTurnOperationType.RoundDraw);
-                DrawButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnDrawButtonClicked(drawOperation));
+                DrawButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnButtonClicked(drawOperation));
             }
-            // todo -- bei button
+            if (operations.Any(op => op.Type == InTurnOperationType.Bei))
+            {
+                BeiButton.onClick.RemoveAllListeners();
+                BeiButton.gameObject.SetActive(true);
+                var beiOperation = System.Array.Find(operations, op => op.Type == InTurnOperationType.Bei);
+                BeiButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnButtonClicked(beiOperation));
+            }
         }
 
         public void Close()
@@ -78,6 +85,7 @@ namespace Single.UI
             RichiButton.gameObject.SetActive(false);
             DrawButton.gameObject.SetActive(false);
             KongButton.gameObject.SetActive(false);
+            BeiButton.gameObject.SetActive(false);
             SkipButton.gameObject.SetActive(false);
             BackButton.gameObject.SetActive(false);
         }

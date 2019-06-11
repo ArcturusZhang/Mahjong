@@ -14,6 +14,7 @@ namespace Single.UI.SubManagers
         public Image ChowImage;
         public Image PongImage;
         public Image KongImage;
+        public Image BeiImage;
         public Image TsumoImage;
         public Image RongImage;
 

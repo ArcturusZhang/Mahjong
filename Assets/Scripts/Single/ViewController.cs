@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
+using Multi;
 using Single.MahjongDataType;
 using Single.Managers;
 using Single.UI;
@@ -30,6 +32,8 @@ namespace Single
         public PointTransferManager PointTransferManager;
         public GameEndPanelManager GameEndPanelManager;
         public LocalSettingManager LocalSettingManager;
+        private ClientRoundStatus CurrentRoundStatus;
+        private WaitForSeconds waitAutoDiscardAfterRichi = new WaitForSeconds(MahjongConstants.AutoDiscardDelayAfterRichi);
 
         private void OnEnable()
         {
@@ -38,6 +42,7 @@ namespace Single
 
         public void AssignRoundStatus(ClientRoundStatus status)
         {
+            CurrentRoundStatus = status;
             status.AddObserver(BoardInfoManager);
             status.AddObserver(YamaManager);
             status.AddObserver(TableTilesManager);
@@ -52,6 +57,92 @@ namespace Single
             }
             status.AddObserver(HandPanelManager.LastDrawTile);
             status.LocalSettings.AddObserver(LocalSettingManager);
+        }
+
+        public void ShowInTurnPanels(InTurnOperation[] operations, int bonusTurnTime)
+        {
+            var localPlayer = CurrentRoundStatus.LocalPlayer;
+            var settings = CurrentRoundStatus.LocalSettings;
+            var richied = CurrentRoundStatus.GetRichiStatus(0);
+            var lastDraw = (Tile)CurrentRoundStatus.GetLastDraw(0);
+            // auto discard when richied or set to qie
+            if ((settings.Qie || richied) && operations.All(op => op.Type == InTurnOperationType.Discard))
+            {
+                if (richied) HandPanelManager.LockTiles();
+                StartCoroutine(AutoDiscard(lastDraw, bonusTurnTime));
+                InTurnPanelManager.Close();
+                return;
+            }
+            // check settings
+            if (settings.He)
+            {
+                // handle auto-win
+                int index = System.Array.FindIndex(operations, op => op.Type == InTurnOperationType.Tsumo);
+                if (index >= 0)
+                {
+                    ClientBehaviour.Instance.OnTsumoButtonClicked(operations[index]);
+                    return;
+                }
+            }
+            // not richied, show timer and panels
+            CurrentRoundStatus.CalculatePossibleWaitingTiles();
+            CurrentRoundStatus.ClearWaitingTiles();
+            InTurnPanelManager.SetOperations(operations);
+            TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, bonusTurnTime, () =>
+            {
+                Debug.Log("Time out! Automatically discarding last drawn tile");
+                localPlayer.DiscardTile(lastDraw, false, true, 0);
+                InTurnPanelManager.Close();
+            });
+        }
+
+        private IEnumerator AutoDiscard(Tile tile, int bonusTimeLeft)
+        {
+            yield return waitAutoDiscardAfterRichi;
+            CurrentRoundStatus.LocalPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
+        }
+
+        public void ShowOutTurnPanels(OutTurnOperation[] operations, int bonusTurnTime)
+        {
+            var settings = CurrentRoundStatus.LocalSettings;
+            var localPlayer = CurrentRoundStatus.LocalPlayer;
+            if (settings.He)
+            {
+                // handle auto-win
+                int index = System.Array.FindIndex(operations, op => op.Type == OutTurnOperationType.Rong);
+                if (index >= 0)
+                {
+                    ClientBehaviour.Instance.OnOutTurnButtonClicked(operations[index]);
+                    return;
+                }
+            }
+            if (settings.Ming)
+            {
+                // handle dont-open
+                for (int i = 0; i < operations.Length; i++)
+                {
+                    var operation = operations[i];
+                    if (operation.Type == OutTurnOperationType.Chow
+                        || operation.Type == OutTurnOperationType.Pong
+                        || operation.Type == OutTurnOperationType.Kong)
+                        operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
+                }
+            }
+            // if all the operations are skip, automatically skip this turn.
+            if (operations.All(op => op.Type == OutTurnOperationType.Skip))
+            {
+                Debug.Log("Only operation is skip, skipping turn");
+                localPlayer.SkipOutTurnOperation(bonusTurnTime);
+                OutTurnPanelManager.Close();
+                return;
+            }
+            OutTurnPanelManager.SetOperations(operations);
+            TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, bonusTurnTime, () =>
+            {
+                Debug.Log("Time out! Automatically skip this turn");
+                localPlayer.SkipOutTurnOperation(0);
+                OutTurnPanelManager.Close();
+            });
         }
 
         public float ShowEffect(int placeIndex, PlayerEffectManager.Type type)

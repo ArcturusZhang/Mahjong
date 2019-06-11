@@ -4,53 +4,52 @@ using Multi.MahjongMessages;
 using Multi.ServerData;
 using Single;
 using Single.MahjongDataType;
-using StateMachine.Interfaces;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Multi.GameState
 {
-    public class PlayerKongState : ServerState
+    public class PlayerBeiDoraState : ServerState
     {
         public int CurrentPlayerIndex;
         public MahjongSet MahjongSet;
-        public OpenMeld Kong;
         private bool[] responds;
         private OutTurnOperation[] outTurnOperations;
         private float firstTime;
         private float serverTimeOut;
-
         public override void OnServerStateEnter()
         {
             NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOutTurnMessageReceived);
-            // update hand tiles and open melds
+            // update hand tiles and bei doras
             UpdateRoundStatus();
             // send messages
             for (int i = 0; i < players.Count; i++)
             {
                 if (i == CurrentPlayerIndex) continue;
-                var message = new ServerKongMessage
+                var message = new ServerBeiDoraMessage
                 {
                     PlayerIndex = i,
-                    KongPlayerIndex = CurrentPlayerIndex,
+                    BeiDoraPlayerIndex = CurrentPlayerIndex,
+                    BeiDoras = CurrentRoundStatus.GetBeiDoras(),
                     HandData = new PlayerHandData
                     {
                         HandTiles = new Tile[CurrentRoundStatus.HandTiles(CurrentPlayerIndex).Length],
                         OpenMelds = CurrentRoundStatus.OpenMelds(CurrentPlayerIndex)
                     },
                     BonusTurnTime = players[i].BonusTurnTime,
-                    Operations = GetKongOperations(i),
+                    Operations = GetBeiDoraOperations(i),
                     MahjongSetData = MahjongSet.Data
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerKongMessage, message);
+                players[i].connectionToClient.Send(MessageIds.ServerBeiDoraMessage, message);
             }
-            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerKongMessage, new ServerKongMessage
+            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerBeiDoraMessage, new ServerBeiDoraMessage
             {
                 PlayerIndex = CurrentPlayerIndex,
-                KongPlayerIndex = CurrentPlayerIndex,
+                BeiDoraPlayerIndex = CurrentPlayerIndex,
+                BeiDoras = CurrentRoundStatus.GetBeiDoras(),
                 HandData = CurrentRoundStatus.HandData(CurrentPlayerIndex),
                 BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
-                Operations = GetKongOperations(CurrentPlayerIndex)
+                Operations = GetBeiDoraOperations(CurrentPlayerIndex)
             });
             responds = new bool[players.Count];
             outTurnOperations = new OutTurnOperation[players.Count];
@@ -63,23 +62,12 @@ namespace Multi.GameState
             var lastDraw = (Tile)CurrentRoundStatus.LastDraw;
             CurrentRoundStatus.LastDraw = null;
             CurrentRoundStatus.AddTile(CurrentPlayerIndex, lastDraw);
-            if (Kong.IsAdded) // add kong
-            {
-                CurrentRoundStatus.AddKong(CurrentPlayerIndex, Kong);
-                CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, Kong.Extra);
-            }
-            else // self kong
-            {
-                CurrentRoundStatus.AddMeld(CurrentPlayerIndex, Kong);
-                CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, Kong);
-            }
+            CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, new Tile(Suit.Z, 4));
+            CurrentRoundStatus.AddBeiDoras(CurrentPlayerIndex);
             CurrentRoundStatus.SortHandTiles();
-            // turn dora if this is a self kong
-            if (Kong.Side == MeldSide.Self)
-                MahjongSet.TurnDora();
         }
 
-        private OutTurnOperation[] GetKongOperations(int playerIndex)
+        private OutTurnOperation[] GetBeiDoraOperations(int playerIndex)
         {
             var operations = new List<OutTurnOperation>();
             operations.Add(new OutTurnOperation
@@ -87,51 +75,28 @@ namespace Multi.GameState
                 Type = OutTurnOperationType.Skip
             });
             if (playerIndex == CurrentPlayerIndex) return operations.ToArray();
-            // rob kong test
-            TestRobKong(playerIndex, operations);
+            // rong test
+            TestBeiDoraRong(playerIndex, operations);
             return operations.ToArray();
         }
 
-        private Tile GetTileFromKong()
+        private void TestBeiDoraRong(int playerIndex, IList<OutTurnOperation> operations)
         {
-            if (Kong.Side == MeldSide.Self) return Kong.First;
-            return Kong.Tile;
-        }
-
-        private void TestRobKong(int playerIndex, IList<OutTurnOperation> operations)
-        {
-            var tile = GetTileFromKong();
+            var tile = new Tile(Suit.Z, 4);
             var point = GetRongInfo(playerIndex, tile);
             if (!gameSettings.CheckConstraint(point)) return;
-            if (Kong.Side == MeldSide.Self)
+            operations.Add(new OutTurnOperation
             {
-                // handle self kong
-                if (gameSettings.AllowGswsRobConcealedKong &&
-                    point.YakuList.Any(yaku => yaku.Name.StartsWith("国士无双")))
-                {
-                    operations.Add(new OutTurnOperation
-                    {
-                        Type = OutTurnOperationType.Rong,
-                        Tile = tile,
-                        HandData = CurrentRoundStatus.HandData(playerIndex)
-                    });
-                }
-            }
-            else
-            {
-                // handle added kong
-                operations.Add(new OutTurnOperation
-                {
-                    Type = OutTurnOperationType.Rong,
-                    Tile = tile,
-                    HandData = CurrentRoundStatus.HandData(playerIndex)
-                });
-            }
+                Type = OutTurnOperationType.Rong,
+                Tile = tile,
+                HandData = CurrentRoundStatus.HandData(playerIndex)
+            });
         }
 
         private PointInfo GetRongInfo(int playerIndex, Tile tile)
         {
-            var baseHandStatus = HandStatus.RobKong;
+            var baseHandStatus = HandStatus.Nothing;
+            if (gameSettings.AllowBeiDoraRongAsRobbKong) baseHandStatus |= HandStatus.RobKong;
             var allTiles = MahjongSet.AllTiles;
             var doraTiles = MahjongSet.DoraIndicators.Select(
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
@@ -139,7 +104,7 @@ namespace Multi.GameState
                 indicator => MahjongLogic.GetDoraTile(indicator, allTiles)).ToArray();
             var beiDora = CurrentRoundStatus.GetBeiDora(playerIndex);
             var point = ServerMahjongLogic.GetPointInfo(
-                playerIndex, CurrentRoundStatus, tile, baseHandStatus, 
+                playerIndex, CurrentRoundStatus, tile, baseHandStatus,
                 doraTiles, uraDoraTiles, beiDora, gameSettings);
             return point;
         }
@@ -183,16 +148,19 @@ namespace Multi.GameState
         {
             if (outTurnOperations.All(op => op.Type == OutTurnOperationType.Skip))
             {
-                // no one claimed a rob kong
-                var turnDoraAfterDiscard = Kong.Side != MeldSide.Self;
+                // no one claimed rong
+                var turnDoraAfterDiscard = false;
+                var isLingShang = gameSettings.AllowBeiDoraTsumoAsLingShang;
                 CurrentRoundStatus.BreakOneShotsAndFirstTurn();
-                ServerBehaviour.Instance.DrawTile(CurrentPlayerIndex, true, turnDoraAfterDiscard);
+                ServerBehaviour.Instance.DrawTile(CurrentPlayerIndex, isLingShang, turnDoraAfterDiscard);
                 return;
             }
             if (outTurnOperations.Any(op => op.Type == OutTurnOperationType.Rong))
             {
-                var discardingTile = GetTileFromKong();
-                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, discardingTile, false, outTurnOperations, true, false);
+                var tile = new Tile(Suit.Z, 4);
+                var turnDoraAfterDiscard = false;
+                var isRobKong = gameSettings.AllowBeiDoraRongAsRobbKong;
+                ServerBehaviour.Instance.TurnEnd(CurrentPlayerIndex, tile, false, outTurnOperations, isRobKong, turnDoraAfterDiscard);
                 return;
             }
             Debug.LogError($"[Server] Logically cannot reach here, operations are {string.Join("|", outTurnOperations)}");

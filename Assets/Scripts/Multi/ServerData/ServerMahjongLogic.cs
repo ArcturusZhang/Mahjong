@@ -14,7 +14,7 @@ namespace Multi.ServerData
         /// <param name="baseHandStatus"></param>
         /// <returns></returns>
         public static PointInfo GetPointInfo(int playerIndex, ServerRoundStatus CurrentRoundStatus, Tile winningTile,
-            HandStatus baseHandStatus, Tile[] doraTiles, Tile[] uraDoraTiles, YakuSetting yakuSettings)
+            HandStatus baseHandStatus, Tile[] doraTiles, Tile[] uraDoraTiles, int beiDora, GameSetting yakuSettings)
         {
             var zhenting = CurrentRoundStatus.IsZhenting(playerIndex);
             if (zhenting && !baseHandStatus.HasFlag(HandStatus.Tsumo)) return new PointInfo();
@@ -47,7 +47,7 @@ namespace Multi.ServerData
             };
             var isQTJ = CurrentRoundStatus.GameSettings.GameMode == GameMode.QTJ;
             return MahjongLogic.GetPointInfo(handData.HandTiles, handData.Melds, winningTile,
-                handStatus, roundStatus, yakuSettings, isQTJ, doraTiles, uraDoraTiles);
+                handStatus, roundStatus, yakuSettings, isQTJ, doraTiles, uraDoraTiles, beiDora);
         }
     }
 }

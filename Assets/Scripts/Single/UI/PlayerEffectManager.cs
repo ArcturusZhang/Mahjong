@@ -35,7 +35,7 @@ namespace Single.UI
 
         public enum Type
         {
-            Richi, Chow, Pong, Kong, Tsumo, Rong
+            Richi, Chow, Pong, Kong, Bei, Tsumo, Rong
         }
     }
 }

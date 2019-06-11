@@ -59,7 +59,7 @@ public class MahjongLogicTest
             new Meld(false, new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4), new Tile(Suit.Z, 4)),
             new Meld(true, new Tile(Suit.Z, 1), new Tile(Suit.Z, 1), new Tile(Suit.Z, 1))
         };
-        var yakuSettings = new YakuSetting();
+        var settings = new GameSetting();
         var handStatus = HandStatus.Tsumo;
         var roundStatus = new RoundStatus
         {
@@ -68,7 +68,8 @@ public class MahjongLogicTest
             FieldCount = 0,
             TotalPlayer = 2
         };
-        var pointInfo = MahjongLogic.GetPointInfo(handTiles.ToArray(), openMelds.ToArray(), new Tile(Suit.Z, 2), handStatus, roundStatus, yakuSettings, false);
+        var pointInfo = MahjongLogic.GetPointInfo(handTiles.ToArray(), openMelds.ToArray(), new Tile(Suit.Z, 2), 
+            handStatus, roundStatus, settings, false);
         Debug.Log($"Point: {pointInfo}");
     }
 
@@ -84,7 +85,7 @@ public class MahjongLogicTest
             new Meld(false, new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6), new Tile(Suit.Z, 6)),
             new Meld(true, new Tile(Suit.Z, 7), new Tile(Suit.Z, 7), new Tile(Suit.Z, 7))
         };
-        var yakuSettings = new YakuSetting();
+        var settings = new GameSetting();
         var handStatus = HandStatus.Tsumo;
         var roundStatus = new RoundStatus
         {
@@ -93,7 +94,8 @@ public class MahjongLogicTest
             FieldCount = 0,
             TotalPlayer = 2
         };
-        var pointInfo = MahjongLogic.GetPointInfo(handTiles.ToArray(), openMelds.ToArray(), new Tile(Suit.Z, 2), handStatus, roundStatus, yakuSettings, false);
+        var pointInfo = MahjongLogic.GetPointInfo(handTiles.ToArray(), openMelds.ToArray(), new Tile(Suit.Z, 2), 
+            handStatus, roundStatus, settings, false);
         Debug.Log($"Point: {pointInfo}");
     }
 

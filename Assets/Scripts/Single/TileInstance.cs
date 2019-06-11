@@ -11,7 +11,7 @@ namespace Single
 
         private MeshRenderer meshRenderer;
 
-        private void Awake()
+        private void OnEnable()
         {
             meshRenderer = GetComponent<MeshRenderer>();
         }

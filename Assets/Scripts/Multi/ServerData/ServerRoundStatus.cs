@@ -34,17 +34,16 @@ namespace Multi.ServerData
         private bool[] tempZhenting;
         private bool[] discardZhenting;
         private bool[] richiZhenting;
+        private int[] beiDoras;
 
-        public ServerRoundStatus(GameSetting gameSettings, YakuSetting yakuSettings, List<Player> players)
+        public ServerRoundStatus(GameSetting gameSettings, List<Player> players)
         {
             GameSettings = gameSettings;
-            YakuSettings = yakuSettings;
             this.players = players;
             points = new int[players.Count];
         }
 
         public GameSetting GameSettings { get; }
-        public YakuSetting YakuSettings { get; }
 
         public int CurrentPlayerIndex
         {
@@ -244,6 +243,7 @@ namespace Multi.ServerData
 
         public void AddKong(int index, OpenMeld kong)
         {
+            CheckRange(index);
             int i = openMelds[index].FindIndex(meld => meld.Type == MeldType.Triplet && meld.First.EqualsIgnoreColor(kong.First));
             if (i < 0)
             {
@@ -270,6 +270,7 @@ namespace Multi.ServerData
 
         public void BreakTempZhenting(int playerIndex)
         {
+            CheckRange(playerIndex);
             tempZhenting[playerIndex] = false;
         }
 
@@ -324,6 +325,7 @@ namespace Multi.ServerData
 
         public void CheckFirstTurn(int playerIndex)
         {
+            CheckRange(playerIndex);
             if (playerIndex == OyaPlayerIndex)
             {
                 if (turnCount > 0)
@@ -378,6 +380,30 @@ namespace Multi.ServerData
             return count == 3;
         }
 
+        public int GetBeiDora(int index)
+        {
+            CheckRange(index);
+            return beiDoras[index];
+        }
+
+        public int[] GetBeiDoras() {
+            return beiDoras;
+        }
+
+        public void ClearBeiDoras()
+        {
+            for (int index = 0; index < beiDoras.Length; index++)
+            {
+                beiDoras[index] = 0;
+            }
+        }
+
+        public void AddBeiDoras(int index)
+        {
+            CheckRange(index);
+            beiDoras[index]++;
+        }
+
         public bool IsAllLast => GameSettings.IsAllLast(OyaPlayerIndex, Field, TotalPlayers);
 
         public bool GameForceEnd => GameSettings.GameForceEnd(OyaPlayerIndex, Field, TotalPlayers);
@@ -425,6 +451,7 @@ namespace Multi.ServerData
             tempZhenting = new bool[players.Count];
             discardZhenting = new bool[players.Count];
             richiZhenting = new bool[players.Count];
+            beiDoras = new int[players.Count];
             firstTurn = true;
             turnCount = 0;
             for (int i = 0; i < players.Count; i++)

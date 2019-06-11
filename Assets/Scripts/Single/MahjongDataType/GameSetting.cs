@@ -29,15 +29,45 @@ namespace Single.MahjongDataType
         public bool Allow4KongDraw;
         public bool Allow4WindDraw;
         public bool Allow9OrphanDraw;
+        public bool AllowBeiDora; // todo -- add setting panel entry
+        public bool AllowBeiAsYaku; // todo -- add setting panel entry
+        public bool AllowBeiDoraRongAsRobbKong;
+        public bool AllowBeiDoraTsumoAsLingShang;
         public bool AllowHint; // todo -- add setting panel entry
         public int BaseTurnTime = 5;
         public int BonusTurnTime = 20;
         public int DiceMin = 2;
         public int DiceMax = 12;
         public int MountainReservedTiles = 14;
-        public int LingshangTilesCount = 4;
         public int InitialDora = 1;
         public int MaxDora = 5;
+        public int LingshangTilesCount => AllowBeiDora ? 8 : 4;
+
+        public bool OpenDuanYao = true;
+        public bool HasOneShot = true;
+        public bool 连风对子额外加符 = true;
+        public bool AllowGswsRobConcealedKong = true;
+        public YakumanLevel SiAnKe = YakumanLevel.Two;
+        public YakumanLevel GuoShi = YakumanLevel.Two;
+        public YakumanLevel JiuLian = YakumanLevel.Two;
+        public YakumanLevel LvYiSe = YakumanLevel.One;
+        public int 四暗刻单骑 => YakumanLevelToInt(SiAnKe);
+        public int 国士无双十三面 => YakumanLevelToInt(GuoShi);
+        public int 纯正九连宝灯 => YakumanLevelToInt(JiuLian);
+        public int 纯绿一色 => YakumanLevelToInt(LvYiSe);
+
+        private static int YakumanLevelToInt(YakumanLevel level)
+        {
+            switch (level)
+            {
+                case YakumanLevel.One:
+                    return 1;
+                case YakumanLevel.Two:
+                    return 2;
+                default:
+                    throw new System.ArgumentException($"Unknown level {level}");
+            }
+        }
 
         public Tile[] redTiles = new Tile[] {
             new Tile(Suit.M, 5, true),
@@ -189,5 +219,10 @@ namespace Single.MahjongDataType
     public enum PointsToGameEnd
     {
         Negative, Zero, Never
+    }
+
+    public enum YakumanLevel
+    {
+        One, Two
     }
 }

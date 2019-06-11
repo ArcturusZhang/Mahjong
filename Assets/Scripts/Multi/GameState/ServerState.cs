@@ -10,7 +10,6 @@ namespace Multi.GameState
     {
         public ServerRoundStatus CurrentRoundStatus;
         protected GameSetting gameSettings;
-        protected YakuSetting yakuSettings;
         protected IList<Player> players;
         public void OnStateEnter()
         {
@@ -18,7 +17,6 @@ namespace Multi.GameState
             if (CurrentRoundStatus != null)
             {
                 gameSettings = CurrentRoundStatus.GameSettings;
-                yakuSettings = CurrentRoundStatus.YakuSettings;
                 players = CurrentRoundStatus.Players;
             }
             OnServerStateEnter();

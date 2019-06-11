@@ -72,11 +72,8 @@ namespace Single.Managers
         private const string Default_Settings_2 = "Data/default_settings_2";
         private const string Default_Settings_3 = "Data/default_settings_3";
         private const string Default_Settings_4 = "Data/default_settings_4";
-        private const string Default_Yaku_Settings = "Data/default_yaku_settings";
         public const string Last_Settings = "/settings.json";
-        public const string Last_Yaku_Settings = "/yaku_settings.json";
         private readonly IDictionary<GamePlayers, string> defaultSettings = new Dictionary<GamePlayers, string>();
-        private string defaultYakuSettings;
 
         private void LoadDefaultSettings()
         {
@@ -84,13 +81,11 @@ namespace Single.Managers
             defaultSettings.Add(GamePlayers.Two, Resources.Load<TextAsset>(Default_Settings_2).text);
             defaultSettings.Add(GamePlayers.Three, Resources.Load<TextAsset>(Default_Settings_3).text);
             defaultSettings.Add(GamePlayers.Four, Resources.Load<TextAsset>(Default_Settings_4).text);
-            defaultYakuSettings = Resources.Load<TextAsset>(Default_Yaku_Settings).text;
         }
 
-        public void LoadSettings(out GameSetting gameSetting, out YakuSetting yakuSetting)
+        public void LoadSettings(out GameSetting gameSetting)
         {
             gameSetting = SerializeUtility.Load<GameSetting>(Last_Settings, defaultSettings[GamePlayers.Four]);
-            yakuSetting = SerializeUtility.Load<YakuSetting>(Last_Yaku_Settings, defaultYakuSettings);
         }
 
         public void SaveSettings(object setting, string path)
@@ -98,18 +93,16 @@ namespace Single.Managers
             setting.Save(path);
         }
 
-        public void SaveSettings(GameSetting gameSetting, YakuSetting yakuSetting)
+        public void SaveSettings(GameSetting gameSetting )
         {
             SaveSettings(gameSetting, Last_Settings);
-            SaveSettings(yakuSetting, Last_Yaku_Settings);
         }
 
-        public void ResetSettings(GameSetting gameSetting, YakuSetting yakuSetting)
+        public void ResetSettings(GameSetting gameSetting)
         {
             Debug.Log("Reset to corresponding default settings");
             var setting = defaultSettings[gameSetting.GamePlayers];
             JsonUtility.FromJsonOverwrite(setting, gameSetting);
-            JsonUtility.FromJsonOverwrite(defaultYakuSettings, yakuSetting);
         }
     }
 }

@@ -11,12 +11,13 @@ namespace Multi.ServerData
         public int Dora;
         public int UraDora;
         public int RedDora;
+        public int BeiDora;
         public bool IsQTJ;
 
         public override string ToString()
         {
             return $"Fu: {Fu}, YakuValues: {string.Join(",", YakuValues)}, "
-                + $"Dora: {Dora}, UraDora: {UraDora}, RedDora: {RedDora}, IsQTJ: {IsQTJ}";
+                + $"Dora: {Dora}, UraDora: {UraDora}, RedDora: {RedDora}, BeiDora: {BeiDora}, IsQTJ: {IsQTJ}";
         }
     }
 }

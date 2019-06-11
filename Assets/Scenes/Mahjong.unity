@@ -1404,6 +1404,7 @@ RectTransform:
   - {fileID: 2012854653}
   - {fileID: 1435051030}
   - {fileID: 1970151409}
+  - {fileID: 1837503922}
   - {fileID: 568920799}
   - {fileID: 1333257188}
   m_Father: {fileID: 1509008501}
@@ -1463,6 +1464,7 @@ MonoBehaviour:
   RichiButton: {fileID: 1435051032}
   DrawButton: {fileID: 2012854655}
   KongButton: {fileID: 1970151411}
+  BeiButton: {fileID: 1837503924}
   SkipButton: {fileID: 568920801}
   BackButton: {fileID: 1333257190}
 --- !u!1 &177558192
@@ -5148,7 +5150,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 166821970}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -5429,7 +5431,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &589747543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9558,7 +9560,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 166821970}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -12936,15 +12938,26 @@ MonoBehaviour:
     Allow4KongDraw: 0
     Allow4WindDraw: 0
     Allow9OrphanDraw: 0
+    AllowBeiDora: 0
+    AllowBeiAsYaku: 0
+    AllowBeiDoraRongAsRobbKong: 0
+    AllowBeiDoraTsumoAsLingShang: 0
     AllowHint: 0
     BaseTurnTime: 5
     BonusTurnTime: 20
     DiceMin: 2
     DiceMax: 12
     MountainReservedTiles: 14
-    LingshangTilesCount: 4
     InitialDora: 1
     MaxDora: 5
+    OpenDuanYao: 1
+    HasOneShot: 1
+    "\u8FDE\u98CE\u5BF9\u5B50\u989D\u5916\u52A0\u7B26": 1
+    AllowGswsRobConcealedKong: 1
+    SiAnKe: 1
+    GuoShi: 1
+    JiuLian: 1
+    LvYiSe: 0
     redTiles:
     - Suit: 0
       Rank: 5
@@ -12955,15 +12968,6 @@ MonoBehaviour:
     - Suit: 2
       Rank: 5
       IsRed: 1
-  YakuSettings:
-    OpenDuanYao: 1
-    HasOneShot: 1
-    "\u8FDE\u98CE\u5BF9\u5B50\u989D\u5916\u52A0\u7B26": 1
-    AllowGswsRobConcealedKong: 1
-    SiAnKe: 1
-    GuoShi: 1
-    JiuLian: 1
-    LvYiSe: 0
 --- !u!1 &1728742379
 GameObject:
   m_ObjectHideFlags: 0
@@ -13990,6 +13994,148 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1832947944}
+  m_CullTransparentMesh: 0
+--- !u!1 &1837503921
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1837503922}
+  - component: {fileID: 1837503926}
+  - component: {fileID: 1837503925}
+  - component: {fileID: 1837503924}
+  - component: {fileID: 1837503923}
+  m_Layer: 5
+  m_Name: BeiButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1837503922
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837503921}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 166821970}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 945, y: -80}
+  m_SizeDelta: {x: 140, y: 60}
+  m_Pivot: {x: 1, y: 0}
+--- !u!114 &1837503923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837503921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
+--- !u!114 &1837503924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837503921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 1837503925}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+--- !u!114 &1837503925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837503921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: -7990482432349812427, guid: f7142bb79f9c6394ba404e1eb6989da2,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+--- !u!222 &1837503926
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837503921}
   m_CullTransparentMesh: 0
 --- !u!1 &1859183029
 GameObject:
@@ -17793,6 +17939,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3710243171694108355, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_Name
+      value: playerBeiDoras3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2918420769922594875, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_Name
+      value: playerBeiDoras2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8054039124678073291, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_Name
+      value: playerBeiDoras1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2740977523222460312, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_Name
+      value: playerBeiDoras0
+      objectReference: {fileID: 0}
     - target: {fileID: 6829137534207372871, guid: 74a98902778dcf5499d6e4cc79127cf7,
         type: 3}
       propertyPath: m_Name
@@ -17873,26 +18039,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.07
       objectReference: {fileID: 0}
-    - target: {fileID: 7570955426123262422, guid: 74a98902778dcf5499d6e4cc79127cf7,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3825609298825313114, guid: 74a98902778dcf5499d6e4cc79127cf7,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3825609298825313114, guid: 74a98902778dcf5499d6e4cc79127cf7,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3639760742018491107, guid: 74a98902778dcf5499d6e4cc79127cf7,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.3
-      objectReference: {fileID: 0}
     - target: {fileID: 2586289602331795834, guid: 74a98902778dcf5499d6e4cc79127cf7,
         type: 3}
       propertyPath: m_IsActive
@@ -17932,6 +18078,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Text
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6780317678854050794, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5121293807595509488, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6159234705678390979, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8934569550123606243, guid: 74a98902778dcf5499d6e4cc79127cf7,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7576662770863191438, guid: 74a98902778dcf5499d6e4cc79127cf7, type: 3}

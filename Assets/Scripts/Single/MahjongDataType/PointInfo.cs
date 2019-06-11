@@ -17,8 +17,10 @@ namespace Single.MahjongDataType
         public int Dora { get; }
         public int UraDora { get; }
         public int RedDora { get; }
+        public int BeiDora { get; }
+        public int Doras { get; }
 
-        public PointInfo(int fu, IList<YakuValue> yakuValues, bool 青天井, int dora = 0, int uraDora = 0, int redDora = 0)
+        public PointInfo(int fu, IList<YakuValue> yakuValues, bool 青天井, int dora, int uraDora, int redDora, int beiDora)
         {
             Fu = fu;
             Yakus = yakuValues.ToArray();
@@ -27,6 +29,8 @@ namespace Single.MahjongDataType
             Dora = dora;
             UraDora = uraDora;
             RedDora = redDora;
+            BeiDora = beiDora;
+            Doras = Dora + UraDora + RedDora + BeiDora;
             IsYakuman = false;
             if (青天井)
             {
@@ -55,7 +59,7 @@ namespace Single.MahjongDataType
 
             if (青天井)
             {
-                TotalFan = Fan + dora + uraDora + redDora;
+                TotalFan = Fan + Doras;
                 int point = Fu * (int)Math.Pow(2, TotalFan + 2);
                 BasePoint = MahjongLogic.ToNextUnit(point, 100);
             }
@@ -66,7 +70,7 @@ namespace Single.MahjongDataType
             }
             else
             {
-                TotalFan = Fan + dora + uraDora + redDora;
+                TotalFan = Fan + Doras;
                 if (TotalFan >= 13) BasePoint = MahjongConstants.Yakuman;
                 else if (TotalFan >= 11) BasePoint = MahjongConstants.Sanbaiman;
                 else if (TotalFan >= 8) BasePoint = MahjongConstants.Baiman;
@@ -82,8 +86,8 @@ namespace Single.MahjongDataType
             Array.Sort(Yakus);
         }
 
-        public PointInfo(NetworkPointInfo netInfo) 
-            : this(netInfo.Fu, netInfo.YakuValues, netInfo.IsQTJ, netInfo.Dora, netInfo.UraDora, netInfo.RedDora)
+        public PointInfo(NetworkPointInfo netInfo)
+            : this(netInfo.Fu, netInfo.YakuValues, netInfo.IsQTJ, netInfo.Dora, netInfo.UraDora, netInfo.RedDora, netInfo.BeiDora)
         {
         }
 
@@ -103,7 +107,7 @@ namespace Single.MahjongDataType
         {
             var yakus = Yakus == null ? "" : string.Join(", ", Yakus.Select(yaku => yaku.ToString()));
             return
-                $"Fu = {Fu}, Fan = {Fan}, Dora = {Dora}, UraDora = {UraDora}, RedDora = {RedDora}, "
+                $"Fu = {Fu}, Fan = {Fan}, Dora = {Dora}, UraDora = {UraDora}, RedDora = {RedDora}, BeiDora = {BeiDora}, "
                 + $"Yakus = [{yakus}], BasePoint = {BasePoint}";
         }
 
