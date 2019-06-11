@@ -32,6 +32,7 @@ namespace Single.GameState
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             localPlayer.SkipOutTurnOperation(BonusTurnTime);
+            controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Kong);
         }
         private void HandleOtherPlayerKong()
         {
@@ -42,6 +43,7 @@ namespace Single.GameState
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             controller.ShowOutTurnPanels(Operations, BonusTurnTime);
+            controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Kong);
         }
 
         public override void OnClientStateExit()

@@ -46,6 +46,7 @@ namespace Multi.GameState
                 Dora = info.Dora,
                 UraDora = info.UraDora,
                 RedDora = info.RedDora,
+                BeiDora = info.BeiDora,
                 IsQTJ = info.IsQTJ
             }).ToArray();
             Debug.Log($"The following players are claiming rong: {string.Join(",", RongPlayerIndices)}, "

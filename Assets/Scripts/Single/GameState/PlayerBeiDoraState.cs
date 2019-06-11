@@ -32,6 +32,7 @@ namespace Single.GameState
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             CurrentRoundStatus.UpdateBeiDoras(BeiDoras);
             localPlayer.SkipOutTurnOperation(BonusTurnTime);
+            controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Bei);
         }
 
         private void HandleOtherPlayerBeiDora()
@@ -44,6 +45,7 @@ namespace Single.GameState
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             CurrentRoundStatus.UpdateBeiDoras(BeiDoras);
             controller.ShowOutTurnPanels(Operations, BonusTurnTime);
+            controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Bei);
         }
 
         public override void OnClientStateExit()

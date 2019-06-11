@@ -132,6 +132,14 @@ namespace Single.UI.SubManagers
                 var yakuItem = entry.GetComponent<YakuItem>();
                 yakuItem.SetYakuItem(new YakuValue { Name = "红宝牌", Value = pointInfo.RedDora }, pointInfo.IsQTJ);
             }
+            if (pointInfo.BeiDora > 0)
+            {
+                var entry = Instantiate(YakuItemPrefab, holder);
+                entry.SetActive(false);
+                entries.Add(entry);
+                var yakuItem = entry.GetComponent<YakuItem>();
+                yakuItem.SetYakuItem(new YakuValue { Name = "北宝牌", Value = pointInfo.BeiDora }, pointInfo.IsQTJ);
+            }
             if (richi)
             {
                 var entry = Instantiate(YakuItemPrefab, holder);
