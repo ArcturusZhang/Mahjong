@@ -388,50 +388,25 @@ namespace Lobby
             StartCoroutine(ServerSceneTransition());
         }
 
-        private IEnumerator ServerSceneTransition() {
-            var transition = GameObject.FindObjectOfType<Single.UI.SceneTransitionManager>();
-            transition.FadeOut();
+        private IEnumerator ServerSceneTransition()
+        {
+            foreach (var connection in NetworkServer.connections)
+            {
+                connection.Send(SceneChangeMessageId, new SceneChangeMessage());
+            }
             yield return new WaitForSeconds(1f);
             ServerChangeScene(playScene);
         }
 
-        public IEnumerator ServerCountdownCoroutine()
+        private const short SceneChangeMessageId = 999;
+
+        class SceneChangeMessage : MessageBase { }
+
+        private void OnSceneChangedMessageReceived(NetworkMessage message)
         {
-            float remainingTime = prematchCountdown;
-            int floorTime = Mathf.FloorToInt(remainingTime);
-
-            while (remainingTime > 0)
-            {
-                yield return null;
-
-                remainingTime -= Time.deltaTime;
-                int newFloorTime = Mathf.FloorToInt(remainingTime);
-
-                if (newFloorTime != floorTime)
-                {
-                    //to avoid flooding the network of message, we only send a notice to client when the number of plain seconds change.
-                    floorTime = newFloorTime;
-
-                    for (int i = 0; i < lobbySlots.Length; ++i)
-                    {
-                        if (lobbySlots[i] != null)
-                        {
-                            //there is maxPlayer slots, so some could be == null, need to test it before accessing!
-                            (lobbySlots[i] as LobbyPlayer).RpcUpdateCountdown(floorTime);
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < lobbySlots.Length; ++i)
-            {
-                if (lobbySlots[i] != null)
-                {
-                    (lobbySlots[i] as LobbyPlayer).RpcUpdateCountdown(0);
-                }
-            }
-
-            ServerChangeScene(playScene);
+            Debug.Log("SceneChangeMessage received");
+            var transition = GameObject.FindObjectOfType<Single.UI.SceneTransitionManager>();
+            transition.FadeOut();
         }
 
         // ----------------- Client callbacks ------------------
@@ -443,6 +418,7 @@ namespace Lobby
             infoPanel.gameObject.SetActive(false);
 
             conn.RegisterHandler(MsgKicked, KickedMessageHandler);
+            conn.RegisterHandler(SceneChangeMessageId, OnSceneChangedMessageReceived);
 
             if (!NetworkServer.active)
             {
@@ -469,7 +445,6 @@ namespace Lobby
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
             base.OnClientSceneChanged(conn);
-            //            conn.Send(MessageConstants.SceneLoadedMessageId, new SceneLoadedMessage {PlayerIndex = });
         }
     }
 }
