@@ -26,7 +26,7 @@ namespace Single.GameState
             CurrentRoundStatus.SetZhenting(Zhenting);
             if (CurrentRoundStatus.IsLocalPlayerTurn(CurrentPlayerIndex))
                 CurrentRoundStatus.CalculateWaitingTiles();
-            controller.StartCoroutine(UpdateHandData(CurrentPlayerIndex, DiscardingLastDraw, Tile, Rivers));
+            controller.StartCoroutine(UpdateHandData(placeIndex, DiscardingLastDraw, Tile, Rivers));
             if (IsRichiing)
                 controller.ShowEffect(placeIndex, UI.PlayerEffectManager.Type.Richi);
             if (Operations == null || Operations.Length == 0)
