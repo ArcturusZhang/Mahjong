@@ -22,7 +22,8 @@ namespace Single.GameState
 
         public override void OnClientStateEnter()
         {
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(TsumoPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(TsumoPlayerIndex);
+            var placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             CurrentRoundStatus.SetLastDraw(placeIndex, WinningTile);
             var data = new SummaryPanelData
             {

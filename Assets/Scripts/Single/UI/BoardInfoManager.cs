@@ -15,6 +15,12 @@ namespace Single.UI
         [SerializeField] private PointsManager PointsManager;
         [SerializeField] private PositionManager PositionManager;
         [SerializeField] private RichiStatusManager RichiStatusManager;
+        [SerializeField] private CurrentPlayerIndicatorManager IndicatorManager;
+
+        public void UpdateCurrentPlayer(ClientRoundStatus status)
+        {
+            IndicatorManager.CurrentPlaceIndex = status.CurrentPlaceIndex;
+        }
 
         public void UpdateRoundInfo(ClientRoundStatus status)
         {
@@ -47,6 +53,7 @@ namespace Single.UI
 
         public void UpdateStatus(ClientRoundStatus subject)
         {
+            UpdateCurrentPlayer(subject);
             UpdateRoundInfo(subject);
             UpdatePoints(subject);
             UpdatePosition(subject);

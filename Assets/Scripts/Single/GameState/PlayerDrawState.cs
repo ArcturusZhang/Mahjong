@@ -4,6 +4,7 @@ using Multi;
 using Single.MahjongDataType;
 using StateMachine.Interfaces;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Single.GameState
 {
@@ -26,7 +27,10 @@ namespace Single.GameState
 
         private void HandleLocalPlayerDraw()
         {
-            CurrentRoundStatus.SetLastDraw(0, Tile);
+            CurrentRoundStatus.SetCurrentPlaceIndex(PlayerIndex);
+            var placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
+            Assert.IsTrue(placeIndex == 0);
+            CurrentRoundStatus.SetLastDraw(placeIndex, Tile);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             CurrentRoundStatus.SetZhenting(Zhenting);
             controller.ShowInTurnPanels(Operations, BonusTurnTime);
@@ -34,7 +38,8 @@ namespace Single.GameState
 
         private void HandleOtherPlayerDraw()
         {
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(PlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(PlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             CurrentRoundStatus.SetLastDraw(placeIndex);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             Debug.Log($"LastDraws: {string.Join(",", CurrentRoundStatus.LastDraws)}");

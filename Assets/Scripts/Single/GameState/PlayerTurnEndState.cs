@@ -22,6 +22,8 @@ namespace Single.GameState
         public override void OnClientStateEnter()
         {
             Debug.Log($"Turn ends, operation {string.Join(",", Operations)} is taking.");
+            // update current place index
+            CurrentRoundStatus.SetCurrentPlaceIndex(PlayerIndex);
             // update richi status
             CurrentRoundStatus.UpdateRichiStatus(RichiStatus);
             // update points

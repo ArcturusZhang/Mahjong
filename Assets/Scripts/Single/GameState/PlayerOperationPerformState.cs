@@ -26,7 +26,8 @@ namespace Single.GameState
         private void HandleLocalPlayerOperation()
         {
             // update local data
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(OperationPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(OperationPlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             Assert.IsTrue(placeIndex == 0);
             SetRoundStatusData();
             // update ui elements
@@ -51,7 +52,8 @@ namespace Single.GameState
         private void HandleOtherPlayerOperation()
         {
             // update local data
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(OperationPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(OperationPlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             Debug.Log($"Hand tile count of player {OperationPlayerIndex}: {HandData.HandTiles.Length}");
             CurrentRoundStatus.SetHandTiles(placeIndex, HandData.HandTiles.Length);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);

@@ -11,6 +11,7 @@ namespace Single.MahjongDataType
     public class ClientRoundStatus : ISubject<ClientRoundStatus>
     {
         public int TotalPlayers { get; }
+        public int CurrentPlaceIndex { get; private set; }
         public int[] Places { get; }
         public string[] PlayerNames { get; }
         public int[] TileCounts { get; }
@@ -39,7 +40,6 @@ namespace Single.MahjongDataType
         public ClientRoundStatus(int totalPlayers, int playerIndex, string gameSetting)
         {
             TotalPlayers = totalPlayers;
-            // Settings = settings;
             Places = new int[4];
             PlayerNames = new string[4];
             TileCounts = new int[4];
@@ -68,6 +68,13 @@ namespace Single.MahjongDataType
             WaitingTiles = null;
             PossibleWaitingTiles = null;
             LocalSettings.Reset();
+            CurrentPlaceIndex = -1;
+            NotifyObservers();
+        }
+
+        public void SetCurrentPlaceIndex(int playerIndex)
+        {
+            CurrentPlaceIndex = GetPlaceIndex(playerIndex);
             NotifyObservers();
         }
 

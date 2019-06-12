@@ -24,7 +24,8 @@ namespace Single.GameState
 
         private void HandleLocalPlayerBeiDora()
         {
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(BeiDoraPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(BeiDoraPlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             Assert.IsTrue(placeIndex == 0);
             CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
             CurrentRoundStatus.ClearLastDraws();
@@ -37,7 +38,9 @@ namespace Single.GameState
 
         private void HandleOtherPlayerBeiDora()
         {
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(BeiDoraPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(BeiDoraPlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
+            Assert.IsTrue(placeIndex != 0);
             Debug.Log($"Hand tile count of player {BeiDoraPlayerIndex}: {HandData.HandTiles.Length}");
             CurrentRoundStatus.SetHandTiles(placeIndex, HandData.HandTiles.Length);
             CurrentRoundStatus.ClearLastDraws();

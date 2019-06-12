@@ -25,7 +25,8 @@ namespace Single.GameState
 
         private void HandleLocalPlayerKong()
         {
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(KongPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(KongPlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             Assert.IsTrue(placeIndex == 0);
             CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
             CurrentRoundStatus.ClearLastDraws();
@@ -36,7 +37,8 @@ namespace Single.GameState
         }
         private void HandleOtherPlayerKong()
         {
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(KongPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(KongPlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             Debug.Log($"Hand tile count of player {KongPlayerIndex}: {HandData.HandTiles.Length}");
             CurrentRoundStatus.SetHandTiles(placeIndex, HandData.HandTiles.Length);
             CurrentRoundStatus.ClearLastDraws();

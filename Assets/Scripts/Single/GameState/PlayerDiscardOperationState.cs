@@ -20,7 +20,8 @@ namespace Single.GameState
         public RiverData[] Rivers;
         public override void OnClientStateEnter()
         {
-            int placeIndex = CurrentRoundStatus.GetPlaceIndex(CurrentPlayerIndex);
+            CurrentRoundStatus.SetCurrentPlaceIndex(CurrentPlayerIndex);
+            int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             // update hand tiles
             CurrentRoundStatus.SetHandTiles(HandTiles);
             CurrentRoundStatus.SetZhenting(Zhenting);
