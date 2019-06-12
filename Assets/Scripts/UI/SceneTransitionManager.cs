@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Single.UI
+namespace UI
 {
     [RequireComponent(typeof(Animator))]
     public class SceneTransitionManager : MonoBehaviour

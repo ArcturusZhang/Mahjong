@@ -4,16 +4,13 @@ using UnityEngine;
 using Lobby;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
-using Single.MahjongDataType;
 using System;
-using Single;
 using System.Linq;
-using Single.UI;
-using System.IO;
-using Multi;
 using System.Reflection;
-using Single.Managers;
 using Utils;
+using Mahjong.Logic;
+using Mahjong.Model;
+using GamePlay.Server.Controller;
 
 namespace Console
 {
@@ -83,32 +80,6 @@ namespace Console
             var point = MahjongLogic.GetPointInfo(tiles.ToArray(), new Meld[0], winningTiles[0],
                 handStatus, roundStatus, gameSettings, isQTJ);
             return point;
-        }
-
-        [ConsoleMethod("summary", "Show summary panel")]
-        public static void ShowSummary(string handString, string winningString, bool richi, bool tsumo, bool oya, bool isQTJ)
-        {
-            var handTiles = ParseTiles(handString);
-            var winningTile = ParseTiles(winningString)[0];
-            var info = new PlayerHandInfo
-            {
-                HandTiles = handTiles,
-                OpenMelds = new List<OpenMeld>(),
-                WinningTile = winningTile,
-                DoraIndicators = null,
-                UraDoraIndicators = null,
-                IsTsumo = tsumo
-            };
-            var pointInfo = GetPointInfo(handString, winningString, richi, tsumo, isQTJ);
-            var pointSummaryPanelManager = GameObject.FindObjectOfType<PointSummaryPanelManager>();
-            var data = new SummaryPanelData
-            {
-                HandInfo = info,
-                PointInfo = pointInfo,
-                TotalPoints = (oya ? 6 : 4) * pointInfo.BasePoint,
-                PlayerName = "Console"
-            };
-            pointSummaryPanelManager.ShowPanel(data, () => Debug.Log("Time is up!"));
         }
 
         [ConsoleMethod("alter_yama", "Set the upcoming tiles in current mahjong set. If game is not started, this command has no effect")]

@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Multi;
-using Single.MahjongDataType;
-using Single.Managers;
+using GamePlay.Server.Controller;
+using UI;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.Match;
@@ -405,7 +404,7 @@ namespace Lobby
         private void OnSceneChangedMessageReceived(NetworkMessage message)
         {
             Debug.Log("SceneChangeMessage received");
-            var transition = GameObject.FindObjectOfType<Single.UI.SceneTransitionManager>();
+            var transition = GameObject.FindObjectOfType<SceneTransitionManager>();
             transition.FadeOut();
         }
 

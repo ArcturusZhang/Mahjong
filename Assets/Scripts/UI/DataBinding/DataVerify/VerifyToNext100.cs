@@ -1,4 +1,4 @@
-using Single;
+using Mahjong.Logic;
 using UnityEngine;
 
 namespace UI.DataBinding.DataVerify

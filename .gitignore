@@ -6,6 +6,7 @@
 [Bb]lender/
 OldTexture/
 Assets/AssetStoreTools*
+*-release/
 
 # Visual Studio cache directory
 .vs/
@@ -32,6 +33,7 @@ ExportedObj/
 *.pdb
 *.opendb
 *.log
+*.zip
 
 # Unity3D generated meta files
 *.pidb.meta

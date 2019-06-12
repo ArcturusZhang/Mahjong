@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Single.MahjongDataType;
-using Single.Managers;
+﻿using System.Collections.Generic;
+using GamePlay.Client.View;
+using Mahjong.Model;
+using Managers;
 using UI.DataBinding;
 using UnityEngine;
-using UnityEngine.UI;
-using Utils;
 
 namespace Lobby
 {
