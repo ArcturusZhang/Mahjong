@@ -21,6 +21,7 @@ namespace GamePlay.Server.Controller.GameState
         private float serverTimeOut;
         private float firstTime;
         private bool next;
+        private const float ServerMaxTimeOut = 10;
 
         public override void OnServerStateEnter()
         {
@@ -92,9 +93,7 @@ namespace GamePlay.Server.Controller.GameState
             next = !RongPlayerIndices.Contains(CurrentRoundStatus.OyaPlayerIndex);
             responds = new bool[players.Count];
             // determine server time out
-            serverTimeOut = MahjongConstants.SummaryPanelDelayTime * RongPointInfos.Sum(point => point.YakuList.Count)
-                + MahjongConstants.SummaryPanelWaitingTime * RongPointInfos.Length
-                + ServerConstants.ServerTimeBuffer;
+            serverTimeOut = ServerMaxTimeOut * RongPointInfos.Length + ServerConstants.ServerTimeBuffer;
             firstTime = Time.time;
         }
 
@@ -117,12 +116,7 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnStateUpdate()
         {
-            if (responds.All(r => r))
-            {
-                PointTransfer();
-                return;
-            }
-            if (Time.time - firstTime > serverTimeOut)
+            if (Time.time - firstTime > serverTimeOut || responds.All(r => r))
             {
                 PointTransfer();
                 return;

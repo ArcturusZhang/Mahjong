@@ -16,7 +16,8 @@ namespace GamePlay.Client.Controller
 
         public void StartCountDown(int countDown, UnityAction callback)
         {
-            if (currentTimerCoroutine != null) {
+            if (currentTimerCoroutine != null)
+            {
                 StopCoroutine(currentTimerCoroutine);
                 currentTimerCoroutine = null;
             }
@@ -26,17 +27,21 @@ namespace GamePlay.Client.Controller
             currentTimerCoroutine = StartCoroutine(CountDown(callback));
         }
 
-        public int StopCountDown() {
-            if (currentTimerCoroutine != null) {
+        public int StopCountDown()
+        {
+            if (currentTimerCoroutine != null)
+            {
                 StopCoroutine(currentTimerCoroutine);
                 currentTimerCoroutine = null;
             }
-            gameObject.SetActive(false);
+            NumberController.Close();
             return mTimeLeft;
         }
 
-        private IEnumerator CountDown(UnityAction callback) {
-            for (; mTimeLeft > 0; mTimeLeft--) {
+        private IEnumerator CountDown(UnityAction callback)
+        {
+            for (; mTimeLeft > 0; mTimeLeft--)
+            {
                 SetTime(mTimeLeft);
                 yield return wait;
             }
@@ -45,8 +50,10 @@ namespace GamePlay.Client.Controller
             currentTimerCoroutine = null;
         }
 
-        private void SetTime(int timeLeft) {
-            if (timeLeft == 0) {
+        private void SetTime(int timeLeft)
+        {
+            if (timeLeft == 0)
+            {
                 NumberController.gameObject.SetActive(false);
                 return;
             }

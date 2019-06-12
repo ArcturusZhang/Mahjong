@@ -25,7 +25,11 @@ namespace GamePlay.Client.View
         public void ShowPanel(SummaryPanelData data, UnityAction callback)
         {
             ConfirmButton.onClick.RemoveAllListeners();
-            ConfirmButton.onClick.AddListener(callback);
+            ConfirmButton.onClick.AddListener(() =>
+            {
+                ConfirmCountDownController.StopCountDown();
+                callback();
+            });
             gameObject.SetActive(true);
             PlayerNameText.text = data.PlayerName;
             HandTileManager.SetHandTiles(data.HandInfo.HandTiles, data.HandInfo.OpenMelds, data.HandInfo.WinningTile);

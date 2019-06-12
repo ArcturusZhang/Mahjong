@@ -17,12 +17,7 @@ namespace GamePlay.Client.View.SubManagers
         public GameObject YakuItemPrefab;
         public Transform YakuItems;
         public YakuPointManager PointManager;
-        private WaitForSeconds waiting;
-
-        private void OnEnable()
-        {
-            waiting = new WaitForSeconds(MahjongConstants.SummaryPanelDelayTime);
-        }
+        private WaitForSeconds waiting = new WaitForSeconds(MahjongConstants.SummaryPanelDelayTime);
 
         private void OnDisable()
         {

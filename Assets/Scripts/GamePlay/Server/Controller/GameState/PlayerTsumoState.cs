@@ -19,6 +19,7 @@ namespace GamePlay.Server.Controller.GameState
         private bool[] responds;
         private float serverTimeOut;
         private float firstTime;
+        private const float ServerMaxTimeOut = 10;
 
         public override void OnServerStateEnter()
         {
@@ -74,9 +75,7 @@ namespace GamePlay.Server.Controller.GameState
             });
             responds = new bool[players.Count];
             // determine server time out
-            serverTimeOut = MahjongConstants.SummaryPanelDelayTime * TsumoPointInfo.YakuList.Count
-                + MahjongConstants.SummaryPanelWaitingTime
-                + ServerConstants.ServerTimeBuffer;
+            serverTimeOut = ServerMaxTimeOut + ServerConstants.ServerTimeBuffer;
             firstTime = Time.time;
         }
 
@@ -99,12 +98,7 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnStateUpdate()
         {
-            if (responds.All(r => r))
-            {
-                PointTransfer();
-                return;
-            }
-            if (Time.time - firstTime > serverTimeOut)
+            if (Time.time - firstTime > serverTimeOut || responds.All(r => r))
             {
                 PointTransfer();
                 return;

@@ -54,8 +54,8 @@ namespace GamePlay.Client.View
             ConfirmButton.onClick.RemoveAllListeners();
             ConfirmButton.onClick.AddListener(() =>
             {
-                callback();
                 ConfirmCountDownController.StopCountDown();
+                callback();
             });
             ConfirmCountDownController.StartCountDown(MahjongConstants.SummaryPanelWaitingTime, callback);
         }
