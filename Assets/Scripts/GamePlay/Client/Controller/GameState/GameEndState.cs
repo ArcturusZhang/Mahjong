@@ -1,6 +1,6 @@
 using System.Collections;
 using Lobby;
-using UI;
+using Managers;
 using UnityEngine;
 
 namespace GamePlay.Client.Controller.GameState

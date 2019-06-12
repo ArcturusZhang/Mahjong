@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using GamePlay.Server.Controller;
-using UI;
+using Managers;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.Match;
