@@ -89,6 +89,7 @@ namespace GamePlay.Client.Controller
             TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, bonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
+                CurrentRoundStatus.SetRichiing(false);
                 localPlayer.DiscardTile(lastDraw, false, true, 0);
                 InTurnPanelManager.Close();
             });
