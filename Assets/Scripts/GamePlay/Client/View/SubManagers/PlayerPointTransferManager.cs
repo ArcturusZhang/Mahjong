@@ -36,6 +36,16 @@ namespace GamePlay.Client.View.SubManagers
             StartCoroutine(SetAnimation(point, totalTransfer));
         }
 
+        public void SetPlace(int place)
+        {
+            PlaceController.SetPlace(place);
+        }
+
+        public void ShowPlace()
+        {
+            PlaceController.Show();
+        }
+
         private void SetArrow(Transfer transfer)
         {
             if (transfer.Type == Type.None || transfer.Amount >= 0) return;
@@ -62,7 +72,6 @@ namespace GamePlay.Client.View.SubManagers
             int gap = totalTransfer / Ticks;
             int currentPoint = point - totalTransfer;
             for (int tick = 0; tick <= Ticks; tick++)
-            // for (int currentPoint = point - totalTransfer; System.Math.Abs(currentPoint - point) > gap; currentPoint += gap)
             {
                 PointController.SetNumber(currentPoint);
                 ChangeController.SetNumber(point - currentPoint);

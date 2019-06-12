@@ -9,6 +9,7 @@ using GamePlay.Client.View.SubManagers;
 using GamePlay.Client.Controller;
 using static GamePlay.Client.View.SubManagers.PlayerPointTransferManager;
 using GamePlay.Server.Model;
+using System.Collections;
 
 namespace GamePlay.Client.View
 {
@@ -18,7 +19,7 @@ namespace GamePlay.Client.View
         public Button ConfirmButton;
         public CountDownController ConfirmCountDownController;
 
-        public void SetTransfer(ClientRoundStatus CurrentRoundStatus, IList<PointTransfer> transfers, UnityAction callback)
+        public void SetTransfer(ClientRoundStatus CurrentRoundStatus, int[] places, IList<PointTransfer> transfers, UnityAction callback)
         {
             gameObject.SetActive(true);
             var points = CurrentRoundStatus.Points;
@@ -48,8 +49,10 @@ namespace GamePlay.Client.View
                     }
                 }
                 SubManagers[placeIndex].SetTransfers(points[placeIndex], localTransfers);
+                var place = System.Array.Find(places, p => p == playerIndex);
+                SubManagers[placeIndex].SetPlace(place);
             }
-            // todo -- places animation
+            StartCoroutine(ShowPlacesAnimation(CurrentRoundStatus, places));
             // count down
             ConfirmButton.onClick.RemoveAllListeners();
             ConfirmButton.onClick.AddListener(() =>
@@ -58,6 +61,20 @@ namespace GamePlay.Client.View
                 callback();
             });
             ConfirmCountDownController.StartCountDown(MahjongConstants.SummaryPanelWaitingTime, callback);
+        }
+
+        private const float Gap = 1f;
+        private WaitForSeconds waiting = new WaitForSeconds(Gap);
+
+        private IEnumerator ShowPlacesAnimation(ClientRoundStatus status, int[] places)
+        {
+            for (int i = 0; i < places.Length; i++)
+            {
+                var playerIndex = places[i];
+                var placeIndex = status.GetPlaceIndex(playerIndex);
+                SubManagers[placeIndex].ShowPlace();
+                yield return waiting;
+            }
         }
 
         public void Close()

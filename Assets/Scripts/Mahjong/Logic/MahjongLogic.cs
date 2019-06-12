@@ -717,5 +717,21 @@ namespace Mahjong.Logic
             } while (!allTiles.Contains(dora, Tile.TileIgnoreColorEqualityComparer));
             return dora;
         }
+
+        public static IOrderedEnumerable<KeyValuePair<int, int>> SortPointsAndPlaces(IEnumerable<int> points)
+        {
+            return points.Select((p, i) => new KeyValuePair<int, int>(p, i))
+                .OrderBy(key => key, new PointsComparer());
+        }
+
+        private struct PointsComparer : IComparer<KeyValuePair<int, int>>
+        {
+            public int Compare(KeyValuePair<int, int> point1, KeyValuePair<int, int> point2)
+            {
+                var pointsCmp = point1.Key.CompareTo(point2.Key);
+                if (pointsCmp != 0) return -pointsCmp;
+                return point1.Value.CompareTo(point2.Value);
+            }
+        }
     }
 }

@@ -1,4 +1,6 @@
+using System.Linq;
 using GamePlay.Server.Model;
+using Mahjong.Logic;
 using UnityEngine;
 
 namespace GamePlay.Client.Controller.GameState
@@ -13,7 +15,9 @@ namespace GamePlay.Client.Controller.GameState
         {
             CurrentRoundStatus.UpdatePoints(Points);
             Debug.Log($"Current points: {string.Join(",", CurrentRoundStatus.Points)}");
-            controller.PointTransferManager.SetTransfer(CurrentRoundStatus, PointTransfers, () =>
+            var pointAndPlace = MahjongLogic.SortPointsAndPlaces(Points);
+            var places = pointAndPlace.Select(v => v.Value).ToArray();
+            controller.PointTransferManager.SetTransfer(CurrentRoundStatus, places, PointTransfers, () =>
             {
                 localPlayer.RequestNewRound();
             });

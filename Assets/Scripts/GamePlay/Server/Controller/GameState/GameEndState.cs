@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GamePlay.Server.Model.Messages;
+using Mahjong.Logic;
 
 namespace GamePlay.Server.Controller.GameState
 {
@@ -8,11 +9,10 @@ namespace GamePlay.Server.Controller.GameState
     {
         public override void OnServerStateEnter()
         {
-            var pointsAndIndices = CurrentRoundStatus.Points.Select((p, i) => new KeyValuePair<int, int>(p, i))
-                .OrderBy(key => key, new PointsComparer());
+            var pointsAndPlaces = MahjongLogic.SortPointsAndPlaces(CurrentRoundStatus.Points);
             var names = CurrentRoundStatus.PlayerNames.ToArray();
             var points = CurrentRoundStatus.Points.ToArray();
-            var places = pointsAndIndices.Select(v => v.Value).ToArray();
+            var places = pointsAndPlaces.Select(v => v.Value).ToArray();
             var message = new ServerGameEndMessage
             {
                 PlayerNames = names,
@@ -31,16 +31,6 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnStateUpdate()
         {
-        }
-
-        private struct PointsComparer : IComparer<KeyValuePair<int, int>>
-        {
-            public int Compare(KeyValuePair<int, int> point1, KeyValuePair<int, int> point2)
-            {
-                var pointsCmp = point1.Key.CompareTo(point2.Key);
-                if (pointsCmp != 0) return -pointsCmp;
-                return point1.Value.CompareTo(point2.Value);
-            }
         }
     }
 }
