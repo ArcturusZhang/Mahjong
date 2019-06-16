@@ -1,0 +1,106 @@
+﻿using System.Collections.Generic;
+using Photon.Pun;
+using Photon.Realtime;
+using UnityEngine;
+using UnityEngine.UI;
+using Utils;
+
+namespace PUNLobby.Room
+{
+    public class RoomPanelManager : MonoBehaviour
+    {
+        public Text roomTitleText;
+        public RoomSlotPanel[] slots;
+        public Button readyButton;
+        public Button cancelButton;
+        public Button startButton;
+        public WarningPanel warningPanel;
+        private IList<Player> players;
+
+        private void Start()
+        {
+            CheckButtonForMaster();
+        }
+
+        private void Update()
+        {
+            ShowSlots();
+        }
+
+        public void SetTitle(string title)
+        {
+            roomTitleText.text = title;
+        }
+
+        public void SetPlayers(IList<Player> players)
+        {
+            this.players = players;
+        }
+
+        private void ShowSlots()
+        {
+            int length = 0;
+            if (players != null) length = players.Count;
+            for (int i = 0; i < length; i++)
+            {
+                slots[i].gameObject.SetActive(true);
+                var player = players[i];
+                var ready = player.GetCustomPropertyOrDefault<bool>(SettingKeys.READY, false);
+                slots[i].Set(player.IsMasterClient, player.NickName, ready);
+            }
+            for (int i = length; i < slots.Length; i++)
+            {
+                slots[i].gameObject.SetActive(false);
+            }
+        }
+
+        public void CheckButtonForMaster()
+        {
+            readyButton.interactable = !PhotonNetwork.IsMasterClient;
+            startButton.interactable = PhotonNetwork.IsMasterClient;
+        }
+
+        public void LeaveRoom()
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+
+        public void CheckRule()
+        {
+            var currentRoom = PhotonNetwork.CurrentRoom;
+            Debug.Log(currentRoom.CustomProperties[SettingKeys.SETTING]);
+        }
+
+        public void OnStartButtonClicked()
+        {
+            var launcher = RoomLauncher.Instance;
+            var room = PhotonNetwork.CurrentRoom;
+            if (room.PlayerCount < room.MaxPlayers)
+            {
+                Debug.Log("Not enough players");
+                warningPanel.Show(400, 200, "Not enough players.");
+                return;
+            }
+            Debug.Log("Requesting game start");
+            launcher.GameStart();
+        }
+
+        public void OnReadyButtonClicked()
+        {
+            Debug.Log("Set ready");
+            var player = PhotonNetwork.LocalPlayer;
+            player.SetCustomProperty(SettingKeys.READY, true);
+            readyButton.gameObject.SetActive(false);
+            cancelButton.gameObject.SetActive(true);
+        }
+
+        public void OnCancelButtonClicked()
+        {
+            Debug.Log("Cancel ready");
+            var player = PhotonNetwork.LocalPlayer;
+            player.SetCustomProperty(SettingKeys.READY, false);
+            readyButton.gameObject.SetActive(true);
+            cancelButton.gameObject.SetActive(false);
+        }
+    }
+}

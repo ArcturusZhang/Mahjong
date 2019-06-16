@@ -151,7 +151,7 @@ TextureImporter:
     second: myres2_48
   - first:
       213: 21300098
-    second: myres2_49
+    second: playername
   - first:
       213: 21300100
     second: myres2_50
@@ -297,12 +297,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 604
-        y: 713
-        width: 168
-        height: 167
+        y: 711
+        width: 169
+        height: 169
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 16, y: 16, z: 16, w: 16}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -1301,7 +1301,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: myres2_49
+      name: playername
       rect:
         serializedVersion: 2
         x: 615

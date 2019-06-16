@@ -2,7 +2,6 @@ using System.Collections;
 using GamePlay.Client.Model;
 using GamePlay.Client.View;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
 using Mahjong.Model;
 using UnityEngine;
 
@@ -53,7 +52,7 @@ namespace GamePlay.Client.Controller.GameState
             controller.PointSummaryPanelManager.ShowPanel(data, () =>
             {
                 Debug.Log("Sending readiness message");
-                localPlayer.ClientReady(MessageIds.ServerPointTransferMessage);
+                ClientBehaviour.Instance.ClientReady();
             });
         }
 

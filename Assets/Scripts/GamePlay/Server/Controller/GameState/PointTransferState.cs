@@ -1,14 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace GamePlay.Server.Controller.GameState
 {
-    public class PointTransferState : ServerState
+    public class PointTransferState : ServerState, IOnEventCallback
     {
         public IList<PointTransfer> PointTransferList;
         public bool NextRound;
@@ -21,37 +24,29 @@ namespace GamePlay.Server.Controller.GameState
         public override void OnServerStateEnter()
         {
             Debug.Log($"[Server] Transfers: {string.Join(", ", PointTransferList)}");
-            NetworkServer.RegisterHandler(MessageIds.ClientNextRoundMessage, OnNextMessageReceived);
-            var names = players.Select(player => player.PlayerName).ToArray();
+            PhotonNetwork.AddCallbackTarget(this);
+            // var names = players.Select(player => player.PlayerName).ToArray();
+            var names = CurrentRoundStatus.PlayerNames;
+            responds = new bool[players.Count];
             // update points of each player
             foreach (var transfer in PointTransferList)
             {
                 ChangePoints(transfer);
             }
-            for (int i = 0; i < players.Count; i++)
+            var info = new EventMessages.PointTransferInfo
             {
-                var message = new ServerPointTransferMessage
-                {
-                    PlayerNames = names,
-                    Points = CurrentRoundStatus.Points.ToArray(),
-                    PointTransfers = PointTransferList.ToArray()
-                };
-                players[i].connectionToClient.Send(MessageIds.ServerPointTransferMessage, message);
-            }
-            responds = new bool[players.Count];
+                PlayerNames = names,
+                Points = CurrentRoundStatus.Points,
+                PointTransfers = PointTransferList.ToArray()
+            };
+            ClientBehaviour.Instance.photonView.RPC("RpcPointTransfer", RpcTarget.AllBufferedViaServer, info);
             firstTime = Time.time;
             serverTimeOut = ServerConstants.ServerPointTransferTimeOut;
         }
 
-        private void OnNextMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientNextRoundMessage>();
-            Debug.Log($"[Server] Received ClientNextRoundMessage: {content}");
-            responds[content.PlayerIndex] = true;
-        }
-
         public override void OnServerStateExit()
         {
+            PhotonNetwork.RemoveCallbackTarget(this);
         }
 
         public override void OnStateUpdate()
@@ -111,7 +106,7 @@ namespace GamePlay.Server.Controller.GameState
                 {
                     return false;
                 }
-                int playerIndex = CurrentRoundStatus.Points.IndexOf(maxPoint);
+                int playerIndex = System.Array.IndexOf(CurrentRoundStatus.Points, maxPoint);
                 if (playerIndex == CurrentRoundStatus.OyaPlayerIndex) // last oya is top
                 {
                     return CurrentRoundStatus.GameSettings.GameEndsWhenAllLastTop;
@@ -125,6 +120,24 @@ namespace GamePlay.Server.Controller.GameState
             CurrentRoundStatus.ChangePoints(transfer.To, transfer.Amount);
             if (transfer.From >= 0)
                 CurrentRoundStatus.ChangePoints(transfer.From, -transfer.Amount);
+        }
+
+        private void OnNextRoundEvent(int index)
+        {
+            responds[index] = true;
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.NextRoundEvent:
+                    OnNextRoundEvent((int)info);
+                    break;
+            }
         }
     }
 }

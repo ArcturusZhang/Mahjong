@@ -1,7 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 using IngameDebugConsole;
 using UnityEngine;
-using Lobby;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System;
@@ -20,23 +19,6 @@ namespace Console
         public static void ChangeScene(string scene)
         {
             SceneManager.LoadScene(scene);
-        }
-
-        [ConsoleMethod("close", "Set object inactive")]
-        public static void Close(string target)
-        {
-            switch (target)
-            {
-                case "lobby":
-                    var lobby = LobbyManager.Instance;
-                    var canvas = lobby?.GetComponent<Canvas>();
-                    if (canvas != null) canvas.enabled = false;
-                    return;
-                default:
-                    var obj = GameObject.Find(target);
-                    obj?.SetActive(false);
-                    return;
-            }
         }
 
         [ConsoleMethod("tiles", "Parse string of tiles")]

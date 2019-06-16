@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GamePlay.Server.Controller;
 using Mahjong.Logic;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using Utils;
 
@@ -19,7 +20,7 @@ namespace GamePlay.Server.Model
         private int extra;
         private int richiSticks;
         private int kongClaimed;
-        private List<Player> players;
+        private int[] bonusTurnTime;
         private List<Tile>[] handTiles;
         private List<OpenMeld>[] openMelds;
         private int[] points;
@@ -33,12 +34,15 @@ namespace GamePlay.Server.Model
         private bool[] discardZhenting;
         private bool[] richiZhenting;
         private int[] beiDoras;
+        private IList<int> playerActorNumbers;
+        private IDictionary<int, string> playerNames;
 
-        public ServerRoundStatus(GameSetting gameSettings, List<Player> players)
+        public ServerRoundStatus(GameSetting gameSettings, IList<Player> players)
         {
             GameSettings = gameSettings;
-            this.players = players;
-            points = new int[players.Count];
+            points = new int[TotalPlayers];
+            playerActorNumbers = players.Select(p => p.ActorNumber).ToList();
+            playerNames = players.ToDictionary(p => p.ActorNumber, p => p.NickName);
         }
 
         public GameSetting GameSettings { get; }
@@ -54,6 +58,14 @@ namespace GamePlay.Server.Model
                 currentPlayerIndex = value;
             }
         }
+        public Player GetPlayer(int playerIndex)
+        {
+            var room = PhotonNetwork.CurrentRoom;
+            if (room == null) throw new ArgumentException("This should not happen");
+            int actorNumber = playerActorNumbers[playerIndex];
+            return room.Players[actorNumber];
+        }
+        public IList<int> PlayerActorNumbers => playerActorNumbers;
         public int OyaPlayerIndex => oya;
         public int Field => field;
         public int Dice => dice;
@@ -78,7 +90,7 @@ namespace GamePlay.Server.Model
         {
             get
             {
-                var array = new bool[players.Count];
+                var array = new bool[TotalPlayers];
                 for (int i = 0; i < array.Length; i++)
                 {
                     array[i] = richiStatus[i];
@@ -95,11 +107,15 @@ namespace GamePlay.Server.Model
             return tempZhenting[playerIndex] || discardZhenting[playerIndex] || richiZhenting[playerIndex];
         }
         public bool FirstTurn => firstTurn;
-        public int TotalPlayers => players.Count;
-        public string[] PlayerNames => players.Select(player => player.PlayerName).ToArray();
+        public int TotalPlayers => GameSettings.MaxPlayer;
+        public string[] PlayerNames => playerActorNumbers.Select(id => playerNames[id]).ToArray();
         public int KongClaimed => kongClaimed;
+        public int MaxBonusTurnTime => bonusTurnTime.Max();
 
-        public IList<Player> Players => players;
+        public string GetPlayerName(int index)
+        {
+            return playerNames[playerActorNumbers[index]];
+        }
 
         public void ClaimKong()
         {
@@ -108,7 +124,25 @@ namespace GamePlay.Server.Model
 
         public void ShufflePlayers()
         {
-            players.Shuffle();
+            playerActorNumbers.Shuffle();
+        }
+
+        public int GetBonusTurnTime(int index)
+        {
+            CheckRange(index);
+            return bonusTurnTime[index];
+        }
+
+        public void SetBonusTurnTime(int value)
+        {
+            for (int i = 0; i < bonusTurnTime.Length; i++)
+                SetBonusTurnTime(i, value);
+        }
+
+        public void SetBonusTurnTime(int index, int value)
+        {
+            CheckRange(index);
+            bonusTurnTime[index] = value;
         }
 
         public Tile[] HandTiles(int index)
@@ -143,8 +177,8 @@ namespace GamePlay.Server.Model
         {
             get
             {
-                var rivers = new RiverData[players.Count];
-                for (int i = 0; i < players.Count; i++)
+                var rivers = new RiverData[TotalPlayers];
+                for (int i = 0; i < rivers.Length; i++)
                 {
                     rivers[i] = new RiverData
                     {
@@ -155,13 +189,7 @@ namespace GamePlay.Server.Model
             }
         }
 
-        public IList<int> Points
-        {
-            get
-            {
-                return Array.AsReadOnly(points);
-            }
-        }
+        public int[] Points => points;
 
         public int GetPoints(int index)
         {
@@ -275,7 +303,7 @@ namespace GamePlay.Server.Model
         public void UpdateTempZhenting(int discardPlayerIndex, Tile discardTile)
         {
             // test temp zhenting
-            for (int playerIndex = 0; playerIndex < players.Count; playerIndex++)
+            for (int playerIndex = 0; playerIndex < GameSettings.MaxPlayer; playerIndex++)
             {
                 if (playerIndex == discardPlayerIndex) continue;
                 if (MahjongLogic.HasWin(handTiles[playerIndex], null, discardTile))
@@ -285,7 +313,7 @@ namespace GamePlay.Server.Model
 
         public void UpdateDiscardZhenting()
         {
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < GameSettings.MaxPlayer; i++)
                 UpdateDiscardZhenting(i);
         }
 
@@ -296,7 +324,7 @@ namespace GamePlay.Server.Model
 
         public void UpdateRichiZhenting(Tile discardTile)
         {
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < GameSettings.MaxPlayer; i++)
                 UpdateRichiZhenting(i, discardTile);
         }
 
@@ -384,7 +412,8 @@ namespace GamePlay.Server.Model
             return beiDoras[index];
         }
 
-        public int[] GetBeiDoras() {
+        public int[] GetBeiDoras()
+        {
             return beiDoras;
         }
 
@@ -414,7 +443,7 @@ namespace GamePlay.Server.Model
 
         public void SortHandTiles()
         {
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < GameSettings.MaxPlayer; i++)
             {
                 SortHandTiles(i);
             }
@@ -431,28 +460,29 @@ namespace GamePlay.Server.Model
             if (next)
             {
                 oya++;
-                if (oya >= players.Count)
+                if (oya >= GameSettings.MaxPlayer)
                 {
-                    oya -= players.Count;
+                    oya -= GameSettings.MaxPlayer;
                     field++;
                 }
             }
             if (extra) this.extra++;
             if (!keepSticks) richiSticks = 0;
-            Debug.Log($"Entering next round, total players: {players.Count}, current player index: {oya}, dice: {dice}, extra: {this.extra}");
+            Debug.Log($"Entering next round, total players: {GameSettings.MaxPlayer}, current player index: {oya}, dice: {dice}, extra: {this.extra}");
             kongClaimed = 0;
-            handTiles = new List<Tile>[players.Count];
-            openMelds = new List<OpenMeld>[players.Count];
-            rivers = new List<RiverTile>[players.Count];
-            richiStatus = new bool[players.Count];
-            oneShotStatus = new bool[players.Count];
-            tempZhenting = new bool[players.Count];
-            discardZhenting = new bool[players.Count];
-            richiZhenting = new bool[players.Count];
-            beiDoras = new int[players.Count];
+            bonusTurnTime = new int[GameSettings.MaxPlayer];
+            handTiles = new List<Tile>[GameSettings.MaxPlayer];
+            openMelds = new List<OpenMeld>[GameSettings.MaxPlayer];
+            rivers = new List<RiverTile>[GameSettings.MaxPlayer];
+            richiStatus = new bool[GameSettings.MaxPlayer];
+            oneShotStatus = new bool[GameSettings.MaxPlayer];
+            tempZhenting = new bool[GameSettings.MaxPlayer];
+            discardZhenting = new bool[GameSettings.MaxPlayer];
+            richiZhenting = new bool[GameSettings.MaxPlayer];
+            beiDoras = new int[GameSettings.MaxPlayer];
             firstTurn = true;
             turnCount = 0;
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < GameSettings.MaxPlayer; i++)
             {
                 handTiles[i] = new List<Tile>();
                 openMelds[i] = new List<OpenMeld>();
@@ -462,8 +492,8 @@ namespace GamePlay.Server.Model
 
         private void CheckRange(int index)
         {
-            if (index < 0 || index >= players.Count)
-                throw new IndexOutOfRangeException($"Player index out of range, should be within {0} to {players.Count - 1}");
+            if (index < 0 || index >= GameSettings.MaxPlayer)
+                throw new IndexOutOfRangeException($"Player index out of range, should be within {0} to {GameSettings.MaxPlayer - 1}");
         }
 
         public override string ToString()

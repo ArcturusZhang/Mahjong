@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Lobby.unity
-    guid: 24ebfa1f56280094fa85afc1db89d107
+    path: Assets/Scenes/PUN_Lobby.unity
+    guid: 4c2341c885655ee4ea1505538ea84d4f
   - enabled: 1
-    path: Assets/Scenes/Mahjong.unity
-    guid: d6afb12096fb04d1392af917d2aa5e96
+    path: Assets/Scenes/PUN_Room.unity
+    guid: 95150e855d245dc4993b94aef38ada89
+  - enabled: 1
+    path: Assets/Scenes/PUN_Mahjong.unity
+    guid: 8f4197c9f5fc5214f932eb76412a05ce
   m_configObjects: {}

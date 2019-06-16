@@ -3,21 +3,22 @@ using Common.StateMachine;
 using Common.StateMachine.Interfaces;
 using GamePlay.Server.Controller.GameState;
 using GamePlay.Server.Model;
-using Lobby;
 using Mahjong.Model;
-using Managers;
+using Photon.Pun;
+using PUNLobby;
 using UnityEngine;
-using UnityEngine.Networking;
-
+using UnityEngine.SceneManagement;
+using Utils;
 
 namespace GamePlay.Server.Controller
 {
     /// <summary>
     /// This class only takes effect on server
     /// </summary>
-    public class ServerBehaviour : NetworkBehaviour
+    public class ServerBehaviour : MonoBehaviourPun
     {
-        public GameSetting GameSettings;
+        public SceneField lobbyScene;
+        [HideInInspector] public GameSetting GameSettings;
         public IStateMachine StateMachine { get; private set; }
         private MahjongSet mahjongSet;
         public ServerRoundStatus CurrentRoundStatus = null;
@@ -26,31 +27,22 @@ namespace GamePlay.Server.Controller
         private void OnEnable()
         {
             Debug.Log("[Server] ServerBehaviour.OnEnable() is called");
+            if (!PhotonNetwork.IsConnected)
+            {
+                SceneManager.LoadScene(lobbyScene);
+                return;
+            }
+            if (!PhotonNetwork.IsMasterClient) return;
             Instance = this;
             StateMachine = new StateMachine();
+            ReadSetting();
+            WaitForOthersLoading();
         }
 
-        public override void OnStartClient()
+        private void Start()
         {
-            Debug.Log("[Server] OnStartClient is called");
-        }
-
-        public override void OnStartLocalPlayer()
-        {
-            Debug.Log("[Server] OnStartLocalPlayer");
-        }
-
-        public override void OnStartServer()
-        {
-            Debug.Log("[Server] OnStartServer");
-            ResourceManager.Instance.LoadSettings(out GameSettings);
-            Debug.Log($"[Server] GameSettings: {GameSettings}");
-            var waitingState = new WaitForLoadingState
-            {
-                TotalPlayers = LobbyManager.Instance._playerNumber,
-                TimeOut = ServerConstants.ServerWaitForLoadingTimeOut
-            };
-            StateMachine.ChangeState(waitingState);
+            if (!PhotonNetwork.IsMasterClient)
+                Destroy(gameObject);
         }
 
         private void Update()
@@ -58,9 +50,25 @@ namespace GamePlay.Server.Controller
             StateMachine.UpdateState();
         }
 
+        private void ReadSetting()
+        {
+            var room = PhotonNetwork.CurrentRoom;
+            var setting = (string)room.CustomProperties[SettingKeys.SETTING];
+            GameSettings = JsonUtility.FromJson<GameSetting>(setting);
+        }
+
+        private void WaitForOthersLoading()
+        {
+            var waitingState = new WaitForLoadingState
+            {
+                TotalPlayers = GameSettings.MaxPlayer
+            };
+            StateMachine.ChangeState(waitingState);
+        }
+
         public void GamePrepare()
         {
-            CurrentRoundStatus = new ServerRoundStatus(GameSettings, LobbyManager.Instance.Players);
+            CurrentRoundStatus = new ServerRoundStatus(GameSettings, PhotonNetwork.PlayerList);
             mahjongSet = new MahjongSet(GameSettings, GameSettings.GetAllTiles());
             var prepareState = new GamePrepareState
             {
@@ -196,8 +204,10 @@ namespace GamePlay.Server.Controller
             StateMachine.ChangeState(drawState);
         }
 
-        public void BeiDora(int playerIndex) {
-            var beiState = new PlayerBeiDoraState {
+        public void BeiDora(int playerIndex)
+        {
+            var beiState = new PlayerBeiDoraState
+            {
                 CurrentRoundStatus = CurrentRoundStatus,
                 CurrentPlayerIndex = playerIndex,
                 MahjongSet = mahjongSet

@@ -1,12 +1,15 @@
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace GamePlay.Server.Controller.GameState
 {
-    public class OperationPerformState : ServerState
+    public class OperationPerformState : ServerState, IOnEventCallback
     {
         public int CurrentPlayerIndex;
         public int DiscardPlayerIndex;
@@ -18,16 +21,41 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnServerStateEnter()
         {
-            NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardMessageReceived);
+            PhotonNetwork.AddCallbackTarget(this);
             // update hand data
             UpdateRoundStatus();
             // send messages
             for (int i = 0; i < players.Count; i++)
             {
-                if (i == CurrentPlayerIndex) continue;
-                var message = new ServerOperationPerformMessage
+                var info = GetInfo(i);
+                var player = CurrentRoundStatus.GetPlayer(i);
+                ClientBehaviour.Instance.photonView.RPC("RpcOperationPerform", player, info);
+            }
+            KongOperation();
+            firstSendTime = Time.time;
+            serverTimeOut = gameSettings.BaseTurnTime + CurrentRoundStatus.MaxBonusTurnTime + ServerConstants.ServerTimeBuffer;
+        }
+
+        private EventMessages.OperationPerformInfo GetInfo(int index)
+        {
+            if (index == CurrentPlayerIndex)
+            {
+                return new EventMessages.OperationPerformInfo
                 {
-                    PlayerIndex = i,
+                    PlayerIndex = CurrentPlayerIndex,
+                    OperationPlayerIndex = CurrentPlayerIndex,
+                    Operation = Operation,
+                    HandData = CurrentRoundStatus.HandData(CurrentPlayerIndex),
+                    BonusTurnTime = CurrentRoundStatus.GetBonusTurnTime(CurrentPlayerIndex),
+                    Rivers = CurrentRoundStatus.Rivers,
+                    MahjongSetData = MahjongSet.Data
+                };
+            }
+            else
+            {
+                return new EventMessages.OperationPerformInfo
+                {
+                    PlayerIndex = index,
                     OperationPlayerIndex = CurrentPlayerIndex,
                     Operation = Operation,
                     HandData = new PlayerHandData
@@ -38,21 +66,7 @@ namespace GamePlay.Server.Controller.GameState
                     Rivers = CurrentRoundStatus.Rivers,
                     MahjongSetData = MahjongSet.Data
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerOperationPerformMessage, message);
             }
-            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerOperationPerformMessage, new ServerOperationPerformMessage
-            {
-                PlayerIndex = CurrentPlayerIndex,
-                OperationPlayerIndex = CurrentPlayerIndex,
-                Operation = Operation,
-                HandData = CurrentRoundStatus.HandData(CurrentPlayerIndex),
-                BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
-                Rivers = CurrentRoundStatus.Rivers,
-                MahjongSetData = MahjongSet.Data
-            });
-            KongOperation();
-            firstSendTime = Time.time;
-            serverTimeOut = gameSettings.BaseTurnTime + players[CurrentPlayerIndex].BonusTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
         private void UpdateRoundStatus()
@@ -71,25 +85,22 @@ namespace GamePlay.Server.Controller.GameState
             ServerBehaviour.Instance.DrawTile(CurrentPlayerIndex, true, turnDoraAfterDiscard);
         }
 
-        private void OnDiscardMessageReceived(NetworkMessage message)
+        private void OnDiscardTileEvent(EventMessages.DiscardTileInfo info)
         {
-            var content = message.ReadMessage<ClientDiscardTileMessage>();
-            if (content.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
+            if (info.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
             {
-                Debug.Log($"[Server] It is not player {content.PlayerIndex}'s turn to discard a tile, ignoring this message");
+                Debug.Log($"[Server] It is not player {info.PlayerIndex}'s turn to discard a tile, ignoring this message");
                 return;
             }
-            // handle message
-            Debug.Log($"[Server] received ClientDiscardRequestMessage: {content}");
             // Change to discardTileState
             ServerBehaviour.Instance.DiscardTile(
-                content.PlayerIndex, content.Tile, content.IsRichiing,
-                content.DiscardingLastDraw, content.BonusTurnTime, turnDoraAfterDiscard);
+                info.PlayerIndex, info.Tile, info.IsRichiing,
+                info.DiscardingLastDraw, info.BonusTurnTime, turnDoraAfterDiscard);
         }
 
         public override void OnServerStateExit()
         {
-            NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
+            PhotonNetwork.RemoveCallbackTarget(this);
         }
 
         public override void OnStateUpdate()
@@ -100,6 +111,19 @@ namespace GamePlay.Server.Controller.GameState
                 // force auto discard
                 var tiles = CurrentRoundStatus.HandTiles(CurrentPlayerIndex);
                 ServerBehaviour.Instance.DiscardTile(CurrentPlayerIndex, tiles[tiles.Length - 1], false, false, 0, turnDoraAfterDiscard);
+            }
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.DiscardTileEvent:
+                    OnDiscardTileEvent((EventMessages.DiscardTileInfo)info);
+                    break;
             }
         }
     }

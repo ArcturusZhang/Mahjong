@@ -233,13 +233,13 @@ TextureImporter:
       name: bothui_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 9
         y: 239
-        width: 305
-        height: 640
+        width: 295
+        height: 632
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 22, y: 22, z: 22, w: 22}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -254,13 +254,13 @@ TextureImporter:
       name: bothui_1
       rect:
         serializedVersion: 2
-        x: 308
-        y: 253
-        width: 296
-        height: 626
+        x: 313
+        y: 258
+        width: 291
+        height: 620
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 15, y: 15, z: 15, w: 15}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -302,7 +302,7 @@ TextureImporter:
         height: 168
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 22, y: 22, z: 22, w: 2}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -512,7 +512,7 @@ TextureImporter:
         height: 60
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 9, y: 9, z: 9, w: 9}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -722,7 +722,7 @@ TextureImporter:
         height: 67
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 3, y: 3, z: 3, w: 3}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -911,7 +911,7 @@ TextureImporter:
         height: 64
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 42, y: 0, z: 49, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0

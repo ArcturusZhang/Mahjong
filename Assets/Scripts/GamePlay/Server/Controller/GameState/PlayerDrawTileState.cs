@@ -1,16 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Logic;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.Networking;
-
 
 namespace GamePlay.Server.Controller.GameState
 {
-    public class PlayerDrawTileState : ServerState
+    public class PlayerDrawTileState : ServerState, IOnEventCallback
     {
         public int CurrentPlayerIndex;
         public MahjongSet MahjongSet;
@@ -23,8 +25,7 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnServerStateEnter()
         {
-            NetworkServer.RegisterHandler(MessageIds.ClientInTurnOperationMessage, OnInTurnOperationReceived);
-            NetworkServer.RegisterHandler(MessageIds.ClientDiscardTileMessage, OnDiscardTileReceived);
+            PhotonNetwork.AddCallbackTarget(this);
             if (IsLingShang)
                 justDraw = MahjongSet.DrawLingShang();
             else
@@ -35,29 +36,34 @@ namespace GamePlay.Server.Controller.GameState
             CurrentRoundStatus.BreakTempZhenting(CurrentPlayerIndex);
             Debug.Log($"[Server] Distribute a tile {justDraw} to current turn player {CurrentPlayerIndex}, "
                 + $"first turn: {CurrentRoundStatus.FirstTurn}.");
+            var room = PhotonNetwork.CurrentRoom;
             for (int i = 0; i < players.Count; i++)
             {
                 if (i == CurrentPlayerIndex) continue;
-                var message = new ServerDrawTileMessage
+                var info = new EventMessages.DrawTileInfo
                 {
                     PlayerIndex = i,
                     DrawPlayerIndex = CurrentPlayerIndex,
                     MahjongSetData = MahjongSet.Data
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerDrawTileMessage, message);
+                var player = CurrentRoundStatus.GetPlayer(i);
+                ClientBehaviour.Instance.photonView.RPC("RpcDrawTile", player, info);
             }
-            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerDrawTileMessage, new ServerDrawTileMessage
+            var currentPlayer = CurrentRoundStatus.GetPlayer(CurrentPlayerIndex);
+            ClientBehaviour.Instance.photonView.RPC("RpcDrawTile", currentPlayer, new EventMessages.DrawTileInfo
             {
                 PlayerIndex = CurrentPlayerIndex,
                 DrawPlayerIndex = CurrentPlayerIndex,
                 Tile = justDraw,
-                BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
+                BonusTurnTime = CurrentRoundStatus.GetBonusTurnTime(CurrentPlayerIndex),
                 Zhenting = CurrentRoundStatus.IsZhenting(CurrentPlayerIndex),
                 Operations = GetOperations(CurrentPlayerIndex),
                 MahjongSetData = MahjongSet.Data
             });
             firstSendTime = Time.time;
-            serverTimeOut = gameSettings.BaseTurnTime + players[CurrentPlayerIndex].BonusTurnTime + ServerConstants.ServerTimeBuffer;
+            serverTimeOut = gameSettings.BaseTurnTime
+                + CurrentRoundStatus.GetBonusTurnTime(CurrentPlayerIndex)
+                + ServerConstants.ServerTimeBuffer;
         }
 
         private InTurnOperation[] GetOperations(int playerIndex)
@@ -209,33 +215,28 @@ namespace GamePlay.Server.Controller.GameState
             }
         }
 
-        private void OnDiscardTileReceived(NetworkMessage message)
+        private void OnDiscardTileEvent(EventMessages.DiscardTileInfo info)
         {
-            var content = message.ReadMessage<ClientDiscardTileMessage>();
-            if (content.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
+            if (info.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
             {
-                Debug.Log($"[Server] It is not player {content.PlayerIndex}'s turn to discard a tile, ignoring this message");
+                Debug.Log($"[Server] It is not player {info.PlayerIndex}'s turn to discard a tile, ignoring this message");
                 return;
             }
-            // handle message
-            Debug.Log($"[Server] Received ClientDiscardRequestMessage {content}");
             // Change to discardTileState
             ServerBehaviour.Instance.DiscardTile(
-                content.PlayerIndex, content.Tile, content.IsRichiing,
-                content.DiscardingLastDraw, content.BonusTurnTime, TurnDoraAfterDiscard);
+                info.PlayerIndex, info.Tile, info.IsRichiing,
+                info.DiscardingLastDraw, info.BonusTurnTime, TurnDoraAfterDiscard);
         }
 
-        private void OnInTurnOperationReceived(NetworkMessage message)
+        private void OnInTurnOperationEvent(EventMessages.InTurnOperationInfo info)
         {
-            var content = message.ReadMessage<ClientInTurnOperationMessage>();
-            if (content.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
+            if (info.PlayerIndex != CurrentRoundStatus.CurrentPlayerIndex)
             {
-                Debug.Log($"[Server] It is not player {content.PlayerIndex}'s turn to perform a in turn operation, ignoring this message");
+                Debug.Log($"[Server] It is not player {info.PlayerIndex}'s turn to perform a in turn operation, ignoring this message");
                 return;
             }
             // handle message according to its type
-            Debug.Log($"[Server] Received ClientInTurnOperationMessage: {content}");
-            var operation = content.Operation;
+            var operation = info.Operation;
             switch (operation.Type)
             {
                 case InTurnOperationType.Tsumo:
@@ -296,9 +297,24 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnServerStateExit()
         {
-            NetworkServer.UnregisterHandler(MessageIds.ClientInTurnOperationMessage);
-            NetworkServer.UnregisterHandler(MessageIds.ClientDiscardTileMessage);
+            PhotonNetwork.RemoveCallbackTarget(this);
             CurrentRoundStatus.CheckOneShot(CurrentPlayerIndex);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.DiscardTileEvent:
+                    OnDiscardTileEvent((EventMessages.DiscardTileInfo)info);
+                    break;
+                case EventMessages.InTurnOperationEvent:
+                    OnInTurnOperationEvent((EventMessages.InTurnOperationInfo)info);
+                    break;
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ namespace GamePlay.Client.Controller.GameState
             CurrentRoundStatus.ClearLastDraws();
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
-            localPlayer.SkipOutTurnOperation(BonusTurnTime);
+            ClientBehaviour.Instance.OnSkipOutTurnOperation(BonusTurnTime);
             controller.ShowEffect(placeIndex, PlayerEffectManager.Type.Kong);
         }
         private void HandleOtherPlayerKong()

@@ -10,14 +10,16 @@ namespace GamePlay.Server.Controller.GameState
     {
         public ServerRoundStatus CurrentRoundStatus;
         protected GameSetting gameSettings;
-        protected IList<Player> players;
+        protected IList<int> players;
+        protected int totalPlayers;
         public void OnStateEnter()
         {
             Debug.Log($"Server enters {GetType().Name}");
             if (CurrentRoundStatus != null)
             {
                 gameSettings = CurrentRoundStatus.GameSettings;
-                players = CurrentRoundStatus.Players;
+                players = CurrentRoundStatus.PlayerActorNumbers;
+                totalPlayers = CurrentRoundStatus.TotalPlayers;
             }
             OnServerStateEnter();
         }

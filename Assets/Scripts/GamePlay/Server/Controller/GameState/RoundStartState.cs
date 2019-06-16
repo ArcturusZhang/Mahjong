@@ -1,10 +1,11 @@
 using System.Linq;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Logic;
 using Mahjong.Model;
+using Photon.Pun;
 using UnityEngine;
-using UnityEngine.Networking;
 
 
 namespace GamePlay.Server.Controller.GameState
@@ -22,10 +23,9 @@ namespace GamePlay.Server.Controller.GameState
         public bool ExtraRound;
         public bool KeepSticks;
         private bool[] responds;
-        private float firstSendTime;
+        private float firstTime;
         public override void OnServerStateEnter()
         {
-            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
             MahjongSet.Reset();
             // throwing dice
             var dice = Random.Range(CurrentRoundStatus.GameSettings.DiceMin, CurrentRoundStatus.GameSettings.DiceMax + 1);
@@ -34,12 +34,14 @@ namespace GamePlay.Server.Controller.GameState
             DrawInitial();
             Debug.Log("[Server] Initial tiles distribution done");
             CurrentRoundStatus.SortHandTiles();
+            CurrentRoundStatus.SetBonusTurnTime(gameSettings.BonusTurnTime);
             responds = new bool[players.Count];
+            var room = PhotonNetwork.CurrentRoom;
             for (int index = 0; index < players.Count; index++)
             {
                 var tiles = CurrentRoundStatus.HandTiles(index);
                 Debug.Log($"[Server] Hand tiles of player {index}: {string.Join("", tiles)}");
-                var message = new ServerRoundStartMessage
+                var info = new EventMessages.RoundStartInfo
                 {
                     PlayerIndex = index,
                     Field = CurrentRoundStatus.Field,
@@ -51,15 +53,15 @@ namespace GamePlay.Server.Controller.GameState
                     InitialHandTiles = tiles,
                     MahjongSetData = MahjongSet.Data
                 };
-                players[index].connectionToClient.Send(MessageIds.ServerRoundStartMessage, message);
-                players[index].BonusTurnTime = CurrentRoundStatus.GameSettings.BonusTurnTime;
+                var player = CurrentRoundStatus.GetPlayer(index);
+                ClientBehaviour.Instance.photonView.RPC("RpcRoundStart", player, info);
             }
-            firstSendTime = Time.time;
+            firstTime = Time.time;
         }
 
         public override void OnStateUpdate()
         {
-            if (responds.All(r => r) || Time.time - firstSendTime >= ServerConstants.ServerTimeOut)
+            if (responds.All(r => r) || Time.time - firstTime >= ServerConstants.ServerTimeOut)
             {
                 ServerNextState();
                 return;
@@ -71,21 +73,8 @@ namespace GamePlay.Server.Controller.GameState
             ServerBehaviour.Instance.DrawTile(CurrentRoundStatus.OyaPlayerIndex);
         }
 
-        private void OnReadinessMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientReadinessMessage>();
-            Debug.Log($"Received ClientReadinessMessage: {content}");
-            if (content.Content != MessageIds.ServerRoundStartMessage)
-            {
-                Debug.LogError("Something is wrong, the received readiness meassage contains invalid content");
-                return;
-            }
-            responds[content.PlayerIndex] = true;
-        }
-
         public override void OnServerStateExit()
         {
-            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
         }
 
         private void DrawInitial()

@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Logic;
 using Mahjong.Model;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Networking;
 
 namespace GamePlay.Server.Controller.GameState
 {
     public class RoundDrawState : ServerState
     {
         public RoundDrawType RoundDrawType;
-        private MessageBase[] messages;
+        private EventMessages.RoundDrawInfo[] infos;
         private List<PointTransfer> transfers;
         private float firstTime;
         private bool next;
@@ -21,7 +21,7 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnServerStateEnter()
         {
-            messages = new ServerRoundDrawMessage[players.Count];
+            infos = new EventMessages.RoundDrawInfo[players.Count];
             transfers = new List<PointTransfer>();
             switch (RoundDrawType)
             {
@@ -41,7 +41,10 @@ namespace GamePlay.Server.Controller.GameState
             }
             // Send messages
             for (int i = 0; i < players.Count; i++)
-                players[i].connectionToClient.Send(MessageIds.ServerRoundDrawMessage, messages[i]);
+            {
+                var player = CurrentRoundStatus.GetPlayer(i);
+                ClientBehaviour.Instance.photonView.RPC("RpcRoundDraw", player, infos[i]);
+            }
             firstTime = Time.time;
         }
 
@@ -49,7 +52,7 @@ namespace GamePlay.Server.Controller.GameState
         {
             for (int i = 0; i < players.Count; i++)
             {
-                messages[i] = new ServerRoundDrawMessage
+                infos[i] = new EventMessages.RoundDrawInfo
                 {
                     RoundDrawType = type
                 };
@@ -75,7 +78,7 @@ namespace GamePlay.Server.Controller.GameState
             // Get messages
             for (int i = 0; i < players.Count; i++)
             {
-                messages[i] = new ServerRoundDrawMessage
+                infos[i] = new EventMessages.RoundDrawInfo
                 {
                     RoundDrawType = RoundDrawType,
                     WaitingData = waitingDataArray
@@ -137,7 +140,7 @@ namespace GamePlay.Server.Controller.GameState
             // Get messages
             for (int i = 0; i < players.Count; i++)
             {
-                messages[i] = new ServerRoundDrawMessage
+                infos[i] = new EventMessages.RoundDrawInfo
                 {
                     RoundDrawType = RoundDrawType,
                     WaitingData = waitingDataArray

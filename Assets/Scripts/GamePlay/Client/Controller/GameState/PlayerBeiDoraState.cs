@@ -32,8 +32,8 @@ namespace GamePlay.Client.Controller.GameState
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);
             CurrentRoundStatus.UpdateBeiDoras(BeiDoras);
-            localPlayer.SkipOutTurnOperation(BonusTurnTime);
             controller.ShowEffect(placeIndex, PlayerEffectManager.Type.Bei);
+            ClientBehaviour.Instance.OnSkipOutTurnOperation(BonusTurnTime);
         }
 
         private void HandleOtherPlayerBeiDora()

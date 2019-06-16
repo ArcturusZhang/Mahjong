@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using GamePlay.Server.Model.Messages;
 using Mahjong.Model;
 
 namespace GamePlay.Client.Controller.GameState
@@ -41,7 +40,7 @@ namespace GamePlay.Client.Controller.GameState
             // clear claimed open melds
             controller.TableTilesManager.ClearMelds();
             // send ready message
-            localPlayer.ClientReady(MessageIds.ServerRoundStartMessage);
+            ClientBehaviour.Instance.ClientReady();
         }
 
         public override void OnClientStateExit()

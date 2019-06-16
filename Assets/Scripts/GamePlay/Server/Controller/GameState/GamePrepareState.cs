@@ -1,9 +1,10 @@
 using System.Linq;
-using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
+using Photon.Pun;
+using Photon.Realtime;
+using GamePlay.Server.Model.Events;
 using UnityEngine;
-using UnityEngine.Networking;
-using Utils;
 
 namespace GamePlay.Server.Controller.GameState
 {
@@ -12,37 +13,20 @@ namespace GamePlay.Server.Controller.GameState
     /// The playerIndex is arranged in this state, so is the settings. Messages will be sent to clients to inform the information.
     /// Transfers to RoundStartState. The state transfer will be done regardless whether enough client responds received.
     /// </summary>
-    public class GamePrepareState : ServerState
+    public class GamePrepareState : ServerState, IOnEventCallback
     {
-        private MessageBase[] messages;
         private bool[] responds;
-        private float firstSendTime;
-        private float lastSendTime;
+        private float firstTime;
         private float serverTimeOut = 5f;
         public override void OnServerStateEnter()
         {
             Debug.Log($"This game has total {players.Count} players");
-            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
-            CurrentRoundStatus.ShufflePlayers();
-            messages = new ServerGamePrepareMessage[players.Count];
+            PhotonNetwork.AddCallbackTarget(this);
             responds = new bool[players.Count];
+            firstTime = Time.time;
+            CurrentRoundStatus.ShufflePlayers();
             AssignInitialPoints();
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].PlayerIndex = i;
-                players[i].BonusTurnTime = CurrentRoundStatus.GameSettings.BonusTurnTime;
-                messages[i] = new ServerGamePrepareMessage
-                {
-                    TotalPlayers = players.Count,
-                    PlayerIndex = i,
-                    Points = CurrentRoundStatus.Points.ToArray(),
-                    PlayerNames = CurrentRoundStatus.PlayerNames,
-                    GameSetting = gameSettings.ToJson(false)
-                };
-                players[i].connectionToClient.Send(MessageIds.ServerGamePrepareMessage, messages[i]);
-            }
-            firstSendTime = Time.time;
-            lastSendTime = Time.time;
+            ClientRpcCalls();
         }
 
         private void AssignInitialPoints()
@@ -53,6 +37,27 @@ namespace GamePlay.Server.Controller.GameState
             }
         }
 
+        private void ClientRpcCalls()
+        {
+            var room = PhotonNetwork.CurrentRoom;
+            for (int i = 0; i < CurrentRoundStatus.TotalPlayers; i++)
+            {
+                var player = CurrentRoundStatus.GetPlayer(i);
+                ClientBehaviour.Instance.photonView.RPC("RpcGamePrepare", player, new EventMessages.GamePrepareInfo
+                {
+                    PlayerIndex = i,
+                    Points = CurrentRoundStatus.Points,
+                    PlayerNames = CurrentRoundStatus.PlayerNames,
+                    GameSetting = gameSettings.ToString()
+                });
+            }
+        }
+
+        public override void OnServerStateExit()
+        {
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
+
         public override void OnStateUpdate()
         {
             if (responds.All(r => r))
@@ -60,39 +65,30 @@ namespace GamePlay.Server.Controller.GameState
                 ServerBehaviour.Instance.RoundStart(true, false, false);
                 return;
             }
-            if (Time.time - firstSendTime > serverTimeOut)
+            if (Time.time - firstTime > serverTimeOut)
             {
                 Debug.Log("[Server] Prepare state time out");
                 ServerBehaviour.Instance.RoundStart(true, false, false);
                 return;
             }
-            // resend request messsage by some interval
-            if (Time.time - lastSendTime >= ServerConstants.MessageResendInterval)
-            {
-                lastSendTime = Time.time;
-                for (int i = 0; i < players.Count; i++)
-                {
-                    if (responds[i]) continue;
-                    players[i].connectionToClient.Send(MessageIds.ServerGamePrepareMessage, messages[i]);
-                }
-            }
         }
 
-        private void OnReadinessMessageReceived(NetworkMessage message)
+        private void OnClientReadyEvent(int index)
         {
-            var content = message.ReadMessage<ClientReadinessMessage>();
-            Debug.Log($"[Server] Received ClientReadinessMessage: {content}.");
-            if (content.Content != content.PlayerIndex)
-            {
-                Debug.LogError("Something is wrong, the received readiness message contains invalid content.");
-                return;
-            }
-            responds[content.PlayerIndex] = true;
+            responds[index] = true;
         }
 
-        public override void OnServerStateExit()
+        public void OnEvent(EventData photonEvent)
         {
-            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.ClientReadyEvent:
+                    OnClientReadyEvent((int)photonEvent.CustomData);
+                    break;
+            }
         }
     }
 }

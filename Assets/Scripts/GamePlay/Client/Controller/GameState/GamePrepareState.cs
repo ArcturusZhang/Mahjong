@@ -11,7 +11,8 @@
             // update data
             CurrentRoundStatus.UpdatePoints(Points);
             CurrentRoundStatus.UpdateNames(Names);
-            localPlayer.ClientReady(localPlayer.PlayerIndex);
+            // send ready message
+            ClientBehaviour.Instance.ClientReady();
         }
 
         public override void OnClientStateExit()

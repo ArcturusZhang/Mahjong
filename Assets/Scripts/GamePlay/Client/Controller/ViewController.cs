@@ -59,7 +59,6 @@ namespace GamePlay.Client.Controller
 
         public void ShowInTurnPanels(InTurnOperation[] operations, int bonusTurnTime)
         {
-            var localPlayer = CurrentRoundStatus.LocalPlayer;
             var settings = CurrentRoundStatus.LocalSettings;
             var richied = CurrentRoundStatus.GetRichiStatus(0);
             var lastDraw = (Tile)CurrentRoundStatus.GetLastDraw(0);
@@ -90,7 +89,7 @@ namespace GamePlay.Client.Controller
             {
                 Debug.Log("Time out! Automatically discarding last drawn tile");
                 CurrentRoundStatus.SetRichiing(false);
-                localPlayer.DiscardTile(lastDraw, false, true, 0);
+                ClientBehaviour.Instance.OnDiscardTile(lastDraw, true, 0);
                 InTurnPanelManager.Close();
             });
         }
@@ -98,16 +97,15 @@ namespace GamePlay.Client.Controller
         private IEnumerator AutoDiscard(Tile tile, int bonusTimeLeft)
         {
             yield return waitAutoDiscardAfterRichi;
-            CurrentRoundStatus.LocalPlayer.DiscardTile(tile, false, true, bonusTimeLeft);
+            ClientBehaviour.Instance.OnDiscardTile(tile, true, bonusTimeLeft);
         }
 
         public bool ShowOutTurnPanels(OutTurnOperation[] operations, int bonusTurnTime)
         {
-            var localPlayer = CurrentRoundStatus.LocalPlayer;
             if (operations == null || operations.Length == 0)
             {
                 Debug.LogError("Received with no operations, this should not happen");
-                localPlayer.SkipOutTurnOperation(bonusTurnTime);
+                ClientBehaviour.Instance.OnSkipOutTurnOperation(bonusTurnTime);
                 return false;
             }
             var settings = CurrentRoundStatus.LocalSettings;
@@ -137,7 +135,7 @@ namespace GamePlay.Client.Controller
             if (operations.All(op => op.Type == OutTurnOperationType.Skip))
             {
                 Debug.Log("Only operation is skip, skipping turn");
-                localPlayer.SkipOutTurnOperation(bonusTurnTime);
+                ClientBehaviour.Instance.OnSkipOutTurnOperation(bonusTurnTime);
                 OutTurnPanelManager.Close();
                 return false;
             }
@@ -145,7 +143,7 @@ namespace GamePlay.Client.Controller
             TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, bonusTurnTime, () =>
             {
                 Debug.Log("Time out! Automatically skip this turn");
-                localPlayer.SkipOutTurnOperation(0);
+                ClientBehaviour.Instance.OnSkipOutTurnOperation(0);
                 OutTurnPanelManager.Close();
             });
             return true;

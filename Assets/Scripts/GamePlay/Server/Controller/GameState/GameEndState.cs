@@ -1,7 +1,8 @@
-using System.Collections.Generic;
 using System.Linq;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Client.Controller;
+using GamePlay.Server.Model.Events;
 using Mahjong.Logic;
+using Photon.Pun;
 
 namespace GamePlay.Server.Controller.GameState
 {
@@ -13,16 +14,13 @@ namespace GamePlay.Server.Controller.GameState
             var names = CurrentRoundStatus.PlayerNames.ToArray();
             var points = CurrentRoundStatus.Points.ToArray();
             var places = pointsAndPlaces.Select(v => v.Value).ToArray();
-            var message = new ServerGameEndMessage
+            var info = new EventMessages.GameEndInfo
             {
                 PlayerNames = names,
                 Points = points,
                 Places = places
             };
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].connectionToClient.Send(MessageIds.ServerGameEndMessage, message);
-            }
+            ClientBehaviour.Instance.photonView.RPC("RpcGameEnd", RpcTarget.AllBufferedViaServer, info);
         }
 
         public override void OnServerStateExit()

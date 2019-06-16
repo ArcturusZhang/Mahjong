@@ -20,7 +20,6 @@ namespace GamePlay.Client.Controller.GameState
                     HandleRoundDraw(WaitingData);
                     break;
             }
-            // other types of round draw -- todo
         }
 
         private void HandleRoundDraw(WaitingData[] data)

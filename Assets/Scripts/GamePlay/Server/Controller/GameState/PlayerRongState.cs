@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
-using Mahjong.Logic;
+using GamePlay.Server.Model.Events;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace GamePlay.Server.Controller.GameState
 {
-    public class PlayerRongState : ServerState
+    public class PlayerRongState : ServerState, IOnEventCallback
     {
         public int CurrentPlayerIndex;
         public int[] RongPlayerIndices;
@@ -25,9 +27,10 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnServerStateEnter()
         {
-            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
+            PhotonNetwork.AddCallbackTarget(this);
+            responds = new bool[players.Count];
             var playerNames = RongPlayerIndices.Select(
-                playerIndex => players[playerIndex].PlayerName
+                playerIndex => CurrentRoundStatus.GetPlayerName(playerIndex)
             ).ToArray();
             var handData = RongPlayerIndices.Select(
                 playerIndex => CurrentRoundStatus.HandData(playerIndex)
@@ -51,7 +54,7 @@ namespace GamePlay.Server.Controller.GameState
             }).ToArray();
             Debug.Log($"The following players are claiming rong: {string.Join(",", RongPlayerIndices)}, "
                 + $"PlayerNames: {string.Join(",", playerNames)}");
-            var rongMessage = new ServerPlayerRongMessage
+            var rongInfo = new EventMessages.RongInfo
             {
                 RongPlayerIndices = RongPlayerIndices,
                 RongPlayerNames = playerNames,
@@ -63,10 +66,8 @@ namespace GamePlay.Server.Controller.GameState
                 RongPointInfos = netInfos,
                 TotalPoints = totalPoints
             };
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].connectionToClient.Send(MessageIds.ServerRongMessage, rongMessage);
-            }
+            // send rpc calls
+            ClientBehaviour.Instance.photonView.RPC("RpcRong", RpcTarget.AllBufferedViaServer, rongInfo);
             // get point transfers
             transfers = new List<PointTransfer>();
             for (int i = 0; i < RongPlayerIndices.Length; i++)
@@ -91,27 +92,14 @@ namespace GamePlay.Server.Controller.GameState
                 Amount = CurrentRoundStatus.RichiSticksPoints
             });
             next = !RongPlayerIndices.Contains(CurrentRoundStatus.OyaPlayerIndex);
-            responds = new bool[players.Count];
             // determine server time out
             serverTimeOut = ServerMaxTimeOut * RongPointInfos.Length + ServerConstants.ServerTimeBuffer;
             firstTime = Time.time;
         }
 
-        private void OnReadinessMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientReadinessMessage>();
-            Debug.Log($"[Server] Received ClientReadinessMessage: {content}");
-            if (content.Content != MessageIds.ServerPointTransferMessage)
-            {
-                Debug.LogError("The message contains invalid content.");
-                return;
-            }
-            responds[content.PlayerIndex] = true;
-        }
-
         public override void OnServerStateExit()
         {
-            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
+            PhotonNetwork.RemoveCallbackTarget(this);
         }
 
         public override void OnStateUpdate()
@@ -126,6 +114,24 @@ namespace GamePlay.Server.Controller.GameState
         private void PointTransfer()
         {
             ServerBehaviour.Instance.PointTransfer(transfers, next, !next, false);
+        }
+
+        private void OnClientReadyEvent(int index)
+        {
+            responds[index] = true;
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.ClientReadyEvent:
+                    OnClientReadyEvent((int)photonEvent.CustomData);
+                    break;
+            }
         }
     }
 }

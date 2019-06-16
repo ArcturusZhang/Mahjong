@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
-using Mahjong.Logic;
+using GamePlay.Server.Model.Events;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace GamePlay.Server.Controller.GameState
 {
-    public class PlayerTsumoState : ServerState
+    public class PlayerTsumoState : ServerState, IOnEventCallback
     {
         public int TsumoPlayerIndex;
         public Tile WinningTile;
@@ -23,7 +25,7 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnServerStateEnter()
         {
-            NetworkServer.RegisterHandler(MessageIds.ClientReadinessMessage, OnReadinessMessageReceived);
+            PhotonNetwork.AddCallbackTarget(this);
             int multiplier = gameSettings.GetMultiplier(CurrentRoundStatus.IsDealer(TsumoPlayerIndex), players.Count);
             var netInfo = new NetworkPointInfo
             {
@@ -34,10 +36,10 @@ namespace GamePlay.Server.Controller.GameState
                 RedDora = TsumoPointInfo.RedDora,
                 IsQTJ = TsumoPointInfo.IsQTJ
             };
-            var tsumoMessage = new ServerPlayerTsumoMessage
+            var info = new EventMessages.TsumoInfo
             {
                 TsumoPlayerIndex = TsumoPlayerIndex,
-                TsumoPlayerName = players[TsumoPlayerIndex].PlayerName,
+                TsumoPlayerName = CurrentRoundStatus.GetPlayerName(TsumoPlayerIndex),
                 TsumoHandData = CurrentRoundStatus.HandData(TsumoPlayerIndex),
                 WinningTile = WinningTile,
                 DoraIndicators = MahjongSet.DoraIndicators,
@@ -46,10 +48,8 @@ namespace GamePlay.Server.Controller.GameState
                 TsumoPointInfo = netInfo,
                 TotalPoints = TsumoPointInfo.BasePoint * multiplier
             };
-            for (int i = 0; i < players.Count; i++)
-            {
-                players[i].connectionToClient.Send(MessageIds.ServerTsumoMessage, tsumoMessage);
-            }
+            // send rpc calls
+            ClientBehaviour.Instance.photonView.RPC("RpcTsumo", RpcTarget.AllBufferedViaServer, info);
             // get point transfers
             // todo -- tsumo loss related, now there is tsumo loss by default
             transfers = new List<PointTransfer>();
@@ -79,21 +79,9 @@ namespace GamePlay.Server.Controller.GameState
             firstTime = Time.time;
         }
 
-        private void OnReadinessMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientReadinessMessage>();
-            Debug.Log($"[Server] Received ClientReadinessMessage: {content}");
-            if (content.Content != MessageIds.ServerPointTransferMessage)
-            {
-                Debug.LogError("The message contains invalid content.");
-                return;
-            }
-            responds[content.PlayerIndex] = true;
-        }
-
         public override void OnServerStateExit()
         {
-            NetworkServer.UnregisterHandler(MessageIds.ClientReadinessMessage);
+            PhotonNetwork.RemoveCallbackTarget(this);
         }
 
         public override void OnStateUpdate()
@@ -109,6 +97,24 @@ namespace GamePlay.Server.Controller.GameState
         {
             var next = CurrentRoundStatus.OyaPlayerIndex != TsumoPlayerIndex;
             ServerBehaviour.Instance.PointTransfer(transfers, next, !next, false);
+        }
+
+        private void OnClientReadyEvent(int index)
+        {
+            responds[index] = true;
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.ClientReadyEvent:
+                    OnClientReadyEvent((int)photonEvent.CustomData);
+                    break;
+            }
         }
     }
 }

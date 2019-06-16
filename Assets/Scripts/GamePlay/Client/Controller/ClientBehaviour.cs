@@ -3,94 +3,92 @@ using Common.StateMachine;
 using Common.StateMachine.Interfaces;
 using GamePlay.Client.Controller.GameState;
 using GamePlay.Client.Model;
-using GamePlay.Server.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
+using GamePlay.Server.Model.Events;
 using UnityEngine;
 
 namespace GamePlay.Client.Controller
 {
-    public class ClientBehaviour : MonoBehaviour
+    public class ClientBehaviour : MonoBehaviourPunCallbacks
     {
         public static ClientBehaviour Instance { get; private set; }
         private ClientRoundStatus CurrentRoundStatus;
         private ViewController controller;
-        private Player localPlayer => CurrentRoundStatus.LocalPlayer;
         public IStateMachine StateMachine { get; private set; }
 
-        private void OnEnable()
+        public override void OnEnable()
         {
+            base.OnEnable();
             Debug.Log("ClientBehaviour.OnEnable() is called");
             Instance = this;
             StateMachine = new StateMachine();
+            EventMessages.RegisterTypes();
         }
 
         private void Start()
         {
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                var player = PhotonNetwork.LocalPlayer;
+                PhotonNetwork.RaiseEvent(
+                    EventMessages.LoadCompleteEvent, player.ActorNumber,
+                    EventMessages.ToMaster, EventMessages.SendReliable);
+            }
             controller = ViewController.Instance;
         }
 
-        /// <summary>
-        /// This method make the game preparation information takes effect 
-        /// on the client. In this method, client sets the proper place to the 
-        /// corresponding player, and gathering necessary information.
-        /// </summary>
-        /// <param name="message">The message received from server</param>
-        public void GamePrepare(ServerGamePrepareMessage message)
+        [PunRPC]
+        public void RpcGamePrepare(EventMessages.GamePrepareInfo info)
         {
-            CurrentRoundStatus = new ClientRoundStatus(
-                message.TotalPlayers, message.PlayerIndex, message.GameSetting);
+            CurrentRoundStatus = new ClientRoundStatus(info.PlayerIndex, info.GameSetting);
             var prepareState = new GamePrepareState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                Points = message.Points,
-                Names = message.PlayerNames
+                Points = info.Points,
+                Names = info.PlayerNames
             };
             StateMachine.ChangeState(prepareState);
         }
 
-        /// <summary>
-        /// This method is invoked when the client received a RoundStartMessage 
-        /// when every round starts. In this method, client set initial hand tiles
-        /// of the local player, and hand tiles count for every remote players.
-        /// Dice is thrown on the server, as client receives the dice value then 
-        /// applies it to the game. Same as other data (Extra, RichiSticks, etc).
-        /// </summary>
-        /// <param name="message">The message received from server</param>
-        public void StartRound(ServerRoundStartMessage message)
+        [PunRPC]
+        public void RpcRoundStart(EventMessages.RoundStartInfo info)
         {
             var startState = new RoundStartState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                LocalPlayerHandTiles = message.InitialHandTiles,
-                OyaPlayerIndex = message.OyaPlayerIndex,
-                Dice = message.Dice,
-                Field = message.Field,
-                Extra = message.Extra,
-                RichiSticks = message.RichiSticks,
-                MahjongSetData = message.MahjongSetData,
-                Points = message.Points
+                LocalPlayerHandTiles = info.InitialHandTiles,
+                OyaPlayerIndex = info.OyaPlayerIndex,
+                Dice = info.Dice,
+                Field = info.Field,
+                Extra = info.Extra,
+                RichiSticks = info.RichiSticks,
+                MahjongSetData = info.MahjongSetData,
+                Points = info.Points
             };
             StateMachine.ChangeState(startState);
         }
 
-        public void PlayerDrawTurn(ServerDrawTileMessage message)
+        [PunRPC]
+        public void RpcDrawTile(EventMessages.DrawTileInfo info)
         {
             var drawState = new PlayerDrawState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                PlayerIndex = message.DrawPlayerIndex,
-                Tile = message.Tile,
-                BonusTurnTime = message.BonusTurnTime,
-                Zhenting = message.Zhenting,
-                MahjongSetData = message.MahjongSetData,
-                Operations = message.Operations
+                PlayerIndex = info.DrawPlayerIndex,
+                Tile = info.Tile,
+                BonusTurnTime = info.BonusTurnTime,
+                Zhenting = info.Zhenting,
+                MahjongSetData = info.MahjongSetData,
+                Operations = info.Operations
             };
             StateMachine.ChangeState(drawState);
         }
 
-        public void PlayerKong(ServerKongMessage message)
+        [PunRPC]
+        public void RpcKong(EventMessages.KongInfo message)
         {
             var kongState = new PlayerKongState
             {
@@ -104,7 +102,8 @@ namespace GamePlay.Client.Controller
             StateMachine.ChangeState(kongState);
         }
 
-        public void PlayerBeiDora(ServerBeiDoraMessage message)
+        [PunRPC]
+        public void RpcBeiDora(EventMessages.BeiDoraInfo message)
         {
             var beiDoraState = new PlayerBeiDoraState
             {
@@ -119,76 +118,81 @@ namespace GamePlay.Client.Controller
             StateMachine.ChangeState(beiDoraState);
         }
 
-        public void PlayerDiscardOperation(ServerDiscardOperationMessage message)
+        [PunRPC]
+        public void RpcDiscardOperation(EventMessages.DiscardOperationInfo info)
         {
             var discardOperationState = new PlayerDiscardOperationState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                CurrentPlayerIndex = message.CurrentTurnPlayerIndex,
-                IsRichiing = message.IsRichiing,
-                DiscardingLastDraw = message.DiscardingLastDraw,
-                Tile = message.Tile,
-                BonusTurnTime = message.BonusTurnTime,
-                Zhenting = message.Zhenting,
-                Operations = message.Operations,
-                HandTiles = message.HandTiles,
-                Rivers = message.Rivers
+                CurrentPlayerIndex = info.CurrentTurnPlayerIndex,
+                IsRichiing = info.IsRichiing,
+                DiscardingLastDraw = info.DiscardingLastDraw,
+                Tile = info.Tile,
+                BonusTurnTime = info.BonusTurnTime,
+                Zhenting = info.Zhenting,
+                Operations = info.Operations,
+                HandTiles = info.HandTiles,
+                Rivers = info.Rivers
             };
             StateMachine.ChangeState(discardOperationState);
         }
 
-        public void PlayerTurnEnd(ServerTurnEndMessage message)
+        [PunRPC]
+        public void RpcTurnEnd(EventMessages.TurnEndInfo info)
         {
             var turnEndState = new PlayerTurnEndState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                PlayerIndex = message.PlayerIndex,
-                ChosenOperationType = message.ChosenOperationType,
-                Operations = message.Operations,
-                Points = message.Points,
-                RichiStatus = message.RichiStatus,
-                RichiSticks = message.RichiSticks,
-                Zhenting = message.Zhenting,
-                MahjongSetData = message.MahjongSetData
+                PlayerIndex = info.PlayerIndex,
+                ChosenOperationType = info.ChosenOperationType,
+                Operations = info.Operations,
+                Points = info.Points,
+                RichiStatus = info.RichiStatus,
+                RichiSticks = info.RichiSticks,
+                Zhenting = info.Zhenting,
+                MahjongSetData = info.MahjongSetData
             };
             StateMachine.ChangeState(turnEndState);
         }
 
-        public void OperationPerform(ServerOperationPerformMessage message)
+        [PunRPC]
+        public void RpcOperationPerform(EventMessages.OperationPerformInfo info)
         {
             var operationState = new PlayerOperationPerformState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                PlayerIndex = message.PlayerIndex,
-                OperationPlayerIndex = message.OperationPlayerIndex,
-                Operation = message.Operation,
-                HandData = message.HandData,
-                BonusTurnTime = message.BonusTurnTime,
-                Rivers = message.Rivers,
-                MahjongSetData = message.MahjongSetData
+                PlayerIndex = info.PlayerIndex,
+                OperationPlayerIndex = info.OperationPlayerIndex,
+                Operation = info.Operation,
+                HandData = info.HandData,
+                BonusTurnTime = info.BonusTurnTime,
+                Rivers = info.Rivers,
+                MahjongSetData = info.MahjongSetData
             };
             StateMachine.ChangeState(operationState);
         }
 
-        public void PlayerTsumo(ServerPlayerTsumoMessage message)
+        [PunRPC]
+        public void RpcTsumo(EventMessages.TsumoInfo info)
         {
             var tsumoState = new PlayerTsumoState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                TsumoPlayerIndex = message.TsumoPlayerIndex,
-                TsumoPlayerName = message.TsumoPlayerName,
-                TsumoHandData = message.TsumoHandData,
-                WinningTile = message.WinningTile,
-                DoraIndicators = message.DoraIndicators,
-                UraDoraIndicators = message.UraDoraIndicators,
-                IsRichi = message.IsRichi,
-                TsumoPointInfo = message.TsumoPointInfo,
-                TotalPoints = message.TotalPoints
+                TsumoPlayerIndex = info.TsumoPlayerIndex,
+                TsumoPlayerName = info.TsumoPlayerName,
+                TsumoHandData = info.TsumoHandData,
+                WinningTile = info.WinningTile,
+                DoraIndicators = info.DoraIndicators,
+                UraDoraIndicators = info.UraDoraIndicators,
+                IsRichi = info.IsRichi,
+                TsumoPointInfo = info.TsumoPointInfo,
+                TotalPoints = info.TotalPoints
             };
             StateMachine.ChangeState(tsumoState);
         }
 
-        public void PlayerRong(ServerPlayerRongMessage message)
+        [PunRPC]
+        public void RpcRong(EventMessages.RongInfo message)
         {
             var rongState = new PlayerRongState
             {
@@ -206,18 +210,20 @@ namespace GamePlay.Client.Controller
             StateMachine.ChangeState(rongState);
         }
 
-        public void RoundDraw(ServerRoundDrawMessage message)
+        [PunRPC]
+        public void RpcRoundDraw(EventMessages.RoundDrawInfo info)
         {
             var roundDrawState = new RoundDrawState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
-                RoundDrawType = message.RoundDrawType,
-                WaitingData = message.WaitingData
+                RoundDrawType = info.RoundDrawType,
+                WaitingData = info.WaitingData
             };
             StateMachine.ChangeState(roundDrawState);
         }
 
-        public void PointTransfer(ServerPointTransferMessage message)
+        [PunRPC]
+        public void RpcPointTransfer(EventMessages.PointTransferInfo message)
         {
             var transferState = new PointTransferState
             {
@@ -229,8 +235,8 @@ namespace GamePlay.Client.Controller
             StateMachine.ChangeState(transferState);
         }
 
-        public void GameEnd(ServerGameEndMessage message)
-        {
+        [PunRPC]
+        public void RpcGameEnd(EventMessages.GameEndInfo message) {
             var endState = new GameEndState
             {
                 CurrentRoundStatus = CurrentRoundStatus,
@@ -241,14 +247,74 @@ namespace GamePlay.Client.Controller
             StateMachine.ChangeState(endState);
         }
 
+        public void ClientReady()
+        {
+            PhotonNetwork.RaiseEvent(
+                EventMessages.ClientReadyEvent, CurrentRoundStatus.LocalPlayerIndex,
+                EventMessages.ToMaster, EventMessages.SendReliable);
+        }
+
+        public void NextRound()
+        {
+            PhotonNetwork.RaiseEvent(
+                EventMessages.NextRoundEvent, CurrentRoundStatus.LocalPlayerIndex,
+                EventMessages.ToMaster, EventMessages.SendReliable);
+        }
+
         public void OnDiscardTile(Tile tile, bool isLastDraw)
         {
-            Debug.Log($"Sending request of discarding tile {tile}");
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
-            localPlayer.DiscardTile(tile, CurrentRoundStatus.IsRichiing, isLastDraw, bonusTimeLeft);
+            OnDiscardTile(tile, isLastDraw, bonusTimeLeft);
+        }
+
+        public void OnDiscardTile(Tile tile, bool isLastDraw, int bonusTimeLeft)
+        {
+            Debug.Log($"Sending request of discarding tile {tile}");
+            var info = new EventMessages.DiscardTileInfo
+            {
+                PlayerIndex = CurrentRoundStatus.LocalPlayerIndex,
+                IsRichiing = CurrentRoundStatus.IsRichiing,
+                DiscardingLastDraw = isLastDraw,
+                Tile = tile,
+                BonusTurnTime = bonusTimeLeft
+            };
+            PhotonNetwork.RaiseEvent(
+                EventMessages.DiscardTileEvent, info,
+                EventMessages.ToMaster, EventMessages.SendReliable);
             controller.InTurnPanelManager.Close();
             CurrentRoundStatus.SetRichiing(false);
             controller.HandPanelManager.RemoveCandidates();
+        }
+
+        private void OnInTurnOperationTaken(InTurnOperation operation, int bonusTurnTime)
+        {
+            var info = new EventMessages.InTurnOperationInfo
+            {
+                PlayerIndex = CurrentRoundStatus.LocalPlayerIndex,
+                Operation = operation,
+                BonusTurnTime = bonusTurnTime
+            };
+            PhotonNetwork.RaiseEvent(
+                EventMessages.InTurnOperationEvent, info,
+                EventMessages.ToMaster, EventMessages.SendReliable);
+        }
+
+        public void OnSkipOutTurnOperation(int bonusTurnTime)
+        {
+            OnOutTurnOperationTaken(new OutTurnOperation { Type = OutTurnOperationType.Skip }, bonusTurnTime);
+        }
+
+        public void OnOutTurnOperationTaken(OutTurnOperation operation, int bonusTurnTime)
+        {
+            var info = new EventMessages.OutTurnOperationInfo
+            {
+                PlayerIndex = CurrentRoundStatus.LocalPlayerIndex,
+                Operation = operation,
+                BonusTurnTime = bonusTurnTime
+            };
+            PhotonNetwork.RaiseEvent(
+                EventMessages.OutTurnOperationEvent, info,
+                EventMessages.ToMaster, EventMessages.SendReliable);
         }
 
         public void OnInTurnSkipButtonClicked()
@@ -266,7 +332,7 @@ namespace GamePlay.Client.Controller
             }
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of tsumo operation with bonus turn time {bonusTimeLeft}");
-            localPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
+            OnInTurnOperationTaken(operation, bonusTimeLeft);
             controller.InTurnPanelManager.Close();
         }
 
@@ -299,7 +365,7 @@ namespace GamePlay.Client.Controller
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
-                localPlayer.InTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                OnInTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 controller.InTurnPanelManager.Close();
                 return;
             }
@@ -309,7 +375,7 @@ namespace GamePlay.Client.Controller
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
-                localPlayer.InTurnOperationTaken(new InTurnOperation
+                OnInTurnOperationTaken(new InTurnOperation
                 {
                     Type = InTurnOperationType.Kong,
                     Meld = meld
@@ -323,7 +389,7 @@ namespace GamePlay.Client.Controller
         {
             Debug.Log($"Requesting to proceed operation: {operation}");
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
-            localPlayer.InTurnOperationTaken(operation, bonusTimeLeft);
+            OnInTurnOperationTaken(operation, bonusTimeLeft);
             controller.InTurnPanelManager.Close();
         }
 
@@ -345,7 +411,7 @@ namespace GamePlay.Client.Controller
         {
             int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
             Debug.Log($"Sending request of operation {operation} with bonus turn time {bonusTimeLeft}");
-            localPlayer.OutTurnOperationTaken(operation, bonusTimeLeft);
+            OnOutTurnOperationTaken(operation, bonusTimeLeft);
             controller.OutTurnPanelManager.Close();
         }
 
@@ -365,7 +431,7 @@ namespace GamePlay.Client.Controller
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of chow operation with bonus turn time {bonusTimeLeft}");
-                localPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                OnOutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 controller.OutTurnPanelManager.Close();
                 return;
             }
@@ -375,7 +441,7 @@ namespace GamePlay.Client.Controller
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
-                localPlayer.OutTurnOperationTaken(new OutTurnOperation
+                OnOutTurnOperationTaken(new OutTurnOperation
                 {
                     Type = OutTurnOperationType.Chow,
                     Meld = meld
@@ -401,7 +467,7 @@ namespace GamePlay.Client.Controller
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of kong operation with bonus turn time {bonusTimeLeft}");
-                localPlayer.OutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
+                OnOutTurnOperationTaken(operationOptions[0], bonusTimeLeft);
                 controller.OutTurnPanelManager.Close();
                 return;
             }
@@ -411,7 +477,7 @@ namespace GamePlay.Client.Controller
             {
                 int bonusTimeLeft = controller.TurnTimeController.StopCountDown();
                 Debug.Log($"Sending request of in turn kong operation with bonus turn time {bonusTimeLeft}");
-                localPlayer.OutTurnOperationTaken(new OutTurnOperation
+                OnOutTurnOperationTaken(new OutTurnOperation
                 {
                     Type = OutTurnOperationType.Pong,
                     Meld = meld
@@ -419,6 +485,26 @@ namespace GamePlay.Client.Controller
                 controller.InTurnPanelManager.Close();
                 controller.MeldSelectionManager.Close();
             });
+        }
+
+        public override void OnLeftRoom()
+        {
+            // todo
+        }
+
+        public override void OnLeftLobby()
+        {
+            // todo
+        }
+
+        public override void OnPlayerLeftRoom(Player otherPlayer)
+        {
+            // todo
+        }
+
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            // todo
         }
     }
 }

@@ -38,8 +38,9 @@ namespace GamePlay.Client.Controller.GameState
                 controller.TurnTimeController.StartCountDown(CurrentRoundStatus.GameSetting.BaseTurnTime, BonusTurnTime, () =>
                 {
                     Debug.Log("Time out, automatically discard rightmost tile");
+                    CurrentRoundStatus.SetRichiing(false);
                     var tile = HandData.HandTiles[HandData.HandTiles.Length - 1];
-                    localPlayer.DiscardTile(tile, false, false, 0);
+                    ClientBehaviour.Instance.OnDiscardTile(tile, false, 0);
                 });
             }
         }

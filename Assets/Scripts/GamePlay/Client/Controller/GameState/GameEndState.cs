@@ -1,5 +1,4 @@
 using System.Collections;
-using Lobby;
 using Managers;
 using UnityEngine;
 
@@ -24,10 +23,8 @@ namespace GamePlay.Client.Controller.GameState
             Debug.Log("Back to lobby");
             var transition = GameObject.FindObjectOfType<SceneTransitionManager>();
             transition.FadeOut();
-            yield return new WaitForSeconds(1f);
-            var lobby = LobbyManager.Instance;
-            lobby.ServerChangeScene(lobby.offlineScene);
-            CurrentRoundStatus.LocalPlayer.connectionToServer.Disconnect();
+            yield return null;
+            // todo -- button for "back to lobby" or "back to room"
         }
 
         public override void OnClientStateExit()

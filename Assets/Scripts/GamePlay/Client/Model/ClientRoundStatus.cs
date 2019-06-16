@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Interfaces;
-using GamePlay.Server.Controller;
 using Mahjong.Logic;
 using Mahjong.Model;
 using UnityEngine;
@@ -30,17 +29,18 @@ namespace GamePlay.Client.Model
         public bool IsRichiing { get; private set; }
         public bool IsZhenting { get; private set; }
         public MahjongSetData MahjongSetData { get; private set; }
-        public Player LocalPlayer { get; }
         public IList<Tile> ForbiddenTiles { get; private set; }
         public GameSetting GameSetting { get; private set; }
         public IDictionary<Tile, IList<Tile>> PossibleWaitingTiles { get; private set; }
         public IList<Tile> WaitingTiles { get; private set; }
         public ClientLocalSettings LocalSettings { get; private set; }
-        public int LocalPlayerIndex => LocalPlayer.PlayerIndex;
+        public int LocalPlayerIndex { get; private set; }
 
-        public ClientRoundStatus(int totalPlayers, int playerIndex, string gameSetting)
+        public ClientRoundStatus(int playerIndex, string gameSetting)
         {
-            TotalPlayers = totalPlayers;
+            LocalPlayerIndex = playerIndex;
+            AssignSettings(gameSetting);
+            TotalPlayers = GameSetting.MaxPlayer;
             Places = new int[4];
             PlayerNames = new string[4];
             TileCounts = new int[4];
@@ -49,9 +49,7 @@ namespace GamePlay.Client.Model
             LastDraws = new Tile?[4];
             Rivers = new RiverData[4];
             LocalPlayerHandTiles = new List<Tile>();
-            LocalPlayer = Lobby.LobbyManager.Instance.LocalPlayer;
             LocalSettings = new ClientLocalSettings();
-            AssignSettings(gameSetting);
             AssignPlaces(playerIndex);
         }
 

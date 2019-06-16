@@ -19,7 +19,7 @@ namespace GamePlay.Client.Controller.GameState
             var places = pointAndPlace.Select(v => v.Value).ToArray();
             controller.PointTransferManager.SetTransfer(CurrentRoundStatus, places, PointTransfers, () =>
             {
-                localPlayer.RequestNewRound();
+                ClientBehaviour.Instance.NextRound();
             });
         }
 

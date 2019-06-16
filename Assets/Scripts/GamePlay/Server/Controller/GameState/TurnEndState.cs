@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Logic;
 using Mahjong.Model;
 using UnityEngine;
@@ -49,7 +50,7 @@ namespace GamePlay.Server.Controller.GameState
             // Send messages to clients
             for (int i = 0; i < players.Count; i++)
             {
-                var message = new ServerTurnEndMessage
+                var info = new EventMessages.TurnEndInfo
                 {
                     PlayerIndex = i,
                     ChosenOperationType = operationChosen,
@@ -60,7 +61,8 @@ namespace GamePlay.Server.Controller.GameState
                     Zhenting = CurrentRoundStatus.IsZhenting(i),
                     MahjongSetData = MahjongSet.Data
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerTurnEndMessage, message);
+                var player = CurrentRoundStatus.GetPlayer(i);
+                ClientBehaviour.Instance.photonView.RPC("RpcTurnEnd", player, info);
             }
             serverTurnEndTimeOut = operationChosen == OutTurnOperationType.Rong || operationChosen == OutTurnOperationType.RoundDraw ?
                 ServerConstants.ServerTurnEndTimeOutExtra : ServerConstants.ServerTurnEndTimeOut;

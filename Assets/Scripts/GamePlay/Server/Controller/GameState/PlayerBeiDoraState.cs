@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Logic;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace GamePlay.Server.Controller.GameState
 {
-    public class PlayerBeiDoraState : ServerState
+    public class PlayerBeiDoraState : ServerState, IOnEventCallback
     {
         public int CurrentPlayerIndex;
         public MahjongSet MahjongSet;
@@ -19,42 +22,20 @@ namespace GamePlay.Server.Controller.GameState
         private float serverTimeOut;
         public override void OnServerStateEnter()
         {
-            NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOutTurnMessageReceived);
+            PhotonNetwork.AddCallbackTarget(this);
             // update hand tiles and bei doras
             UpdateRoundStatus();
             // send messages
             for (int i = 0; i < players.Count; i++)
             {
-                if (i == CurrentPlayerIndex) continue;
-                var message = new ServerBeiDoraMessage
-                {
-                    PlayerIndex = i,
-                    BeiDoraPlayerIndex = CurrentPlayerIndex,
-                    BeiDoras = CurrentRoundStatus.GetBeiDoras(),
-                    HandData = new PlayerHandData
-                    {
-                        HandTiles = new Tile[CurrentRoundStatus.HandTiles(CurrentPlayerIndex).Length],
-                        OpenMelds = CurrentRoundStatus.OpenMelds(CurrentPlayerIndex)
-                    },
-                    BonusTurnTime = players[i].BonusTurnTime,
-                    Operations = GetBeiDoraOperations(i),
-                    MahjongSetData = MahjongSet.Data
-                };
-                players[i].connectionToClient.Send(MessageIds.ServerBeiDoraMessage, message);
+                var info = GetInfo(i);
+                var player = CurrentRoundStatus.GetPlayer(i);
+                ClientBehaviour.Instance.photonView.RPC("RpcBeiDora", player, info);
             }
-            players[CurrentPlayerIndex].connectionToClient.Send(MessageIds.ServerBeiDoraMessage, new ServerBeiDoraMessage
-            {
-                PlayerIndex = CurrentPlayerIndex,
-                BeiDoraPlayerIndex = CurrentPlayerIndex,
-                BeiDoras = CurrentRoundStatus.GetBeiDoras(),
-                HandData = CurrentRoundStatus.HandData(CurrentPlayerIndex),
-                BonusTurnTime = players[CurrentPlayerIndex].BonusTurnTime,
-                Operations = GetBeiDoraOperations(CurrentPlayerIndex)
-            });
             responds = new bool[players.Count];
             outTurnOperations = new OutTurnOperation[players.Count];
             firstTime = Time.time;
-            serverTimeOut = players.Max(p => p.BonusTurnTime) + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
+            serverTimeOut = CurrentRoundStatus.MaxBonusTurnTime + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
         }
 
         private void UpdateRoundStatus()
@@ -65,6 +46,39 @@ namespace GamePlay.Server.Controller.GameState
             CurrentRoundStatus.RemoveTile(CurrentPlayerIndex, new Tile(Suit.Z, 4));
             CurrentRoundStatus.AddBeiDoras(CurrentPlayerIndex);
             CurrentRoundStatus.SortHandTiles();
+        }
+
+        private EventMessages.BeiDoraInfo GetInfo(int index)
+        {
+            if (index == CurrentPlayerIndex)
+            {
+                return new EventMessages.BeiDoraInfo
+                {
+                    PlayerIndex = CurrentPlayerIndex,
+                    BeiDoraPlayerIndex = CurrentPlayerIndex,
+                    BeiDoras = CurrentRoundStatus.GetBeiDoras(),
+                    HandData = CurrentRoundStatus.HandData(CurrentPlayerIndex),
+                    BonusTurnTime = CurrentRoundStatus.GetBonusTurnTime(CurrentPlayerIndex),
+                    Operations = GetBeiDoraOperations(CurrentPlayerIndex)
+                };
+            }
+            else
+            {
+                return new EventMessages.BeiDoraInfo
+                {
+                    PlayerIndex = index,
+                    BeiDoraPlayerIndex = CurrentPlayerIndex,
+                    BeiDoras = CurrentRoundStatus.GetBeiDoras(),
+                    HandData = new PlayerHandData
+                    {
+                        HandTiles = new Tile[CurrentRoundStatus.HandTiles(CurrentPlayerIndex).Length],
+                        OpenMelds = CurrentRoundStatus.OpenMelds(CurrentPlayerIndex)
+                    },
+                    BonusTurnTime = CurrentRoundStatus.GetBonusTurnTime(index),
+                    Operations = GetBeiDoraOperations(index),
+                    MahjongSetData = MahjongSet.Data
+                };
+            }
         }
 
         private OutTurnOperation[] GetBeiDoraOperations(int playerIndex)
@@ -109,17 +123,9 @@ namespace GamePlay.Server.Controller.GameState
             return point;
         }
 
-        private void OnOutTurnMessageReceived(NetworkMessage message)
-        {
-            var content = message.ReadMessage<ClientOutTurnOperationMessage>();
-            Debug.Log($"[Server] received ClientOutTurnOperationMessage: {content}");
-            responds[content.PlayerIndex] = true;
-            outTurnOperations[content.PlayerIndex] = content.Operation;
-            players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;
-        }
-
         public override void OnServerStateExit()
         {
+            PhotonNetwork.RemoveCallbackTarget(this);
         }
 
         public override void OnStateUpdate()
@@ -131,7 +137,7 @@ namespace GamePlay.Server.Controller.GameState
                 for (int i = 0; i < responds.Length; i++)
                 {
                     if (responds[i]) continue;
-                    players[i].BonusTurnTime = 0;
+                    // players[i].BonusTurnTime = 0;
                     outTurnOperations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                     NextState();
                     return;
@@ -164,6 +170,28 @@ namespace GamePlay.Server.Controller.GameState
                 return;
             }
             Debug.LogError($"[Server] Logically cannot reach here, operations are {string.Join("|", outTurnOperations)}");
+        }
+
+        private void OnOutTurnOperationEvent(EventMessages.OutTurnOperationInfo info)
+        {
+            var index = info.PlayerIndex;
+            if (responds[index]) return;
+            responds[index] = true;
+            outTurnOperations[index] = info.Operation;
+            CurrentRoundStatus.SetBonusTurnTime(index, info.BonusTurnTime);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.OutTurnOperationEvent:
+                    OnOutTurnOperationEvent((EventMessages.OutTurnOperationInfo)info);
+                    break;
+            }
         }
     }
 }

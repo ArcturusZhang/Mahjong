@@ -1,16 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using ExitGames.Client.Photon;
+using GamePlay.Client.Controller;
 using GamePlay.Server.Model;
-using GamePlay.Server.Model.Messages;
+using GamePlay.Server.Model.Events;
 using Mahjong.Logic;
 using Mahjong.Model;
+using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.Networking;
-
 
 namespace GamePlay.Server.Controller.GameState
 {
-    public class PlayerDiscardTileState : ServerState
+    public class PlayerDiscardTileState : ServerState, IOnEventCallback
     {
         public int CurrentPlayerIndex;
         public Tile DiscardTile;
@@ -26,7 +28,7 @@ namespace GamePlay.Server.Controller.GameState
 
         public override void OnServerStateEnter()
         {
-            NetworkServer.RegisterHandler(MessageIds.ClientOutTurnOperationMessage, OnOperationMessageReceived);
+            PhotonNetwork.AddCallbackTarget(this);
             if (CurrentRoundStatus.CurrentPlayerIndex != CurrentPlayerIndex)
             {
                 Debug.LogError("[Server] currentPlayerIndex does not match, this should not happen");
@@ -40,28 +42,30 @@ namespace GamePlay.Server.Controller.GameState
             // Get messages and send them to players
             for (int i = 0; i < players.Count; i++)
             {
-                var message = new ServerDiscardOperationMessage
+                var info = new EventMessages.DiscardOperationInfo
                 {
                     PlayerIndex = i,
                     CurrentTurnPlayerIndex = CurrentPlayerIndex,
                     IsRichiing = IsRichiing,
                     DiscardingLastDraw = DiscardLastDraw,
                     Tile = DiscardTile,
-                    BonusTurnTime = players[i].BonusTurnTime,
+                    BonusTurnTime = CurrentRoundStatus.GetBonusTurnTime(i),
                     Zhenting = CurrentRoundStatus.IsZhenting(i),
                     Operations = GetOperations(i),
                     HandTiles = CurrentRoundStatus.HandTiles(i),
                     Rivers = rivers
                 };
-                players[i].connectionToClient.Send(MessageIds.ServerDiscardOperationMessage, message);
+                var player = CurrentRoundStatus.GetPlayer(i);
+                ClientBehaviour.Instance.photonView.RPC("RpcDiscardOperation", player, info);
             }
             firstSendTime = Time.time;
-            serverTimeOut = players.Max(p => p.BonusTurnTime) + gameSettings.BaseTurnTime + ServerConstants.ServerTimeBuffer;
+            serverTimeOut = gameSettings.BaseTurnTime + CurrentRoundStatus.MaxBonusTurnTime
+                + ServerConstants.ServerTimeBuffer;
         }
 
         private void UpdateRoundStatus()
         {
-            players[CurrentPlayerIndex].BonusTurnTime = BonusTurnTime;
+            CurrentRoundStatus.SetBonusTurnTime(CurrentPlayerIndex, BonusTurnTime);
             var lastDraw = CurrentRoundStatus.LastDraw;
             CurrentRoundStatus.LastDraw = null;
             if (!DiscardLastDraw)
@@ -242,7 +246,7 @@ namespace GamePlay.Server.Controller.GameState
                 for (int i = 0; i < responds.Length; i++)
                 {
                     if (responds[i]) continue;
-                    players[i].BonusTurnTime = 0;
+                    CurrentRoundStatus.SetBonusTurnTime(i, 0);
                     operations[i] = new OutTurnOperation { Type = OutTurnOperationType.Skip };
                 }
                 TurnEnd();
@@ -261,18 +265,31 @@ namespace GamePlay.Server.Controller.GameState
                 false, TurnDoraAfterDiscard);
         }
 
-        private void OnOperationMessageReceived(NetworkMessage message)
+        private void OnOutTurnOperationEvent(EventMessages.OutTurnOperationInfo info)
         {
-            var content = message.ReadMessage<ClientOutTurnOperationMessage>();
-            Debug.Log($"[Server] Received ClientOutTurnOperationMessage: {content}");
-            responds[content.PlayerIndex] = true;
-            operations[content.PlayerIndex] = content.Operation;
-            players[content.PlayerIndex].BonusTurnTime = content.BonusTurnTime;
+            var index = info.PlayerIndex;
+            if (responds[index]) return;
+            responds[index] = true;
+            operations[index] = info.Operation;
+            CurrentRoundStatus.SetBonusTurnTime(index, info.BonusTurnTime);
         }
 
         public override void OnServerStateExit()
         {
-            NetworkServer.UnregisterHandler(MessageIds.ClientOutTurnOperationMessage);
+            PhotonNetwork.RemoveCallbackTarget(this);
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            var code = photonEvent.Code;
+            var info = photonEvent.CustomData;
+            Debug.Log($"{GetType().Name} receives event code: {code} with content {info}");
+            switch (code)
+            {
+                case EventMessages.OutTurnOperationEvent:
+                    OnOutTurnOperationEvent((EventMessages.OutTurnOperationInfo)info);
+                    break;
+            }
         }
     }
 }
