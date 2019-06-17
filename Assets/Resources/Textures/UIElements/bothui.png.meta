@@ -359,13 +359,13 @@ TextureImporter:
       name: bothui_6
       rect:
         serializedVersion: 2
-        x: 766
-        y: 493
-        width: 70
-        height: 128
+        x: 769
+        y: 495
+        width: 64
+        height: 124
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 0, y: 17, z: 0, w: 17}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -655,7 +655,7 @@ TextureImporter:
         serializedVersion: 2
         x: 751
         y: 306
-        width: 136
+        width: 135
         height: 57
       alignment: 0
       pivot: {x: 0.5, y: 0.5}

@@ -24,7 +24,7 @@ namespace PUNLobby
                 launcher.PanelManager.warningPanel.Show(400, 200, "Please input a player name.");
                 return;
             }
-            launcher.Connect();
+            launcher.Connect(playerName);
             SerializeUtility.SaveContent(Application.persistentDataPath + LAST_LOGIN, playerName);
         }
 

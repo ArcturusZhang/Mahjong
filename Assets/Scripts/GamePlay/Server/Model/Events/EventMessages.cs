@@ -22,15 +22,6 @@ namespace GamePlay.Server.Model.Events
         public const byte OutTurnOperationEvent = (byte)4;
         public const byte NextRoundEvent = (byte)5;
 
-        public static void RegisterTypes()
-        {
-            var types = typeof(EventMessages).GetNestedTypes(BindingFlags.Public);
-            for (byte i = 0; i < types.Length; i++)
-            {
-                PhotonPeer.RegisterType(types[i], i, SerializeUtility.SerializeObject, SerializeUtility.DeserializeObject);
-            }
-        }
-
         [Serializable]
         public struct GamePrepareInfo
         {

@@ -8,45 +8,73 @@ namespace Mahjong.Model
     [Serializable]
     public class GameSetting
     {
+        // Basic settings
         public GameMode GameMode;
         public GamePlayers GamePlayers;
         public RoundCount RoundCount;
         public MinimumFanConstraintType MinimumFanConstraintType;
         public PointsToGameEnd PointsToGameEnd;
         public bool GameEndsWhenAllLastTop;
-        public bool AllowDiscardSameAfterOpen;
-        public bool AllowRichiWhenPointsLow;
-        public bool AllowRichiWhenNotReady;
-        public bool AllowChows;
-        public bool AllowPongs;
         public int InitialPoints;
         public int FirstPlacePoints;
+        public bool AllowHint;
+        // Advance settings
+        public InitialDoraCount InitialDoraCount;
+        public bool AllowRichiWhenPointsLow;
+        public bool AllowRichiWhenNotReady;
+        public bool AllowDiscardSameAfterOpen;
         public int RichiMortgagePoints;
         public int ExtraRoundBonusPerPlayer;
         public int NotReadyPunishPerPlayer;
         public int FalseRichiPunishPerPlayer;
+        public bool AllowMultipleRong;
         public bool Allow3RongDraw;
         public bool Allow4RichiDraw;
         public bool Allow4KongDraw;
         public bool Allow4WindDraw;
         public bool Allow9OrphanDraw;
-        public bool AllowBeiDora; // todo -- add setting panel entry
-        public bool AllowBeiAsYaku; // todo -- add setting panel entry
-        public bool AllowBeiDoraRongAsRobbKong;
-        public bool AllowBeiDoraTsumoAsLingShang;
-        public bool AllowHint; // todo -- add setting panel entry
+        // Time settings
         public int BaseTurnTime = 5;
         public int BonusTurnTime = 20;
+        // hidden entries in setting panel
+        public bool AllowChows;
+        public bool AllowPongs;
+        public bool AllowBeiDora;
+        public bool AllowBeiAsYaku;
+        public bool AllowBeiDoraRongAsRobbKong;
+        public bool AllowBeiDoraTsumoAsLingShang;
         public int DiceMin = 2;
         public int DiceMax = 12;
         public int MountainReservedTiles = 14;
-        public int InitialDora = 1;
+        public int InitialDora
+        {
+            get
+            {
+                switch (InitialDoraCount)
+                {
+                    case InitialDoraCount.One:
+                        return 1;
+                    case InitialDoraCount.Two:
+                        return 2;
+                    case InitialDoraCount.Three:
+                        return 3;
+                    case InitialDoraCount.Four:
+                        return 4;
+                    case InitialDoraCount.Five:
+                        return 5;
+                    default:
+                        Debug.LogError($"Unknown InitialDoraCount {InitialDoraCount}");
+                        return 1;
+                }
+            }
+        }
         public int MaxDora = 5;
         public int LingshangTilesCount => AllowBeiDora ? 8 : 4;
 
+        // Yaku settings
         public bool OpenDuanYao = true;
         public bool HasOneShot = true;
-        public bool 连风对子额外加符 = true;
+        public bool 连风对子额外加符 = true; // this field do not have setting entry
         public bool AllowGswsRobConcealedKong = true;
         public YakumanLevel SiAnKe = YakumanLevel.Two;
         public YakumanLevel GuoShi = YakumanLevel.Two;
@@ -220,6 +248,11 @@ namespace Mahjong.Model
     public enum PointsToGameEnd
     {
         Negative, Zero, Never
+    }
+
+    public enum InitialDoraCount
+    {
+        One, Two, Three, Four, Five
     }
 
     public enum YakumanLevel

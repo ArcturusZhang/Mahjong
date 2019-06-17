@@ -4,6 +4,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using Mahjong.Model;
 using Utils;
+using GamePlay.Server.Model.Events;
+using System.Reflection;
+using ExitGames.Client.Photon;
 
 namespace PUNLobby
 {
@@ -12,8 +15,8 @@ namespace PUNLobby
         public static Launcher Instance { get; private set; }
         public SceneField roomScene;
         public PanelManager PanelManager;
+        public RulePanel rulePanel;
         private string gameVersion = "1.0";
-        private bool joiningRoom = false;
 
         public override void OnEnable()
         {
@@ -35,6 +38,21 @@ namespace PUNLobby
             }
         }
 
+        private void Start()
+        {
+            RegisterTypes();
+        }
+
+        private static void RegisterTypes()
+        {
+            var types = typeof(EventMessages).GetNestedTypes(BindingFlags.Public);
+            for (byte i = 0; i < types.Length; i++)
+            {
+                PhotonPeer.RegisterType(types[i], i, SerializeUtility.SerializeObject, SerializeUtility.DeserializeObject);
+            }
+            PhotonPeer.RegisterType(typeof(GameSetting), (byte)types.Length, SerializeUtility.SerializeObject, SerializeUtility.DeserializeObject);
+        }
+
         public void SetPlayerName(string value)
         {
             PhotonNetwork.NickName = value;
@@ -45,7 +63,7 @@ namespace PUNLobby
             PanelManager.ShowCreateRoomPanel();
         }
 
-        internal void Connect()
+        internal void Connect(string playerName)
         {
             if (!PhotonNetwork.IsConnected)
             {
@@ -56,6 +74,7 @@ namespace PUNLobby
             {
                 // todo -- already connected to photon server
             }
+            PhotonNetwork.NickName = playerName;
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -81,25 +100,22 @@ namespace PUNLobby
         {
             if (!string.IsNullOrEmpty(roomName))
             {
-                joiningRoom = true;
                 RoomOptions roomOptions = new RoomOptions
                 {
                     IsOpen = true,
                     IsVisible = true,
                     MaxPlayers = (byte)setting.MaxPlayer,
                     CleanupCacheOnLeave = true,
-                    CustomRoomProperties = new ExitGames.Client.Photon.Hashtable()
+                    CustomRoomProperties = new ExitGames.Client.Photon.Hashtable(),
+                    CustomRoomPropertiesForLobby = new string[] { SettingKeys.SETTING }
                 };
-                roomOptions.CustomRoomProperties.Add(SettingKeys.SETTING, setting.ToString());
-                // todo -- Prevent create room with same name
-                PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
+                roomOptions.CustomRoomProperties.Add(SettingKeys.SETTING, setting);
+                PhotonNetwork.CreateRoom(roomName, roomOptions, TypedLobby.Default);
             }
         }
 
         public void JoinRoom(string name)
         {
-            joiningRoom = true;
-            //Join the Room
             PhotonNetwork.JoinRoom(name);
         }
 
@@ -119,32 +135,40 @@ namespace PUNLobby
 
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
-            Debug.Log("OnCreateRoomFailed got called. This can happen if the room exists (even if not visible). Try another room name.");
-            joiningRoom = false;
+            Debug.Log($"OnCreateRoomFailed got called. This can happen if the room exists (even if not visible). Message: {message}.");
+            PanelManager.warningPanel.Show(400, 200, "The room with same name already exists, please try again with another name.");
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
-            Debug.Log("OnJoinRoomFailed got called. This can happen if the room is not existing or full or closed.");
-            joiningRoom = false;
+            Debug.Log($"OnJoinRoomFailed got called. This can happen if the room is not existing or full or closed. Message: {message}");
+            PanelManager.warningPanel.Show(400, 200, $"Room does not exist.");
         }
 
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
-            Debug.Log("OnJoinRandomFailed got called. This can happen if the room is not existing or full or closed.");
-            joiningRoom = false;
+            Debug.Log($"OnJoinRandomFailed got called. This can happen if the room is not existing or full or closed. Message: {message}");
         }
 
         public override void OnCreatedRoom()
         {
             Debug.Log("OnCreatedRoom");
-            //Load the Scene called GameLevel (Make sure it's added to build settings)
             PhotonNetwork.LoadLevel(roomScene);
         }
 
         public override void OnJoinedRoom()
         {
             Debug.Log("OnJoinedRoom");
+        }
+
+        public override void OnLeftLobby()
+        {
+            Debug.Log("OnLeftLobby");
+        }
+
+        public void ShowRulePanel(GameSetting gameSetting)
+        {
+            rulePanel.Show(gameSetting);
         }
     }
 }

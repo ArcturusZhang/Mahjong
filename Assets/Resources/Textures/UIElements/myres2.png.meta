@@ -296,13 +296,13 @@ TextureImporter:
       name: myres2_1
       rect:
         serializedVersion: 2
-        x: 604
-        y: 711
-        width: 169
-        height: 169
+        x: 608
+        y: 715
+        width: 161
+        height: 160
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 16, y: 16, z: 16, w: 16}
+      border: {x: 12, y: 12, z: 12, w: 12}
       outline: []
       physicsShape: []
       tessellationDetail: 0

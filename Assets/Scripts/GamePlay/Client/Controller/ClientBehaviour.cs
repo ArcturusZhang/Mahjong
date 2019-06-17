@@ -25,7 +25,6 @@ namespace GamePlay.Client.Controller
             Debug.Log("ClientBehaviour.OnEnable() is called");
             Instance = this;
             StateMachine = new StateMachine();
-            EventMessages.RegisterTypes();
         }
 
         private void Start()

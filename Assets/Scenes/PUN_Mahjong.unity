@@ -5415,49 +5415,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 588975034}
   m_CullTransparentMesh: 0
---- !u!1 &589747542
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 589747544}
-  - component: {fileID: 589747543}
-  m_Layer: 0
-  m_Name: ResourceManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &589747543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 589747542}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9658da4929316514e9c80ed6247051ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &589747544
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 589747542}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &595067388
 GameObject:
   m_ObjectHideFlags: 0
@@ -8778,7 +8735,7 @@ RectTransform:
   m_Children:
   - {fileID: 1301541704}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -12915,33 +12872,34 @@ MonoBehaviour:
     MinimumFanConstraintType: 0
     PointsToGameEnd: 0
     GameEndsWhenAllLastTop: 0
-    AllowDiscardSameAfterOpen: 0
-    AllowRichiWhenPointsLow: 0
-    AllowRichiWhenNotReady: 0
-    AllowChows: 0
-    AllowPongs: 0
     InitialPoints: 0
     FirstPlacePoints: 0
+    AllowHint: 0
+    InitialDoraCount: 0
+    AllowRichiWhenPointsLow: 0
+    AllowRichiWhenNotReady: 0
+    AllowDiscardSameAfterOpen: 0
     RichiMortgagePoints: 0
     ExtraRoundBonusPerPlayer: 0
     NotReadyPunishPerPlayer: 0
     FalseRichiPunishPerPlayer: 0
+    AllowMultipleRong: 0
     Allow3RongDraw: 0
     Allow4RichiDraw: 0
     Allow4KongDraw: 0
     Allow4WindDraw: 0
     Allow9OrphanDraw: 0
+    BaseTurnTime: 5
+    BonusTurnTime: 20
+    AllowChows: 0
+    AllowPongs: 0
     AllowBeiDora: 0
     AllowBeiAsYaku: 0
     AllowBeiDoraRongAsRobbKong: 0
     AllowBeiDoraTsumoAsLingShang: 0
-    AllowHint: 0
-    BaseTurnTime: 5
-    BonusTurnTime: 20
     DiceMin: 2
     DiceMax: 12
     MountainReservedTiles: 14
-    InitialDora: 1
     MaxDora: 5
     OpenDuanYao: 1
     HasOneShot: 1

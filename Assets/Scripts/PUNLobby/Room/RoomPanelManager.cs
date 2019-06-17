@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Mahjong.Model;
+using Managers;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -14,6 +16,7 @@ namespace PUNLobby.Room
         public Button readyButton;
         public Button cancelButton;
         public Button startButton;
+        public RulePanel rulePanel;
         public WarningPanel warningPanel;
         private IList<Player> players;
 
@@ -68,7 +71,8 @@ namespace PUNLobby.Room
         public void CheckRule()
         {
             var currentRoom = PhotonNetwork.CurrentRoom;
-            Debug.Log(currentRoom.CustomProperties[SettingKeys.SETTING]);
+            var gameSetting = (GameSetting)currentRoom.CustomProperties[SettingKeys.SETTING];
+            rulePanel.Show(gameSetting);
         }
 
         public void OnStartButtonClicked()
@@ -82,7 +86,15 @@ namespace PUNLobby.Room
                 return;
             }
             Debug.Log("Requesting game start");
+            var setting = (GameSetting)room.CustomProperties[SettingKeys.SETTING];
+            SaveSettings(setting);
             launcher.GameStart();
+        }
+
+        private void SaveSettings(GameSetting gameSettings)
+        {
+            Debug.Log($"Save settings: {gameSettings}");
+            ResourceManager.Instance.SaveSettings(gameSettings);
         }
 
         public void OnReadyButtonClicked()

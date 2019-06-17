@@ -53,8 +53,9 @@ namespace GamePlay.Server.Controller
         private void ReadSetting()
         {
             var room = PhotonNetwork.CurrentRoom;
-            var setting = (string)room.CustomProperties[SettingKeys.SETTING];
-            GameSettings = JsonUtility.FromJson<GameSetting>(setting);
+            // var setting = (string)room.CustomProperties[SettingKeys.SETTING];
+            // GameSettings = JsonUtility.FromJson<GameSetting>(setting);
+            GameSettings = (GameSetting)room.CustomProperties[SettingKeys.SETTING];
         }
 
         private void WaitForOthersLoading()
