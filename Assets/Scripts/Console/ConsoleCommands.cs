@@ -10,6 +10,7 @@ using Utils;
 using Mahjong.Logic;
 using Mahjong.Model;
 using GamePlay.Server.Controller;
+using Photon.Pun;
 
 namespace Console
 {
@@ -176,6 +177,12 @@ namespace Console
             {
                 Debug.Log($"Server setting: {server.GameSettings.ToJson(true)}");
             }
+        }
+
+        [ConsoleMethod("ping", "Show ping to the photon server")]
+        public static int Ping()
+        {
+            return PhotonNetwork.GetPing();
         }
     }
 }
