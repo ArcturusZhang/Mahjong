@@ -26,6 +26,7 @@ namespace PUNLobby
             }
             launcher.Connect(playerName);
             SerializeUtility.SaveContent(Application.persistentDataPath + LAST_LOGIN, playerName);
+            launcher.PanelManager.infoPanel.Show(400, 200, "Connecting...");
         }
 
         public void ExitGame()

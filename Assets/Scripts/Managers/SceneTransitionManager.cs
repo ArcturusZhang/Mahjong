@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Managers
 {
@@ -8,6 +6,10 @@ namespace Managers
     public class SceneTransitionManager : MonoBehaviour
     {
         public Animator animator;
+        public void FadeIn()
+        {
+            animator.SetTrigger("start");
+        }
         public void FadeOut()
         {
             animator.SetTrigger("end");

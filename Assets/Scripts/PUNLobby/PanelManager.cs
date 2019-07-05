@@ -11,6 +11,7 @@ namespace PUNLobby
         [SerializeField] private RoomListPanel roomListPanel;
         [SerializeField] private CreateRoomPanel createPanel;
         public WarningPanel warningPanel;
+        public WarningPanel infoPanel;
         private RectTransform currentPanel;
 
         public void ChangeTo(RectTransform newPanel)

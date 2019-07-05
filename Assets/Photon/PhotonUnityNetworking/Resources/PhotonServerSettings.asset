@@ -18,7 +18,7 @@ MonoBehaviour:
     AppIdVoice: 
     AppVersion: 1.0
     UseNameServer: 1
-    FixedRegion: asia
+    FixedRegion: ru
     Server: 
     Port: 0
     Protocol: 0

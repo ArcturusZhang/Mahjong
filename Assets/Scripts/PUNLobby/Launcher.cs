@@ -7,6 +7,8 @@ using Utils;
 using GamePlay.Server.Model.Events;
 using System.Reflection;
 using ExitGames.Client.Photon;
+using Managers;
+using System.Collections;
 
 namespace PUNLobby
 {
@@ -17,6 +19,7 @@ namespace PUNLobby
         public PanelManager PanelManager;
         public RulePanel rulePanel;
         private string gameVersion = "1.0";
+        private SceneTransitionManager transitionManager;
 
         public override void OnEnable()
         {
@@ -36,6 +39,7 @@ namespace PUNLobby
             {
                 PanelManager.ChangeTo(PanelManager.LobbyPanel);
             }
+            transitionManager = GameObject.FindObjectOfType<SceneTransitionManager>();
         }
 
         private void Start()
@@ -77,25 +81,6 @@ namespace PUNLobby
             PhotonNetwork.NickName = playerName;
         }
 
-        public override void OnDisconnected(DisconnectCause cause)
-        {
-            Debug.Log("OnDisconnected. StatusCode: " + cause.ToString() + " ServerAddress: " + PhotonNetwork.ServerAddress);
-        }
-
-        public override void OnConnectedToMaster()
-        {
-            Debug.Log("OnConnectedToMaster");
-            // After we connected to Master server, join the Lobby
-            PhotonNetwork.JoinLobby(TypedLobby.Default);
-        }
-
-        public override void OnRoomListUpdate(List<RoomInfo> roomList)
-        {
-            Debug.Log("We have received the Room list");
-            //After this callback, update the room list
-            PanelManager.SetRoomList(roomList);
-        }
-
         public void CreateRoom(string roomName, GameSetting setting)
         {
             if (!string.IsNullOrEmpty(roomName))
@@ -106,48 +91,92 @@ namespace PUNLobby
                     IsVisible = true,
                     MaxPlayers = (byte)setting.MaxPlayer,
                     CleanupCacheOnLeave = true,
-                    CustomRoomProperties = new ExitGames.Client.Photon.Hashtable(),
+                    CustomRoomProperties = new ExitGames.Client.Photon.Hashtable {
+                        {SettingKeys.SETTING, setting}
+                    },
                     CustomRoomPropertiesForLobby = new string[] { SettingKeys.SETTING }
                 };
-                roomOptions.CustomRoomProperties.Add(SettingKeys.SETTING, setting);
-                PhotonNetwork.CreateRoom(roomName, roomOptions, TypedLobby.Default);
+                StartCoroutine(CreatedRoomCoroutine(roomName, roomOptions));
             }
         }
 
         public void JoinRoom(string name)
         {
-            PhotonNetwork.JoinRoom(name);
+            StartCoroutine(JoinRoomCoroutine(name));
         }
 
         public void Refresh()
         {
             if (PhotonNetwork.IsConnected)
             {
-                //Re-join Lobby to get the latest Room list
+                // Re-join Lobby to get the latest Room list
                 PhotonNetwork.JoinLobby(TypedLobby.Default);
             }
             else
             {
-                //We are not connected, establish a new connection
+                // We are not connected, establish a new connection
                 PhotonNetwork.ConnectUsingSettings();
             }
+        }
+
+        public override void OnRegionListReceived(RegionHandler regionHandler)
+        {
+            Debug.Log($"OnRegionListReceived: {regionHandler.EnabledRegions}");
+        }
+
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            Debug.Log("OnDisconnected. StatusCode: " + cause.ToString() + " ServerAddress: " + PhotonNetwork.ServerAddress);
+            PanelManager.infoPanel.Close();
+            PanelManager.warningPanel.Show(400, 200, "ERROR", $"StatusCode: {cause.ToString()}; ServerAddress: {PhotonNetwork.ServerAddress}");
+            PanelManager.ChangeTo(PanelManager.LoginPanel);
+        }
+
+        public override void OnConnectedToMaster()
+        {
+            Debug.Log("OnConnectedToMaster");
+            // After we connected to Master server, join the Lobby
+            PhotonNetwork.JoinLobby(TypedLobby.Default);
+        }
+
+        public override void OnJoinedLobby()
+        {
+            Debug.Log("OnJoinedLobby");
+            PanelManager.infoPanel.Close();
+        }
+
+        public override void OnLeftLobby()
+        {
+            Debug.Log("OnLeftLobby");
+            PanelManager.ChangeTo(PanelManager.LoginPanel);
+        }
+
+        public override void OnRoomListUpdate(List<RoomInfo> roomList)
+        {
+            Debug.Log("We have received the Room list");
+            //After this callback, update the room list
+            PanelManager.SetRoomList(roomList);
         }
 
         public override void OnCreateRoomFailed(short returnCode, string message)
         {
             Debug.Log($"OnCreateRoomFailed got called. This can happen if the room exists (even if not visible). Message: {message}.");
+            transitionManager.FadeIn();
             PanelManager.warningPanel.Show(400, 200, "The room with same name already exists, please try again with another name.");
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
             Debug.Log($"OnJoinRoomFailed got called. This can happen if the room is not existing or full or closed. Message: {message}");
-            PanelManager.warningPanel.Show(400, 200, $"Room does not exist.");
+            transitionManager.FadeIn();
+            PanelManager.warningPanel.Show(400, 200, "Fail to join the room. This can happen if the room is not existing or full or closed.");
         }
 
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
             Debug.Log($"OnJoinRandomFailed got called. This can happen if the room is not existing or full or closed. Message: {message}");
+            transitionManager.FadeIn();
+            PanelManager.warningPanel.Show(400, 200, "Fail to join the room. This can happen if the room is not existing or full or closed.");
         }
 
         public override void OnCreatedRoom()
@@ -161,14 +190,23 @@ namespace PUNLobby
             Debug.Log("OnJoinedRoom");
         }
 
-        public override void OnLeftLobby()
-        {
-            Debug.Log("OnLeftLobby");
-        }
-
         public void ShowRulePanel(GameSetting gameSetting)
         {
             rulePanel.Show(gameSetting);
+        }
+
+        private IEnumerator CreatedRoomCoroutine(string roomName, RoomOptions roomOptions)
+        {
+            transitionManager.FadeOut();
+            yield return new WaitForSeconds(1f);
+            PhotonNetwork.CreateRoom(roomName, roomOptions, TypedLobby.Default);
+        }
+
+        private IEnumerator JoinRoomCoroutine(string name)
+        {
+            transitionManager.FadeOut();
+            yield return new WaitForSeconds(1f);
+            PhotonNetwork.JoinRoom(name);
         }
     }
 }
