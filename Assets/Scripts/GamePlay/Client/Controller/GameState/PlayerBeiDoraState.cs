@@ -27,7 +27,7 @@ namespace GamePlay.Client.Controller.GameState
             CurrentRoundStatus.SetCurrentPlaceIndex(BeiDoraPlayerIndex);
             int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             Assert.IsTrue(placeIndex == 0);
-            CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
+            CurrentRoundStatus.CheckLocalHandTiles(HandData.HandTiles);
             CurrentRoundStatus.ClearLastDraws();
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             controller.TableTilesManager.SetMelds(placeIndex, HandData.OpenMelds);

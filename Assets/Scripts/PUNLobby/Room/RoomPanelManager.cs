@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Mahjong.Model;
 using Managers;
 using Photon.Pun;
@@ -85,10 +86,23 @@ namespace PUNLobby.Room
                 warningPanel.Show(400, 200, "Not enough players.");
                 return;
             }
-            Debug.Log("Requesting game start");
-            var setting = (GameSetting)room.CustomProperties[SettingKeys.SETTING];
-            SaveSettings(setting);
-            launcher.GameStart();
+            if (CheckReadiness())
+            {
+                Debug.Log("Game is starting");
+                var setting = (GameSetting)room.CustomProperties[SettingKeys.SETTING];
+                SaveSettings(setting);
+                launcher.GameStart();
+            }
+            else
+            {
+                Debug.Log("Game cannot start, since some players are not ready");
+                warningPanel.Show(400, 200, "Game cannot start, some players are not ready.");
+            }
+        }
+
+        private bool CheckReadiness()
+        {
+            return players.All(p => p.IsMasterClient || p.GetCustomPropertyOrDefault<bool>(SettingKeys.READY, false));
         }
 
         private void SaveSettings(GameSetting gameSettings)

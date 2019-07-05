@@ -65,7 +65,7 @@ namespace GamePlay.Client.Controller.GameState
 
         private void SetRoundStatusData()
         {
-            CurrentRoundStatus.SetHandTiles(HandData.HandTiles);
+            CurrentRoundStatus.CheckLocalHandTiles(HandData.HandTiles);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             SetRiverData();
             CurrentRoundStatus.CalculatePossibleWaitingTiles();

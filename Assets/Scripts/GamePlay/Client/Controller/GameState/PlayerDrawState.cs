@@ -27,7 +27,7 @@ namespace GamePlay.Client.Controller.GameState
             CurrentRoundStatus.SetCurrentPlaceIndex(PlayerIndex);
             var placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             Assert.IsTrue(placeIndex == 0);
-            CurrentRoundStatus.SetLastDraw(placeIndex, Tile);
+            CurrentRoundStatus.DrawTile(placeIndex, Tile);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             CurrentRoundStatus.SetZhenting(Zhenting);
             controller.ShowInTurnPanels(Operations, BonusTurnTime);
@@ -37,7 +37,7 @@ namespace GamePlay.Client.Controller.GameState
         {
             CurrentRoundStatus.SetCurrentPlaceIndex(PlayerIndex);
             int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
-            CurrentRoundStatus.SetLastDraw(placeIndex);
+            CurrentRoundStatus.DrawTile(placeIndex);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
             Debug.Log($"LastDraws: {string.Join(",", CurrentRoundStatus.LastDraws)}");
         }

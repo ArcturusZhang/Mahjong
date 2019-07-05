@@ -18,7 +18,7 @@ namespace GamePlay.Client.Controller.GameState
             // update local tiles
             CurrentRoundStatus.NewRound(OyaPlayerIndex, Dice, Field, Extra, RichiSticks);
             CurrentRoundStatus.SetMahjongSetData(MahjongSetData);
-            CurrentRoundStatus.SetHandTiles(LocalPlayerHandTiles);
+            CurrentRoundStatus.CheckLocalHandTiles(LocalPlayerHandTiles);
             CurrentRoundStatus.SetZhenting(false);
             // update other player's hand tile count
             for (int placeIndex = 0; placeIndex < 4; placeIndex++)

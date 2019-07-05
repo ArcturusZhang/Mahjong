@@ -19,13 +19,36 @@ namespace GamePlay.Client.Controller.GameState
         public RiverData[] Rivers;
         public override void OnClientStateEnter()
         {
+            if (CurrentPlayerIndex == CurrentRoundStatus.LocalPlayerIndex)
+                HandleLocalDiscard();
+            else
+                HandleOtherDiscard();
+        }
+
+        private void HandleLocalDiscard()
+        {
+            // if local, check data accuracy, including hand tiles and river tiles
+            // check hand tiles
+            CurrentRoundStatus.CheckLocalHandTiles(HandTiles);
+            // set river tiles
+            for (int playerIndex = 0; playerIndex < Rivers.Length; playerIndex++)
+            {
+                int placeIndex = CurrentRoundStatus.GetPlaceIndex(playerIndex);
+                CurrentRoundStatus.SetRiverData(placeIndex, Rivers[playerIndex]);
+            }
+            // set zhenting status
+            CurrentRoundStatus.SetZhenting(Zhenting);
+            // skipping this out turn operation, since the current turn is the turn of local player.
+            ClientBehaviour.Instance.OnSkipOutTurnOperation(BonusTurnTime);
+        }
+
+        private void HandleOtherDiscard()
+        {
             CurrentRoundStatus.SetCurrentPlaceIndex(CurrentPlayerIndex);
             int placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
             // update hand tiles
-            CurrentRoundStatus.SetHandTiles(HandTiles);
+            CurrentRoundStatus.CheckLocalHandTiles(HandTiles);
             CurrentRoundStatus.SetZhenting(Zhenting);
-            if (CurrentRoundStatus.IsLocalPlayerTurn(CurrentPlayerIndex))
-                CurrentRoundStatus.CalculateWaitingTiles();
             if (IsRichiing)
                 controller.ShowEffect(placeIndex, PlayerEffectManager.Type.Richi);
             controller.StartCoroutine(UpdateHandData(placeIndex, DiscardingLastDraw, Tile, Rivers));

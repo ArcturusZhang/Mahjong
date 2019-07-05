@@ -58,7 +58,6 @@ namespace GamePlay.Client.View
                 {
                     ClientBehaviour.Instance.OnInTurnKongButtonClicked(kongOperations);
                     Close();
-                    BackButton.gameObject.SetActive(true);
                     BackButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnBackButtonClicked(operations));
                 });
             }
@@ -76,6 +75,11 @@ namespace GamePlay.Client.View
                 var beiOperation = System.Array.Find(operations, op => op.Type == InTurnOperationType.Bei);
                 BeiButton.onClick.AddListener(() => ClientBehaviour.Instance.OnInTurnButtonClicked(beiOperation));
             }
+        }
+
+        public void ShowBackButton()
+        {
+            BackButton.gameObject.SetActive(true);
         }
 
         public void Close()

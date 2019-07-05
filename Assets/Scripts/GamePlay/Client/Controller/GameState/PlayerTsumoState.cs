@@ -23,7 +23,7 @@ namespace GamePlay.Client.Controller.GameState
         {
             CurrentRoundStatus.SetCurrentPlaceIndex(TsumoPlayerIndex);
             var placeIndex = CurrentRoundStatus.CurrentPlaceIndex;
-            CurrentRoundStatus.SetLastDraw(placeIndex, WinningTile);
+            CurrentRoundStatus.DrawTile(placeIndex, WinningTile);
             var data = new SummaryPanelData
             {
                 HandInfo = new PlayerHandInfo

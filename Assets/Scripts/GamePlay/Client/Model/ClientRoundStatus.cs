@@ -68,6 +68,7 @@ namespace GamePlay.Client.Model
             PossibleWaitingTiles = null;
             LocalSettings.Reset();
             CurrentPlaceIndex = -1;
+            LocalPlayerHandTiles = null;
             NotifyObservers();
         }
 
@@ -127,11 +128,38 @@ namespace GamePlay.Client.Model
             NotifyObservers();
         }
 
-        public void SetHandTiles(IList<Tile> handTiles)
+        private List<Tile> backupTiles;
+
+        public void CheckLocalHandTiles(IList<Tile> handTiles)
         {
-            LocalPlayerHandTiles = new List<Tile>(handTiles);
+            if (LocalPlayerHandTiles == null || LocalPlayerHandTiles.Count != handTiles.Count)
+            {
+                AssginHandTiles(handTiles);
+                SetHandTiles(0, handTiles.Count);
+                NotifyObservers();
+                return;
+            }
+            if (backupTiles == null) backupTiles = new List<Tile>();
+            backupTiles.Clear();
+            backupTiles.AddRange(LocalPlayerHandTiles);
+            backupTiles.Sort();
+            for (int i = 0; i < backupTiles.Count; i++)
+            {
+                if (!backupTiles[i].EqualsConsiderColor(handTiles[i]))
+                {
+                    AssginHandTiles(handTiles);
+                    Debug.LogError("Hand tiles on client are not identical to the data received from server.\n"
+                        + $"Client: {string.Join("", LocalPlayerHandTiles)}\nServer: {string.Join("", handTiles)}");
+                    break;
+                }
+            }
             SetHandTiles(0, handTiles.Count);
             NotifyObservers();
+        }
+
+        private void AssginHandTiles(IList<Tile> handTiles)
+        {
+            LocalPlayerHandTiles = new List<Tile>(handTiles);
         }
 
         public void SetHandTiles(int placeIndex, int count)
@@ -140,7 +168,36 @@ namespace GamePlay.Client.Model
             NotifyObservers();
         }
 
-        public void SetLastDraw(int placeIndex, Tile lastDraw = default(Tile))
+        public void DiscardTile(Tile tile, bool isLastDraw, bool isRichiing)
+        {
+            var placeIndex = 0;
+            var lastDraw = LastDraws[placeIndex];
+            LastDraws[placeIndex] = null;
+            if (!isLastDraw)
+            {
+                int index = LocalPlayerHandTiles.FindIndex(t => t.EqualsConsiderColor(tile));
+                LocalPlayerHandTiles.RemoveAt(index);
+                if (lastDraw != null)
+                    LocalPlayerHandTiles.Add((Tile)lastDraw);
+            }
+            var localRiver = Rivers[placeIndex].River;
+            var river = localRiver == null
+                ? new List<RiverTile>()
+                : new List<RiverTile>(Rivers[placeIndex].River);
+            river.Add(new RiverTile
+            {
+                Tile = tile,
+                IsRichi = isRichiing,
+                IsGone = false
+            });
+            Rivers[placeIndex].River = river.ToArray();
+            // if Li is checked, automatically sort hand tiles.
+            if (LocalSettings.Li) LocalPlayerHandTiles.Sort();
+            IsRichiing = false;
+            NotifyObservers();
+        }
+
+        public void DrawTile(int placeIndex, Tile lastDraw = default(Tile))
         {
             for (int i = 0; i < LastDraws.Length; i++)
             {

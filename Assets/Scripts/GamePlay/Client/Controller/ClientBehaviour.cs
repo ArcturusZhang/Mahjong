@@ -280,9 +280,14 @@ namespace GamePlay.Client.Controller
             PhotonNetwork.RaiseEvent(
                 EventMessages.DiscardTileEvent, info,
                 EventMessages.ToMaster, EventMessages.SendReliable);
-            controller.InTurnPanelManager.Close();
-            CurrentRoundStatus.SetRichiing(false);
-            controller.HandPanelManager.RemoveCandidates();
+            var localDiscardState = new LocalDiscardState {
+                CurrentRoundStatus = CurrentRoundStatus,
+                CurrentPlayerIndex = CurrentRoundStatus.LocalPlayerIndex,
+                IsRichiing = CurrentRoundStatus.IsRichiing,
+                DiscardingLastDraw = isLastDraw,
+                Tile = tile
+            };
+            StateMachine.ChangeState(localDiscardState);
         }
 
         private void OnInTurnOperationTaken(InTurnOperation operation, int bonusTurnTime)
@@ -369,6 +374,7 @@ namespace GamePlay.Client.Controller
                 return;
             }
             // show kong selection panel here
+            controller.InTurnPanelManager.ShowBackButton();
             var meldOptions = operationOptions.Select(op => op.Meld);
             controller.MeldSelectionManager.SetMeldOptions(meldOptions.ToArray(), meld =>
             {
@@ -435,6 +441,7 @@ namespace GamePlay.Client.Controller
                 return;
             }
             // chow selection logic here
+            controller.OutTurnPanelManager.ShowBackButton();
             var meldOptions = operationOptions.Select(op => op.Meld);
             controller.MeldSelectionManager.SetMeldOptions(meldOptions.ToArray(), meld =>
             {
@@ -471,6 +478,7 @@ namespace GamePlay.Client.Controller
                 return;
             }
             // pong selection logic here
+            controller.OutTurnPanelManager.ShowBackButton();
             var meldOptions = operationOptions.Select(op => op.Meld);
             controller.MeldSelectionManager.SetMeldOptions(meldOptions.ToArray(), meld =>
             {

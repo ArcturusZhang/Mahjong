@@ -52,7 +52,6 @@ namespace GamePlay.Client.View
                 {
                     ClientBehaviour.Instance.OnChowButtonClicked(chowOptions, operations);
                     Close();
-                    BackButton.gameObject.SetActive(true);
                     BackButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnBackButtonClicked(operations));
                 });
             }
@@ -65,10 +64,14 @@ namespace GamePlay.Client.View
                 {
                     ClientBehaviour.Instance.OnPongButtonClicked(pongOptions, operations);
                     Close();
-                    BackButton.gameObject.SetActive(true);
                     BackButton.onClick.AddListener(() => ClientBehaviour.Instance.OnOutTurnBackButtonClicked(operations));
                 });
             }
+        }
+
+        public void ShowBackButton()
+        {
+            BackButton.gameObject.SetActive(true);
         }
 
         public void Close()
