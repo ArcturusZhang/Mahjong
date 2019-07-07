@@ -52,6 +52,22 @@ namespace Mahjong.Model
             return doraList.ToArray();
         }
 
+        public Tile[] Reset(IList<Tile> allTiles)
+        {
+            if (allTiles.Count != this.allTiles.Count)
+                Debug.LogError("The given tiles are not efficient or redundant");
+            this.allTiles = new List<Tile>(allTiles);
+            tilesDrawn = 0;
+            lingShangDrawn = 0;
+            doraTurned = 0;
+            var doraList = new List<Tile>();
+            for (int i = 0; i < setting.InitialDora; i++)
+            {
+                doraList.Add(TurnDora());
+            }
+            return doraList.ToArray();
+        }
+
         /// <summary>
         /// Draw a new tile on the wall, throw a exception when there are none
         /// </summary>
